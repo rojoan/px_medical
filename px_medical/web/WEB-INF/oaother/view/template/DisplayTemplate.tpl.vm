@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../app/right/right.css" rel="stylesheet" type="text/css" />
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script>
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+
+<body scroll="no">
+<div class="gradual">
+#set($data = ${HELPER_BEAN.getBeanNameMap(${page.data.get(0)})})
+##以下是编辑界面的工具条
+#parse("/template/EditToolBar.tpl.vm")
+##编辑用的表格
+#parse("/template/EditGrid2.tpl.vm")
+##打印用的表格
+#parse("/template/PrintGrid2.tpl.vm")
+</div>
+</body>
+</html>

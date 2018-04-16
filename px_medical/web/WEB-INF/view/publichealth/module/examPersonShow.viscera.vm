@@ -1,0 +1,317 @@
+<form id="formLiveWayInfo" class="form-horizontal">
+	<div class="row m-l-xs m-r-xs">
+	    <div class="text-box"><h5>脏器功能</h5></div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">口唇</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.lips" "$!organBody.lips" $!{dicData.dicBodyLips} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">咽部</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.pharyngeal" "$!organBody.pharyngeal" $!{dicData.dicBodyPharyngeal} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">齿列</label>
+	        <div class="col-sm-2">
+	        	#set($checkFlag = "")
+	            #if("$!organBody.dentitionFlag" == "1")
+	            	#set($checkFlag = "checked='checked'")
+	            #end
+	        	#formSimpleCheckbox("examOrganBody.dentitionFlag" "1" "" "class='m-t-xs m-r-xs i-checks' $!checkFlag  disabled='disabled'" " 正常")
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">缺齿</label>
+	        <div class="col-sm-2">
+	        	<table>
+	        		<tr>
+	        			<td>
+	        				#formTextInput("examOrganBody.lackToothTl" "#htmlEscape($!organBody.lackToothTl)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        			<td>
+	        				#formTextInput("examOrganBody.lackToothTr" "#htmlEscape($!organBody.lackToothTr)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        		</tr>
+	        		<tr>
+	        			<td>
+	        				#formTextInput("examOrganBody.lackToothBl" "#htmlEscape($!organBody.lackToothBl)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        			<td>
+	        				#formTextInput("examOrganBody.lackToothBr" "#htmlEscape($!organBody.lackToothBr)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        		</tr>
+	        	</table>
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">龋牙</label>
+	        <div class="col-sm-2">
+	        	<table>
+	        		<tr>
+	        			<td>
+	        				#formTextInput("examOrganBody.decayedToothTl" "#htmlEscape($!organBody.decayedToothTl)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        			<td>
+	        				#formTextInput("examOrganBody.decayedToothTr" "#htmlEscape($!organBody.decayedToothTr)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        		</tr>
+	        		<tr>
+	        			<td>
+	        				#formTextInput("examOrganBody.decayedToothBl" "#htmlEscape($!organBody.decayedToothBl)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        			<td>
+	        				#formTextInput("examOrganBody.decayedToothBr" "#htmlEscape($!organBody.decayedToothBr)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        		</tr>
+	        	</table>
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">义齿（假牙）</label>
+	        <div class="col-sm-2">
+	        	<table>
+	        		<tr>
+	        			<td>
+	        				#formTextInput("examOrganBody.falseToothTl" "#htmlEscape($!organBody.falseToothTl)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        			<td>
+	        				#formTextInput("examOrganBody.falseToothTr" "#htmlEscape($!organBody.falseToothTr)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        		</tr>
+	        		<tr>
+	        			<td>
+	        				#formTextInput("examOrganBody.falseToothBl" "#htmlEscape($!organBody.falseToothBl)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        			<td>
+	        				#formTextInput("examOrganBody.falseToothBr" "#htmlEscape($!organBody.falseToothBr)" "maxlength='10' class='form-control' readonly")
+	        			</td>
+	        		</tr>
+	        	</table>
+	        </div>
+	    </div>
+
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">左眼视力</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.leftEye" "$!organBody.leftEye" "maxlength='3' class='form-control' readonly")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">纠正左眼视力</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.leftCorrectEye" "$!organBody.leftCorrectEye" "maxlength='3' class='form-control' readonly")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">听力</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.hearing" "$!organBody.hearing" $!{dicData.dicBodyHearing} "class='form-control' disabled='disabled'" "")
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">右眼视力</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.rightEye" "$!organBody.rightEye" "maxlength='3' class='form-control' readonly")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">纠正右眼视力</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.rightCorrectEye" "$!organBody.rightCorrectEye" "maxlength='3' class='form-control' readonly")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">运动能力</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.sportsAbility" "$!organBody.sportsAbility" $!{dicData.dicBodySportsAbility} "class='form-control' disabled='disabled'" "")
+	        </div>
+	    </div>
+	</div>
+	<div class="row m-l-xs m-r-xs">
+	    <div class="text-box"><h5>查体</h5></div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">眼底</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.fundus" "$!organBody.fundus" $!{dicData.dicIsNormal} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">眼底异常</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.fundusOtherContent" "#htmlEscape($!organBody.fundusOtherContent)" "maxlength='50' class='form-control' readonly")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">皮肤</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.skin" "$!organBody.skin" $!{dicData.dicBodySkin} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">皮肤其他</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.skinOtherContent" "#htmlEscape($!organBody.skinOtherContent)" "maxlength='50' class='form-control' readonly")
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">巩膜</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.sclera" "$!organBody.sclera" $!{dicData.dicBodySclera} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">巩膜其他</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.scleraOtherContent" "#htmlEscape($!organBody.scleraOtherContent)" "maxlength='50' class='form-control' readonly")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">淋巴结</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.lymph" "$!organBody.lymph" $!{dicData.dicBodyLymph} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">淋巴结其他</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.lymphOtherContent" "#htmlEscape($!organBody.lymphOtherContent)" "maxlength='50' class='form-control' readonly")
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">是否桶状胸</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.barrel" "$!organBody.barrel" $!{dicData.dicYesNo} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">肺部呼吸音</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.breath" "$!organBody.breath" $!{dicData.dicIsNormal} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">呼吸音异常</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.breathOtherContent" "#htmlEscape($!organBody.breathOtherContent)" "maxlength='50' class='form-control' readonly")
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">肺部啰音</label>
+	        <div class="col-sm-2">
+	        	#formSingleSelectFirstNone("examOrganBody.rale" "$!organBody.rale" $!{dicData.dicBodyRale} "class='form-control' disabled='disabled'" "")
+	        </div>
+	        <label class="col-sm-1 control-label text-right p-r-none">啰音其他</label>
+	        <div class="col-sm-2">
+	        	#formTextInput("examOrganBody.raleOtherContent" "#htmlEscape($!organBody.raleOtherContent)" "maxlength='50' class='form-control' readonly")
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">心率</label>
+	        <div class="col-sm-1">
+	        	#formTextInput("examOrganBody.heartRate" "$!organBody.heartRate" "maxlength='3' class='form-control' readonly")
+	        </div>
+	        <div class="col-sm-1 control-label" style="text-align: left">次/分</div>
+            <label class="col-sm-1 control-label text-right p-r-none">心律</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.rhythmHeart" "$!organBody.rhythmHeart" $!{dicData.dicBodyRhythmHeart} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">心脏杂音</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.heartNoise" "$!organBody.heartNoise" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">杂音描述</label>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.heartNoiseContent" "#htmlEscape($!organBody.heartNoiseContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">腹部压痛</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.tender" "$!organBody.tender" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.tenderOtherContent" "#htmlEscape($!organBody.tenderOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">腹部包块</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.enclosed" "$!organBody.enclosed" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.enclosedOtherContent" "#htmlEscape($!organBody.enclosedOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">腹部肝大</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.hepat" "$!organBody.hepat" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.hepatOtherContent" "#htmlEscape($!organBody.hepatOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">腹部脾大</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.splenauxe" "$!organBody.splenauxe" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.splenauxeOtherContent" "#htmlEscape($!organBody.splenauxeOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">移动性浊音</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.shiftDull" "$!organBody.shiftDull" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.shiftDullContent" "#htmlEscape($!organBody.shiftDullContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">下肢水肿</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.lowerBodyEdema" "$!organBody.lowerBodyEdema" $!{dicData.dicBodyLowerBodyEdema} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">肛门指诊</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.anusDre" "$!organBody.anusDre" $!{dicData.dicBodyAnusDre} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">指诊其他描述</label>
+            <div class="col-sm-1">
+            	#formTextInput("examOrganBody.anusDreContent" "#htmlEscape($!organBody.anusDreContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">足背动脉搏动</label>
+            <div class="col-sm-6">
+            	#formCheckboxesLable("examOrganBody.dorsalArteryBeats" $!dorsalArteryBeats $!dicData.dicDorsalArteryBeats "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">乳腺</label>
+            <div class="col-sm-5" style="width: auto; padding-right: 0px;">
+            	#formCheckboxesLable("examOrganBody.breast" $!breast $!dicData.dicBodyBreast "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">其他</label>
+            <div class="col-sm-5" style="padding-left: 0px;">
+            	#formTextInput("examOrganBody.breastOtherContent" "#htmlEscape($!organBody.breastOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">妇科外阴</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.vulva" "$!organBody.vulva" $!{dicData.dicBodyVulva} "class='form-control'disabled='disabled'" "")
+            </div>
+            <div class="col-sm-3">
+            	#formTextInput("examOrganBody.vulvaOtherContent" "#htmlEscape($!organBody.vulvaOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">妇科阴道</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.vagina" "$!organBody.vagina" $!{dicData.dicBodyVulva} "class='form-control'disabled='disabled'" "")
+            </div>
+            <div class="col-sm-3">
+            	#formTextInput("examOrganBody.vaginaOtherContent" "#htmlEscape($!organBody.vaginaOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">妇科宫颈</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.cervix" "$!organBody.cervix" $!{dicData.dicBodyVulva} "class='form-control'disabled='disabled'" "")
+            </div>
+            <div class="col-sm-3">
+            	#formTextInput("examOrganBody.cervixOtherContent" "#htmlEscape($!organBody.cervixOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">妇科宫体</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.corpus" "$!organBody.corpus" $!{dicData.dicBodyVulva} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-3">
+            	#formTextInput("examOrganBody.corpusOtherContent" "#htmlEscape($!organBody.corpusOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">妇科附件</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.adnexaUteri" "$!organBody.adnexaUteri" $!{dicData.dicBodyVulva} "class='form-control'disabled='disabled'" "")
+            </div>
+            <div class="col-sm-3">
+            	#formTextInput("examOrganBody.adnexaUteriContent" "#htmlEscape($!organBody.adnexaUteriContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">其他</label>
+            <div class="col-sm-11">
+            	#formTextInput("examOrganBody.screenelse" "#htmlEscape($!organBody.screenelse)" "maxlength='25' class='form-control' readonly")
+            </div>
+        </div>
+    </div>
+</form>

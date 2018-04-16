@@ -1,0 +1,114 @@
+<script>
+$(document).ready(function () {
+
+    // 选择儿童信息弹层事件绑定到vaccinatedName
+    $('#vaccinatedName').click(function(){
+        var title = '选择接种儿童/新生儿信息';
+        common.open(contextPath + '/childDetail/selectCommonChildDetail.do', title, {area: ['85%', '95%']});
+    });
+
+    // 选择成人信息弹层事件绑定到btn
+    $('#vaccinatedPersonDetailBtn').click(function(){
+        var title = '选择接种人员(成人)信息';
+        common.open(contextPath + '/personDetail/selectCommonPersonDetail.do', title, {area: ['85%', '95%']});
+    });
+
+});
+
+
+// 选择儿童信息弹层回调函数
+function selectChildCallBack(obj) {
+    $('#childDetailId').val(obj.childDetailId);
+    $('#vaccinatedName').val(obj.childName);
+##    $('#hospitalId').val(obj.hospitalId);
+##    $('#hospitalNo').val(obj.hospitalNo);
+##    $('#birthDate').val(obj.birthDate);
+##    $('#fetationAge').val(obj.fetationAge);
+##    $('#hospitalName').val(obj.hospitalName);
+##    $('#nextVisitAddr').val(obj.familyAddr);
+##    $('#birthWeight').val(obj.birthWeight);
+##    $('#birthHeight').val(obj.birthHeight);
+##    var genderEle = "#gender_" + obj.gender;
+##    $(genderEle).iCheck('check');
+}
+
+// 选择通用人员(personDetail)信息回调函数
+function selectPersonCallBack(obj) {
+    var genderEle = "#gender_" + obj.gender;
+    $('#personDetailId').val(obj.personDetailId);
+    $('#vaccinatedName').val(obj.personalName);
+##    $(genderEle).iCheck('check');
+##    $('#idCard').val(obj.certificateNumber);
+##    $('#regionId').val(obj.regionId);
+##    $('#linkmanPhone').val(obj.myselfPhone);
+##    $('#birthDate').val(obj.birthDate);
+##    $('#familyRelId').val(obj.familyRelId);
+##    $('#contactAddr').val(obj.familyAddr);
+}
+
+        // 提交表单
+        function saveVaccinationCard() {
+            var vaccinationCardParams = common.serializeObject($('#vaccinationCardForm'));
+            if (vaccinationCardParams.creatorName == undefined || vaccinationCardParams.creatorName  == "") {
+                common.alert("请填写建卡人",0);
+               $("#creatorName").focus();
+                return false;
+            }
+
+            if (vaccinationCardParams.fillTime == undefined || vaccinationCardParams.fillTime  == "") {
+                common.alert("请填写填写时间",0);
+                return false;
+            }
+
+            if (vaccinationCardParams.hospitalId == undefined || vaccinationCardParams.hospitalId  == "") {
+                common.alert("请填写医疗机构ID",0);
+                return false;
+            }
+
+            if (vaccinationCardParams.hospitalName == undefined || vaccinationCardParams.hospitalName  == "") {
+                common.alert("请填写医疗机构名称",0);
+               $("#hospitalName").focus();
+                return false;
+            }
+
+            if (vaccinationCardParams.regionId == undefined || vaccinationCardParams.regionId  == "") {
+                common.alert("请填写行政区域",0);
+               $("#regionId").focus();
+                return false;
+            }
+
+            if (vaccinationCardParams.vaccinatedName == undefined || vaccinationCardParams.vaccinatedName  == "") {
+                common.alert("请填写被接种人姓名",0);
+               $("#vaccinatedName").focus();
+                return false;
+            }
+
+            if (vaccinationCardParams.vaccinationCardNo == undefined || vaccinationCardParams.vaccinationCardNo  == "") {
+                common.alert("请填写预防接种卡编号",0);
+               $("#vaccinationCardNo").focus();
+                return false;
+            }
+
+            if (vaccinationCardParams.validFlag == undefined || vaccinationCardParams.validFlag  == "") {
+                common.alert("请填写是否有效",0);
+                return false;
+            }
+
+                $.post("../vaccinationCard/saveVaccinationCard.jo", vaccinationCardParams,  function (result) {
+                if (result.code == "0") {
+                  common.alert("保存成功",0);
+                  parent.queryRecord();//重新查询
+                  // 关闭窗口
+                  var index = parent.layer.getFrameIndex(window.name);
+                  parent.layer.close(index); 
+               } else {
+                  common.alert(result.msg, 2);
+               }
+            }
+            , "json").error(function(jqXHR) {
+                                        jqueryPostError(jqXHR);
+                           }
+                       );//post
+
+        }//save function
+</script>

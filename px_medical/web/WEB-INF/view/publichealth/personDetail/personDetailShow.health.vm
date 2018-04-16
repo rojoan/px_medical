@@ -1,0 +1,236 @@
+<!-- 个人的健康信息修改 -->
+<div id="personHeath" class=" tab-pane full-height">
+	<form class="form-horizontal">
+		<!--既往疾病史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>既往疾病史</h5>
+			</div>
+			<div id="pastDisease" class="row m-l-sm">
+				#if($pastDiseaseList && $pastDiseaseList.size() > 0)
+					<!-- 列表中有数据时，循环显示 -->
+					 #foreach($item in $pastDiseaseList)
+					<div class="trRow show">
+						#formHiddenInput("pastDiseaseId" "$!item.pastDiseaseId" "")
+						<input type="hidden" name="pastDiseaseId" value="$!item.pastDiseaseId">
+						<div class="form-group">
+							<label class="col-sm-1 control-label text-right p-r-none red">疾病名称</label>
+							<div class="col-xs-3">
+								#formTextInput("diseaseName" "#htmlEscape($!item.diseaseName)" "readonly maxlength='50' class='form-control'")
+							</div>
+							<label class="col-sm-1 control-label text-right p-r-none">得病时间</label>
+							<div class="col-sm-3">
+								<div class=" input-daterange date">
+									#formTextInput("diseaseTime" "$!date.format('yyyy-MM-dd', $!item.diseaseTime)" "readonly class='form-control '")
+								</div>
+							</div>
+							<label class="col-sm-1 control-label text-right p-r-none">是否为遗传</label>
+							<div class="col-sm-2">
+								<!-- 多组redio需要设置： name=familyDiseaseFlag+ $item.pastDiseaseId -->
+								#formRadioButtonsLabel("familyDiseaseFlag$item.pastDiseaseId" "$!item.familyDiseaseFlag" $dicData.dicYesNo "&nbsp;" "disabled='disabled' " "class='checkbox-inline i-checks' ")
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-1 control-label text-right p-r-none ">得病部位描述</label>
+							<div class="col-xs-10"> 
+								#formTextInput("diseaseContent" "#htmlEscape($!item.diseaseContent)" "readonly maxlength='200' class='form-control readonly '")
+							</div>
+						</div>
+					</div>
+					#end 
+				#else
+				#end
+			</div>
+		</div>
+
+		<!--个人暴露史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>个人暴露史</h5>
+			</div>
+			<div id="exposeDisease" class="row m-l-sm">
+				<div style="margin: 10px 5px 8px 0px;">
+					<div class="form-group" style="margin-left: 15px; margin-right: 15px;">
+						<div class="col-md-12">
+							#formCheckboxesLable("exposeId" $!personExposeIdsList $dicData.dicExpose "" "disabled='disabled' class='checkbox-inline i-checks'")
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--个人过敏史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>个人过敏史</h5>
+			</div>
+			<div id="drugAllergyRows" class="row m-l-sm m-b-sm">
+				<div style="margin: 10px 5px 8px 0px;">
+					<div class="form-group" style="margin-left: 15px; margin-right: 15px;">
+						<div class="col-md-12">
+						 #foreach($option in $dicData.dicDrugAllergy.keySet())
+					        <label  class="checkbox-inline i-checks">
+						        <input type="checkbox" name="drugAllergyId" value="${option}" id="drugAllergyId_${option}" disabled="disabled"
+						        #foreach($item in $!drugAllergyList)
+						            #if($item.drugAllergyId == $option)
+						                checked="checked"
+						            #end
+						        #end
+						         />${dicData.dicDrugAllergy.get($option)} 
+						         #if(5 == $option)
+							         <input type="text" name="drugAllergyOther" readonly
+							         #foreach($item in $!drugAllergyList)
+							            #if($item.drugAllergyId == $option)
+							                value="$item.drugAllergyOther"
+							            #end
+							          #end
+						            >
+							     #else
+							    	&nbsp;
+						         #end
+					        </label>
+					          
+					    #end
+					</div>  
+				</div>
+			</div>
+		  </div>
+		</div>
+
+		<!--既往手术、外伤、输血史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>既往手术、外伤、输血史</h5>
+			</div>
+
+			<div id="personSurgeryRows" class="row m-l-sm">
+				#if($personSurgeryList && $personSurgeryList.size() > 0)
+				<!-- 列表中有数据时，循环显示 -->
+				#foreach($item in $personSurgeryList)
+				<div class="surgeryRow trRow">
+					#if($item.surgeryName) 
+					#formHiddenInput("surgeryId" "$!item.surgeryId" "") 
+					<div class="form-group">
+						<label class="col-sm-1 control-label text-right p-r-none ">手术名称</label>
+						<div class="col-sm-6">#formTextInput("surgeryName" "#htmlEscape($!item.surgeryName)" "maxlength='50'  readonly  class='form-control'")</div>
+
+						<label class="col-sm-1 control-label text-right p-r-none ">手术时间</label>
+						<div class="col-sm-3 input-daterange date">
+							#formTextInput("surgeryTime" "$!date.format('yyyy-MM-dd', $!item.surgeryTime)" " maxlength='15' class=' form-control ' readonly ")
+						</div>
+					</div>
+					#end
+				</div>
+
+				<div class="traumaRow trRow">
+					#if($item.traumaName) 
+					#formHiddenInput("surgeryId" "$!item.surgeryId" "") 
+					<input type="hidden" name="surgeryType" value="traumaType">
+					<div class="form-group">
+						<label class="col-sm-1 control-label text-right p-r-none ">外伤名称</label>
+						<div class="col-sm-6">
+							#formTextInput("traumaName" "#htmlEscape($!item.traumaName)" "maxlength='50'  readonly  class='form-control'")
+						</div>
+
+						<label class="col-sm-1 control-label text-right p-r-none ">外伤时间</label>
+						<div class="col-sm-3 input-daterange date">
+							#formTextInput("traumaTime" "$!date.format('yyyy-MM-dd', $!item.traumaTime)" "  class=' form-control ' readonly")
+						</div>
+					</div>
+					#end
+				</div>
+
+				<div class="bloodTransRow trRow">
+					#if($item.bloodTransReason) 
+					
+					#formHiddenInput("surgeryId" "$!item.surgeryId" "") 
+					<input type="hidden" name="surgeryType" value="bloodTransType">
+					<div class="form-group">
+						<label class="col-sm-1 control-label text-right p-r-none ">输血原因</label>
+						<div class="col-sm-6">
+							#formTextInput("bloodTransReason" "#htmlEscape($!item.bloodTransReason)" "maxlength='100'  readonly  class='form-control'  ")
+						</div>
+						<label class="col-sm-1 control-label text-right p-r-none ">外伤时间</label>
+						<div class="col-sm-3 input-daterange date">
+							#formTextInput("bloodTransTime" "$!date.format('yyyy-MM-dd', $!item.bloodTransTime)" " maxlength='15' class=' form-control ' readonly ")
+						</div>
+					</div>
+					#end
+				</div>
+				#end
+				<!-- foreach -->
+				#else
+				<!-- if list.size  -->
+				<!-- 列表中没有数据显示空白 -->
+				<div class="surgeryRow"></div>
+				<div class="traumaRow"></div>
+				<div class="bloodTransRow"></div>
+				#end
+				<!-- if list.size  -->
+			</div>
+
+		</div>
+
+
+		<!--家族史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>家族史</h5>
+			</div>
+
+			<div id="familyDiseaseRows" class="row m-l-sm">
+
+				#if($familyDiseaseList && $familyDiseaseList.size() > 0)
+				<!-- 列表中有数据时，循环显示 -->
+					#foreach($item in $familyDiseaseList)
+					<div class="trRow">
+						#formHiddenInput("familyDiseaseId" "$!item.familyDiseaseId" "")
+						<div class="form-group">
+							<div class="col-sm-2">
+								#formSingleSelectDictionary("familyMemberFlag" $!item.familyMemberFlag $dicData.dicFamilyMemberFlag "id='familyMemberFlag' data-placeholder='请选择成员'  disabled='disabled'  class='form-control' style='min-width: 80px; width: 70%;margin-left: 40px;' tabindex='1'" "请选择成员" "")</div>
+							<div class="col-sm-9">
+								<div class="input-group ">
+									<input name="diseaseNames" value="$!item.diseaseName" type="text" class="form-control " readonly > 
+									<input type="hidden" name="diseaseIdStr" value="$!item.diseaseIdStr" />
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
+											<span class="caret"></span>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					#end 
+				#else
+				<!-- 列表中没有数据显示空白 -->
+				#end
+
+			</div>
+		</div>
+
+		<!--残疾情况-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>残疾情况</h5>
+			</div>
+			<div id="personDisabilitRows" class="row m-l-sm m-b-sm">
+				<div style="margin: 10px 5px 8px 0px;">
+					<div class="form-group" style="margin-left: 15px; margin-right: 15px;">
+						<div class="col-md-12">#formCheckboxesLable("disabilityId" $!disabilityIdsList $dicData.dicDisability "" " disabled='disabled' class='checkbox-inline i-checks'")</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<script src="../resource/style/js/ui.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){ 
+		$('#personHeath > input').attr("readonly",true)//将input元素设置为readonly 　　 
+		$('#personHeath > select').attr("disabled","disabled")//将input元素设置为disabled 
+	});
+	</script>
+</div>
+
+
+		

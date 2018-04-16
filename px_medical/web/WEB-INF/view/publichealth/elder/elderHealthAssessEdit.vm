@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老年人一般健康评估</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { height: 100% }
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+                    <!--如果弹窗没有底部菜单栏则 -44px -->
+                <form id="elderHealthAssessForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+                    #formHiddenInput("elderHealthAssessId" "$!elderHealthAssess.elderHealthAssessId")
+                    #formHiddenInput("personDetailId" "$!elderHealthAssess.personDetailId" " id='personDetailId' ")
+                    #formHiddenInput("hospitalId" "$!elderHealthAssess.hospitalId")
+                    #formHiddenInput("hospitalNo" "$!elderHealthAssess.hospitalNo")
+                    #formHiddenInput("regionId" "$!elderHealthAssess.regionId" "id='regionId'")
+                    #formHiddenInput("assessDoctorId" "$!elderHealthAssess.assessDoctorId")
+                    #formHiddenInput("hospitalName" "#htmlEscape($!elderHealthAssess.hospitalName)" " id='hospitalName' maxlength='10' class='form-control' readonly ")
+                                
+                    
+                    <div class="modal-body full-height-scroll" style="height: calc(100% - 49px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+                        <!-- 表单 开始 -->
+                        <div class="table-content">
+                            <div class="text-box"><h5>基本信息</h5></div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none red">姓名</label>
+                                <div class="col-sm-3"> 
+                                     #formTextInput("personalName" "$!personDetail.personalName" "   id='personalName' class='form-control' readonly")
+                                </div>
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">性别</label>
+                                <div class="col-sm-3">
+                                    #formRadioButtonsLabel("gender" "$!personDetail.gender" $dicData.dicSex "&nbsp;" "" "class='checkbox-inline i-checks' readonly ")
+                                </div>
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">年龄</label>
+                                <div class="col-sm-3">
+                                    #formTextInput("personalAge" "$!personDetail.personalAge" "   id='personalAge' class='form-control' readonly ")
+                                </div>
+                            </div>
+                            <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none">身高</label>
+		                         <div class="col-sm-2">
+		                             #formFloInput("height" "$!elderHealthAssess.height" " id='height' maxlength='4' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-left p-r-none" >cm</label>
+		                         <label class="col-sm-1 control-label text-right p-r-none">体重</label>
+		                         <div class="col-sm-2">
+		                             #formFloInput("weight" "$!elderHealthAssess.weight" " id='weight' maxlength='4' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-left p-r-none">kg</label>
+		                         <label class="col-sm-1 control-label text-right p-r-none">体质指数(BMI)</label>
+		                         <div class="col-sm-2">
+		                             #formFloInput("bmi" "$!elderHealthAssess.bmi" " id='bmi' maxlength='4' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-left p-r-none">Kg/m<sup>2</sup></label>
+		                     </div>
+		                     <div class="form-group">
+		                     <label class="col-md-1 control-label">血压</label>
+				                <div class=" input-group col-md-2" style="padding-left: 9px; display: inline-table; float: left">
+				                    #formIntInput("minBloodPressure" "$!postpartumVisit.minBloodPressure" " id='minBloodPressure' maxlength='3' class='form-control'") 
+				   
+				                    <span class="input-group-addon">/</span>
+				                    #formIntInput("maxBloodPressure" "$!postpartumVisit.maxBloodPressure" " id='maxBloodPressure' maxlength='3' class='form-control'") 
+				
+				                </div>
+				                <label class="col-md-1 control-label p-r-n" style="text-align: left">mmHg</label>
+		                     </div>
+		                     
+                            <div class="form-group">
+                                 <label class="col-sm-1 control-label text-right p-r-none p-l-none ">评估医生</label>
+                                <div class="col-sm-3">
+                                    #formTextInput("assessDoctorName" "#htmlEscape($!elderHealthAssess.assessDoctorName)" " id='assessDoctorName' maxlength='10' class='form-control' readonly ")
+                                </div>
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none red">评估日期</label>
+                                <div class="col-sm-3">
+                                    #formTextInput("assessTime" $!date.format('yyyy-MM-dd', $!elderHealthAssess.assessTime) " id='assessTime' onclick='$layerDate' maxlength='20' class='form-control'")
+                    
+                                </div>
+                            </div>
+                              
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">其他评估</label>
+                                <div class="col-sm-7">
+                                    #formTextInput("otherAssess" "#htmlEscape($!elderHealthAssess.otherAssess)" " id='otherAssess' maxlength='20' class='form-control' ")
+                                </div>
+                            </div>
+                              
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">总体评估</label>
+                                <div class="col-sm-7">
+                                    #formTextarea("wholeAssess" "#htmlEscape($!elderHealthAssess.wholeAssess)" " id='wholeAssess' maxlength='2000' class='form-control' ")
+                                </div>
+                            </div>
+                              
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">管理计划</label>
+                                <div class="col-sm-7">
+                                    #formTextarea("managerPlan" "#htmlEscape($!elderHealthAssess.managerPlan)" " id='managerPlan' maxlength='2000' class='form-control' ")
+                                </div>
+                            </div>
+                              
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">疾病筛选</label>
+                                <div class="col-sm-7">
+                                    #formTextarea("diseaseChoice" "#htmlEscape($!elderHealthAssess.diseaseChoice)" " id='diseaseChoice' maxlength='500' class='form-control' ")
+                                </div>
+                            </div>
+                          
+                            #foreach($option in $healthAssessTypeMap.keySet())
+	                            <div class="form-group" id="healthAssessTypeItem">
+                                   #set( $healthAssessItemHealthNoList =  $healthAssessItemHealthNoGroupMap.get($option) ) <!-- 当前key = Type的 healthAssessItemHealthNoList 非常健康评估集合  -->
+                                   #set( $healthAssessItemHealthYesList =  $healthAssessItemHealthYesGroupMap.get($option) ) <!-- 当前key = Type的 healthAssessItemHealthYesList 正常健康集合  -->
+                                   #set( $type = $option )
+	                                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">$healthAssessTypeMap.get($type)  </label>
+	                                <div class="col-sm-2 item" >
+	                                   #foreach($item  in  $healthAssessItemHealthYesList)
+		                                   <label  class="checkbox-inline i-checks" style="float:left;">
+									        <input type="checkbox" name="$type" value="$item.healthAssessItemId"  
+										        #foreach($healthAssessItemId in $healthAssessItemIdMap.keySet())
+										            #if($item.healthAssessItemId == $healthAssessItemId)
+										                checked="checked"
+										            #end
+										        #end
+									          />$item.healthAssessItem  &nbsp;&nbsp;&nbsp;
+									          #formHiddenInput("elderHealthAssessItemId" "$item.elderHealthAssessItemId" " ")
+									        </label>
+								       #end
+	                                </div>
+	                                <div class="col-sm-9 item">
+	                                   #foreach($item  in  $healthAssessItemHealthNoList)
+		                                   <label  class="checkbox-inline i-checks" style="float:left;">
+									        <input type="checkbox" name="$type" value="$item.healthAssessItemId"  
+										        #foreach($healthAssessItemId in $healthAssessItemIdMap.keySet())
+										            #if($item.healthAssessItemId == $healthAssessItemId)
+										                checked="checked"
+										            #end
+										        #end
+									          />$item.healthAssessItem  &nbsp;&nbsp;&nbsp;
+									          #formHiddenInput("elderHealthAssessItemId" "$item.elderHealthAssessItemId" " ")
+									        </label>
+								       #end
+	                                </div>
+	                            </div>
+                            #end
+                               
+                         </div>   
+                        <!-- 表单 结束 -->
+                    </div>
+                </form>
+           
+                <div class="tool-table-fixed" style="width: calc(100%)">
+                    #if('show' != $!mode)
+                        <button onclick="saveElderHealthAssess();" type="button" class="btn btn-success">
+                            <i class="fa fa-save"></i> 保 存
+                        </button>
+                    #end
+                </div>
+                
+    <!-- 全局js -->
+    #parse("./common/pageJs.vm") 
+    #parse("./common/common.js.vm")
+    #parse("./publichealth/elder/elderHealthAssessEdit.js.vm")
+</body>
+</html>

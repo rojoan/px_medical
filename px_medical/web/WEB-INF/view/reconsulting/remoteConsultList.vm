@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+	#parse("./common/pageCss.vm")
+	#parse("./common/pageJs.vm")
+    <style>
+        html,body { height: 100%}
+        button.close { position: relative; z-index: 5555; right:9px; top:5px;}
+    </style>
+</head>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">   		
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">		
+				    		
+					<form id="lis_queryForm" class="form-horizontal">
+						<!-- 会诊类型只用于列表显示，不作为查询条件使用 -->
+						<select style="display: none" class="form-control" id="consultationType">
+	                        <option value="">会诊类型</option>
+	                        <option  value="2">交互式会诊</option>
+	                        <option  value="1">非交互式会诊</option>
+	                    </select>
+	                    <div class=" form-group m-b-none">
+	                        <div class="col-md-3">
+		                         <select id="consultingStatus" name="consultingStatus" data-placeholder="请选择会诊状态" class="chosen-select" style="min-width: 240px" tabindex="1">
+		                             <option value="">请选择会诊状态</option>
+		                             #foreach($item in $dicData.dicConsultStatus.entrySet())
+		                             	#if("$!item.key" == "2" || "$!item.key" == "3")
+		                             	<option value="$!item.key" hassubinfo="true">$!item.value</option>
+		                             	#end
+		                             #end
+		                         </select>
+	                        </div>
+	                        <div class="col-md-3">
+	                         <select id="medicalInstitutionId" name="medicalInstitutionId" data-placeholder="选择医院" class="chosen-select" style="min-width: 240px" tabindex="1">
+	                             <option value="">请选择医院</option>
+	                             #foreach($item in $!hospitalList)
+	                             	<option value="$!item.orgId" hassubinfo="true">$!item.name</option>
+	                             #end
+	                         </select>
+	                        </div>
+	                        <div class="col-md-3">
+	                        	<input type="text" id="patientName" name="patientName" placeholder="按患者姓名查找" class="input-sm form-control"> 
+	                        </div>
+	                        
+	                        <div class="col-md-3">
+	                            <button type="button" id="btn_remoteConsult" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 查 询 </button> 
+	                            <button type="button" id="clean_remoteConsult" class="btn btn-sm btn-info"><i class="iconfont fa icon-qingchu"></i> 清 空 </button> 
+	                        </div>
+	                    </div>
+	                </form>
+						
+				</div>
+			</div>
+		
+		<div class="ibox float-e-margins m-b-none">
+			<div class="ibox-content " style="padding-bottom: 4px;">				
+				<div class="table-responsive">
+					<table id="dataList" class="table table-bordered table-hover" data-mobile-responsive="true"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+    
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	#parse("./reconsulting/remoteConsultList.js.vm")
+</body>
+</html>

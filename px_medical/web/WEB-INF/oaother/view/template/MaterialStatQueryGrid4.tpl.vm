@@ -1,0 +1,101 @@
+<div class="clear_Up">
+<table cellpadding="0" cellspacing="0" class="form_tab">
+    <tbody id="queryBody" #if("$showQueryGrid" == "y")style="DISPLAY:"  #else style="DISPLAY: none"#end>
+<form name="$!{_layout.queryForm.name}" method="post" action="#getRequestUri()?action=$!{_layout.queryForm.action}">
+    <input type="hidden" name="submitFlag" value="0" />
+#if(${page.pageSize})    <input type="hidden" name="pageSize" value="${page.pageSize}" />#end
+#set($queryBeanMap = ${HELPER_BEAN.getBeanNameMap(${command})})
+#set($cellcount=0)
+#set($cur_colspan=0)
+#foreach($cell in ${_layoutquery.queryCondition})
+#if("hidden" != ${cell.type})
+#if(${cell.colspan} && ${cell.colspan} > 2)
+#if($cellcount!=0)##留空本行剩下的单元，准备新开一行
+                <td width="15%" class="form_cell_bg">&nbsp;</td>
+                <td width="35%" >&nbsp;</td>
+              </tr>
+#end
+#set($cellcount=0)##新开一行
+#set($cur_colspan=3)
+#end
+#if($cellcount==0)##行开始
+              <tr>
+#end
+
+#set($cellcount=$cellcount+1)
+                <td width="15%" class="form_cell_bg">#inputTitle($!{cell.title} $!{cell.required})</td>
+                <td width="35%" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+#if(${cell.view})
+#viewInputField(${cell} $queryBeanMap)
+#else
+#inputField(${cell} $queryBeanMap)
+#end
+                 </td>
+#if($cur_colspan > 2)##新开一行
+#set($cellcount=2)
+#set($cur_colspan=0)
+#end
+#if($cellcount>=2)##行结束
+#set($cellcount=0)
+              </tr>
+#end
+#else
+#inputField(${cell} $queryBeanMap)
+#end
+#end
+#if($cellcount!=0)
+                <td width="15%" class="form_cell_bg">&nbsp;</td>
+                <td width="35%" >&nbsp;</td>
+              </tr>
+#end
+               <tr align="center">
+                <td colspan="4" align="center">
+                    <input type="button" class="input_style" value="开始统计..." onclick="javascript:if (defaultBeforeSubmitQuery) defaultBeforeSubmitQuery(document.queryForm); #if($_layout.statOnlick)$_layout.statOnlick#else doSate(document.queryForm, '#getRequestUri()?action=$!{_layout.queryForm.action}', 'statMsgDiv');#end" />
+                    <input type="button" class="input_style" value="清空" onclick="javascript:clearQueryCondition(document.queryForm)" />
+                </td>
+			   </tr>
+               <tr align="center">
+                <td colspan="4" align="center">
+					<div id="statMsgDiv"></div>
+				</td>
+              </tr>
+    </tbody>
+</form>
+</table>
+
+</div>
+<div class="clear_Up" id="datalist" #if("$showQueryGrid" == "y")style="DISPLAY:none" #else style="DISPLAY:"#end>
+
+	 #if(${_layoutTRActionRadio})
+		<table cellpadding="0" cellspacing="0" class="radio_tab">
+                <tr>
+					<td class="radio_back">
+						#foreach($radio in ${_layoutTRActionRadio.actionRadioList})
+							<input type="radio" id="$!{radio.field}$velocityCount" name="$!{radio.field}" #if($!{radio.checked})checked#end #if(${radio.readonly})readonly#end class='inputobject' #if(${radio.onclick})onclick="${radio.onclick}"#end /><LABEL for="$!{radio.field}$velocityCount">${radio.title}</LABEL>
+						#end
+                	</td>
+				</tr>
+		</table>
+	#end
+<table cellpadding="0" cellspacing="0" class="button_tab">
+
+			   <tr align="right">
+            #if(${_layoutActionRadio} || ${_layoutActionButtonList.buckButtonList})
+                <td align="left">
+                 #foreach($radio in ${_layoutActionRadio.actionRadioList})
+                    <input type="radio" id="$!{radio.field}$velocityCount" name="$!{radio.field}" #if($!{radio.checked})checked#end #if(${radio.readonly})readonly#end class='inputobject' #if(${radio.onclick})onclick="${radio.onclick}"#end /><LABEL for="$!{radio.field}$velocityCount">${radio.title}</LABEL>
+                 #end
+                #foreach($button in ${_layoutActionButtonList.buckButtonList})
+                    #buttonField($button "input_style" $queryBeanMap)
+                #end
+                </td>
+            #end
+                <td align="right">
+#foreach($button in ${_layoutActionButtonList.buttonList})
+#buttonField($button "input_style" $queryBeanMap)
+#end
+##                    &nbsp;<input id="doExpandButton" type="button" class="button_2" value="查&nbsp;询" onclick="javascript:doExpand('queryBody', this)" />&nbsp;&nbsp;
+                    &nbsp;<input id="doExpandButton" type="button" class="input_style" value="重新统计..." onclick="javascript:showQuery('queryBody','datalist')" />&nbsp;&nbsp;
+                </td>
+              </tr>
+</table>

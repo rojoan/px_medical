@@ -1,0 +1,121 @@
+<script type="text/javascript">
+	//查询按钮时间
+	function query() {
+		var $formObj = $("#familyDetail_queryForm");
+		var queryParams = common.serializeObject($('#familyDetail_queryForm'));
+		var options = {
+			url : '../familyDetail/familyDetailListData.jo?tiem=' + new Date().getTime(),
+			silent : false,
+			query : queryParams
+		};
+		$('#familyDetailGrid').bootstrapTable('refresh', options);
+	}
+	
+    // 添加按钮
+    function add(){
+        var title = '添加家庭档案 '+common.mustHit;
+        var url = '../familyDetail/editFamilyDetail.do?mode=simple' ;
+        common.open(url, title, {area: ['95%', '95%']});
+    }
+	
+	//清空查询框
+	function clearQuery() {
+		var $formObj = $("#familyDetail_queryForm");
+		$formObj.find("#q_familyOwnerName").val("");
+		$formObj.find("#q_familyType").val("");//选择框
+		$formObj.find("#q_familyType").trigger("chosen:updated");
+		$formObj.find("#q_censusType").val("");//选择框
+		$formObj.find("#q_censusType").trigger("chosen:updated");
+		$formObj.find("#q_censusAttribute").val("");//选择框
+		$formObj.find("#q_censusAttribute").trigger("chosen:updated");
+	}
+
+	$(function() {
+		function setQueryParams(params) {
+			var requestParams = common.serializeObject($('#familyDetail_queryForm'));
+			requestParams.pageSize = params.pageSize;
+			requestParams.pageNumber = params.pageNumber;
+			return requestParams;
+		}
+		
+		var dicFamilyType = JSON.parse('$dicTools.changeMapToJson($dicData.dicFamilyType)');
+		var dicCensusType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCensusType)');
+		$('#familyDetailGrid').bootstrapTable(
+			$.extend(
+				baseTable,
+				{url : "../familyDetail/familyDetailListData.jo",
+				queryParams :setQueryParams,
+				columns : [
+					{
+						checkbox : true
+					},
+					{
+						field : 'familyOwnerName',
+						title : '户主姓名'
+					},
+					{
+						field : 'familyNumber',
+						title : '家庭编号'
+					},
+					{
+						field : 'householdNumber',
+						title : '户口薄编号'
+					},
+					{
+						field : 'familyType',
+						title : '家庭类型',
+						formatter : function(value, row, index) {
+							if (value) { return dicFamilyType[value]; }
+						}
+					},
+					{
+						field : 'censusType',
+						title : '户籍类型',
+						formatter : function( value, row, index) {
+							if (value) { return dicCensusType[value]; }
+						}
+					},
+					{
+						field : 'contactPhone',
+						title : '联系电话'
+					},
+					{
+						field : 'familyCount',
+						title : '成员数量'
+					},
+					{
+						field : 'liveCount',
+						title : '现住人数'
+					},
+					{
+						field : 'childrenCount',
+						title : '未成年人数'
+					},
+					{
+						field : 'elderCount',
+						title : '负担老人数'
+					},
+					{
+						field : 'createTime',
+						title : '建档时间',
+						formatter : function(value) {
+							if (value) { return getSmpFormatDateByLong(value, false); }
+						}
+					} 
+				],
+				onCheck: function(row){
+					if (parent.selectFamilyCallBack && typeof(parent.selectFamilyCallBack) == "function") {
+						parent.selectFamilyCallBack(row);
+						
+						// 关闭窗口
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index); 
+					}
+				},
+				onLoadSuccess: function() {
+					var height = ($('#familyDetailGrid').parents("body").height() - $('#familyDetail_queryForm').parents(".ibox").first().height() - 36);
+					$('#familyDetailGrid').bootstrapTable('resetView', {height : height});
+				}
+		}));
+	});
+</script>

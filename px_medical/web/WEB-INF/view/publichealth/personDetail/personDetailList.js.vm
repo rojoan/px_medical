@@ -1,0 +1,149 @@
+<script>
+	
+	//验证单选
+	function singleCheck(rows){
+		if (rows.length != 1 || !rows[0].personDetailId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行");
+			return false;
+		}
+		return true;
+	}
+	
+	// 添加按钮
+	function add(){
+		var title = '添加居民个人档案'+common.mustHit;
+	    var url = '../personDetail/editPersonDetail.do' ;
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	//查询按钮时间
+	function query(){
+		var $formObj = $("#personDetail_queryForm");
+		var queryParams = common.serializeObject($('#personDetail_queryForm'));
+		var options = {url: '../personDetail/personDetailListData.jo?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		$('#personDetailGrid').bootstrapTable('refresh', options); 
+	}
+	//清空查询框
+	function clearQuery(){
+	var $formObj = $("#personDetail_queryForm");
+		$formObj.find("#q_personalName").val("");
+		$formObj.find("#q_gender").val("");//选择框
+		$formObj.find("#q_gender").trigger("chosen:updated");
+		$formObj.find("#q_censusType").val("");//选择框
+		$formObj.find("#q_censusType").trigger("chosen:updated"); 
+	}
+	
+	$(function() {
+		$('#personDetailGrid').bootstrapTable(
+			$.extend(baseTable, {
+				url : "../personDetail/personDetailListData.jo",
+				queryParams : function (params){
+					var requestParams = common.serializeObject($('#personDetail_queryForm'));
+			        requestParams.pageSize = params.pageSize;
+			        requestParams.pageNumber = params.pageNumber;
+			        return requestParams;
+				},
+				columns : [
+					{checkbox:true},
+					{
+						field : 'personalName',
+						title : '居民姓名'
+					},{
+						field : 'gender',
+						title : '性别',
+						formatter :function (value, row, index) {
+							var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+							if (value) return dicSex[value];
+						}
+					},{
+						field : 'certificateType',
+						title : '证件类型',
+						formatter :function (value, row, index) {
+							var dicCertificateType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCertificateType)'); 
+							if (value) return dicCertificateType[value];
+						}
+					}, {
+						field : 'certificateNumber',
+						title : '证件编号'
+					},{
+						field : 'censusType',
+						title : '户籍类型',
+						formatter :function (value, row, index) {
+							var dicCensusType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCensusType)'); 
+							if (value) return dicCensusType[value];
+						}
+					}, {
+						field : 'birthDate',
+						title : '出生日期'
+					}, {
+						field : 'myselfPhone',
+						title : '本人电话'
+					},{
+						field : 'creatorName',
+						title : '建档人'
+					},{
+						field : 'createTime',
+						title : '建档时间'
+					},{
+                        field : 'operate',
+                        title : '操作',
+                        events : operateEvents,
+                        formatter : operateFormatter
+                    } ],
+					onDblClickRow : function (row, element){
+						 var title = '居民个人档案 -  ' + row.personalName;
+		                 var url = '../personDetail/editPersonDetail.do?mode=show&personDetailId=' + row.personDetailId ;
+		                 common.open(url, title, {area: ['99%', '99%']});
+			   		},
+					onLoadSuccess : function(){
+						var height = ($('#personDetailGrid').parents("body").height() - $('#personDetail_queryForm').parents(".ibox").first().height() - 74);
+						$('#personDetailGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				})
+		);
+	});
+	
+	$(window).resize(function() { 
+		var height = ($('#personDetailGrid').parents("body").height() - $('#personDetail_queryForm').parents(".ibox").first().height() - 74);
+		$('#personDetailGrid').bootstrapTable('resetView', {height: height});
+	})
+	
+	window.operateEvents = {
+	        "click #btn_show_personDetail": function(e, value, row, index) {
+	        	 var title = '居民个人档案 -  ' + row.personalName;
+	             var url = '../personDetail/editPersonDetail.do?mode=show&personDetailId=' + row.personDetailId ;
+	             common.open(url, title, {area: ['99%', '99%']});
+	        },
+	        
+	        "click #btn_edit_personDetail": function(e, value, row, index) {
+	        	var title = '修改居民个人档案'+common.mustHit;
+	            var url = '../personDetail/editPersonDetail.do?personDetailId=' + row.personDetailId ;
+	            common.open(url, title, {area: ['99%', '99%']});
+	        },
+	         
+	        "click #btn_del_personDetail": function(e, value, row, index) {
+	        	common.confirm("确定要删除吗？", function (){
+	                $.post( '../personDetail/delPersonDetail.jo',
+	                        {personDetailId:row.personDetailId}, 
+	                        function (result){
+	                            if (result.code == "0") {
+	                                 common.alert("删除成功",0);
+	                                 $('#btn_query').click();
+	                            } else {
+	                                common.alert(result.msg, 2);
+	                            }
+	                        }, 
+	                'json');
+	            });
+	        }
+	 }
+	
+    function operateFormatter(value, row, index) {
+        var html = [
+                    '<a id="btn_show_personDetail" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+                    '<a id="btn_edit_personDetail" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+                    '<a id="btn_del_personDetail" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+                    ];
+        return html.join('');
+    }
+	</script>

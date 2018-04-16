@@ -1,0 +1,107 @@
+<script type="text/javascript">
+$(document).ready(function() {
+
+	// 搜索按钮
+	$('#search_generalSurveyList').click(function (){
+		var queryParams = common.serializeObject($('#lis_queryForm'));
+		if (queryParams.inspectionDate != "" && queryParams.inspectionDate != undefined) {
+			var re = new RegExp("-","g");
+			queryParams.inspectionDate = queryParams.inspectionDate.replace(re, "");
+		}
+		var options = {url: '../lis/applyList.do', silent: false, query: queryParams};
+		$('#generalSurveyList').bootstrapTable('refresh', options); 
+	});
+	// 清空按钮
+	$('#clean_generalSurveyList').click(function (){
+		$("#patientType").val("");
+		$("#patientName").val("");
+		$("#sampleClassName").val("");
+		$("#inspectionDate").val("");
+	});
+});
+$(function() {
+	function queryParams (params){
+		var requestParams = common.serializeObject($('#lis_queryForm'));
+        requestParams.pageSize = params.pageSize;
+        requestParams.pageNumber = params.pageNumber;
+        return requestParams;
+	}
+	var tableParams = {
+		clickToSelect: false,
+		singleSelect: false,
+		url : "../lis/applyList.do",
+		queryParams : queryParams,
+		columns : [
+	   		//{ checkbox:true },
+	   		{
+	   			field : 'indexNo',
+	   			title : '序号',
+	   			width : '50px',
+	   			formatter: function (value, row, index) {return  index + 1} 
+	   		}, {
+	   			field : 'patientName',
+	   			title : '患者姓名'
+	   		}, {
+	   			field : 'inspectionTime',
+	   			title : '检验时间'
+	   		}, {
+	   			field : 'testOrderName',
+	   			title : '检验名称'
+	   		}, {
+	   			field : 'patientType',
+	   			title : '类别',
+	   			formatter: function (value, row, index) {return  $("#patientType option[value='" + row.patientType + "']").text()} 
+	   		}, {
+	   			field : 'patientSex',
+	   			title : '性别',
+	   			formatter: function (value, row, index) {return  $("#patientSex option[value='" + row.patientSex + "']").text()} 
+	   		}, {
+	   			field : 'ageInput',
+	   			title : '年龄'
+	   		}, {
+	   			field : 'patientDeptName',
+	   			title : '科别'
+	   		}, {
+	   			field : 'sampleClassName',
+	   			title : '标本种类'
+	   		}, {
+	   			field : 'sampleStatusName',
+	   			title : '标本性状名称'
+	   		}, {
+	   			field : 'operate',
+	   			title : '操作',
+	   			width : '100px',
+	   			events : operateEvents,
+	   			formatter : operateFormatter
+	   		} 
+	   	],
+   		onDblClickRow : function (row, element){
+   			var title = '检验详情';
+   			common.open("../lis/generalSurveyInfo.do?lisInspectionSampleId=" + row.lisInspectionSampleId, title, {area: ['99%', '99%']});
+   		},
+   		onLoadSuccess : function(){
+   			var height = ($('#generalSurveyList').parents("body").height() - $('#lis_queryForm').parents(".ibox").height() - 44);
+   			$('#generalSurveyList').bootstrapTable('resetView', {height: height}); 
+   		}
+	}
+	$('#generalSurveyList').bootstrapTable($.extend(baseTable, tableParams));
+});
+window.operateEvents = {
+	"click #btn_apply" : function (e, value, row, index) {
+		var title = '申请会诊';
+		common.open('../reConsult/lisReConsultApplyEdit.do?lisInspectionSampleId=' + row.lisInspectionSampleId, title, {area: ['99%', '99%']});
+	},
+	"click #btn_show" : function (e, value, row, index) {
+		var title = '检验详情';
+		common.open("../lis/generalSurveyInfo.do?lisInspectionSampleId=" + row.lisInspectionSampleId, title, {area: ['99%', '99%']});
+	}
+};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_apply" href="javascript:void(0)" title="申请会诊"><i class="fa fa-user-md"></i></a>',
+				'<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>'
+	            ];
+	return html.join('');
+}
+
+</script>

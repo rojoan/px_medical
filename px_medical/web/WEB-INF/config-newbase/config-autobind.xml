@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+         default-lazy-init="true"
+         >
+
+    <bean id="configBeanTemplate" abstract="true">
+        <property name="jdbcOperations"><ref bean="jdbcTemplate"/></property>
+        <property name="commonDao"><ref bean="simpleCommonDao"/></property>
+        <property name="dictionarys"><ref bean="dictionarys"/></property>
+        <property name="databaseMethodFactory"><ref bean="simpleDatabaseMethodFactory"/></property>
+    </bean>
+
+    <bean id="autoBindConfig" class="com.bofan.spring.support.AutoBindConfig">
+        <property name="configTemplateName"><value>configBeanTemplate</value></property>
+        <property name="autoBindMap">
+            <map>
+                <entry key="jdbcOperations" value="com.bofan.architecture.dao.JdbcOperationsAware" />
+                <entry key="commonDao" value="com.bofan.database.dao.CommonDaoAware" />
+                <entry key="dictionarys" value="com.bofan.dictionary.DictionarysAware"/>
+                <entry key="databaseMethodFactory" value="com.bofan.database.dao.DatabaseMethodFactoryAware" />
+            </map>
+        </property>
+    </bean>
+</beans>

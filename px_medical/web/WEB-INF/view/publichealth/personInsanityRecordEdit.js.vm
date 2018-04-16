@@ -1,0 +1,100 @@
+<script type="text/javascript">
+$(function (){
+	// 选择患者信息
+	$('#patientName').click(function(){
+		layer.open({
+            type: 2,
+            title: '选择患者信息',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false,
+            area: ['85%', '95%'],
+            content: contextPath + '/personDetail/selectCommonPersonDetail.do'
+        });
+	});
+	
+	// 添加药物
+	$('#btn_add_drug').click(function (){
+		var html = $('#drugFormTemplet').html();
+		$('#drugList').append(html);
+	});
+	
+	// 保存
+	$('#btn_save').click(function(){
+		var params = common.serializeObject($('#editForm'));
+		
+		if ($('#submitFlag').val() == "1") {
+			common.alert("不能重复提交", 0);
+    		return ;
+		}
+		if (params.personDetailId == "" || params.personDetailId == undefined) {
+    		common.alert("请选择患者", 0);
+    		return ;
+    	}
+		if (params.familyRelId == "" || params.familyRelId == undefined) {
+    		common.alert("请选择监护人与患者关系", 0);
+    		return ;
+    	}
+		if (params.censusFlag == "" || params.censusFlag == undefined) {
+    		common.alert("请选择联系人户别", 0);
+    		return ;
+    	}
+		
+		if (params.linkmanName == "" || params.linkmanName == undefined) {
+    		common.alert("请填写联系人姓名", 0);
+    		return ;
+    	}
+		if (params.linkmanPhone == "" || params.linkmanPhone == undefined) {
+    		common.alert("请填写联系人电话", 0);
+    		return ;
+    	}
+		if (params.careerId == "" || params.careerId == undefined) {
+    		common.alert("请选择联系人职业", 0);
+    		return ;
+    	}
+		
+		// 将用药情况信息以json格式传到后台
+		params.insanityBehaviorJson = buildBehaviorJson();
+		$.post("../personInsanity/savePersonInsanity.jo", params, function (result){
+			if (result.code == "0") {
+				$('#submitFlag').val('1');
+				common.alertCall("保存成功。", 1, function (){
+					// 刷新父页面
+					$('#btn_query', window.parent.document).click();
+					// 关闭窗口
+					var index = parent.layer.getFrameIndex(window.name);
+			        parent.layer.close(index); 
+				});
+			} else {
+				common.alert(result.msg, 2);
+			}
+		},"json").error(function (e){jqueryPostError(e)});
+	});
+
+	// 将危险行为表单数据封装成JSON
+	function buildBehaviorJson(){
+		var array = [];
+		$("#behaviorList").find("input").each(function (){
+			if (this.value != "") {
+				var obj = {};
+				obj[this.name] = this.value;
+				obj["insanity_type"] = this.id;
+				array.push(obj);
+			}
+		});
+		return JSON.stringify(array);
+	}
+});
+
+// 选择患者信息回调函数
+function selectPersonCallBack(obj) {
+	var genderEle = "#gender_" + obj.gender;
+	$('#idCard').val(obj.certificateNumber);
+	$('#regionId').val(obj.regionId);
+	$('#patientName').val(obj.personalName);
+	$('#birthDate').val(obj.birthDate);
+	//$('#familyRelId').val(obj.familyRelId);
+	$('#personDetailId').val(obj.personDetailId);
+	$(genderEle).iCheck('check');
+}
+</script>

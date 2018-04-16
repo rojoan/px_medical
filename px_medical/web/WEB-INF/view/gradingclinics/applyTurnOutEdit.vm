@@ -1,0 +1,596 @@
+
+<!-- 主体 -->
+<div class="modal-body form-horizontal full-height-scroll" style="padding: 0; height: calc(100% - 50px)">
+		<button type="button" class="close tabs" data-dismiss="modal">
+			<span aria-hidden="true"><i class="fa fa-close"></i></span> 
+			<span class="sr-only"><i class="fa fa-close"></i></span>
+		</button>
+		<!-- tab -->
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#tab-1">申请表单信息</a></li>
+			<li class=""><a data-toggle="tab" href="#tab-2">影像资料</a></li>
+		</ul>
+		<div class="tab-content table-content full-height-scroll" style="height: calc(100% - 40px); padding: 9px 8px 9px 12px; background: #fff">
+			<!-- tab1  start-->
+			<div id="tab-1" class="tab-pane active ">
+				
+				<form id="diaApplayForm" method="get" class="form-horizontal full-height">
+				       
+				        <!-- 隐藏字段 -->
+				        #parse("./gradingclinics/applyTurnOutEditHidden.vm")
+				        <div class="ibox float-e-margins ">
+				            <div class="ibox-title"><h5>患者基本信息 </h5></div>
+				            <div class="ibox-content">
+				                <div class="form-group">
+				                    <label class="col-sm-1 control-label text-right p-r-none p-l-none">就诊卡号</label>
+				                    <div class="col-sm-3">
+				                        <input type="text" id="patientCardNo" value="$!patient.patientCardNo" disabled="disabled" class="form-control">
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">身份证号码</label>
+				                    <div class="col-sm-3">
+				                        <input type="text" id="patientIdCard" value="$!patient.patientIdCard" disabled="disabled" class="form-control">
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">医/农保证号</label>
+				                    <div class="col-sm-3">
+				                        <input type="text" id="insuranceNo" value="$!patient.insuranceNo" disabled="disabled" class="form-control">
+				                    </div>
+				                </div>
+				                <div class="form-group">
+				                    <label class="col-sm-1 control-label text-right p-r-none">患者姓名</label>
+				                    <div class="col-sm-3">
+				                        <input type="text" id="patientName" name="patientName" value="$!patient.patientName" disabled="disabled" class="form-control">
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">患者性别</label>
+				                    <div class="col-sm-3 p-r-none">
+				                        #formRadioButtonsLabel("patientSex" "$!patient.patientSex" $dicData.dicSex "&nbsp;" ""  "class='checkbox-inline i-checks'")
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">出生日期</label>
+				                    <div class="col-xs-3">
+				                        <div class=" input-daterange input-group date">
+				                            <input type="text" id="patientBirth"  value="$!date.format('yyyy-MM-dd', $!patient.patientBirth)" disabled="disabled" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" />
+				                        </div>
+				                    </div>
+				                </div>
+				                <div class="form-group">
+				                    <label class="col-sm-1 control-label text-right p-r-none">联系电话</label>
+				                    <div class="col-sm-3">
+				                        <input type="text" id="phone" value="$!patient.phone" disabled="disabled" class="form-control">
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">联系地址</label>
+				                    <div class="col-sm-7">
+				                        <input type="text" id="nowadd" value="$!patient.nowadd" disabled="disabled" class="form-control">
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				
+				        <!--转入医院信息-->
+				        <div class="ibox float-e-margins ">
+				            <div class="ibox-title"><h5>转入医院信息</h5></div>
+				            <div class="ibox-content">
+								<!-- 行 -->
+				                <div class="form-group p-r-none">
+				                    <label class="col-sm-1 control-label text-right p-r-none">#requiredTag&nbsp;转入医院</label>
+				                    <div class="col-sm-3">
+				                        <div class="input-group">
+				                            <div class="input-group">
+												#formSingleSelectDictionary("institutionUpId" $!hdDiagnosisApply.institutionUpId $!hospitalMap 
+												"id='institutionUpId' data-placeholder='选择转入医院' onchange='loadOfficeUp(this.value);' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择医院" "")
+				                            </div>
+				                        </div>
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">#requiredTag&nbsp;转入科室</label>
+				                    <div class="col-sm-3">
+				                        <div class="input-group">
+				                            <!-- officeName -->
+				                            <select id="officeUpId" name="officeUpId" data-placeholder="选择科室"
+				                                    onchange="loadDoctorUp(this.value);" class="form-control"
+				                                    style="min-width: 178px; width: 100%" tabindex="1">
+				                                <option value="">请选择科室</option>
+				                                #foreach($item in $!offficeUpList)
+					                                #if($!item.orgId == $!hdDiagnosisApply.officeUpId)
+					                                <option value="$!item.orgId" hassubinfo="true" selected="selected">$!item.name
+					                                </option>
+					                                #else
+					                                <option value="$!item.orgId" hassubinfo="true">$!item.name</option>
+					                                #end
+				                                #end
+				                            </select>
+				                        </div>
+				                    </div>
+				
+				                    <!--doctorName -->
+				                    <label class="col-sm-1 control-label text-right p-r-none">转入医生 </label>
+				                    <div class="col-sm-3">
+				                        <div class="input-group">
+				                            <select id="doctorUpId" name="doctorUpId" data-placeholder="选择医生" class="form-control"
+				                                    style="min-width: 150px;" tabindex="1">
+				                                <option value="">请选择医生</option>
+				                                #foreach($item in $!doctorUpList)
+					                                #if($!item.userInfoId == $!hdDiagnosisApply.doctorUpId)
+					                                <option value="$!item.userInfoId" hassubinfo="true" selected="selected">$!item.name</option>
+					                                #else
+					                                <option value="$!item.userInfoId" hassubinfo="true">$!item.name</option>
+					                                #end
+				                                #end
+				
+				                            </select>
+				                        </div>
+				                    </div>
+				                </div>
+				                 <!-- 行 -->
+				                <div class="form-group p-r-none">
+				                    <label class="col-sm-1 control-label text-right p-r-none">#requiredTag&nbsp;转诊目的</label>
+				                    <div class="col-sm-3 p-r-none">
+				                        #formRadioButtonsLabel("transAim" $!hdDiagnosisApply.transAim $dicData.dicTransAim "" "" "class='checkbox-inline i-checks'")
+				                    </div>
+				
+				                    <label class="col-sm-1 control-label text-right p-r-none">联系电话</label>
+				                    <div class="col-sm-3">
+				                        <input type="text" id="institutionPhoneUp" name="institutionPhoneUp" value="$!hdDiagnosisApply.institutionPhoneUp" class="form-control">
+				                    </div>
+				                </div>
+				                <!-- 行 -->
+				                <div class="form-group p-r-none">
+				                    <label class="col-sm-1 control-label text-right p-r-none">#requiredTag&nbsp;转诊原因</label>
+				                    <div class="col-sm-10">
+				                        <input type="text" id="transReason" name="transReason" value="$!hdDiagnosisApply.transReason" class="form-control">
+				                    </div>
+				                </div>
+				
+				            </div>
+				        </div>
+				
+				        <!--转出医院信息-->
+				        <div class="ibox float-e-margins ">
+				            <div class="ibox-title"><h5>转出单位信息</h5></div>
+				            <div class="ibox-content">
+				
+				                <div class="form-group p-r-none">
+				                    <label class="col-sm-1 control-label text-right p-r-none">#requiredTag&nbsp;转出科室</label>
+				                    <div class="col-sm-3">
+				                        <div class="input-group">
+				                            <select id="offficeDownId" name="offficeDownId" onchange="loadDoctorDown(this.value);"
+				                                    data-placeholder="转出科室" class="form-control" style="min-width: 178px; width: 100%"  tabindex="1">
+				                                <option value="">请选择科室</option>
+				                                #foreach($item in $!offficeDownList)
+					                                #if($!item.orgId == $!hdDiagnosisApply.offficeDownId)
+					                                <option value="$!item.orgId" hassubinfo="true" selected="selected">$!item.name
+					                                </option>
+					                                #else
+					                                <option value="$!item.orgId" hassubinfo="true">$!item.name</option>
+					                                #end
+				                                #end
+				                            </select>
+				                            
+				                        </div>
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">#requiredTag&nbsp;转出医生</label>
+				                    <div class="col-sm-3">
+				                        <div class="input-group">
+				                            <select id="doctorDownId" name="doctorDownId" data-placeholder="转出医生" class="form-control"
+				                                    style="min-width: 178px; width: 100%" tabindex="1">
+				                                <option value="">请选择医生</option>
+				                                #foreach($item in $!doctorDownList)
+					                                #if($!item.userInfoId == $!hdDiagnosisApply.doctorDownId)
+					                                <option value="$!item.userInfoId" hassubinfo="true" selected="selected">$!item.name
+					                                </option>
+					                                #else
+					                                <option value="$!item.userInfoId" hassubinfo="true">$!item.name</option>
+					                                #end
+				                                #end
+				                            </select>
+				                        </div>
+				                    </div>
+				                    <label class="col-sm-1 control-label text-right p-r-none">#requiredTag&nbsp;医生电话</label>
+				                    <div class="col-sm-3">
+				                        <input type="text" id="doctorMobileDown" name="doctorMobileDown"
+				                               value="$!hdDiagnosisApply.doctorMobileDown" class="form-control">
+				                    </div>
+				                </div>
+				                <div class="form-group p-r-none">
+				                	#if($!hdDiagnosisApply.hdType == ${CONST.Contstants.DIAGNOSISAPPLY_HDTYPE_UP}) 
+				                    <label class="col-sm-1 control-label text-right p-r-none">有效期</label>
+				                    <div class="col-sm-3">
+				                        <div class="input-daterange input-group date">
+				                             #formTextInput("validStartTime" "$!date.format('yyyy-MM-dd', $!hdDiagnosisApply.validStartTime)" "class='input-sm form-control form_datetime'")
+				                            <span class="input-group-addon">到</span>
+				                             #formTextInput("validEndTime" "$!date.format('yyyy-MM-dd', $!hdDiagnosisApply.validEndTime)" "class='input-sm form-control form_datetime'")
+				                        </div>
+				                    </div>
+									#end
+				                    <label class="col-sm-1 control-label text-right p-r-none">自动审核</label>
+				                    <div class="col-sm-3 p-r-none">
+				                        #formRadioButtonsLabel("autoCheckFlag" $!hdDiagnosisApply.autoCheckFlag $dicData.dicYesNo "&nbsp;"
+				                        "" "class='checkbox-inline i-checks'")
+				                    </div>
+				                </div>
+				
+				                 
+				
+				            </div>
+				        </div>
+				        
+				       <!-- 转出的转诊包括上转和下转，转诊信息进行区分 --> 
+				        #if($!hdDiagnosisApply.hdType == ${CONST.Contstants.DIAGNOSISAPPLY_HDTYPE_UP}) 
+				        	<!--上转=转诊信息-->
+				        	<!-- 下转的隐藏域-->
+						    #formHiddenInput("diagnosisDown" "$!hdDiagnosisApply.diagnosisDown" "") <!-- 转诊诊断（下转）-->
+						    #formHiddenInput("diagnosisResultDown" "$!hdDiagnosisApply.diagnosisResultDown" "") <!-- 转诊检查结果（下转）-->
+						    #formHiddenInput("diagnosisCureDown" "$!hdDiagnosisApply.diagnosisCureDown" "") <!-- 转诊治疗经过（下转）-->
+						    #formHiddenInput("recoverySuggestDown" "$!hdDiagnosisApply.recoverySuggestDown" "") <!-- 转诊康复建议（下转）-->
+						    #formHiddenInput("operationDown" "$!hdDiagnosisApply.operationDown" "") <!-- 手术名称 下转-->
+						    #formHiddenInput("operationTimeDown" "$!hdDiagnosisApply.operationTimeDown" "") <!-- 手术时间-->
+					       <div class="ibox float-e-margins ">
+					            <div class="ibox-title"><h5>转诊信息</h5></div>
+					            <div class="ibox-content">
+					                <!--转出诊断信息-->
+					                <div class="form-group">
+					                    <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;初步印象（主诉）</label>
+					                    <div class="col-sm-10">
+					                        <textarea id="firstImpressUp" name="firstImpressUp" class="form-control">$!hdDiagnosisApply.firstImpressUp</textarea>
+					                    </div>
+					                </div>
+					                <div class="form-group">
+					                    <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;初步诊断</label>
+					                    <div class="col-sm-10">
+					                        <textarea id="firstDiagnosisUp" name="firstDiagnosisUp" class="form-control">$!hdDiagnosisApply.firstDiagnosisUp</textarea>
+					                    </div>
+					                </div>
+					                <div class="form-group">
+					                    <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;主要现病史</label>
+					                    <div class="col-sm-10">
+					                        <textarea id="mainSickUp" name="mainSickUp"
+					                                  class="form-control">$!hdDiagnosisApply.mainSickUp</textarea>
+					                    </div>
+					                </div>
+					                <div class="form-group">
+					                    <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;主要既往史</label>
+					                    <div class="col-sm-10">
+					                        <textarea id="historySickUp" name="historySickUp" class="form-control">$!hdDiagnosisApply.historySickUp</textarea>
+					                    </div>
+					                </div>
+					                <div class="form-group">
+					                    <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;治疗经过</label>
+					                    <div class="col-sm-10">
+					                        <textarea id="cureUp" name="cureUp" class="form-control">$!hdDiagnosisApply.cureUp</textarea>
+					                    </div>
+					                </div>
+					
+					            </div>
+					        </div>
+				        #else
+				        	  <!--下转=转诊信息-->
+				        	    <!-- 上转的隐藏域-->
+							    #formHiddenInput("firstDiagnosisUp" "" "") <!-- 初步诊断（主诉）（上转）-->
+							    #formHiddenInput("otherDiagnosisUp" "" "")<!--  其他（上转）-->
+							    #formHiddenInput("firstImpressUp" "" "") <!-- 初步印象（上转）-->
+							    #formHiddenInput("mainSickUp" "" "") <!-- 主要现病史（上转） 上转单 必填 -->
+							    #formHiddenInput("historySickUp" "" "") <!-- 主要既往史（上转） 上转单 必填 -->
+							    #formHiddenInput("cureUp" "" "") <!-- 治疗经过（上转） 上转单 必填--> 
+				        	  
+				              <div class="ibox float-e-margins ">
+				                  <div class="ibox-title"><h5>转诊信息</h5></div>
+				                  <div class="ibox-content" >
+				                           <!--转出诊断信息-->
+				                           <div class="form-group">
+				                               <label class="col-sm-2 control-label text-right p-r-none  p-l-none">#requiredTag&nbsp;转诊诊断</label>
+				                               <div class="col-sm-10">
+				                                   <textarea id="diagnosisDown" name="diagnosisDown" class="form-control">$!hdDiagnosisApply.diagnosisDown</textarea>
+				                               </div>
+				                           </div>
+				                           
+				                           <div class="form-group">
+				                               <label class="col-sm-2 control-label text-right p-r-none  p-l-none">#requiredTag&nbsp;转诊检查结果</label>
+				                               <div class="col-sm-10">
+				                                   <textarea  id="diagnosisResultDown" name="diagnosisResultDown" class="form-control" >$!hdDiagnosisApply.diagnosisResultDown</textarea>
+				                               </div>
+				                           </div>
+				                           
+				                           <div class="form-group">
+				                               <label class="col-sm-2 control-label text-right p-r-none  p-l-none">#requiredTag&nbsp;转诊治疗经过</label>
+				                               <div class="col-sm-10">
+				                                   <textarea id="diagnosisCureDown" name="diagnosisCureDown" class="form-control" >$!hdDiagnosisApply.diagnosisCureDown</textarea>
+				                               </div>
+				                           </div>
+				                           
+				                           <div class="form-group m-b-none">
+				                               <label class="col-sm-2 control-label text-right p-r-none  p-l-none">#requiredTag&nbsp;转诊康复建议</label>
+				                               <div class="col-sm-10">
+				                                   <textarea id="recoverySuggestDown" name="recoverySuggestDown" class="form-control" >$!hdDiagnosisApply.recoverySuggestDown</textarea>
+				                               </div>
+				                           </div>
+				                  </div>
+				              </div>
+				              
+				               <!--手术信息-->
+				              <div class="ibox float-e-margins m-b-none ">
+				                  <div class="ibox-title"><h5>手术信息</h5></div>
+				                  <div class="ibox-content" >
+				                          <div class="form-group p-r-none">
+									 		  <label class="col-sm-1 control-label text-right p-r-none  p-l-none">手术名称</label>
+				                              <div class="col-sm-6 p-r-none">
+				                                     <input type="text" class="input-sm form-control" id="operationDown" name="operationDown" value="$!hdDiagnosisApply.operationDown" />
+				                              </div>
+				                              <label class="col-sm-1 control-label text-right p-r-none  p-l-none">手术时间</label>
+											  <div class="col-sm-3" >
+						                      		<div class="input-group date" data-date="" data-date-format="yyyy-MM-dd" data-link-field="dtp_input1">
+						                               #formTextInput("operationTimeDown" "$!date.format('yyyy-MM-dd', $!hdDiagnosisApply.operationTimeDown)" " id='operationTimeDown'  class='form-control form_datetime'")
+						                            </div> 
+				                              </div>
+				                          </div>
+				                  </div>
+				              </div>	
+				        #end
+		        </form>
+		        
+		     </div>
+		     <!-- tab2  start-->
+		     <div id="tab-2" class="tab-pane full-height">
+				<div class="full-height">
+					<iframe id="pacsImage" src="" style="height: 100%; width: 100%;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"> </iframe>
+				</div>
+			</div>
+        </div>
+</div>
+
+<!-- 底部 -->
+<div class="modal-footer" style="text-align: center;">     
+     #if($!hdDiagnosisApply.transStatus == ${CONST.Contstants.HDDIAGNOSISAPPLY_TRANSSTATUS_STORE})
+     <button type="button" onclick="saveDiagnosisApply(1);" class="btn btn-w-m btn-primary"><i class="fa fa-check-square-o"></i> 请求转诊</button>
+     &nbsp;&nbsp;
+     #end
+     <button type="button" onclick="saveDiagnosisApply(0);" class="btn btn-w-m btn-success"><i class="fa fa-save"></i> 保 存</button>
+     <button type="button" class="btn btn-w-m btn-info" data-dismiss="modal"><i class="fa fa-close"></i> 关闭</button>
+</div>
+#parse("./common/common.js.vm")
+<script>
+
+        // 提交上转申请表单
+        function saveDiagnosisApply(transStatus) {
+
+            //如果状态已经是1=已申请待审核,那么就不会再是0-暂存
+            var transStatusa = $('#transStatus').val();
+            var diagnosisApplyParams = common.serializeObject($('#diaApplayForm'));
+            if ($('#transStatus').val() == '1') {
+                diagnosisApplyParams.transStatus = '1';
+            } else {
+                diagnosisApplyParams.transStatus = transStatus;
+            }
+
+            //转入的医院信息
+            diagnosisApplyParams.institutionUpName = $('#institutionUpId').find("option:selected").text();//医院名称
+            diagnosisApplyParams.officeUpName = $('#officeUpId').find("option:selected").text();//科室
+            diagnosisApplyParams.doctorUpName = $('#doctorUpId').find("option:selected").text();//医生
+            //转出的医院信息
+            diagnosisApplyParams.officeDownName = $('#offficeDownId').find("option:selected").text();//医生
+            diagnosisApplyParams.doctorDownName = $('#doctorDownId').find("option:selected").text();//医生
+
+            //患者信息
+            if (diagnosisApplyParams.patientId == undefined || diagnosisApplyParams.patientId == "") {
+                common.alert("患者信息不存在",0);
+                return false;
+            }
+
+            //转入医院信息
+            if (diagnosisApplyParams.institutionUpId == undefined || diagnosisApplyParams.institutionUpId == "") {
+                common.alert("请选择转入医院",0);
+                return false;
+            }
+
+
+            if (diagnosisApplyParams.officeUpId == undefined || diagnosisApplyParams.officeUpId == "") {
+                common.alert("请选择转入科室",0);
+                return false;
+            }
+
+            if (diagnosisApplyParams.transAim == undefined || diagnosisApplyParams.transAim == "") {
+                common.alert("请选择转诊目的",0);
+                return false;
+            }
+            //如果转入医院联系电话不为空则判断
+    		if (diagnosisApplyParams.institutionPhoneUp) {
+    			if (!checkMobile(diagnosisApplyParams.institutionPhoneUp) && !checkPhone(diagnosisApplyParams.institutionPhoneUp)) {
+    				common.alert("转出医院联系电话格式错误！",0);
+    				return false;
+    			}
+    		}
+            if (diagnosisApplyParams.transReason == undefined || diagnosisApplyParams.transReason == "") {
+                common.alert("请选择转诊原因",0);
+                return false;
+            }
+
+            //转出医院信息
+            if (diagnosisApplyParams.offficeDownId == undefined || diagnosisApplyParams.offficeDownId == "") {
+                common.alert("请选择转出科室",0);
+                return false;
+            }
+            if (diagnosisApplyParams.doctorDownId == undefined || diagnosisApplyParams.doctorDownId == "") {
+                common.alert("请填写转出医生",0);
+                return false;
+            }
+            if (diagnosisApplyParams.doctorMobileDown == undefined || diagnosisApplyParams.doctorMobileDown == "") {
+    			common.alert("请填写转出医生联系电话",0);
+    			$("#doctorMobileDown").focus();
+    			return false;
+    		}else{
+    			if (!checkMobile(diagnosisApplyParams.doctorMobileDown) && !checkPhone(diagnosisApplyParams.doctorMobileDown)) {
+    				common.alert("转出医生联系电话格式错误！",0);
+    				return false;
+    			}
+    		}
+
+            //根据转诊类型 上下转诊 进行判断
+            if(diagnosisApplyParams.hdType == 1){
+            	 //转诊信息 - 上转的时候必填
+	            if (diagnosisApplyParams.firstImpressUp == undefined || diagnosisApplyParams.firstImpressUp == "") {
+	                common.alert("请填初步印象（主诉）",0);
+	                return false;
+	            }
+	            if (diagnosisApplyParams.firstDiagnosisUp == undefined || diagnosisApplyParams.firstDiagnosisUp == "") {
+	                common.alert("请填初步诊断",0);
+	                return false;
+	            }
+	            if (diagnosisApplyParams.mainSickUp == undefined || diagnosisApplyParams.mainSickUp == "") {
+	                common.alert("主要现病史",0);
+	                return false;
+	            }
+	            if (diagnosisApplyParams.historySickUp == undefined || diagnosisApplyParams.historySickUp == "") {
+	                common.alert("主要既往史",0);
+	                return false;
+	            }
+	            if (diagnosisApplyParams.cureUp == undefined || diagnosisApplyParams.cureUp == "") {
+	                common.alert("治疗经过",0);
+	                return false;
+	            }
+            }else{
+            	//下转的诊断信息判断
+            	if (diagnosisApplyParams.diagnosisDown == undefined || diagnosisApplyParams.diagnosisDown == "") {
+					common.alert("请填写转诊诊断",0);
+					$("#diagnosisDown").focus();
+					return false;
+				}
+				if (diagnosisApplyParams.diagnosisResultDown == undefined || diagnosisApplyParams.diagnosisResultDown == "") {
+					common.alert("请填写转诊检查结果",0);
+					$("#diagnosisResultDown").focus();
+					return false;
+				}
+				if (diagnosisApplyParams.diagnosisCureDown == undefined || diagnosisApplyParams.diagnosisCureDown == "") {
+					common.alert("请填写转诊治疗经过",0);
+					$("#diagnosisCureDown").focus();
+					return false;
+				}
+				if (diagnosisApplyParams.recoverySuggestDown == undefined || diagnosisApplyParams.recoverySuggestDown == "") {
+					common.alert("请填写转诊康复建议",0);
+					$("#recoverySuggestDown").focus();
+					return false;
+				}
+            }
+           
+
+            $.post("../gradingclinics/saveDiagnosisApply.do", diagnosisApplyParams, function (result) {
+                if (result.code == "0") {
+                    $('#submitFlag').val("1");
+                    common.alert("保存成功",0);
+                    //回显后台新增属性的值
+                    $("#diaApplayForm > #transStatus").val(result.data.transStatus);
+                    $("#applyTime").val(getSmpFormatDateByLong(result.data.applyTime, true));
+                    $("#officeDownName").val(result.data.officeDownName);
+                    $("#doctorDownName").val(result.data.doctorDownName);
+                    $("#institutionPhoneDow").val(result.data.institutionPhoneDow);
+                } else {
+                    common.alert("保存失败",0);
+                    $('#submitFlag').val("");
+                }
+            }, "json");
+        }
+
+        //转出科室
+        function loadOffficeDown(institutionDownId) {
+            if (institutionDownId == "") {
+                //清空医生列表
+                var doctorDownIdEle = $('#doctorDownId');
+                $(doctorDownIdEle).empty();
+                $(doctorDownIdEle).trigger("chosen:updated");
+                return false;
+            }
+            $.post("../sys/queryDepByUnitId.do", {unitId: institutionDownId}, function (data) {
+                //加载科室列表
+                var targetEle = $('#offficeDownId');
+                $(targetEle).empty();
+                $(targetEle).append("<option value=''>请选择科室</option>");
+                if (data == null || targetEle == "" || targetEle == undefined) {
+                    return false;
+                }
+                $.each(data, function () {
+                    $(targetEle).append("<option value='" + this.orgId + "'>" + this.name + "</option>");
+                });
+                $(targetEle).trigger("chosen:updated");
+            }, "json");
+        }
+
+        //转出医生
+        function loadDoctorDown(officeDownId) {
+            if (officeDownId == "") {
+                return false;
+            }
+            var institutionDownId = '$!hdDiagnosisApply.institutionDownId';
+            $.post("../sys/queryUserByOrgId.do", {orgId: officeDownId}, function (data) {
+              
+                var targetEle = $('#doctorDownId');
+                $(targetEle).empty();
+                $(targetEle).append("<option value=''>请选择医生</option>");
+                if (data == null || targetEle == "" || targetEle == undefined) {
+                    return false;
+                }
+                $.each(data, function () {
+                    $(targetEle).append("<option value='" + this.userInfoId + "'>" + this.name + "</option>");
+                });
+                $(targetEle).trigger("chosen:updated");
+            }, "json");
+        }
+
+        //转入科室
+        function loadOfficeUp(institutionUpId) {
+            if (institutionUpId == "") {
+                return false;
+            }
+            $.post("../sys/queryDepByUnitId.do", {unitId: institutionUpId}, function (data) {
+                //清空医生列表
+                var doctorUpIdEle = $('#doctorUpId');
+                $(doctorUpIdEle).empty();
+                $(doctorUpIdEle).trigger("chosen:updated");
+                //加载科室列表
+                var targetEle = $('#officeUpId');
+                $(targetEle).empty();
+                $(targetEle).append("<option value=''>请选择科室</option>");
+                if (data == null || targetEle == "" || targetEle == undefined) {
+                    return false;
+                }
+                $.each(data, function () {
+                    $(targetEle).append("<option value='" + this.orgId + "'>" + this.name + "</option>");
+                });
+                $(targetEle).trigger("chosen:updated");
+            }, "json");
+        }
+
+        //转入医生
+        function loadDoctorUp(officeUpId) {
+            if (officeUpId == "") {
+                return false;
+            }
+            var institutionUpId = $('#institutionUpId').val();
+            $.post("../sys/queryUserByOrgId.do", {orgId: officeUpId}, function (data) {
+                var targetEle = $('#doctorUpId');
+                $(targetEle).empty();
+                $(targetEle).append("<option value=''>请选择医生</option>");
+                if (data == null || targetEle == "" || targetEle == undefined) {
+                    return false;
+                }
+                $.each(data, function () {
+                    $(targetEle).append("<option value='" + this.userInfoId + "'>" + this.name + "</option>");
+                });
+                $(targetEle).trigger("chosen:updated");
+            }, "json");
+        }
+    	//加载pacs影像信息
+
+    	$(document).ready(function() {
+    		loadPacsImage();
+    	});
+    	function loadPacsImage() {
+    		var param = {};
+    		param.patientType = '$!hdDiagnosisApply.patientType';
+    		param.inpatientId = '$!hdDiagnosisApply.inpatientId';
+    		param.orgId = '$!hdDiagnosisApply.institutionDownId';
+    		param.patientId = '$!hdDiagnosisApply.patientId';
+
+    		$.post("../pacs/findPatientExamInfo.do", param, function(result) {
+    			if (result.data && result.data.patientExamId) {
+    				$('#pacsImage').attr('src', '../report/examInfoShow.do?mode=pacsImage&patientExamId=' + result.data.patientExamId);
+    			} else {
+    				$('#pacsImage').contents().find("body").html("无影像数据");
+    			}
+    		}, "json");
+    	}
+</script>

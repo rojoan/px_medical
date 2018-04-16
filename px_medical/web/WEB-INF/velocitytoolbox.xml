@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<toolbox>
+  <xhtml>true</xhtml>
+  <tool>
+    <key>render</key>
+    <scope>request</scope>
+    <class>org.apache.velocity.tools.view.tools.ViewRenderTool</class>
+  </tool>
+  <tool>
+    <key>ctx</key>
+    <scope>request</scope>
+    <class>org.apache.velocity.tools.view.tools.ContextTool</class>
+  </tool>
+  <tool>
+    <key>SessionSysPortal</key>
+    <scope>session</scope>
+    <class>com.login.utils.SessionSysPortal</class>
+  </tool>
+  <tool>
+    <key>date</key>
+    <scope>application</scope>
+    <class>org.apache.velocity.tools.generic.DateTool</class>
+  </tool>
+  <tool>
+    <key>esc</key>
+    <scope>application</scope>
+    <class>org.apache.velocity.tools.generic.EscapeTool</class>
+  </tool>
+
+  <tool>
+    <key>math</key>
+    <scope>application</scope>
+    <class>org.apache.velocity.tools.generic.MathTool</class>
+  </tool>
+
+  <tool>
+    <key>HELPER_BEAN</key>
+    <scope>application</scope>
+    <class>com.bofan.share.utils.BeanHelper</class>
+  </tool>
+
+  <tool>
+    <key>HELPER_HTMLHELPER</key>
+    <scope>application</scope>
+    <class>com.bofan.share.utils.HtmlHelper</class>
+  </tool>
+
+  <tool>
+    <key>dicData</key>
+    <scope>application</scope>
+    <class>com.bofan.dictionary.support.DictionarysInVelocityToolbox</class>
+  </tool>
+  <tool>
+    <key>TOOLS</key>
+    <scope>application</scope>
+    <class>com.bofan.utils.Tools</class>
+  </tool>
+  <tool>
+    <key>dicTools</key>
+    <scope>application</scope>
+    <class>com.bofan.utils.DicTools</class>
+  </tool>
+
+<!--   <tool> -->
+<!--     <key>ApplicationProperties</key> -->
+<!--     <scope>application</scope> -->
+<!--     <class>com.bofan.utils.ApplicationProperties</class> -->
+<!--     <parameter name="resourcePath" value="/WEB-INF/application.properties"/> -->
+<!--   </tool> -->
+
+  <tool>
+    <key>CONST</key>
+    <scope>application</scope>
+    <class>com.bofan.utils.ConstantsTool</class>
+    <parameter name="packages" value="com.bofan.utils,
+        com.bofan.inspect.valueobject,
+	    com.bofan.app.valueobject, com.bofan.supervise.valueobject,
+	    com.bofan.govoa.addressbook.command, com.bofan.govoa.addressbook.valueobject,
+	    com.bofan.govoa.pubboard.valueobject, com.bofan.govoa.workmail.valueobject,
+	    com.bofan.workflow.valueobject,com.bofan.faq.command,com.bofan.audit.valueobject,
+	    com.bofan.examine.valueobject,com.bofan.examine.utils"/>
+	  <!-- 
+    <parameter name="classes" value="com.bofan.app.utils.AppStaticPara,com.bofan.inspect.utils.AppInspectStaticPara,
+        com.bofan.audit.utils.AuditStaticPara,com.bofan.audit.foodprod.form.AbstractFoodProdAuditForm,com.bofan.inspect.from.AbstractAppInspectForm,
+        com.bofan.app.form.AbstractAppCommonForm,com.bofan.examine.utils.ExamineStaticPara"/>
+         -->
+  </tool>
+
+</toolbox>
+      <!-- 
+      SessionSysPortal 在 toolbox2.0的配置
+  <tool>
+    <key>SessionSysPortal</key>
+    <scope>session</scope>
+    <class>com.bofan.utils.SessionSysPortal</class>
+  </tool>
+      -->

@@ -1,0 +1,7 @@
+#if(!${datamap.get($!{cell.field})})
+$!{cell.prefix}<input id="$!{cell.field}checkbox" type="checkbox" bindname="$!{cell.field}" value="1" #if(${cell.defaltValue} == "1") checked#end  #if(${cell.readonly})readonly#end class='inputobject' $!{cell.custom} #if(${cell.style})style=#singleQuotes()${cell.style}#singleQuotes()#end onclick="javascript:setBindValue(this);" unselectvalue="0"/>#if(${cell.title})<label for="$!{cell.field}checkbox" onclick="javascript:setBindValue(this);">$!{cell.title}</label>#end $!{cell.suffix}
+#formHiddenInput("$!{cell.field}" "${cell.defaltValue}" "")
+#else
+$!{cell.prefix}<input id="$!{cell.field}checkbox" type="checkbox" bindname="$!{cell.field}" value="1" #if("${datamap.get(${cell.field})}" == "1")  checked#end  #if(${cell.readonly})readonly#end class='inputobject' $!{cell.custom} #if(${cell.style})style=#singleQuotes()${cell.style}#singleQuotes()#end onclick="javascript:setBindValue(this);" unselectvalue="0"/>#if(${cell.title})<label for="$!{cell.field}checkbox" onclick="javascript:setBindValue(this);">$!{cell.title}</label>#end $!{cell.suffix}
+#formHiddenInput("$!{cell.field}" "${datamap.get(${cell.field})}" "")
+#end

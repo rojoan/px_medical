@@ -1,0 +1,4 @@
+#set($text = "#htmlEscape($!{datamap.get($!{cell.field})})")
+${text.toString().replaceAll("\n", "</br>")}
+##htmlEscape($!{datamap.get($!{cell.field}).toString().replaceAll("\n", "</br>")})
+

@@ -1,0 +1,111 @@
+<script>
+    // 提交报告结果
+	$('#saveExamResult').click(function (){
+		saveExamResult();
+	});
+
+	// 提交表单
+	function saveExamResult() {
+		
+		var params = common.serializeObject($('#examResultForm'));
+		console.log(params);
+		if (params.examFinding == undefined || params.examFinding == "") {
+			common.alert("请填写检查所见", 0);
+			return false;
+		}
+		if (params.examHint == undefined || params.examHint == "") {
+			common.alert("请填写检查提示", 0);
+			return false;
+		}
+		if (params.diagnosticOpinion == undefined || params.diagnosticOpinion == "") {
+			common.alert("请填写诊断意见", 0);
+			return false;
+		}
+		$.post("../report/saveExamResult.jo", params, function(result){
+			if (result.code == "0") {
+				$('#submitFlag').val("1");
+				common.alert("保存成功", 1);
+			} else {
+				common.alert(result.msg, 2);
+				$('#submitFlag').val("");
+			}
+		}, "json");
+	}
+	
+	// 拷贝知识内容
+	function setEditor(obj) {
+		var eleId = $('#focusEle').val();
+		var text = $('#' + eleId).val();
+		var content = $(obj, window.frames["kbListIframe"].document).next().text();
+		
+		var leftExp = new RegExp("\\[","g");
+		var rightExp = new RegExp("\\]","g");
+		content = content.replace(leftExp, "").replace(rightExp, "")
+		
+		$('#' + eleId).val(text + content);
+	}
+
+//预加载
+$(document).ready(function () {
+
+        // MetsiMenu
+        $('#side-menu').metisMenu();
+
+        // 打开右侧边栏
+        $('.right-sidebar-toggle').click(function () {
+            $('#right-sidebar').toggleClass('sidebar-open');
+        });
+        
+ 
+        //知识库-请求后台数据，初始化知识库的jsTree
+        $.post("../report/emrKbTypeTree.do", {topEmrKbTypeCode:'002'}, function(result){
+        	if (null != result && result.length > 0) {
+				result.splice(0,1, $.extend(result[0], {state: {opened : true }}));
+			}
+        	var dataArray =  result;
+        	$('#jstree1').jstree({ 
+        		'core' : { "force_text": true, "cache": false, 'check_callback':true, 'data' : dataArray },
+        	    'plugins': ['types', 'dnd']
+        	}); 
+		}, "json");
+
+        //知识库-绑定选中事件
+        $('#jstree1').bind("select_node.jstree", function(event, data) {  
+            var inst = data.instance;  
+            var selectedNode = inst.get_node(data.selected);
+            $('#kbListIframe').attr('src', '../emrKb/emrKbDetailListByTypeId.do?emrKbTypeId=' + selectedNode.id);
+        });
+        
+        //知识库-增加知识库信息节点
+        function loadEmrKbDetailNode(inst, selectedNode){  
+          // ajax请求后台获取知识库信息
+          $.post("../report/findEmrKbDetail.do", {emrKbTypeId:selectedNode.id}, function(result){
+        	var emrKbContent = "";
+        	var emrKbDetailArr = result;
+        	var html = [];
+        	$(emrKbDetailArr).each(function(i){
+        		html.push('<dd>');
+				html.push('<a onClick="copyEmrKb(this)" href="javascript:void(0)">');
+				html.push(this.emrKbTitle); 
+				html.push('</a>');
+				html.push('<div>' + this.emrKbContent + '</div>')
+				html.push('</dd>');
+        		
+        	});
+			$('#emrKbContent').html(html.join(''));
+        	
+		  }, "json");
+          
+          //展开节点
+          inst.open_node(selectedNode);  
+        }  
+       
+        var viewer = new Viewer(document.getElementById('dowebok'), {
+            url: 'data-original'
+        });
+
+        $('.viewer-in').css({position: "relative", width: "100%", height: "100%", top: "0", left: "0"});
+
+ });
+
+</script>

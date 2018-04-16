@@ -1,0 +1,236 @@
+<html>
+  <head>
+    <meta http-equiv=Content-Type content="text/html; charset=gbk">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link href="../app/print/designer.css" rel="stylesheet" type="text/css" />
+##    <script language="javascript" type="text/javascript" src="../app/print/jatoolsPrinter.js"></script>
+#loadDefaultScript("")
+
+##　　<style media="print">　　
+##　　  .noprint{display:none;height:3} 　　
+##   </style>
+<style>　
+.jbqk_title{
+    font-weight:bold;
+    font-size:24px;
+}
+.jbqk_check {
+    font-size:16px;
+}
+.jbqk_tab{
+    border-collapse:collapse;
+    width:660px;
+    font-size:16px;
+    font-family:"仿宋_GB2312";
+}
+
+.jbqk_tab th{
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+    border-left:1px solid #000;
+    border-right:1px solid #000;
+    padding:0 4px;
+    line-height:24px;
+}
+
+.jbqk_tab tr{
+    height:40px;
+}
+
+.jbqk_tab td{
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+    border-left:1px solid #000;
+    border-right:1px solid #000;
+    padding:0 4px;
+    line-height:24px;
+    font-size:16px;
+}
+</style>
+
+<style type="text/css" rel="stylesheet">
+
+@media Print
+{
+  .noprint {
+    DISPLAY: none
+  }
+  .print {
+    Z-INDEX: 1; CURSOR: move; POSITION: absolute
+  }
+.cyry_mar{
+    padding:0;
+    width:700px;
+    height:1080 px;
+    overflow-y:hidden;
+    }
+  .pageNext{page-break-after: always;}
+  .backobj .mouseoveronobj, .undrageobject, .showdiv, .hidediv {}
+
+}
+
+</style>
+  </meta>
+<script language="javascript">
+//初始化打印窗体
+function initPrintForm() {
+    if (dialogArguments != null) {
+        getObjectById("printContentPanel").innerHTML = dialogArguments.CustomValue.printContent;
+        //getObjectById("printDocName").innerText = dialogArguments.CustomValue.printDocName;
+        //addPageInfo();
+        //initPrintTitle();
+        loadPrintSettings();
+    }
+}
+
+//打印
+#*
+function print() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    factory.printing.Print(true);
+}
+*#
+function print() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        alert("打印机未正确连接!");
+        return;
+    }
+
+    webPrn.OpenDocumentHTML(getObjectById("printContentPanel").innerHTML);
+}
+//打印预览
+function preview() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+        loadPrintSettings();
+    factory.printing.Preview();
+}
+//打印页设置
+function pageSetup() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    factory.printing.PageSetup();
+}
+//检查打印插件是否安装，打印机链接是否正常
+function checkPrinting() {
+    if (!factory.object) {
+        alert("安装打印ActiveX插件失败，可能浏览器的安全设置过高！");
+        return false;
+    }
+    //检查打印设备是否正确连接
+    try {
+        factory.printing.header;
+    } catch(ex) {
+       if(ex.number == -2147220485) {
+           alert("查找打印设备失败，请确认是否正确设置默认打印机？");
+       } else {
+           alert("初始化打印插件失败:" + ex.description);
+       }
+       return false;
+    }
+    return true;
+}
+//装载打印机的设置
+function loadPrintSettingsOld() {
+    //清除页眉页脚
+    factory.printing.header = "";
+    factory.printing.footer = "";
+    //横向
+    factory.printing.portrait = true;
+    factory.printing.leftMargin = 7;
+    factory.printing.topMargin = 7;
+}
+//装载打印机的设置
+function loadPrintSettings() {
+    window.onresize = function(){
+        webPrn.ResizeWindow(document.body.clientWidth,document.body.clientHeight);
+    }
+        if(webPrn){
+
+    try
+        {
+        //webPrn.LoadUrl = "C:\\TablePrint\\TablePrint.htm";
+        //webPrn.OpenUrl();
+        ##var cssStr = '<head><link href="../app/print/designer.css" rel="stylesheet" type="text/css" /></head>';
+//alert(window.location.host)
+var cssStr =
+'   <html>\n'
++'    <head>\n'
++     '<meta http-equiv=Content-Type content="text/html; charset=gbk">\n'
++'    <title>${SessionSysPortal.appTitle}</title>\n'
++'    <link href="http://'+ window.location.host + '#getContextPath()/app/print/designer.css" rel="stylesheet" type="text/css" />\n'
+
++' <style type="text/css" rel="stylesheet">\n'
++' @media Print\n'
++'{\n'
++'  .noprint {\n'
++'    DISPLAY: none\n'
++'  }\n'
++'  .print {\n'
++'    Z-INDEX: 1; CURSOR: move; POSITION: absolute\n'
++'  }\n'
++'  .pageNext{page-break-after: always;}\n'
++'  .backobj .mouseoveronobj, .undrageobject, .showdiv, .hidediv {}\n'
++'}\n'
++'</style>\n'
+
++'    </head>\n'
++'    <body >\n'
+;
+
+        //window.clipboardData.setData("Text", cssStr + getObjectById("printContentPanel").innerHTML + '</body></html>');
+        webPrn.OpenDocumentHTML(cssStr + getObjectById("printContentPanel").innerHTML + '</body></html>');
+
+        webPrn.SetLeftMargin("0.866");
+        webPrn.SetRightMargin("0.0");
+        webPrn.SetTopMargin("0.275");
+        webPrn.SetBottomMargin("0.275")
+
+        webPrn.SetHeader("&b");
+        //未尾不可见字符为智能ABC按Vn(n=数字)输入
+        webPrn.SetFooter("&b第 &p 页      共 &P 页　");
+
+        webPrn.SetPaperInfo();
+        webPrn.ResizeWindow(document.body.clientWidth,document.body.clientHeight);
+        //webPrn.PrintView();
+        //window.close();
+    }catch(e){
+                alert('请按提示安装cab控件,再刷新本页面!');
+
+    }
+
+    }
+        //webPrn.PrintView();
+        //param 声明参数不要少, 具体看说明文档
+
+}
+</script>
+</head>
+<body onload="javascript:initPrintForm();" scroll="no">
+<OBJECT id="webPrn" width="100%" height="100%" classid="clsid:C204BA3C-EBEA-454B-BD4E-4F6A73E79CFD" CODEBASE="ocx/vWebPrint.CAB#version=1,0,0,0">
+    <param name="lUser" value="李四"></param>
+    <param name="lUserNumer" value="30"></param>
+    <param name="lUserEndDate" value="2014-02-09"></param>
+    <param name="showToolbar" value="true"></param>
+    <param name="userId" value="1556"></param>
+</OBJECT>
+<table cellpadding="0" cellspacing="0" width="100%" height="100%">
+  <tr>
+    <td width="64%">
+      <div id="printContentPanel" name="printElement" moveable="true" class="backobj print" style="Z-INDEX: 10000; width:760;LEFT:10px;TOP:0px;background:white;"></div>
+    </td>
+    <td width="1%"></td>
+
+  </tr>
+</table>
+
+</body>
+</html>

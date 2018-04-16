@@ -1,0 +1,397 @@
+<div class="modal inmodal full-height" id="myModal2" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog"
+		style="margin: 5px auto; width: calc(100% - 10px); height: calc(100% - 10px);">
+		<div class="modal-content animated bounceInRight full-height">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true"><i class="fa fa-close"></i></span>
+					<span class="sr-only"><i class="fa fa-close"></i></span>
+				</button>
+				<h7 class="modal-title">1岁以内儿童健康检查 <span class="must-red font-14">( 红字为必填 )</span></h7>
+			</div>
+			<div class="modal-body full-height-scroll" style="height: calc(100% - 93px)">
+				<!--如果弹窗没有底部菜单栏则 -44px -->
+				<form id="oneYearOldForm" class="form-horizontal">
+					<div class="ibox float-e-margins full-height">
+						<div class="ibox-title">
+							<h5>儿童基本信息</h5>
+						</div>
+						<div class="ibox-content" style="background: #f8fafb">
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label must-red"> 姓 名</label>
+								<div class="col-md-8">
+									#formTextInput("childName" "" " id='childName' maxlength='10' class='form-control' readonly")
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">档案编号</label>
+								<div class="col-md-8">
+									#formTextInput("examBillNo" "" " id='examBillNo' maxlength='25' class='form-control'")
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label"> 性 别</label>
+								<div class="col-md-8">
+									<label class="checkbox-inline i-checks">
+										<input type="radio" name="aa" value="">男
+									</label> 
+									<label class="checkbox-inline i-checks">
+										<input type="radio" name="aa" value="">女
+									</label> 
+									<label class="checkbox-inline i-checks">
+										<input type="radio" name="aa" value="">未知的性别
+									</label> 
+									<label class="checkbox-inline i-checks">
+										<input type="radio" name="aa" value="">未说明的性别
+									</label>
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label must-red ">出生时间</label>
+								<div class="col-md-8">
+									<div class="input-daterange input-group date ">
+										#formTextInput("birthDate" "" " id='birthDate' class='form-control form_datetime'")
+									</div>
+								</div>
+							</div>
+							<div class="col-md-12 form-group">
+								<label class="col-sm-2 control-label text-right">家庭地址</label>
+								<div class="col-sm-10">
+									#formTextInput("familyAddr" "" " id='familyAddr' class='form-control' readOnly")
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">出生孕周（周）</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">健康状况</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">母亲妊娠期患病情况</label>
+								<div class="col-md-8">
+									<label class="checkbox-inline i-checks">
+										<input type="checkbox" name="aa" value="">无
+									</label>
+									<label class="checkbox-inline i-checks">
+										<input type="checkbox" name="aa" value="">糖尿病
+									</label> 
+									<label class="checkbox-inline i-checks">
+										<input type="checkbox" name="aa" value="">妊娠期高血压
+									</label>
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">其他疾病</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">出生体重（kg）</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">出生身长（cm）</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-12 form-group">
+								<label class="col-md-2 control-label">出生情况</label>
+								<div class="col-md-10">
+									<label class=" i-checks">
+										<input type="checkbox" name="aa" value="">顺产
+									</label> 
+									<label class=" i-checks">
+										<input type="checkbox" name="aa" value="">胎头吸引
+									</label> 
+									<label class=" i-checks">
+										<input type="checkbox" name="aa" value="">产钳
+									</label> 
+									<label class=" i-checks">
+										<input type="checkbox" name="aa" value="">剖腹
+									</label> 
+									<label class=" i-checks">
+										<input type="checkbox" name="aa" value="">双多胎
+									</label> 
+									<label class=" i-checks">
+										<input type="checkbox" name="aa" value="">臂位
+									</label> 
+									<label class=" i-checks">
+										<input type="checkbox" name="aa" value="">其他
+									</label>
+									<input type="text" class="form-control" style="width: 30%; display: inline-block">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">新生儿室息</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">Apgar评分</label>
+								<label class="col-md-1 control-label p-l-n p-r-n">1分钟</label>
+								<div class="col-md-2">
+									<input type="text" class="form-control">
+								</div>
+								<label class="col-md-1 control-label p-l-n p-r-n">5分钟</label>
+								<div class="col-md-2">
+									<input type="text" class="form-control">
+								</div>
+								<div class="col-md-2">
+									<label class="checkbox-inline i-checks">
+										<input type="checkbox" name="aa" value="">不祥
+									</label>
+								</div>
+							</div>
+							<div class="col-md-12 form-group">
+								<label class="col-md-2 control-label">畸形</label>
+								<div class="col-md-2">
+									<select class="form-control" name="account">
+										<option>正常</option>
+										<option>异常</option>
+									</select>
+								</div>
+								<label class="col-md-2 control-label">畸形类型</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+
+							<div class="col-md-12 form-group">
+								<label class="col-md-2 control-label">新生儿听力筛查</label>
+								<div class="col-md-2">
+									<select class="form-control" name="account">
+										<option>正常</option>
+										<option>右耳异常</option>
+									</select>
+								</div>
+								<label class="col-md-2 control-label">新生儿疾病筛查</label>
+								<div class="col-md-6">
+									<label class=" i-checks"> <input type="checkbox"
+										name="aa" value="">未进行
+									</label> <label class=" i-checks"> <input type="checkbox"
+										name="aa" value="">检查均阴性
+									</label> <label class=" i-checks"> <input type="checkbox"
+										name="aa" value="">甲低
+									</label> <label class=" i-checks"> <input type="checkbox"
+										name="aa" value="">笨丙酮尿症
+									</label> <label class=" i-checks"> <input type="checkbox"
+										name="aa" value="">其他遗传代谢病
+									</label> <input type="text" class="form-control"
+										style="width: 20%; display: inline-block">
+								</div>
+							</div>
+							<div class="col-md-12 form-group">
+								<label class="col-md-2 control-label">体弱儿</label>
+								<div class="col-md-2">
+									<select class="form-control" name="account">
+										<option>正常</option>
+										<option>异常</option>
+									</select>
+								</div>
+								<div class="col-md-3">
+									<select class="form-control" name="account">
+										<option>正常</option>
+										<option>异常</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="ibox float-e-margins full-height">
+						<div class="ibox-title">
+							<h5>儿童体格检查</h5>
+						</div>
+						<div class="ibox-content">
+							<!-- 表格显示内容 开始 -->
+							<div class="table-responsive">
+								<table class="table table-bordered table-jcdj m-b-none">
+									<tbody>
+										<tr>
+											<th class="text-nowrap">体重（kg）</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">红润
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">黄染
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">其他
+											</label></td>
+											<th class="text-nowrap">身长（cm）</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">未购异常
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">异常
+											</label></td>
+										</tr>
+										<tr>
+											<th class="text-nowrap">头围（cm）</th>
+											<td colspan="3"><input type="text" class="form-control"></td>
+										</tr>
+										<tr>
+											<th class="text-nowrap">面色</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">红润
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">黄染
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">其他
+											</label></td>
+											<th class="text-nowrap">皮肤</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">未购异常
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">异常
+											</label></td>
+										</tr>
+										<tr>
+											<th class="text-nowrap">前齿</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">闭合
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">未闭
+											</label></td>
+											<th class="text-nowrap">颈部包块</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">无
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">有
+											</label></td>
+										</tr>
+										<tr>
+											<th class="text-nowrap">眼外观</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">未见异常
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">异常
+											</label></td>
+											<th class="text-nowrap">耳外观</th>
+											<td><label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">未见异常
+											</label> <label class="checkbox-inline i-checks"> <input
+													type="checkbox" name="aa" value="">异常
+											</label></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- 表格显示内容 结束 -->
+						</div>
+					</div>
+					<div class="ibox float-e-margins full-height">
+						<div class="ibox-title">
+							<h5>儿童父母信息</h5>
+						</div>
+						<div class="ibox-content" style="background: #f8fafb">
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">母亲姓名</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">父亲姓名</label>
+								<div class="col-md-8">
+									<div class="input-group">
+										<input type="text" class="form-control"> <span
+											class="input-group-btn">
+											<button type="button" class="btn btn-primary"
+												style="padding: 4px 12px">查询</button>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">出生日期</label>
+								<div class="col-md-8">
+									<div class=" input-daterange date">
+										<input type="text"
+											class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" name="start"
+											value="" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">出生日期</label>
+								<div class="col-md-8">
+									<div class=" input-daterange date">
+										<input type="text"
+											class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" name="start"
+											value="" />
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+					<div class="ibox float-e-margins full-height">
+						<div class="ibox-title">
+							<h5>其他信息</h5>
+						</div>
+						<div class="ibox-content" style="background: #f8fafb">
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">出生地点分类</label>
+								<div class="col-md-8">
+									<select class="form-control" name="account">
+										<option></option>
+										<option>卫生院</option>
+										<option>医院</option>
+										<option>其他</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">助产机构</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">接生人员</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">发证日期</label>
+								<div class="col-md-8">
+									<div class=" input-daterange date">
+										<input type="text"
+											class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" name="start"
+											value="" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 form-group">
+								<label class="col-md-4 control-label">发证人员</label>
+								<div class="col-md-8">
+									<input type="text" class="form-control">
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" style="text-align: center">
+				<button type="button" class="btn btn-success">
+					<i class="fa fa-save"></i> 保存
+				</button>
+				<button type="button" class="btn btn-warning" data-dismiss="modal">
+					<i class="fa fa-close"></i> 关闭
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

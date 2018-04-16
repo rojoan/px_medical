@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>客户端</title>
+    <link href="../style/css/css.css" type="text/css" rel="stylesheet" />
+    <script src="../style/lib/jquery/jquery-2.0.3.min.js" type="text/javascript"></script> 
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+    
+</head>
+<body>
+    <!--top start-->
+    <header id="header" class="list">
+        <div class="top form_add">
+            <div class="fl">
+                <a href="javascript:history.back()"><i class="iconfont back">&#xe89b;</i></a>
+            </div>
+            <div class="txt form_add">会诊详情<span id="consult_status"></span></div>
+            <div class="fr">
+            	<a href="../index.html"><i class="iconfont back">&#xe60b;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end   article start-->
+    <article id="main">  
+		<div class="centera">
+			<div class="oranger w2"> 
+			    <a class="hover" href="javascript:;"><span>患者信息</span></a>
+			    <a href="javascript:;"><span>会诊信息</span></a>
+<!-- 			    
+			    <a href="javascript:;"><span>内容三</span></a>
+			    <a href="javascript:;"><span>内容四</span></a>
+ -->			    
+			</div>
+			<div id="tablea" class="tablea">			
+			  <div class="box">
+				  <span>
+				  112
+				  <br>11
+				  <br>11
+				  <br>11
+				  <br>11
+				  
+				  v
+				  v
+				  v
+				  
+				  v
+				  v
+				  <br>11<br>11
+				  <br>11
+				  <br>11
+				  <br>11
+				  <br>11
+				  v
+				  v
+				  v
+				  v
+				  vvv
+	              <br>11<br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11<br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11<br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+	              <br>11
+				  1
+				  </span>
+			  </div>
+			  <div class="box">2222</div>
+<!-- 			  
+			  <div class="box">3333</div>
+			  <div class="box">4444</div>	
+ -->			  		  
+			</div>
+		</div>
+    </article>    
+    <!--article end-->
+    
+	<footer class="page-footer fixed-footer" id="footer">
+		<ul class="">
+		    <li class="active">
+		        <a href="consultDetail-a1.html">
+		            <i class="iconfont">&#xe603;</i>
+		            <p>患者资料</p>
+		        </a>
+		    </li>
+		    <li>
+		        <a href="lease.html">
+		            <i class="iconfont">&#xe63d;</i>
+		            <p>影像资料</p>
+		        </a>
+		    </li>
+		    
+		    <li>
+		        <a href="consultDetail-a3.html">
+		            <i class="iconfont">&#xe684;</i>
+		            <p>检查报告</p>
+		        </a>
+		    </li>
+		    <li>
+		        <a href="sign.html">
+		            <i class="iconfont">&#xe673;</i>
+		            <p>会诊报告</p>
+		        </a>
+		    </li>
+		    
+		</ul>
+	</footer>
+	
+    
+    
+    
+</body>
+<script type="text/javascript">
+
+
+
+	$(document).ready(function () {
+		
+	    //计算内容上下padding
+	    reContPadding({main:"#main",header:"#header",footer:"#footer"});
+	    function reContPadding(o){
+	        var main = o.main || "#main",
+	            header = o.header || null,
+	            footer = o.footer || null;
+	        var cont_pt = $(header).outerHeight(true),
+	            cont_pb = $(footer).outerHeight(true);
+	        $(main).css({paddingTop:cont_pt,paddingBottom:cont_pb});
+	    }
+	    
+
+	    $(function(){  
+	    	  $(".tablea").find(".box:first").show();    //为每个BOX的第一个元素显示        
+	    	  $(".oranger a").on("mouseover",function(){ //给a标签添加事件  
+	    	     var index=$(this).index();  //获取当前a标签的个数  
+	    	     $(this).parent().next().find(".box").hide().eq(index).show(); //返回上一层，在下面查找css名为box隐藏，然后选中的显示  
+	    	     $(this).addClass("hover").siblings().removeClass("hover"); //a标签显示，同辈元素隐藏  
+	    	  })  
+	    	})     
+	    
+	    
+
+				
+	});
+
+	  function cleanWhitespace(div) {
+		    for(var i=0;i<div.childNodes.length;i++){  
+		      var node = div.childNodes[i];  
+		      if(node.nodeType == 3 && !/\S/.test(node.nodeValue)){  
+		        node.parentNode.removeChild(node);
+		      }  
+		    }  
+		  }
+
+
+	var show = {
+		patientId: "",
+		changeTab: function (index){
+			var array = ['tab', index];
+			var targetDiv = array.join('');
+			$('#frmMain').find("div").each(function (){
+				if (this.id == targetDiv) {
+					$(this).show();
+					show.loadData(index, targetDiv);
+					common.historyTab[targetDiv] = targetDiv;
+				} else {
+					$(this).hide();
+				}
+			});
+		},
+		loadInspectionSample: function (){
+			var lisInspectionSampleId = common.getCache(common.lisInspectionSampleId);
+			if (null == lisInspectionSampleId || lisInspectionSampleId == "null") {
+				return ;
+			}
+			common.loading();
+			$.post(
+				rootPath + '/mobile.lis/showDetail.do', 
+				{lisInspectionSampleId: common.getCache(common.lisInspectionSampleId)}, 
+				function(data){
+					var resultImg = data.resultImg;
+					var requisitionInfo = data.requisitionInfo;
+					var inspectionSample = data.inspectionSample;
+					var sampleExplain = data.sampleExplain;
+
+					if (inspectionSample != undefined) {
+						common.getPatientType(inspectionSample.patientType);
+						$('#patientBed').val(inspectionSample.patientBed);
+						$('#testOrder').val(inspectionSample.testOrder);
+						$('#testOrderName').val(inspectionSample.testOrderName);
+						$('#sampleClassName').val(inspectionSample.sampleClassName);
+						$('#sampleStatusName').val(inspectionSample.sampleStatusName);
+						$('#requisitionPerson').val(inspectionSample.requisitionPerson);
+						$('#inspectionDate').val(inspectionSample.inspectionDate);
+						$('#itemCount').val(inspectionSample.itemCount);
+						common.getInspectionState(inspectionSample.inspectionState);
+						$('#clinicalDiagnoses').val(inspectionSample.clinicalDiagnoses);
+						$('#remark').val(inspectionSample.remark);
+					}
+					
+					var imgs = [];
+					if (resultImg != undefined && resultImg.length != undefined && resultImg.length > 0) {
+						$.each(resultImg, function (){
+							imgs.push('<img src="' + rootPath + '/lis/downloadImg.do?fileUid=' + this.bdbKey + '" /><br>');
+						});
+					}
+					if (imgs.length <= 0) {
+						imgs.push('<ul><li style="text-align:center"><span>无图像信息</span></li></ul>');
+					}
+					$('#tab6').html(imgs.join(''));
+					common.loaded();
+			}, 'json');
+		},
+		loadData: function (index, tabId) {
+			if (common.historyTab[tabId] != undefined && common.historyTab[tabId] != "") {
+				return ;
+			}
+			
+			switch(index) {
+			case 1:
+				common.loading();
+				$.post(
+					rootPath + '/mobile.reconsult/consultDetailInfo.do', 
+					{reConsultingId: common.getCache(common.rowId)}, 
+					function(data){
+						var professor = [];
+						var consult = data.consult;
+						var professorList = data.professorList;
+						if (consult != undefined) {
+							show.patientId = consult.patientId;
+							$('#consult_status').html("(<font color='#FF664D'>" + common.getConsultStatus(consult.consultingStatus) + "</font>)");
+							
+							$('#proposerName').val(consult.proposerName);
+							$('#reCreateTime').val(consult.reCreateTime);
+							$('#officeName').val(consult.officeName);
+							$('#doctorName').val(consult.doctorName);
+							$('#reConsultingTime').val(consult.reConsultingTime);
+							$('#medicalInstitutionName').val(consult.medicalInstitutionName);
+							$('#clinicalDiagnosis').val(consult.clinicalDiagnosis);
+							$('#diseaseDescribe').val(consult.diseaseDescribe);
+							$('#consultationAsk').val(consult.consultationAsk);
+							if (consult.consultationType == "1") {
+								$('#consultationType').val("非交互式");
+							} else if (consult.consultationType == "2") {
+								$('#consultationType').val("交互式");
+							}
+							
+							$('#examFinding').val(consult.examFinding);
+							$('#examHint').val(consult.examHint);
+							$('#diagnosticOpinion').val(consult.diagnosticOpinion);
+						}
+						if (professorList != undefined) {
+							$.each(professorList, function (){
+								professor.push(this.doctorName);
+							});
+							$('#professorList').val(professor.join(';'));
+						}
+						common.loaded();
+				}, 'json');
+				break;
+			case 2:
+				common.loading();
+				$.post(
+						rootPath + '/mobile.patient/showPatientInfo.do', 
+						{patientId: common.getCache(common.patientId)}, 
+						function(data){
+							var patient = data.patient;
+							if (patient != undefined) {
+								$('#patientName').val(patient.patientName);
+								$('#patientNo').val(patient.patientNo);
+								$('#age').val(patient.age);
+								$('#patientBirth').val(patient.patientBirth);
+								$('#patientNowAddr').val(patient.patientNowAddr);
+								$('#homeAddr').val(patient.homeAddr);
+								$('#remark').val(patient.remark);
+								$('#patientSex').val(common.getSex(patient.patientSex));
+								if (patient.marryFlag == "0") {
+									$('#marryFlag').val("未婚");
+								} else if (patient.marryFlag == "1") {
+									$('#marryFlag').val("已婚");
+								}
+							}
+							common.loaded();
+					}, 'json');
+				break;
+			case 3:
+				var patientId = common.getCache(common.patientId);
+				var patientExamId = common.getCache(common.patientExamId);
+				if (patientId == undefined || patientId == "" || patientExamId == undefined || patientExamId == "") {
+					break;
+				}
+				$("#pacdImage").height($('#frmMain').height() - 40);
+				$('#pacdImage').attr('src', rootPath + '/pacsView/index.html?patientid=' + patientExamId);
+				break;
+			case 4:
+				show.loadInspectionSample();
+				break;
+			case 5:
+				var inspectionId = common.getCache(common.inspectionId);
+				if (null == inspectionId || inspectionId == "null") {
+					break;
+				}
+				common.loading();
+				$.post(
+					rootPath + '/mobile.lis/generalSurveyList.do', 
+					{inspectionId: common.getCache(common.inspectionId)}, 
+					function(data){
+						var html = [];
+						if (data.length != undefined && data.length > 0) {
+							$.each(data, function (){
+								html.push('<ul>');
+								html.push('<li><label>项目ID</label><span>' + (null == this.testItemId ? "" : this.testItemId) + '</span></li>');
+								html.push('<li><label>中文名称</label><span>' + (null == this.chineseName ? "" : this.chineseName) + '</span></li>');
+								html.push('<li><label>英文名称</label><span>' + (null == this.englishName ? "" : this.englishName) + '</span></li>');
+								html.push('<li><label>结果</label><span>' + (null == this.quantitativeResult ? "" : this.quantitativeResult) + '</span></li>');
+								html.push('<li><label>参考值</label><span>' + (null == this.testItemReference ? "" :this.testItemReference) + '</span></li>');
+								html.push('<li><label>单位</label><span>' + (null == this.testItemUnit ? "" : this.testItemUnit) + '</span></li>');
+								html.push('<li><label>定性</label><span>' + (null == this.qualitativeResult ? "" : this.qualitativeResult) + '</span></li>');
+								html.push('</ul>');
+							});
+						}
+						if (html.length <= 0) {
+							html.push('<ul><li style="text-align:center"><span>无检验项目</span></li></ul>');
+						}
+						$('#tab5').html(html.join(''));
+						common.loaded();
+				}, 'json');
+				break;
+			case 6:
+				show.loadInspectionSample();
+				break;
+			case 7:
+				break;
+			default:
+			  return ;
+			}
+		}
+	}
+	$(function (){
+		var lisInspectionSampleId= common.getCache(common.lisInspectionSampleId);
+		if (lisInspectionSampleId == undefined || lisInspectionSampleId == "" || lisInspectionSampleId == "null") {
+			$('#tabMenu').find("li").each(function (i){
+				if (i == 3 || i == 4 ||i == 5) {
+					$(this).hide();
+				}
+			});
+		}
+		
+		show.changeTab(1);
+	});
+</script>
+</html>

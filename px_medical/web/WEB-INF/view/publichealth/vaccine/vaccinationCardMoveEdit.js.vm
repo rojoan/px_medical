@@ -1,0 +1,120 @@
+<script>
+function changeInHospital(hospitalSelect) {
+    selectedOption = hospitalSelect.options[hospitalSelect.selectedIndex];
+    if(selectedOption.value != "") {
+      $('#inHospitalName').val(selectedOption.text);
+    }
+}
+
+function changeOutHospital(hospitalSelect) {
+    selectedOption = hospitalSelect.options[hospitalSelect.selectedIndex];
+    if(selectedOption.value != "") {
+      $('#outHospitalName').val(selectedOption.text);
+    }
+}
+
+$(document).ready(function () {
+    // 选择接种卡信息弹层事件绑定到vaccinateCardNo
+    $('#vaccinationCardNo').click(function(){
+        var title = '选择接种卡信息';
+        common.open(contextPath + '/vaccinationCard/vaccinationCardSelectList.do', title, {area: ['85%', '95%']});
+    });
+});
+
+// 选择接种卡(VaccinationCard)信息回调函数
+function selectVaccinationCardCallBack(obj) {
+    $('#vaccinationCardId').val(obj.vaccinationCardId);
+    $('#vaccinationCardNo').val(obj.vaccinationCardNo);
+    $('#childDetailId').val(obj.childDetailId);
+    $('#personDetailId').val(obj.personDetailId);
+    $('#vaccinatedName').val(obj.vaccinatedName);
+    if("$hospitalId" == obj.hospitalId) {
+        $('#outHospitalId').val("$hospitalId");
+        $('#outHospitalName').val("$hospitalName");
+    } else {
+        $('#inHospitalId').val("$hospitalId");
+        $('#inHospitalName').val("$hospitalName");
+        $('#outHospitalId').val(obj.hospitalId);
+        $('#outHospitalName').val(obj.hospitalName);
+    }
+}
+        // 提交表单
+        function saveVaccinationCardMove() {
+            var vaccinationCardMoveParams = common.serializeObject($('#vaccinationCardMoveForm'));
+            if (vaccinationCardMoveParams.inHospitalId == undefined || vaccinationCardMoveParams.inHospitalId  == "") {
+                common.alert("请填写调入医疗机构ID",0);
+                return false;
+            }
+
+            if (vaccinationCardMoveParams.inHospitalName == undefined || vaccinationCardMoveParams.inHospitalName  == "") {
+                common.alert("请填写调入医疗机构",0);
+               $("#inHospitalName").focus();
+                return false;
+            }
+
+            if (vaccinationCardMoveParams.moveTime == undefined || vaccinationCardMoveParams.moveTime  == "") {
+                common.alert("请填写调动日期",0);
+                return false;
+            }
+
+            if (vaccinationCardMoveParams.outHospitalId == undefined || vaccinationCardMoveParams.outHospitalId  == "") {
+                common.alert("请填写调出医疗机构ID",0);
+                return false;
+            }
+
+            if (vaccinationCardMoveParams.outHospitalName == undefined || vaccinationCardMoveParams.outHospitalName  == "") {
+                common.alert("请填写调出医疗机构",0);
+               $("#outHospitalName").focus();
+                return false;
+            }
+
+            if (vaccinationCardMoveParams.regionId == undefined || vaccinationCardMoveParams.regionId  == "") {
+                common.alert("请填写行政区域ID",0);
+               $("#regionId").focus();
+                return false;
+            }
+
+            if (vaccinationCardMoveParams.vaccinatedName == undefined || vaccinationCardMoveParams.vaccinatedName  == "") {
+                common.alert("请填写被接种人姓名",0);
+               $("#vaccinatedName").focus();
+                return false;
+            }
+
+            if (vaccinationCardMoveParams.vaccinationCardNo == undefined || vaccinationCardMoveParams.vaccinationCardNo  == "") {
+                common.alert("请填写预防接种卡编号",0);
+               $("#vaccinationCardNo").focus();
+                return false;
+            }
+
+
+            $.post("../vaccinationCardMove/saveVaccinationCardMove.jo", vaccinationCardMoveParams,  function (result) {
+                if (result.code == "0") {
+                    common.alert("保存成功",0);
+                    $('#addVaccinationCardMoveModal').modal('hide');
+                    var $form = $('#vaccinationCardMove_queryForm');
+                    if ($form.size()) {
+                        queryVaccinationCardMove();//重新查询
+                    }
+                } else {
+                    common.alert("保存失败:" + result.msg ,0);
+                }
+            }, "json");
+
+                $.post("../vaccinationCardMove/saveVaccinationCardMove.jo", vaccinationCardMoveParams,  function (result) {
+                if (result.code == "0") {
+                  common.alert("保存成功",0);
+                  parent.queryRecord();//重新查询
+                  // 关闭窗口
+                  var index = parent.layer.getFrameIndex(window.name);
+                  parent.layer.close(index); 
+               } else {
+                  common.alert(result.msg, 2);
+               }
+            }
+            , "json").error(function(jqXHR) {
+                                        jqueryPostError(jqXHR);
+                           }
+                       );//post
+
+        }//save function
+</script>

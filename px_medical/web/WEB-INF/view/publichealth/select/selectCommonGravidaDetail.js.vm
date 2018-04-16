@@ -1,0 +1,80 @@
+<script>
+	//查询按钮
+	  function queryGravidaDetail(){ 
+		  var queryParams = common.serializeObject($('#gravidaDetail_queryForm'));
+		  var options = {url: '../gravidaDetail/listData.do?time=' + new Date().getTime(), silent: false, query: queryParams};
+		  $('#gravidaDetailGrid').bootstrapTable('refresh', options); 
+	  }
+	  //清空查询框
+	  function clearQuery(){
+			var $form = $("#gravidaDetail_queryForm");
+			$form.find('[name="gravidaCard"]').val("");  
+			$form.find('[name="gravidaName"]').val(""); 
+			$form.find('[name="gravidaIdCard"]').val(""); 
+			 
+	  }
+	
+	$(function() {
+		$('#gravidaDetailGrid').bootstrapTable(//bootstrapTable
+				$.extend(baseTable, {
+					url : "../gravidaDetail/listData.do",
+					queryParams : function (params){
+						var requestParams = common.serializeObject($('#gravidaDetail_queryForm'));
+				        requestParams.pageSize = params.pageSize;
+				        requestParams.pageNumber = params.pageNumber;
+				        return requestParams;
+					},
+					columns : [
+					{checkbox:true},
+					{
+						field : 'gravidaCard',
+						title : '保健卡号'
+					},{
+						field : 'gravidaName',
+						title : '姓名'
+					},{
+						field : 'gravidaIdCard',
+						title : '身份证号'
+					},{
+						field : 'gravidaPhone',
+						title : '联系电话'
+					},{
+						field : 'gravidaAddr',
+						title : '联系地址'
+					},{
+						field : 'husbandName',
+						title : '丈夫姓名'
+					},{
+						field : 'husbandIdCard',
+						title : '丈夫身份证号'
+					},{
+						field : 'createTime',
+						title : '建档时间',
+						formatter :function (value) {
+							if (value) {
+								return getSmpFormatDateByLong(value,false);
+							}
+						}
+					} ],
+			   		onCheck: function(row){
+			            if (parent.selectGravidaCallBack && typeof(parent.selectGravidaCallBack) == "function") {
+			                parent.selectGravidaCallBack(row);
+			                
+			                // 关闭窗口
+			                var index = parent.layer.getFrameIndex(window.name);
+			                parent.layer.close(index); 
+			            }
+			        },
+					onLoadSuccess : function(){
+						var height = ($('#gravidaDetailGrid').parents("body").height() - $('#gravidaDetail_queryForm').parents(".ibox").first().height() - 72);
+						$('#gravidaDetailGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				})//$.extend
+		);//bootstrapTable
+	});//(function(){})
+
+	$(window).resize(function() { 
+		var height = ($('#gravidaDetailGrid').parents("body").height() - $('#gravidaDetail_queryForm').parents(".ibox").first().height() - 72);
+		$('#gravidaDetailGrid').bootstrapTable('resetView', {height: height});
+	})
+	</script>

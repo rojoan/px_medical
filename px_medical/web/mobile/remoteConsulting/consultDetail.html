@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>客户端</title>
+    <link href="../style/css/css.css" type="text/css" rel="stylesheet" />
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+    
+</head>
+<body>
+    <!--top start-->
+    <header>
+        <div class="top form_add">
+            <div class="fl">
+                <a href="javascript:history.back()"><i class="iconfont back">&#xe89b;</i></a>
+            </div>
+            <div class="txt form_add">会诊详情<span id="consult_status"></span></div>
+            <div class="fr">
+            	<a href="../index.html"><i class="iconfont back">&#xe60b;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end    article start-->
+    <article class="top-min">
+        <div class="head_clear"></div>
+        <div class="main">
+            <div class="main_left" id="frmTitle" >
+                <div class="picBox" onclick="switchSysBar()" id="switchPoint" ><i class="iconfont">&#xec56;</i></div>
+                <ul id="tabMenu" class="side-menu">
+                    <li onclick="show.changeTab(1)">
+	                    <i class="iconfont">&#xe673;</i> 
+	                    <span>会诊信息</span>
+                    </li>
+                    <li onclick="show.changeTab(2)">
+                    	<i class="iconfont">&#xe603;</i> 
+                    	<span>患者信息</span>
+                    </li>
+                    <li onclick="show.changeTab(3)">
+                    	<i class="iconfont">&#xe63d;</i> 
+                    	<span>影像资料</span>
+                    </li>
+                     <li onclick="show.changeTab(4)">
+                    	<i class="iconfont">&#xe6ca;</i> 
+                    	<span>检验信息</span>
+                    </li>
+                    <li onclick="show.changeTab(5)">
+                    	<i class="iconfont">&#xe8d7;</i> 
+                    	<span>检验项目</span>
+                    </li>
+                    <li onclick="show.changeTab(6)">
+                    	<i class="iconfont">&#xe658;</i> 
+                    	<span>检验图像</span>
+                    </li>
+                     <li onclick="show.changeTab(7)">
+                    	<i class="iconfont">&#xe684;</i> 
+                    	<span>会诊报告</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="main_right" id="frmMain">
+                <div class="form_list" id="tab1" style="display: none">
+                    <dl>
+                        <dt>
+                            <label>发起人</label><input id="proposerName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>发起时间</label><input id="reCreateTime" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>申请科室</label><input id="officeName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>申请医生</label><input id="doctorName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>会诊类型</label><input id="consultationType" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>会诊时间</label><input id="reConsultingTime" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="input-row">
+                            <label>会诊医院</label><input id="medicalInstitutionName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="textarea">
+                            <label>参与专家</label><textarea id="professorList" readonly class="text"></textarea>
+                        </dt>
+                        <dt class="textarea">
+                            <label>临床诊断</label><textarea id="clinicalDiagnosis" readonly class="text"></textarea>
+                        </dt>
+                        <dt class="textarea">
+                            <label>病历描述</label><textarea id="diseaseDescribe" readonly class="text"></textarea>
+                        </dt>
+                        <dt class="textarea">
+                            <label>会诊要求</label><textarea id="consultationAsk" readonly class="text"></textarea>
+                        </dt>
+                    </dl>
+                </div>
+                <div class="form_list" id="tab2" style="display: none">
+                    <dl>
+                        <dt>
+                            <label>患者姓名</label><input id="patientName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>患者编号</label><input id="patientNo" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>性 别</label><input id="patientSex" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>年 龄</label><input id="age" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>出生日期</label><input id="patientBirth" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>是否已婚</label><input id="marryFlag" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="input-row">
+                            <label>现住地址</label><input id="patientNowAddr" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="input-row">
+                            <label>家庭地址</label><input id="homeAddr" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="textarea">
+                            <label>备注</label><textarea id="remark" class="text" readonly></textarea>
+                        </dt>
+                    </dl>
+                </div>
+
+                <div class="form_list" id="tab3" style="display: none">
+                    <iframe id="pacdImage" src="" width="100%" height="100%" style="border: none"></iframe>
+                </div>
+                <div class="form_list" id="tab4" style="display: none">
+                    <dl>
+                        <dt>
+                            <label>类别</label><input id="patientType" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>床号</label><input id="patientBed" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>检验项目</label><input id="testOrder" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>检验名称</label><input id="testOrderName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>标本种类</label><input id="sampleClassName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>标本性状</label><input id="sampleStatusName" type="text" class="input-txt" readonly />
+                        </dt>               
+                        <dt>
+                            <label>申请医生</label><input id="requisitionPerson" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>检验时间</label><input id="inspectionDate" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>项 目 数</label><input id="itemCount" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>检验状态</label><input id="inspectionState" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="input-row">
+                            <label>临床诊断</label><input id="clinicalDiagnoses" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="textarea">
+                            <label>备注</label><textarea id="remark" class="text" readonly></textarea>
+                        </dt>
+                    </dl>
+                </div>
+                <div class="form_list details-table" id="tab5" style="display: none"></div>
+                <div class="form_list" id="tab6" style="display: none"></div>
+                <div class="form_list" id="tab7" style="display: none">
+                    <dl>
+                        <dt class="textarea">
+                            <label>检查所见</label><textarea id="examFinding" class="text" readonly style="height: 1.5rem"></textarea>
+                        </dt>
+                        <dt class="textarea">
+                            <label>检查提示</label><textarea id="examHint" class="text" readonly style="height: 1.5rem"></textarea>
+                        </dt>
+                        <dt class="textarea">
+                            <label>诊断意见</label><textarea id="diagnosticOpinion" class="text" readonly style="height: 1.5rem"></textarea>
+                        </dt>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!--article end-->
+</body>
+<script type="text/javascript">
+	var show = {
+		patientId: "",
+		changeTab: function (index){
+			var array = ['tab', index];
+			var targetDiv = array.join('');
+			$('#frmMain').find("div").each(function (){
+				if (this.id == targetDiv) {
+					$(this).show();
+					show.loadData(index, targetDiv);
+					common.historyTab[targetDiv] = targetDiv;
+				} else {
+					$(this).hide();
+				}
+			});
+		},
+		loadInspectionSample: function (){
+			var lisInspectionSampleId = common.getCache(common.lisInspectionSampleId);
+			if (null == lisInspectionSampleId || lisInspectionSampleId == "null") {
+				return ;
+			}
+			common.loading();
+			$.post(
+				rootPath + '/mobile.lis/showDetail.do', 
+				{lisInspectionSampleId: common.getCache(common.lisInspectionSampleId)}, 
+				function(data){
+					var resultImg = data.resultImg;
+					var requisitionInfo = data.requisitionInfo;
+					var inspectionSample = data.inspectionSample;
+					var sampleExplain = data.sampleExplain;
+
+					if (inspectionSample != undefined) {
+						common.getPatientType(inspectionSample.patientType);
+						$('#patientBed').val(inspectionSample.patientBed);
+						$('#testOrder').val(inspectionSample.testOrder);
+						$('#testOrderName').val(inspectionSample.testOrderName);
+						$('#sampleClassName').val(inspectionSample.sampleClassName);
+						$('#sampleStatusName').val(inspectionSample.sampleStatusName);
+						$('#requisitionPerson').val(inspectionSample.requisitionPerson);
+						$('#inspectionDate').val(inspectionSample.inspectionDate);
+						$('#itemCount').val(inspectionSample.itemCount);
+						common.getInspectionState(inspectionSample.inspectionState);
+						$('#clinicalDiagnoses').val(inspectionSample.clinicalDiagnoses);
+						$('#remark').val(inspectionSample.remark);
+					}
+					
+					var imgs = [];
+					if (resultImg != undefined && resultImg.length != undefined && resultImg.length > 0) {
+						$.each(resultImg, function (){
+							imgs.push('<img src="' + rootPath + '/lis/downloadImg.do?fileUid=' + this.bdbKey + '" /><br>');
+						});
+					}
+					if (imgs.length <= 0) {
+						imgs.push('<ul><li style="text-align:center"><span>无图像信息</span></li></ul>');
+					}
+					$('#tab6').html(imgs.join(''));
+					common.loaded();
+			}, 'json');
+		},
+		loadData: function (index, tabId) {
+			if (common.historyTab[tabId] != undefined && common.historyTab[tabId] != "") {
+				return ;
+			}
+			
+			switch(index) {
+			case 1:
+				common.loading();
+				$.post(
+					rootPath + '/mobile.reconsult/consultDetailInfo.do', 
+					{reConsultingId: common.getCache(common.rowId)}, 
+					function(data){
+						var professor = [];
+						var consult = data.consult;
+						var professorList = data.professorList;
+						if (consult != undefined) {
+							show.patientId = consult.patientId;
+							$('#consult_status').html("(<font color='#FF664D'>" + common.getConsultStatus(consult.consultingStatus) + "</font>)");
+							
+							$('#proposerName').val(consult.proposerName);
+							$('#reCreateTime').val(consult.reCreateTime);
+							$('#officeName').val(consult.officeName);
+							$('#doctorName').val(consult.doctorName);
+							$('#reConsultingTime').val(consult.reConsultingTime);
+							$('#medicalInstitutionName').val(consult.medicalInstitutionName);
+							$('#clinicalDiagnosis').val(consult.clinicalDiagnosis);
+							$('#diseaseDescribe').val(consult.diseaseDescribe);
+							$('#consultationAsk').val(consult.consultationAsk);
+							if (consult.consultationType == "1") {
+								$('#consultationType').val("非交互式");
+							} else if (consult.consultationType == "2") {
+								$('#consultationType').val("交互式");
+							}
+							
+							$('#examFinding').val(consult.examFinding);
+							$('#examHint').val(consult.examHint);
+							$('#diagnosticOpinion').val(consult.diagnosticOpinion);
+						}
+						if (professorList != undefined) {
+							$.each(professorList, function (){
+								professor.push(this.doctorName);
+							});
+							$('#professorList').val(professor.join(';'));
+						}
+						common.loaded();
+				}, 'json');
+				break;
+			case 2:
+				common.loading();
+				$.post(
+						rootPath + '/mobile.patient/showPatientInfo.do', 
+						{patientId: common.getCache(common.patientId)}, 
+						function(data){
+							var patient = data.patient;
+							if (patient != undefined) {
+								$('#patientName').val(patient.patientName);
+								$('#patientNo').val(patient.patientNo);
+								$('#age').val(patient.age);
+								$('#patientBirth').val(patient.patientBirth);
+								$('#patientNowAddr').val(patient.patientNowAddr);
+								$('#homeAddr').val(patient.homeAddr);
+								$('#remark').val(patient.remark);
+								$('#patientSex').val(common.getSex(patient.patientSex));
+								if (patient.marryFlag == "0") {
+									$('#marryFlag').val("未婚");
+								} else if (patient.marryFlag == "1") {
+									$('#marryFlag').val("已婚");
+								}
+							}
+							common.loaded();
+					}, 'json');
+				break;
+			case 3:
+				var patientId = common.getCache(common.patientId);
+				var patientExamId = common.getCache(common.patientExamId);
+				if (patientId == undefined || patientId == "" || patientExamId == undefined || patientExamId == "") {
+					break;
+				}
+				$("#pacdImage").height($('#frmMain').height() - 40);
+				$('#pacdImage').attr('src', rootPath + '/pacsView/index.html?patientid=' + patientExamId);
+				break;
+			case 4:
+				show.loadInspectionSample();
+				break;
+			case 5:
+				var inspectionId = common.getCache(common.inspectionId);
+				if (null == inspectionId || inspectionId == "null") {
+					break;
+				}
+				common.loading();
+				$.post(
+					rootPath + '/mobile.lis/generalSurveyList.do', 
+					{inspectionId: common.getCache(common.inspectionId)}, 
+					function(data){
+						var html = [];
+						if (data.length != undefined && data.length > 0) {
+							$.each(data, function (){
+								html.push('<ul>');
+								html.push('<li><label>项目ID</label><span>' + (null == this.testItemId ? "" : this.testItemId) + '</span></li>');
+								html.push('<li><label>中文名称</label><span>' + (null == this.chineseName ? "" : this.chineseName) + '</span></li>');
+								html.push('<li><label>英文名称</label><span>' + (null == this.englishName ? "" : this.englishName) + '</span></li>');
+								html.push('<li><label>结果</label><span>' + (null == this.quantitativeResult ? "" : this.quantitativeResult) + '</span></li>');
+								html.push('<li><label>参考值</label><span>' + (null == this.testItemReference ? "" :this.testItemReference) + '</span></li>');
+								html.push('<li><label>单位</label><span>' + (null == this.testItemUnit ? "" : this.testItemUnit) + '</span></li>');
+								html.push('<li><label>定性</label><span>' + (null == this.qualitativeResult ? "" : this.qualitativeResult) + '</span></li>');
+								html.push('</ul>');
+							});
+						}
+						if (html.length <= 0) {
+							html.push('<ul><li style="text-align:center"><span>无检验项目</span></li></ul>');
+						}
+						$('#tab5').html(html.join(''));
+						common.loaded();
+				}, 'json');
+				break;
+			case 6:
+				show.loadInspectionSample();
+				break;
+			case 7:
+				break;
+			default:
+			  return ;
+			}
+		}
+	}
+	$(function (){
+		var lisInspectionSampleId= common.getCache(common.lisInspectionSampleId);
+		if (lisInspectionSampleId == undefined || lisInspectionSampleId == "" || lisInspectionSampleId == "null") {
+			$('#tabMenu').find("li").each(function (i){
+				if (i == 3 || i == 4 ||i == 5) {
+					$(this).hide();
+				}
+			});
+		}
+		
+		show.changeTab(1);
+	});
+</script>
+</html>

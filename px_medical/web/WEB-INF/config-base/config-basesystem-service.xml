@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="serviceProxyFactory" lazy-init="true" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" abstract="true">
+        <property name="transactionManager"><ref bean="transactionManager" /></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="save*">PROPAGATION_REQUIRED</prop>
+                <prop key="select*">PROPAGATION_REQUIRED</prop>
+                <prop key="find*">PROPAGATION_REQUIRED</prop>
+                <prop key="get*">PROPAGATION_REQUIRED</prop>
+                <prop key="insert*">PROPAGATION_REQUIRED</prop>
+                <prop key="update*">PROPAGATION_REQUIRED</prop>
+                <prop key="del*">PROPAGATION_REQUIRED</prop>
+                <prop key="load*">PROPAGATION_REQUIRED</prop>
+                <prop key="validate*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="daoBase" abstract="true">
+       <property name="sessionFactory"><ref bean="sessionFactory" /></property>
+    </bean>
+<!-- 公用的基本service -->
+    <bean id="commonDao" class="com.bofan.basesystem.common.service.dao.hibernate.HibernateCommonDao" parent="daoBase">
+         <property name="defaultPageSize"><value>20</value></property>
+    </bean>
+
+</beans>

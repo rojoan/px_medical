@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+<form id="editForm" action="">
+	<label>账户名称</label><br />
+	<input id="username" name="username" value="" /><br />
+	
+	<label>账户密码</label><br />
+	<input id="userpasswd" name="userpasswd" value="" /><br />
+	
+	<label>账户真实姓名</label><br />
+	<input id="realname" name="realname" value="" /><br />
+	
+	<label>角色（1部门管理员； 2预定用户； 3普通用户）</label><br />
+	<input id="role" name="role" value="" /><br />
+	
+	<label>用户第三方用户Id</label><br />
+	<input id="thirduserid" name="thirduserid" value="" /><br />
+	
+	<label>用户第三方部门Id</label><br />
+	<input id="thirddeptid" name="thirddeptid" value="" /><br />
+	
+	<label>可用会议人数</label><br />
+	<input id="usernum" name="usernum" value="" /><br />
+	
+	<label>性别(1男；0女)</label><br />
+	<input id="sex" name="sex" value="" /><br />
+	
+	<label>邮箱</label><br />
+	<input id="email" name="email" value="" /><br />
+	
+	<label>电话(可选)</label><br />
+	<input id="telephone" name="telephone" value="" /><br />
+	
+	<label>移动电话(可选)</label><br />
+	<input id="mobile" name="mobile" value="" /><br />
+	
+	<label>职务级别（职务ID，可选）</label><br />
+	<input id="levelid" name="levelid" value="" /><br />
+
+	<label>发起及时会议权限 1 有权限 0没有权限</label><br />
+	<input id="imconference" name="imconference" value="" /><br />
+	
+	<label>是否加入企业通讯簿 1 加入 0不加入</label><br />
+	<input id="inaddress" name="inaddress" value="" /><br />
+	
+	<label>用户排序</label><br />
+	<input id="userorder" name="userorder" value="" /><br />
+	
+	<input type="button" value=" 提 交 " onclick="addUser()" />
+</form>
+<!-- 全局js -->
+<script src="../resource/js/jquery.min.js"></script>
+#parse("./common/common.js.vm")
+<script type="text/javascript">
+	function addUser() {
+		var queryParams = common.serializeObject($('#editForm'));
+		$.post("../video/addUser.do", queryParams, function (result){
+			if (result == "0") {
+				alert("创建成功");
+			} else {
+				alert(result);
+			}
+		}, "json");
+	}
+</script>
+</body>
+</html>

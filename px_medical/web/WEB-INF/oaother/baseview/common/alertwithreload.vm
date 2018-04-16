@@ -1,0 +1,14 @@
+## $msg 为提示消息,$retUrl为重定向的Url
+<html>
+   <head>
+     <title>${SessionSysPortal.appTitle}</title>
+     <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+     #if($msg)
+     <script>
+        alert('$msg');
+     </script>
+     #end
+   </head>
+   <body onload='window.location.href="${retUrl}"'>
+   </body>
+</html>

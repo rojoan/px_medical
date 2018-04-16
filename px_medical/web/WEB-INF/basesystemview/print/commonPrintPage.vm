@@ -1,0 +1,388 @@
+<html>
+  <head>
+    <meta http-equiv=Content-Type content="text/html; charset=gbk">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link href="../app/print/designer.css" rel="stylesheet" type="text/css" />
+    <script language="javascript" type="text/javascript" src="../app/print/jatoolsPrinter.js"></script>
+#loadDefaultScript("")
+
+##　　<style media="print">　　
+##　　  .noprint{display:none;height:3} 　　
+##   </style>
+
+
+<style type="text/css" rel="stylesheet">
+.print {
+  Z-INDEX: 1; CURSOR: move; POSITION: absolute; border:0 none;
+}
+
+.noprint {
+  PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+
+.undrageobject {}
+
+.showdiv {display:block}
+.hidediv {display:none}
+.backobj .mouseoveronobj {position:absolute;z-index:100;margin:0px;padding:0px;overflow:hidden;list-style:none;-moz-opacity:.45;filter:Alpha(opacity=45);}
+.selectedobj {position:absolute;z-index:100;margin:0px;padding:0px;overflow:hidden;list-style:none;-moz-opacity:.65;filter:Alpha(opacity=65);background:#C4CAAE;}
+.selectedchildobj {background:#ffffe0;}
+
+@media Print
+{
+  .noprint {
+    DISPLAY: none
+  }
+  .print {
+    Z-INDEX: 1; CURSOR: move; POSITION: absolute
+  }
+  .pageNext{page-break-after: always;}
+  .backobj .mouseoveronobj, .undrageobject, .showdiv, .hidediv {}
+}
+<!--
+#pageInfoTable tr.ruled {
+  background:#C3C3C3;
+}
+
+.ruler a {
+    color:#000;
+    text-decoration:none;
+}
+
+.ruler a:hover {
+    color:#000;
+    font-style:italic;
+    text-decoration:none;
+}
+-->
+BODY {
+  BACKGROUND: #808080;
+}
+</style>
+  </meta>
+<script language="javascript">
+//初始化打印窗体
+function initPrintForm() {
+    if (dialogArguments != null) {
+        getObjectById("printContentPanel").innerHTML = dialogArguments.CustomValue.printContent;
+        getObjectById("printDocName").innerText = dialogArguments.CustomValue.printDocName;
+        addPageInfo();
+        initPrintTitle();
+        loadPrintSettings();
+    }
+}
+//
+function addPageInfo() {
+    var printContentTB = getObjectById("printContentTable");
+    if (printContentTB == undefined) {
+        return;
+    }
+    var rowArgument = new Object(), row, pageNumber = 0;
+    var cellArgument = new Object();
+    var pageTB = new CreateTableBuilder(getObjectById("pageInfoTable"), 0);
+    rowArgument.mouseOver = function() {this.className = 'ruled'; return false};
+    rowArgument.mouseOut = function() {this.className = ''; return false};
+    for (var i = 0; i < printContentTB.rows.length; i++) {
+        row = printContentTB.rows[i];
+        if (row.page != null) {
+            cellArgument.align = "left";
+            cellArgument.height = 30;
+            cellArgument.style = new Object();
+            cellArgument.style.cursor = "hand";
+            cellArgument.style.className = "print_inf_td";
+            pageNumber++;
+            pageTB.createRow(rowArgument);
+            cellArgument.innerHTML = buildImg(createImgArg("../app/print/images/icon_file.gif", null, null, "absmiddle", "", null))
+                + "&nbsp;<a href='#'><font style='font-weight:bold;font-size:10pt'>" + pageNumber + "." + row.page + "</font></a>";
+            eval("cellArgument.onclick = function () {getPage('" + row.page + "'," + pageNumber + ");};");
+            pageTB.row.createCell(cellArgument);
+        }
+    }
+    getObjectById("printNumber").innerText = pageNumber;
+    //设定页码
+    //var pageNumDiv = document.getElementsByName("page_num_div");
+
+    var tempDiv = document.getElementsByTagName("div");
+
+    if (tempDiv == undefined) {
+        return;
+    }
+    var pageCount = 0;
+    var pageNum = 0;
+    for (var i = 0; i < tempDiv.length; i++) {
+        if (tempDiv[i].name != undefined && tempDiv[i].name == "page_num_div") {
+            pageCount = pageCount + 1;
+        }
+    }
+    for (var i = 0; i < tempDiv.length; i++) {
+         if (tempDiv[i].name != undefined && tempDiv[i].name == "page_num_div") {
+             pageNum = pageNum + 1
+             tempDiv[i].innerText = "第 " + pageNum + " 页 " + " 共 " + pageCount +  " 页";
+         }
+    }
+
+        //
+
+}
+//
+function getPage(title, pageNumber) {
+    var contentPanel = getObjectById("printContentPanel");
+    contentPanel.style.pixelTop = ((pageNumber - 1) * - 1070);
+}
+//打印
+function print() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    factory.printing.Print(true);
+}
+
+//打印预览
+function preview() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+        loadPrintSettings();
+    factory.printing.Preview();
+}
+//打印页设置
+function pageSetup() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    factory.printing.PageSetup();
+}
+//检查打印插件是否安装，打印机链接是否正常
+function checkPrinting() {
+    if (!factory.object) {
+        alert("安装打印ActiveX插件失败，可能浏览器的安全设置过高！");
+        return false;
+    }
+    //检查打印设备是否正确连接
+    try {
+        factory.printing.header;
+    } catch(ex) {
+       if(ex.number == -2147220485) {
+           alert("查找打印设备失败，请确认是否正确设置默认打印机？");
+       } else {
+           alert("初始化打印插件失败:" + ex.description);
+       }
+       return false;
+    }
+    return true;
+}
+//装载打印机的设置
+function loadPrintSettingsOld() {
+    //清除页眉页脚
+    factory.printing.header = "";
+    factory.printing.footer = "";
+    //横向
+    factory.printing.portrait = true;
+    factory.printing.leftMargin = 7;
+    factory.printing.topMargin = 7;
+}
+//装载打印机的设置
+function loadPrintSettings(printerSetting) {
+
+    //清除页眉页脚
+    factory.printing.header = "";
+
+    factory.printing.footer = "";
+
+    //纵向
+    factory.printing.portrait = true;
+
+    //factory.printing.paperSize = "A3";
+
+
+	//alert(printerSetting.leftMargin);
+    //取得页边距参数
+    var leftMargin = 0;
+    var topMargin = 0;
+    var rightMargin = 0;
+    var bottomMargin = 0;
+    //装载打印机的Cookie保存值
+    factory.printing.leftMargin = (printerSetting != undefined && printerSetting.leftMargin) ? printerSetting.leftMargin : leftMargin;
+    factory.printing.topMargin = (printerSetting != undefined && printerSetting.topMargin) ? printerSetting.topMargin : topMargin;
+    factory.printing.rightMargin = (printerSetting != undefined && printerSetting.rightMargin) ? printerSetting.rightMargin : rightMargin;
+    factory.printing.bottomMargin = (printerSetting != undefined && printerSetting.bottomMargin) ? printerSetting.bottomMargin : bottomMargin;
+}
+</script>
+</head>
+<body onload="javascript:initPrintForm();" scroll="no">
+<object id="factory" style="DISPLAY: none" codeBase="ocx/smsx.cab#Version=7,2,0,36" classid="clsid:1663ed61-23eb-11d2-b92f-008048fdd814" viewastext></object>
+<form action="#" name="printForm" method="post">
+<center>
+<div class="noprint" style="Z-INDEX: 100000; LEFT: 410px; WIDTH: 450px; POSITION: absolute; TOP: -10px;list-style:none;-moz-opacity:.75;filter:Alpha(opacity=75)">
+  <fieldset class="search_border">
+    <legend class="search_title"><font style="color:red;font-weight:bold">打印控制</font></legend>
+    <center>
+      <img style="CURSOR: hand" onclick="javascript:print();" alt="打印" src="../app/print/images/icon_print.gif" border="0">
+      <img style="CURSOR: hand" onclick="javascript:preview();" alt="打印预览" src="../app/print/images/icon_preview.gif" border="0">
+      <img style="CURSOR: hand" onclick="javascript:pageSetup();" alt="页面设置" src="../app/print/images/icon_set.gif" border="0">
+      <br>
+    </center>
+  </fieldset>
+</div>
+</center>
+<table cellpadding="0" cellspacing="0" width="100%" height="100%">
+  <tr>
+    <td width="64%">
+      <div id="printContentPanel" name="printElement" moveable="true" class="backobj print" style="Z-INDEX: 10000; width:760;LEFT:10px;TOP:0px;background:white;"></div>
+    </td>
+    <td width="1%"></td>
+    <td width="35%" valign="top">
+      <div class="noprint" style="Z-INDEX: 10000;background:#fdf9e6;width:100%;height:100%;POSITION: absolute;TOP:0px;border:1px inset">
+        <div id="pageInfoPanel" class="noprint" style="Z-INDEX: 10000; width:100%;background:white;border:1px outset">
+          <fieldset class="search_border">
+            <legend class="search_title"><b>打印信息</b></legend>
+            <table cellpadding="0" cellspacing="0" width="100%" class="ruler">
+              <tr><td class="print_inf_td">文档名称：#formSpanText("printDocName" "" "style='color:red'") </td></tr>
+              <tr><td class="print_inf_td">打印页数：共 #formSpanText("printNumber" "" "style='color:red'") 页</td></tr>
+            </table>
+          </fieldset>
+<br>
+          <fieldset class="search_border">
+            <legend class="search_title"><b>打印页面目录</b></legend>
+            <table id="pageInfoTable" cellpadding="0" cellspacing="0" width="100%" height="100%" class="ruler"></table>
+          </fieldset>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+</form>
+</body>
+<script language="javascript">
+//********************************************************键盘事件*************************************************//
+//键盘上下左右键 控制打印区域的上下调整
+document.onkeydown = function() {
+    var contentPanel = getObjectById("printContentPanel");
+    if (event.keyCode == 38) {
+        contentPanel.style.pixelTop = contentPanel.style.pixelTop - 20;
+    } else if (event.keyCode == 40) {
+        if ((contentPanel.style.pixelTop + 20) <= 20) {
+            contentPanel.style.pixelTop = contentPanel.style.pixelTop + 20;
+        }
+    }
+}
+//********************************************************鼠标事件*************************************************//
+//鼠标滚轮事件
+document.onmousewheel = function() {
+    var contentPanel = getObjectById("printContentPanel");
+    if ((contentPanel.style.pixelTop + event.wheelDelta) <= 20) {
+        contentPanel.style.pixelTop = contentPanel.style.pixelTop + event.wheelDelta;
+    }
+}
+//初始化打印模板中打印对象延迟标题和鼠标点击、拖动事件
+function initPrintTitle() {
+    var pt = document.getElementsByTagName("DIV");
+    for (var i = 0, len = pt.length; i < len; i++) {
+        var it = pt[i];
+        if (it.name == "printElement" || it.moveable) {
+            initPrintEvent(it);
+        }
+    }
+}
+
+//初始化打印对象obj的鼠标事件
+function initPrintEvent(obj) {
+    obj.onmousedown = doonmousedown;
+    obj.onmouseup = doonmouseup;
+    obj.onmousemove = doonmousemove;
+    obj.oncontextmenu = dooncontextmenu;
+    obj.onselectstart = doonselectstart;
+    if (!obj.moveable) {
+        obj.onmouseover = doonmouseover;
+        obj.onmouseout = doonmouseout;
+        obj.ondblclick = doondblclick;
+        obj.onclick = doonclick;
+    }
+}
+
+var isMouseDown = false;
+//鼠标拖拽移动
+function doonmousemove() {
+    //拖拽:组件只沿着y轴拖动
+    if (isMouseDown == true) {
+        this.style.pixelTop  = parseInt(py) + event.y - parseInt(y);
+        //不让鼠标点击事件层层触发
+        event.cancelBubble = true;
+    }
+}
+//鼠标按下
+function doonmousedown() {
+    //鼠标按下
+    this.setCapture();
+    isMouseDown = true;
+    x = event.x;
+    y = event.y;
+    px = this.style.pixelLeft;
+    py = this.style.pixelTop;
+    if (!this.moveable) {
+        this.style.zIndex = globalZindex++;
+    }
+    event.cancelBubble = true;
+}
+//鼠标放开
+function doonmouseup() {
+    //鼠标放开
+    isMouseDown = false;
+    this.releaseCapture();
+    event.cancelBubble = true;
+}
+//双击
+function doondblclick() {
+    this.style.pixelLeft = parseInt(this.defaultLeft);
+    this.style.pixelTop  = parseInt(this.defaultTop);
+    event.cancelBubble = true;
+}
+//单击
+function doonclick() {
+    document.body.focus();
+}
+
+//选取
+function doonselectstart() {
+    return false;
+}
+//右键
+function dooncontextmenu() {
+    return false;
+}
+
+var currentOverObj;
+//向指定对象中添加样式类
+function addClass(obj, className) {
+    if (obj) {
+        obj.className += className;
+    }
+}
+//将指定对象中的样式类移出
+function removeClass(obj, classPattern) {
+    if (obj) {
+        obj.className = obj.className.replace(classPattern, '');
+    }
+}
+//鼠标经过事件
+function doonmouseover() {
+    if (this != currentOverObj) {
+        addClass(this, " mouseoveronobj");
+        removeClass(currentOverObj, / mouseoveronobj/g);
+        currentOverObj = this;
+        event.cancelBubble = true;
+    }
+}
+//鼠标移出事件
+function doonmouseout() {
+    if (this == currentOverObj) {
+        removeClass(currentOverObj, / mouseoveronobj/g);
+        currentOverObj = null;
+        event.cancelBubble = true;
+    }
+}
+</script>
+</html>

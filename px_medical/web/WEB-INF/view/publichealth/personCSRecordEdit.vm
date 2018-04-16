@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>脑卒中-慢性病患者登记编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal" style="height: calc(100% - 44px)">
+		#formHiddenInput("submitFlag" "" "id='submitFlag'")
+		#formHiddenInput("regionId" "$!personChronic.personDetailId" "id='regionId'")
+		#formHiddenInput("personDetailId" "$!personChronic.personDetailId" "id='personDetailId'")
+		#formHiddenInput("personChronicId" "$!personChronic.personChronicId" "id='personChronicId'")
+		#formHiddenInput("personChronicType.chronicTypeId" "$!chronicType.chronicTypeId" "id='chronicTypeId'")
+		##** chronicType： 1=高血压；2=糖尿病；3=慢阻肺疾病；4=冠心病；5=脑卒中；6=肺结核 *##
+		#formHiddenInput("chronicType" "5" "")
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>患者基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">患者姓名</label>
+	                <div class="col-sm-1">
+	                	#formTextInput("patientName" "#htmlEscape($!personChronic.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <div class="col-sm-1">
+	                    <button id="inportPerson" type="button" class="btn btn-info m-l-n">导入患者</button>
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">性别</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                    #formRadioButtons("gender" "$!personChronic.gender" $!dicData.dicSex "" "class='checkbox-inline i-checks'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">身份证号码</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("idCard" "#htmlEscape($!personChronic.idCard)" " id='idCard' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">出生日期</label>
+	                <div class="col-sm-2">
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd', $!personChronic.birthDate)" " id='birthDate' class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">患者与家庭关系</label>
+	                <div class="col-sm-2">
+	                    #formSingleSelectFirstNone("familyRelId" "$!personChronic.familyRelId" $!{dicData.dicFamilyRel} "id='familyRelId' class='form-control'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">联系人电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("linkmanPhone" "#htmlEscape($!personChronic.linkmanPhone)" " id='linkmanPhone' maxlength='15' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">邮编</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("zipCode" "#htmlEscape($!personChronic.zipCode)" " id='zipCode' maxlength='10' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">专项档案号</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personChronicType.specialArchive" "#htmlEscape($!chronicType.specialArchive)" "maxlength='20' class='form-control'")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">登记编号</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("recordNum" "#htmlEscape($!personChronic.recordNum)" " id='recordNum' maxlength='10' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">联系地址</label>
+	                <div class="col-sm-8">
+	                    #formTextInput("contactAddr" "#htmlEscape($!personChronic.contactAddr)" "id='contactAddr' maxlength='100' class='form-control'")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>慢性病基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">诊断医院类型</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("personChronicType.diagnosisHospitalType" "$!chronicType.diagnosisHospitalType" $!{dicData.dicDiagnosisHospitalType} "class='form-control'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断医院名称</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personChronicType.diagnosisHospital" "#htmlEscape($!chronicType.diagnosisHospital)" "maxlength='20' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">发病时间</label>
+	                <div class="col-sm-2">
+	                	#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("personChronicType.attackDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.attackDate)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">确诊时间</label>
+	                <div class="col-sm-2">
+	                	#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("personChronicType.confirmDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.confirmDate)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	                </div>
+                </div>
+                <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">具体诊断</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                	#formCheckboxesLable("chronicDiagnoses" $!chronicDiagnoses $!dicData.dicChdChronicLevel "&nbsp;" "class='m-t-xs m-r-xs i-checks'" "")
+	                </div>
+	            </div>
+                <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">诊断依据</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                	#formCheckboxesLable("diagnoseBasis" $!diagnoseBasis $!dicData.dicTumDiagnoseBasis "&nbsp;" "class='m-t-xs m-r-xs i-checks'" "")
+	                </div>
+	            </div>
+	
+	            <div class="text-box"><h5>死亡信息</h5></div>
+	           	<div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">死亡时间</label>
+	                <div class="col-sm-2">
+	                	#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("deathDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronic.deathDate)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">死亡原因</label>
+	                <div class="col-sm-8">
+	                    #formTextInput("deathReason" "#htmlEscape($!personChronic.deathReason)" "maxlength='20' class='form-control'")
+	                </div>
+                </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	    <div class="modal-footer" style="text-align: center">
+	        <button type="button" id="btn_save" class="btn btn-success"><i class="fa fa-paste"></i> 保 存 </button>
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+#parse("./publichealth/personCSRecordEdit.js.vm")
+</html>

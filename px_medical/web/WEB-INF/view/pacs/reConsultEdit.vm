@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>病人检查信息页</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="../resource/css/plugins/datatimepicker/datetimepicker.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/style/css/page.css" rel="stylesheet">
+<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<style>
+.lightBoxGallery img {
+	margin: 5px;
+	width: 90px;
+}
+
+.hzzb-tool {
+	height: 48px;
+	background: #ccc;
+	width: 100%;
+	line-height: 48px;
+	padding: 0 15px;
+}
+
+.hzzb-yxzl-left {
+	width: 20%
+}
+
+.hzzb-yxzl-right {
+	width: 77.5%
+}
+
+.form-control.full-height {
+	height: 100%
+}
+
+table.table-jcdj>tbody>tr>th, table.table-jcdj>tbody>tr>td {
+	padding: 9px 15px;
+	border: 0;
+}
+
+table.table-jcdj>tbody>tr>td:hover {
+	 border-bottom: 0; 
+}
+table.table-jcdj th.text-nowrap{
+  background-color: #fff;
+}
+.pic-viewer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+dl#dowebok dd img {
+	width: 20%;
+	max-height: 120px;
+	margin: 2%;
+	float: left;
+}
+</style>
+</head>
+<body class="gray-bg top-navigation full-height">
+	<div class=" full-height hzs-tabs-left">
+		<ul class="nav nav-tabs">
+			<li class=""><a data-toggle="tab" href="#tab-1"> 患者资料</a></li>
+			<li class="active"><a data-toggle="tab" href="#tab-2">会诊申请</a></li>
+			<li class=""><a data-toggle="tab" href="#tab-3">创建会议</a></li>
+		</ul>
+
+		<div class="tab-content full-height-scroll"
+			style="height: calc(100% - 20px)">
+			<div id="tab-1" class="tab-pane full-height">
+				<div class="ibox float-e-margins ">
+					<div class="ibox-content">
+						<div class="row">
+							<div class="col-xs-3">
+								<div class="table-responsive">
+									<table class="table table-bordered table-jcdj">
+										<tbody>
+											<tr>
+												<th class="text-nowrap">患者姓名：</th>
+												<td>$!patientExam.patientName</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">患者编号：</th>
+												<td>$!patient.patientNo</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">性 别：</th>
+												<td>#lookUpDict($dicData.dicSex $!patient.patientSex)</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">年 龄：</th>
+												<td>$!patient.getAge()</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">身 高：</th>
+												<td>$!patientExam.patientHeight</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">体 重：</th>
+												<td>$!patientExam.patientWeight</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">检查费用：</th>
+												<td>$!patientExam.examCost</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">检查部位：</th>
+												<td>$!patientExam.examPart</td>
+											</tr>
+											<tr>
+												<td colspan="2" style="text-align: center;">
+													<button type="button" id="downloadImg" class="btn btn-w-m btn-primary"> <i class="fa fa-arrow-circle-down"></i>下载图片</button> <br>
+													<div id="downloadMsg"></div> <iframe id="downloadIfrmae" src="" style="border: none; height: 0px; width: 100%"></iframe>
+												</td>
+											</tr>
+									</table>
+								</div>
+							</div>
+
+							<div class="col-xs-9 " style="min-height: 450px;">
+								#if($!patientExam.imageType == '1')
+								<!--iframe start-->
+								<iframe src="../pacsView/index.html?patientid=$!patientExam.patientExamId&pacsaccessnumber=" width="100%" height="500px" style="border: none"></iframe>
+								<dl id="dowebok"></dl>
+								#else
+								<!-- pic start-->
+								<dl id="dowebok">
+									#foreach($item in $!patientExamJpgList)
+									<dd>
+										<img src="data:image/jpg;base64,$!item" />
+									</dd>
+									#end
+								</dl>
+								#end
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="tab-2" class="tab-pane full-height active">
+				<div class="col-sm-12 full-height white-bg">
+					<div class="ibox float-e-margins m-b-none ">
+						<div class="ibox-title" style="border: 0">
+							<h5>患者信息</h5>
+						</div>
+						<div class="ibox-content" style="padding-bottom: 0">
+							<form id="patientForm" method="get" class="form-horizontal">
+								<input type="hidden" name="patientId" value="$!patientExam.patientId" /> 
+								<input type="hidden" id="submitFlag" name="submitFlag" value="" />
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">患者姓名</label>
+									<div class="col-sm-4">
+										<input type="text" name="patientName" class="form-control" readonly value="$!patientExam.patientName">
+									</div>
+									<label class="col-sm-2 control-label text-right p-r-none">患者性别</label>
+									<div class="col-sm-4">
+										<div class="switch">
+											<span class='switch-btn switch-left #if("$!patient.patientSex" == "1") chosen #end'>男</span>
+											<span class='switch-btn switch-right #if("$!patient.patientSex" == "2") chosen #end'>女</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group m-b-none">
+									<label class="col-sm-2 control-label text-right p-r-none">患者年龄</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" readonly value="$!patient.getAge()">
+									</div>
+									<label class="col-sm-2 control-label text-right p-r-none">联系电话</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" readonly value="$!patient.contactPhone">
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<form id="applyForm" method="get" class="form-horizontal">
+						<div class="ibox float-e-margins m-b-f-42 ">
+							<div class="ibox-title" style="border: 0">
+								<h5>申请信息</h5>
+							</div>
+							<div class="ibox-content">
+								#formHiddenInput("patientType" "$!patientExam.patientType" "id='patientType'") 
+								#formHiddenInput("inpatientId" "$!patientExam.inpatientId" "id='inpatientId'")
+								#formHiddenInput("patientExamId" "$!patientExam.patientExamId" "id='patientExamId'") 
+								#formHiddenInput("reConsultingId" "$!reConsulting.reConsultingId" "id='reConsultingId'")
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">检查类型</label>
+									<div class="col-sm-4">
+										<input type="text" name="" class="form-control" readonly value="#lookUpDict($dicData.dicExamCategory '$!patientExam.examCategory')">
+									</div>
+									<label class="col-sm-2 control-label text-right p-r-none">检查部位</label>
+									<div class="col-sm-4">
+										<input type="text" name="biopsySite" class="form-control" readonly value="$!patientExam.examPart">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;申请科室</label>
+									<div class="col-sm-4">
+										<div class="input-group">
+											<!-- officeName -->
+											<select id="officeId" name="officeId" data-placeholder="选择科室"
+												class="form-control" style="min-width: 150px;" tabindex="1">
+												<option value="">请选择科室</option> 
+												#foreach($item in $!officeList)
+												<option value="$!item.orgId" hassubinfo="true"
+													#if("$!reConsulting.officeId" == "$!item.orgId" || "$currentUser.orgId" == "$!item.orgId") selected #end>$!item.name</option> #end
+											</select>
+										</div>
+									</div>
+									<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;申请医生</label>
+									<div class="col-sm-4">
+										<!--doctorName -->
+										<select id="doctorId" name="doctorId" data-placeholder="选择医生"
+											class="form-control" style="min-width: 150px;" tabindex="1">
+											<option value="">请选择医生</option> #foreach($item in $!doctorList)
+											<option value="$!item.userInfoId" hassubinfo="true"
+												#if("$!reConsulting.doctorId" == "$!item.userInfoId" || "$currentUser.userInfoId" == "$!item.userInfoId") selected #end>$!item.name</option> #end
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">临床诊断</label>
+									<div class="col-sm-10">
+										<textarea name="clinicalDiagnosis" maxlength="500" class="form-control" placeholder="填写临床诊断...">$!reConsulting.clinicalDiagnosis</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;会诊医院</label>
+									<div class="col-sm-10">
+										<!-- medicalInstitutionName -->
+										<select id="medicalInstitutionId" name="medicalInstitutionId"
+											data-placeholder="选择医院" class="form-control"
+											style="min-width: 220px" tabindex="2">
+											<option value="">请选择医院</option> 
+											#foreach($item in $!hospitalList)
+											<option value="$!item.orgId" hassubinfo="true"
+												#if("$!reConsulting.medicalInstitutionId" == "$!item.orgId") selected #end>$!item.name</option> #end
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">会诊要求</label>
+									<div class="col-sm-10">
+										<textarea name="consultationAsk" maxlength="500" class="form-control" placeholder="填写会诊要求...">$!reConsulting.consultationAsk</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">病史描述</label>
+									<div class="col-sm-10">
+										<textarea name="diseaseDescribe" maxlength="500" class="form-control" placeholder="填写病史描述...">$!reConsulting.diseaseDescribe</textarea>
+									</div>
+								</div>
+								<div class="form-group"
+									style="padding-top: 2%; padding-left: 12%">
+									<div class="i-checks">
+										<label> 
+											<input type="radio" name="consultationType" value="1" #if("$!reConsulting.consultationType" == "1") checked #end> <i></i>
+											非交互式会诊(不支持音视频通信、文字聊天功能，仅根据发起方提交的病历资料进行会诊)
+										</label>
+									</div>
+									<div class="i-checks">
+										<label> 
+											<input type="radio" name="consultationType" value="2" #if("$!reConsulting.consultationType" == "2") checked #end> <i></i>
+											交互式会诊（协同模式:支持音视频通信、文字聊天、文档共享、桌面/程序共享、白板注释、数据交互、影音播放和协同浏览等功能）
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tool-table-fixed" style="width: calc(100% - 40px)">
+							#if("$!reConsulting" == "" || "$!reConsulting.consultingStatus" == "0" || "$!reConsulting.consultingStatus" == "3")
+							<button type="button" id="submitApply" class="btn btn-w-m btn-primary"><i class="fa fa-check-square-o"></i> 提交申请 </button>
+							&nbsp;&nbsp;
+							<button type="button" id="saveApply" class="btn btn-w-m btn-success"> <i class="fa fa-save"></i> 暂存
+							</button>
+							#else 
+								<span style="color: red">已申请且会诊未完成时，不能再次申请远程会诊</span> 
+							#end
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			<!-- begin会议信息 -->
+         
+        <div id="tab-3" class='tab-pane #if("$!show" == "1")active#end'>
+            <div class='full-height-scroll full-height'>
+                <div class="table-responsive">
+                    <form id="auditEditForm" class="form-horizontal">
+                        <input type="hidden" id="submitFlag" name="submitFlag" value="" />
+                        <input type="hidden" id="reConsultingId" name="reConsultingId" value="$!consult.reConsultingId" />
+                        <input type="hidden" id="videoMeetingId" name="videoMeetingId" value="$!meeting.videoMeetingId" />
+                        <table class="table table-bordered table-jcdj">
+                            <tbody>
+                                <tr>
+                                    <th class="text-nowrap ">#requiredTag&nbsp;会议名称</th>
+                                    <td colspan="3">
+                                        #formTextInput("topic" "$!meeting.topic" "id='topic' maxlength='64' class='form-control'")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-nowrap">#requiredTag&nbsp;参会人员</th>
+                                    <td colspan="3">
+                                        <select id="ponsultingProfessor" data-placeholder="选择会议参与人" class="chosen-select" multiple style="min-width: 150px; width: 100%" tabindex="2">
+                                            #foreach($item in $!professorList)
+                                            <option value="$!item.professorId" select="selected" hassubinfo="true">$!item.doctorName</option>
+                                            #end
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-nowrap">#requiredTag&nbsp;会议时间</th>
+                                    <td colspan="3">
+                                        <div class="input-group date">
+                                            <input type="text" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginTime" name="beginTime" value="$!date.format('yyyy-MM-dd HH:mm', $!meeting.beginTime)" />
+                                            <span class="input-group-addon">到</span> 
+                                            <input type="text" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endTime" name="endTime" value="$!date.format('yyyy-MM-dd HH:mm', $!meeting.endTime)" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-nowrap">会议内容</th>
+                                    <td colspan="3">
+                                        #formTextarea("content" "$!meeting.content" "id='content' maxlength='500' class='form-control' rows='5' placeholder='填写会议内容...'")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="text-align: center;">
+                                            <button type="button" id="btn_audit_pass" class="btn btn-w-m btn-primary"><i class="fa fa-paste"></i> 创建会议</button>
+                                            &nbsp;&nbsp;
+                                            <button type="button" id="btn_audit_save" class="btn btn-w-m btn-success"><i class="fa fa-save"></i> 暂 存 </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+		</div>
+	</div>
+
+	<!-- 全局js -->
+	<script src="../resource/js/jquery.min.js"></script>
+	<script src="../resource/js/bootstrap.min.js"></script>
+	<script src="../resource/js/plugins/layer/layer.min.js"></script>
+	<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+	<script src="../resource/style/js/img-viewer.min.js"></script>
+	#parse("./common/common.js.vm")
+	<!-- 页面js -->
+	#parse("./pacs/reConsultEdit.js.vm")
+</body>
+
+</html>

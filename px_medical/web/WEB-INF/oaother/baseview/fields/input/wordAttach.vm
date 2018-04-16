@@ -1,0 +1,44 @@
+##word附件模板
+#if($attachpage)
+<script>
+function getServerName(){
+    ServerName = "http://" + window.location.hostname + "#getContextPath()/sysaffix/other_file_download.action?file_id="+$!{attMap.get('oa_other_attach_id')};
+    document.doc_info.downloadurl.value=ServerName;
+}
+function openserverdoc(){
+    getServerName();
+    var downloadUrl =document.doc_info.downloadurl.value;
+    var serverport =document.doc_info.downloadport.value ;
+    var filename="$!{attMap.get('true_name')}" ;
+    var filetype=".doc" ;
+    file_head = filename.split(".");
+    if(file_head[1]=="doc"){
+        var mydiv=document.getElementById("myobj");
+        mydiv.style.display="";
+        ccwebdoc.openserverdoc(downloadUrl,serverport,filename,filetype);
+    }
+}
+</script>
+<tr>
+   <td width="82%" colspan="4" align=center>
+
+<form name="doc_info">
+    <input type="hidden" name="downloadurl" size="100" value="../scm/go.do?action=/attach/download&keyid=$!{attMap.get('oa_other_attach_id')}">
+    <input type="hidden" name="downloadport" size="100" value="8080">
+</form>
+<div id="myobj" style="display:none">
+<OBJECT
+      classid="clsid:2F20ABA5-875C-4913-832F-393476212699"
+      codebase="../ocx/ccwebdocreaderProj1.ocx#version=1,0,0,0"
+      name = 'ccwebdoc'
+      width=800
+      height=800
+      align=center
+      hspace=0
+      vspace=0
+>
+</OBJECT>
+</div>
+     </td>
+ </tr>
+#end

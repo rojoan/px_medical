@@ -1,0 +1,110 @@
+ <script type="text/javascript">
+         $(document).ready(function() {
+             selfCareAbilityEvent();
+         });
+       //自理能力-选择事件
+         function selfCareAbilityEvent(){
+             $('input[type=radio]').on('ifClicked', function(event){
+                  var score = $(this).val();
+                  var $scoreResult = $(this).parent().parent().parent().parent().find('.scoreResult');
+                  $scoreResult.val(score);
+                  countScore();
+             });
+         }
+       function countScore() {
+           var totalScore = 0;
+           $('.scoreResult').each(function(i){
+               var curScore = $(this).val();
+               if(curScore && !isNaN(curScore)){
+                   totalScore += parseInt(curScore);
+               }
+           });
+           
+           $('#selfCareAssessScore').val(totalScore);
+           
+           /** 评估结果
+                                                 根据下表中5个方面进行评估，将各方面判断评分汇总后：
+             1 =  0 - 3     分者为： 生活自理能力 - 可自理
+             2 =  4 - 8     分者为： 生活自理能力 - 轻度依赖
+             3 =  9 -  18  分者为： 生活自理能力 - 中度依赖
+             4 =  >=19    分者为： 生活自理能力 - 不能自理 */
+           var selfCareAssessResult = '';
+           if (totalScore <= 3 ) {
+               selfCareAssessResult = 1;
+           } else if (totalScore >= 4 &&totalScore <= 8){
+               selfCareAssessResult = 2;
+           } else if (totalScore >= 9 &&totalScore <= 18){
+               selfCareAssessResult = 3;
+           } else if (totalScore >= 19){
+               selfCareAssessResult = 4;
+           }
+           
+           var dicSelfCareAssessResult = JSON.parse('$dicTools.changeMapToJson($dicData.dicSelfCareAssessResult)'); 
+           var selfCareAssessResultContent = dicSelfCareAssessResult[selfCareAssessResult]
+           $('#selfCareAssessResultContent').val(selfCareAssessResultContent);
+           $('#selfCareAssessResult').val(selfCareAssessResult);
+           
+       }  
+       
+
+       // 提交表单
+       function saveElderSelfCareAbility() {
+            var elderSelfCareAbilityParams = common.serializeObject($('#elderSelfCareAbilityForm'));
+            var elderSelfCareAbilityRetionData = {};
+            elderSelfCareAbilityRetionData.elderSelfCareAbilityEditInfo = elderSelfCareAbilityParams;
+            elderSelfCareAbilityRetionData.elderSelfCareItemEditInfoList = buildElderSelfCareItemParam();
+            
+            if (isBlank(elderSelfCareAbilityParams.assessTime)) {
+                common.alert("请填写评估日期",0);
+                return false;
+            }
+            //是否每项都选中
+            var scoreFlag = true;
+            $('.scoreResult').each(function(i){
+                var curScore = $(this).val();
+                if(isBlank(curScore)){
+                	common.alert("请勾选全部的评估项",0);
+                	scoreFlag = false;
+                }
+            });
+            if (!scoreFlag) {
+				return false;
+			}
+            
+            $.post("../elder/saveElderSelfCareAbility.jo", 
+                   {elderSelfCareAbilityRetionData : JSON.stringify(elderSelfCareAbilityRetionData)},  
+                   function (result) {
+                        if (result.code == "0") {
+                            common.alert("保存成功",1);
+                            /*var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index); */
+                        } else {
+                            common.alert(result.msg,2);
+                        }
+                   },
+             "json");
+        }
+      
+       //获取 自理能力评估明细 的参数
+       function buildElderSelfCareItemParam() {
+           var jqElderSelfCareItemTrRow =  $('#elderSelfCareAbilityForm').find('.trRow');
+           var elderSelfCareItemArr = [];
+           jqElderSelfCareItemTrRow.find('input[type=radio]:checked').each(function(i) {
+                 var elderSelfCareItem = {};
+                 elderSelfCareItem.selfCareAbilityId = $(this).attr('name');
+                 elderSelfCareItem.selfCareAbilityScore = $(this).val();
+                 elderSelfCareItemArr.push(elderSelfCareItem);
+           });
+           return elderSelfCareItemArr;
+       }
+       
+       //查看 设置 readonly、disabled
+       $(document).ready(function() {
+           var jqForm = $('#elderSelfCareAbilityForm');
+           if('show' == '$!mode'){
+               jqForm.find('input').attr('readonly',true);
+               jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+           }
+       });
+                         
+</script>

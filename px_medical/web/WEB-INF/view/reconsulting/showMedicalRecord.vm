@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 导入头部信息及css -->
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/plugins/jsTree/style.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/css/plugins/datatimepicker/datetimepicker.css" rel="stylesheet">
+<link href="../resource/style/css/page.css" rel="stylesheet">
+<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+<style>
+.pic-viewer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+html, body {
+	height: 100%;
+}
+</style>
+</head>
+<body>
+	<div class="modal-body full-height" style="padding: 0;">
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#consultInfo">会诊信息</a></li>
+			<li class=""><a data-toggle="tab" href="#patientInfo">患者信息</a></li>
+			#if("$!consult.patientExamId" != "")
+				<li class=""><a data-toggle="tab" href="#pacsInfo">影像资料</a></li>
+			#end
+			#if("$!consult.lisInspectionSampleId" != "")
+				<li class=""><a data-toggle="tab" href="#lisInfo">检验报告</a></li>
+			#end
+			#if("$!consult.risInspectionId" != "")
+				<li class=""><a data-toggle="tab" href="#risInfo">病历文书</a></li>
+			#end
+			#if("$!consult.consultingStatus" == "2" || "$!consult.consultingStatus" == "3")
+				<li class=""><a data-toggle="tab" href="#consultReport">会诊报告</a></li>
+			#end
+		</ul>
+		<div class="tab-content" style="height: calc(100% - 20px)">
+			<!-- 会诊信息 -->
+			<div id="consultInfo" class="tab-pane full-height active">
+				<div class="full-height-scroll full-height">
+					<div class="table-responsive">
+						<table class="table table-bordered table-jcdj">
+							<tbody>
+								<tr>
+									<th class="text-nowrap">发起人</th>
+									<td>#htmlEscape($!consult.proposerName)</td>
+									<th class="text-nowrap">发起时间</th>
+									<td>$!date.format('yyyy-MM-dd HH:mm', $!consult.reCreateTime)</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">申请科室</th>
+									<td>#htmlEscape($!consult.officeName)</td>
+									<th class="text-nowrap">申请医生</th>
+									<td>#htmlEscape($!consult.doctorName)</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">会诊类型</th>
+									<td>#lookUpDict($dicData.consultingConsultationType $!consult.consultationType)</td>
+									<th class="text-nowrap">会诊时间</th>
+									<td>$!date.format('yyyy-MM-dd HH:mm', $!consult.reConsultingTime)</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">会诊医院</th>
+									<td colspan="3">#htmlEscape($!consult.medicalInstitutionName)</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">参与专家</th>
+									<td colspan="3">
+										#foreach($item in $!professorList)
+											#htmlEscape($!item.doctorName)；
+										#end
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">临床诊断</th>
+									<td colspan="3">#htmlEscape($!consult.clinicalDiagnosis)</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">病历描述</th>
+									<td colspan="3">#htmlEscape($!consult.diseaseDescribe)</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">会诊要求</th>
+									<td colspan="3">#htmlEscape($!consult.consultationAsk)</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<!-- 患者信息-->
+			<div id="patientInfo" class="tab-pane full-height">
+				<div class="full-height-scroll full-height">
+					<iframe src="../patient/showPatient.do?patientId=$!consult.patientId" width="100%" height="100%" style="border: none"></iframe>
+				</div>
+			</div>
+			
+			<!-- 影像资料 -->
+			#if("$!consult.patientExamId" != "")
+				<div id="pacsInfo" class="tab-pane full-height">
+					<iframe src="../report/showPacs.do?patientExamId=$!consult.patientExamId" width="100%" height="100%" style="border: none"></iframe>
+				</div>
+			#end
+			
+			<!-- 检验报告 -->
+			#if("$!consult.lisInspectionSampleId" != "")
+				<div id="lisInfo" class="tab-pane full-height">
+					<iframe src="../lis/surveyDetail.do?lisInspectionSampleId=$!consult.lisInspectionSampleId" style="height: 100%; width: 100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+				</div>
+			#end
+			
+			<!-- #risInfo 病例文书 -->
+			#if("$!consult.risInspectionId" != "")
+				<div id="risInfo" class="tab-pane"></div>
+			#end
+			
+			<!-- 会诊报告 -->
+			#if("$!consult.consultingStatus" == "2" || "$!consult.consultingStatus" == "3")
+				<div id="consultReport" class="tab-pane full-height active">
+					<div class="ibox float-e-margins full-height">
+		                <div class="ibox-title">
+		                    <h5>检查所见</h5>
+		                </div>
+		                <div class="ibox-content" style="min-height: 80px">
+		                    #htmlEscape($!consult.examFinding)
+		                </div>
+		                <div class="ibox-title">
+		                    <h5>检查提示</h5>
+		                </div>
+		                <div class="ibox-content" style="min-height: 80px">
+		                    #htmlEscape($!consult.examHint)
+		                </div>
+		                <div class="ibox-title">
+		                    <h5>诊断意见</h5>
+		                </div>
+		                <div class="ibox-content" style="min-height: 80px">
+		                	#htmlEscape($!consult.diagnosticOpinion)
+		                </div>
+		           	</div>
+				</div>
+			#end
+		</div>
+
+	</div>
+	<!-- 全局js -->
+	<script src="../resource/js/jquery.min.js"></script>
+	<script src="../resource/js/bootstrap.min.js"></script>
+	<!-- Chosen -->
+	<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+	<!-- Data time picker -->
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	<!-- iCheck -->
+	<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+	<!-- Bootstrap table -->
+	<script src="../resource/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="../resource/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+	<script src="../resource/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script src="../resource/style/js/img-viewer.min.js"></script>
+	#parse("./common/common.js.vm")
+</body>
+</html>

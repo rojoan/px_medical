@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 根据info对象中的是否当前年属性（yearPropertyName记录的属性名），来设定查询条件中的年度的过滤条件 -->
+    <bean id="currentYearConditionFilter" class="com.bofan.basesystem.common.conditionfilter.support.CurrentYearConditionFilter">
+        <property name="yearPropertyName"><value>isYearLimit</value></property><!--info对象中记录是否当前年的属性的名字 -->
+    </bean>
+
+</beans>

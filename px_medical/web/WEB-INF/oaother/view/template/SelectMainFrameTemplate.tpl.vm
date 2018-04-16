@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../app/right/right.css" rel="stylesheet" type="text/css" />
+#set($dataMap = ${HELPER_BEAN.getBeanNameMap(${command})})
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script language="JavaScript">
+#if($message)
+alert("$esc.javascript($message)");
+#end
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+var binds = new Object();
+function sendSelectFromLeft(node) {
+    
+    //if (document.frames["leftFrame"] != undefined) {
+        //document.frames["rightFrame"].receiveSelectFromLeft(node);
+    //} else {
+        //returnData(node);
+    //}
+    if (window.frames["leftFrame"] != undefined) {
+        window.frames["rightFrame"].receiveSelectFromLeft(node);
+    } else {
+        returnData(node);
+    }
+}
+
+function sendSelectFromRight() {
+    //var selectDatas = document.frames["rightFrame"].returnSelected();
+    var selectDatas = window.frames["rightFrame"].returnSelected();
+    returnData(selectDatas);
+}
+
+function returnData(datas) {
+    if (typeof(top.dialogArguments.CustomValue.callback) == 'function') {
+        if (top.dialogArguments.CustomValue.callback(datas, binds)) {
+             window.close();
+        }
+    } else if (typeof(top.dialogArguments.CustomValue) == 'function') {
+        if (top.dialogArguments.CustomValue(datas, binds)) {
+             window.close();
+        }
+    }
+    window.close();
+}
+
+function initForm() {
+    var rightUrl = "#buttonUrl(${_layout.rightUrl} $datamap)";
+    if (top.dialogArguments.CustomValue != null && top.dialogArguments.CustomValue.autoBind != null) {
+        binds.bindId = top.dialogArguments.CustomValue.autoBind.bindId;
+        binds.bindName = top.dialogArguments.CustomValue.autoBind.bindName;
+    }
+    if (top.dialogArguments.CustomValue.rightUrlInitParams != null) {
+        for (i = 0; i < top.dialogArguments.CustomValue.rightUrlInitParams.length; i++) {
+            param = top.dialogArguments.CustomValue.rightUrlInitParams[i];
+            if (i == 0 && rightUrl.indexOf("?") > 0) {
+                rightUrl += "&";
+            } else if (i == 0 && rightUrl.indexOf("?") < 0) {
+                rightUrl += "?";
+            }
+            if (i < top.dialogArguments.CustomValue.rightUrlInitParams.length - 1) {
+                rightUrl += param.paramName + "=" + param.paramValue + "&";
+            } else {
+                rightUrl += param.paramName + "=" + param.paramValue;
+            }
+        }
+    }
+    document.getElementById("rightFrame").src = rightUrl;
+}
+</script>
+
+<body scroll="no" onload="javascript:initForm();">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+    <!--��ť begin-->
+<form name="frameForm">
+  <tr>
+    <td>
+      <table cellpadding="0" cellspace="0" border="0" width="100%">
+        <tr>#parse("/template/EditToolBar.tpl.vm")</tr>
+      </table>
+    </td>
+  </tr>
+    <!--��ť end-->
+  <tr><td height="20" width="100%"></td></tr>
+  <tr>
+    <td valign="top" height="78%" width="100%">
+      <table cellpadding="0" cellspacing="0" class="wk_tab">
+#if(${_layout.leftUrl} && ${_layout.rightUrl})
+        <tr>
+          <td valign="top" height="100%" width="40%" bgcolor="#red">
+            <iframe frameborder="0" height="400" src="#buttonUrl(${_layout.leftUrl} $datamap)" width="100%" marginwidth="10" scrolling="auto" id="leftFrame" name="leftFrame" >
+            </iframe>
+          </td>
+          <td valign="top" height="100%" width="60%">
+            <iframe frameborder="0" height="400" src="#" width="100%" marginwidth="10" scrolling="auto" id="rightFrame" name="rightFrame" >
+            </iframe>
+          </td>
+        </tr>
+#else
+        <tr>
+          <td valign="top" height="100%" width="60%">
+            <iframe frameborder="0" height="400" src="#" width="100%" marginwidth="10" scrolling="auto" id="rightFrame" name="rightFrame" ></iframe>
+          </td>
+        </tr>
+#end
+      </table>
+    </td>
+  </tr>
+</form>
+</table>
+</body>
+</html>

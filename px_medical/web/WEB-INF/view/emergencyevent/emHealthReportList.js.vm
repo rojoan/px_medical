@@ -1,0 +1,149 @@
+<script>
+	//验证单选
+	function singleCheck(rows){
+		if (rows.length != 1 || !rows[0].healthReportId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行",0);
+			return false;
+		}
+		return true;
+	}
+	
+		// 查看按钮
+	function show(){
+		var rows = common.getTableSelectRow('emHealthReportGrid', false);
+		if (!singleCheck(rows) )   return ;
+		openModal('modal','../emHealthReport/show.do?healthReportId=' + rows[0].healthReportId);
+	}
+		// 编辑按钮
+	function edit(){
+		var rows = common.getTableSelectRow('emHealthReportGrid', false);
+		if (!singleCheck(rows) )   return ;
+		openModal('modal','../emHealthReport/edit.do?healthReportId=' + rows[0].healthReportId);
+	}
+		// 添加按钮
+	function add(){
+		openModal('modal','../emHealthReport/edit.do??v=1');
+	}
+		// 审核按钮
+	function audit(){
+		var rows = common.getTableSelectRow('emHealthReportGrid', false);
+		if (!singleCheck(rows) )   return ;
+		openModal('modal','../emHealthReport/audit.do?healthReportId=' + rows[0].healthReportId);
+	}
+		// 删除按钮
+	function del(){
+		var rows = common.getTableSelectRow('emHealthReportGrid', false);
+		if (!singleCheck(rows) )   return ;
+		 $.post("../emHealthReport/delemHealthReport.do", {healthReportId:rows[0].healthReportId}, function (result) {
+	            if (result.code == "0") {
+	                common.alert("删除成功",0);
+	                query();
+	            } else {
+	            	common.alert(result.msg);
+	            }
+	        }, "json");
+	}
+		
+	//查询按钮时间
+	  function query(){
+		  var $formObj = $("#report_queryForm");
+		  if (compareDate($formObj.find("#q_eventOccurTimeStart").val(),$formObj.find("#q_eventOccurTimeEnd").val())) {
+				common.alert("事件发生事件的开始时间不能大于结束时间！",0);
+			  	return false;
+		  }
+		  var queryParams = common.serializeObject($('#report_queryForm'));
+		  var options = {url: '../emHealthReport/listData.do?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		  $('#emHealthReportGrid').bootstrapTable('refresh', options); 
+	  }
+	  //清空查询框
+	  function clearQuery(){
+			var $formObj = $("#report_queryForm");
+			$formObj.find("#q_eventOccurTimeStart").val("");
+			$formObj.find("#q_eventOccurTimeEnd").val("");
+			$formObj.find("#q_eventName").val("");
+			$formObj.find("#q_eventTypeId").val("");//选择框
+			$formObj.find("#q_eventTypeId").trigger("chosen:updated");
+			$formObj.find("#q_eventLevelId").val("");//选择框
+			$formObj.find("#q_eventLevelId").trigger("chosen:updated");
+	  }
+	
+	//Grid列表
+	$(function() {
+		$('#emHealthReportGrid').bootstrapTable(
+				$.extend(baseTable, {
+					url : "../emHealthReport/listData.do",
+					columns : [
+					{checkbox:true},
+					{
+						field : 'eventName',
+						title : '事件名称'
+					},{
+						field : 'eventTypeId',
+						title : '信息类别',
+						formatter :function (value, row, index) {
+							var dicEventType = JSON.parse('$dicTools.changeMapToJson($dicData.dicEventType)'); 
+							if (value) {
+								return dicEventType[value];
+							}
+						}
+					},{
+						field : 'eventLevelId',
+						title : '突发事件等级',
+						formatter :function (value, row, index) {
+							var dicEventLevel = JSON.parse('$dicTools.changeMapToJson($dicData.dicEventLevel)'); 
+							if (value) {
+								return dicEventLevel[value];
+							}
+						}
+					},{
+						field : 'eventOccurTime',
+						title : '事件发生日期',
+						formatter :function (value) {
+							if (value) {
+								return getSmpFormatDateByLong(value,false);
+							}
+						}
+					}, {
+						field : 'fillTime',
+						title : '填报日期',
+						formatter :function (value) {
+							if (value) {
+								return getSmpFormatDateByLong(value,false);
+							}
+						}
+					},{
+						field : 'fillIllCount',
+						title : '新报告病历数'
+					},{
+						field : 'excludeIllCount',
+						title : '排除病例数'
+					},{
+						field : 'addIllCount',
+						title : '累计报告病历数'
+					},{
+						field : 'addDieCount',
+						title : '累计报告死亡数'
+					}],
+					onDblClickRow : function (row, element){
+						$('#emHealthReportGrid').bootstrapTable('check',element.attr('data-index'));
+						show();
+			   		},
+					onLoadSuccess : function(){
+						var height = ($('#emHealthReportGrid').parents("body").height() - $('#report_queryForm').parents(".ibox").height() - 72);
+						$('#emHealthReportGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				}
+			)//$.extend() end 
+		);//bootstrapTable end
+	});//$(function()
+
+	 
+	//清除模态框的缓存
+	$(document).ready(function() {
+		clearModal('modal');
+	});
+	$(window).resize(function() { 
+		var height = ($('#emHealthReportGrid').parents("body").height() - $('#report_queryForm').parents(".ibox").height() - 72);
+		$('#emHealthReportGrid').bootstrapTable('resetView', {height: height});
+	})
+</script>

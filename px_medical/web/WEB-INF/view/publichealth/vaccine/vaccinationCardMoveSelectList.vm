@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>疫苗接种证调动记录表管理</title>
+#parse("./common/pageCss.vm") 
+<!-- <link rel="stylesheet" type="text/css" href="../resource/css/plugins/webuploader/webuploader-demo.css?v=2"> -->
+<style>
+    html,body { height: 100%}
+    button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px;}
+    table.table-jcdj > tbody > tr > td:hover { border-bottom: 0}
+    table.table-hover > tbody > tr > td { font-size: 12px;}
+</style>
+</head>
+
+
+<body class="gray-bg top-navigation">
+    <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins full-height">
+                <div class="ibox-content">
+                    <div class="row">
+                        <form id="vaccinationCardMove_queryForm" method="get" class="form-horizontal">
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">操作时间</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_createTime" name="createTime" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">处理医生</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_handleDoctor" name="handleDoctor" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">调入医疗机构</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_inHospitalName" name="inHospitalName" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">调出医疗机构</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_outHospitalName" name="outHospitalName" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">调动申请人</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_proposerName" name="proposerName" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">行政区域ID</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_regionId" name="regionId" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">被接种人姓名</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_vaccinatedName" name="vaccinatedName" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">预防接种卡编号</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_vaccinationCardNo" name="vaccinationCardNo" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 text-center">
+                                <button type="button" id="btn_query" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-search"></i> <span>查 询</span>
+                                </button>
+                                &nbsp;&nbsp;&nbsp;
+                                <button type="button" id="btn_clean" class="btn btn-sm btn-info">
+                                    <i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+                                </button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ibox float-e-margins full-height m-b-none">
+                <div class="ibox-content p-b-n">
+                    <div class="table-responsive">
+
+                        <!-- 列表表格 -->
+                        <div class="example">
+                            <table id="vaccinationCardMoveListGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+    </div>
+    #parse("./common/pageJs.vm") 
+    #parse("./common/common.js.vm")
+    <script>
+    
+ //查询函数
+function queryRecord() {
+        var queryParams = common.serializeObject($('#vaccinationCardMove_queryForm'));
+        var options = {url: '../vaccinationCardMove/vaccinationCardMoveListData.jo', silent: false, query: queryParams};
+        $('#vaccinationCardMoveListGrid').bootstrapTable('refresh', options); 
+}
+
+    $(document).ready(function () {
+
+            // 查询按钮
+            $('#btn_query').click(function (){
+                queryRecord();
+            });
+        
+            // 清空按钮
+            $('#btn_clean').click(function (){
+            // 清空按钮
+           $('#q_createTime').val('');
+           $('#q_handleDoctor').val('');
+           $('#q_inHospitalName').val('');
+           $('#q_outHospitalName').val('');
+           $('#q_proposerName').val('');
+           $('#q_regionId').val('');
+           $('#q_vaccinatedName').val('');
+           $('#q_vaccinationCardNo').val('');
+            });
+
+            //查询疫苗接种证调动记录表列表
+            $('#vaccinationCardMoveListGrid').bootstrapTable(
+                $.extend(baseTable, {
+                    url : "../vaccinationCardMove/vaccinationCardMoveListData.jo",
+                    queryParams : function (params){
+                        var requestParams = common.serializeObject($('#vaccinationCardMove_queryForm'));
+                        requestParams.pageSize = params.pageSize;
+                        requestParams.pageNumber = params.pageNumber;
+                        return requestParams;
+                    },
+                    columns : [
+                    {checkbox : true,},
+                    {
+                        field : 'createTime',
+                        title : '操作时间'
+                    },
+                    {
+                        field : 'handleDoctor',
+                        title : '处理医生'
+                    },
+                    {
+                        field : 'inHospitalName',
+                        title : '调入医疗机构'
+                    },
+                    {
+                        field : 'outHospitalName',
+                        title : '调出医疗机构'
+                    },
+                    {
+                        field : 'proposerName',
+                        title : '调动申请人'
+                    },
+                    {
+                        field : 'regionId',
+                        title : '行政区域ID'
+                    },
+                    {
+                        field : 'vaccinatedName',
+                        title : '被接种人姓名'
+                    },
+                    {
+                        field : 'vaccinationCardNo',
+                        title : '预防接种卡编号'
+                    }                    ], 
+                    onCheck:function(row){
+                        parent.selectVaccinationCardMoveCallBack(row);
+                        // 关闭窗口
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index); 
+                    },
+                    onLoadSuccess : function(){
+                        var height = ($('#vaccinationCardMoveGrid').parents("body").height() - $('#vaccinationCardMove_queryForm').parents("#vaccinationCardMoveQuery").first().height() - 130);
+                        $('#vaccinationCardMoveGrid').bootstrapTable('resetView', {height: height}); 
+                    }
+                }
+                )//extends
+              );//bootstapTable
+        }//document ready() function()
+    );//document ready()
+ 
+
+    </script>
+</body>
+</html>

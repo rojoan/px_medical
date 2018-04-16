@@ -1,0 +1,182 @@
+<script>
+	var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)');
+    //验证单选
+    function singleCheck(rows){
+        if (rows.length != 1 || !row.deathRecordId ) {
+            common.alert("请选择将要编辑的行且仅能选择一行",0);
+            return false;
+        }
+        return true;
+    }
+    // 查看按钮
+    function showDeathRecord(){
+        var rows = common.getTableSelectRow('deathRecordGrid', false);
+        if (!singleCheck(rows) )   return ;
+        layer.open({
+            type: 2,
+            title: '查看死亡登记信息<span class="must-red font-14">( 红字为必填 )</span>',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['80%', '80%'],
+            content: '../deathRecord/editDeathRecord.do?mode=show&deathRecordId=' + row.deathRecordId
+        });
+    }
+    // 添加按钮
+    function addDeathRecord(){ 
+        layer.open({
+            type: 2,
+            title: '新增死亡登记信息<span class="must-red font-14">( 红字为必填 )</span>',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['80%', '80%'],
+            content: '../deathRecord/editDeathRecord.do?deathFlag='+$('#deathFlag').val()
+        });
+    }
+    // 编辑按钮
+    function editDeathRecord(){
+        var rows = common.getTableSelectRow('deathRecordGrid', false);
+        if (!singleCheck(rows) )   return ;
+        layer.open({
+            type: 2,
+            title: '修改死亡登记信息<span class="must-red font-14">( 红字为必填 )</span>',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['80%', '80%'],
+            content: '../deathRecord/editDeathRecord.do?deathRecordId=' + row.deathRecordId
+        });
+    }
+    
+    //删除
+    function delDeathRecord(){
+        var rows = common.getTableSelectRow('deathRecordGrid', false);
+        if (!singleCheck(rows) )   return ;
+        common.confirm("确定要删除吗？", function (){
+            $.post( '../deathRecord/delDeathRecord.jo',
+                    {deathRecordId:row.deathRecordId}, 
+                    function (result){
+                        if (result.code == "0") {
+                             common.alert("删除成功",0);
+                             queryRecord();
+                        } else {
+                            common.alert(result.msg, 2);
+                        }
+                    }, 
+            'json');
+        });
+    }
+    
+    //查询按钮时间
+    function queryRecord(){  
+        var queryParams = common.serializeObject($('#deathRecord_queryForm'));
+        var options = {url: '../deathRecord/deathRecordListData.jo?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+        $('#deathRecordGrid').bootstrapTable('refresh', options); 
+    }
+    //清空查询框
+    function clearQuery(){
+          $("#vaccinatedName").val('');
+          $("#beginDeathTime").val('');
+          $("#endDeathTime").val('');
+    }
+      
+    $(document).ready(function() {
+       	$('#deathRecordGrid').bootstrapTable(//bootstrapTable
+                   $.extend(baseTable, {
+                       url : "../deathRecord/deathRecordListData.jo",
+                       queryParams : function (params){
+                           var requestParams = common.serializeObject($('#deathRecord_queryForm'));
+                           requestParams.pageSize = params.pageSize;
+                           requestParams.pageNumber = params.pageNumber;
+                           return requestParams;
+                       },
+                       columns : [
+                       {checkbox:true},
+                       {
+                           field : 'vaccinatedName',
+                           title : '姓名'
+                       },{
+                           field : 'gender',
+                           title : '性别',
+                           formatter :function (value, row, index) {
+                               if (value)  return dicSex[value];
+                           }
+                       }, {
+                           field : 'birthDate',
+                           title : '出生日期'
+                       }, {
+                           field : 'deathSite',
+                           title : '死亡地点'
+                       },{
+                           field : 'deathTime',
+                           title : '死亡日期'
+                       },{
+                           field : 'deathAge',
+                           title : '死亡年龄'
+                       },{
+                           field : 'deathClinic',
+                           title : '死亡诊断'
+                       },{
+                           field : 'familyPhone',
+                           title : '家庭联系电话'
+                       },{
+                           field : 'operate',
+                           title : '操作',
+                           events : operateEvents,
+                           formatter : operateFormatter
+                       } ],
+                       onDblClickRow : function (row, element){
+                    	   var title = '死亡登记信息  ' + row.vaccinatedName ;
+                           var url = '../deathRecord/editDeathRecord.do?mode=show&deathRecordId=' + row.deathRecordId;
+                           common.open(url, title, {area: ['99%', '99%']});
+                       },
+                       onLoadSuccess : function(){
+                           var height = ($('#deathRecordGrid').parents("body").height() - $('#deathRecord_queryForm').parents(".ibox").first().height() - 82);
+                           $('#deathRecordGrid').bootstrapTable('resetView', {height: height}); 
+                       }
+                   })//$.extend
+           );//bootstrapTable
+	});
+       
+    window.operateEvents = {
+ 	        "click #btn_show_death": function(e, value, row, index) {
+ 	            var title = '死亡登记信息  ' + row.vaccinatedName ;
+ 	            var url = '../deathRecord/editDeathRecord.do?mode=show&deathRecordId=' + row.deathRecordId;
+ 	            common.open(url, title, {area: ['99%', '99%']});
+ 	        },
+ 	        
+ 	        "click #btn_edit_death": function(e, value, row, index) {
+ 	           var title = '死亡登记信息  ' + row.vaccinatedName ;
+               var url = '../deathRecord/editDeathRecord.do?deathRecordId=' + row.deathRecordId;
+               common.open(url, title, {area: ['99%', '99%']});
+ 	        },
+ 	         
+ 	        "click #btn_del_death": function(e, value, row, index) { 
+ 	           common.confirm("确定要删除吗？", function (){
+ 	              $.post( '../deathRecord/delDeathRecord.jo',
+ 	                      {deathRecordId:row.deathRecordId}, 
+ 	                      function (result){
+ 	                          if (result.code == "0") {
+ 	                               common.alert("删除成功",0);
+ 	                               $('#btn_query').click();
+ 	                          } else {
+ 	                              common.alert(result.msg, 2);
+ 	                          }
+ 	                      }, 
+ 	              'json');
+ 	          });
+ 	        }
+ 	}
+    
+    function operateFormatter(value, row, index) {
+        var html = [
+                    '<a id="btn_show_death" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+                    '<a id="btn_edit_death" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+                    '<a id="btn_del_death" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+                    ];
+        return html.join('');
+    }
+</script>
+ 
+ 

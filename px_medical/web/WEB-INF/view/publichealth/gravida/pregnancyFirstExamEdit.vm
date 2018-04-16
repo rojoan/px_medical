@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>修改孕妇前期体检</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { height: 100% }
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+	<!--如果弹窗没有底部菜单栏则 -44px -->
+	<form id="pregnancyFirstExamForm"  class="form-horizontal full-height">
+		#formHiddenInput("pregnancyFirstExamId" "$!pregnancyFirstExam.pregnancyFirstExamId" " id='pregnancyFirstExamId' ")
+		#formHiddenInput("gravidaDetailId" "$!gravidaDetail.gravidaDetailId" " id='gravidaDetailId' ")
+		#formHiddenInput("personDetailId" "$!gravidaDetail.personDetailId" " id='personDetailId' ")
+		#formHiddenInput("hospitalId" "$!{pregnancyFirstExam.hospitalId}" " id='hospitalId' ")
+        #formHiddenInput("transDiagnosisOfficeId" "$!{pregnancyFirstExam.transDiagnosisOfficeId}")
+        #formHiddenInput("dutyDoctorId" "$!pregnancyFirstExam.dutyDoctorId")
+                 <div class="modal-body  full-height-scroll" style=" padding: 0 15px 40px"><!--如果弹窗没有底部菜单栏则 -44px -->
+                     <!-- 表单 开始 -->
+                     <div class="table-content">
+                     <!--基本信息-->
+                     <div class="text-box"><h5>基础信息</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none p-l-none">孕妇姓名</label>
+                         <div class="col-sm-3">
+                              #formTextInput("gravidaName" "#htmlEscape($!gravidaDetail.gravidaName)" " id='gravidaName' maxlength='10' class='form-control' readonly ")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">保健卡号</label>
+                         <div class="col-sm-3">
+                             #formTextInput("gravidaCard" "#htmlEscape($!gravidaDetail.gravidaCard)" " id='gravidaCard' maxlength='20' class='form-control' readonly ")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">孕妇年龄</label>
+                         <div class="col-xs-3">
+                             #formTextInput("gravidaAge" "$!gravidaDetail.gravidaAge" " id='gravidaAge' maxlength='3' class='form-control' readonly ")
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">孕检日期</label>
+                         <div class="col-sm-3">
+                             <div class="input-daterange">
+                        #formTextInput("curExamTime" $!date.format('yyyy-MM-dd', $!pregnancyFirstExam.curExamTime) " id='curExamTime' onclick='$layerDate' maxlength='20' class='form-control'")
+                    </div>
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">填表孕周</label>
+                         <div class="col-sm-2">
+                             #formIntZeroInput("curGestationalWeek" "$!pregnancyFirstExam.curGestationalWeek" " id='curGestationalWeek' maxlength='3' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none">周</label>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">末次月经时间</label>
+                        <div class="col-sm-3">
+                             <div class=" input-daterange date">
+                                #formTextInput("lastMenorrheTime" "$!date.format('yyyy-MM-dd', $!pregnancyFirstExam.lastMenorrheTime)" " onclick='$layerDate' id='lastMenorrheTime' class='form-control  layer-date' ")
+                            </div>
+                        </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">预产期</label>
+                        <div class="col-sm-3">
+                             <div class="input-daterange">
+                                #formTextInput("gravidaYield" "$!date.format('yyyy-MM-dd', $!pregnancyFirstExam.gravidaYield)" " onclick='$layerDate' id='gravidaYield' class='form-control  layer-date' ")
+                            </div>
+                        </div>
+                     </div>
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">早期情况</label>
+                        <div class="col-sm-11">
+                                #formCheckboxesLable("pregnancyCaseIds" $!gravidaPregnancyIdList $dicData.dicPregnancyCase "&nbsp;&nbsp;&nbsp;" " id='dicPregnancyCaseIds' " "class='checkbox-inline i-checks' style='float:left;'")
+                                #if($pregnancyFirstExam.pregnancyContent)
+                                    #formTextInput("pregnancyContent" "#htmlEscape($!pregnancyFirstExam.pregnancyContent)" " id='pregnancyContent' maxlength='20' class='form-control' style='float:left; width:30%;'")
+                                #else
+                                    #formTextInput("pregnancyContent" "#htmlEscape($!pregnancyFirstExam.pregnancyContent)" " id='pregnancyContent' maxlength='20' class='form-control' style='float:left; width:30%;' readonly")
+                                #end
+                         </div>
+                        
+                     </div>
+                     
+                     <div class="text-box"> <h5>孕产史</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">孕次</label>
+                         <div class="col-sm-2">
+                             #formIntZeroInput("gravidaCount" "$!pregnancyFirstExam.gravidaCount" " id='gravidaCount' maxlength='2' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none" >次</label>
+                         <label class="col-sm-1 control-label text-right p-r-none">阴道分娩</label>
+                         <div class="col-sm-2">
+                             #formIntZeroInput("vaginalDelivery" "$!pregnancyFirstExam.vaginalDelivery" " id='vaginalDelivery' maxlength='3' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none" >次</label>
+                         <label class="col-sm-1 control-label text-right p-r-none">人流史</label>
+                         <div class="col-sm-2">
+                             #formIntZeroInput("abortionCount" "$!pregnancyFirstExam.abortionCount" " id='abortionCount' maxlength='2' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none" >次</label>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">剖宫产</label>
+                         <div class="col-sm-2">
+                             #formIntZeroInput("cesareanDelivery" "$!pregnancyFirstExam.cesareanDelivery" " id='cesareanDelivery' maxlength='2' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none">次</label>
+                         <label class="col-sm-1 control-label text-right p-r-none">成活数</label>
+                         <div class="col-sm-2">
+                             #formIntZeroInput("liveDelivery" "$!pregnancyFirstExam.liveDelivery" " id='liveDelivery' maxlength='2' class='form-control'")
+                         </div>
+                     </div>
+                     
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">妊高症</label>
+                         <div class="col-sm-5">
+                             #formTextInput("hypSyndrome" "#htmlEscape($!pregnancyFirstExam.hypSyndrome)" " id='hypSyndrome' maxlength='20' class='form-control'")
+                         </div>
+                     </div>
+                     
+                     <div class="text-box"> <h5>妇产科手术史</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">妇科手术史</label>
+                         <div class="col-sm-3">
+                              #formRadioButtonsLabel("gynOperationFlag" "$!pregnancyFirstExam.gynOperationFlag" $dicData.dicYesNo "&nbsp;" "" "class='checkbox-inline i-checks' onlick=gynOperationFlagChangeEvent(); ")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">手术史描述</label>
+                         <div class="col-sm-5">
+                             #if($!pregnancyFirstExam.gynOperationFlag == 1)
+                                 #formTextInput("gynOperationContent" "#htmlEscape($!pregnancyFirstExam.gynOperationContent)" " id='gynOperationContent' maxlength='50' class='form-control' ")
+                             #else
+                                 #formTextInput("gynOperationContent" "#htmlEscape($!pregnancyFirstExam.gynOperationContent)" " id='gynOperationContent' maxlength='50' class='form-control' readonly ")
+                             #end
+                         
+                         </div>
+                     </div>
+                     
+                     
+                     <div class="text-box"> <h5>体检</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">身高</label>
+                         <div class="col-sm-2">
+                             #formFloInput("height" "$!pregnancyFirstExam.height" " id='height' maxlength='5' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none" >cm</label>
+                         <label class="col-sm-1 control-label text-right p-r-none">体重</label>
+                         <div class="col-sm-2">
+                             #formFloInput("weight" "$!pregnancyFirstExam.weight" " id='weight' maxlength='5' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none">kg</label>
+                         <label class="col-sm-1 control-label text-right p-r-none">体质指数(BMI)</label>
+                         <div class="col-sm-2">
+                             #formFloInput("bodyIndex" "$!pregnancyFirstExam.bodyIndex" " id='bodyIndex' maxlength='6' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none">Kg/m<sup>2</sup></label>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">血压左</label>
+                         <div class="col-sm-2">
+                             #formIntInput("lbloodPressure" "$!pregnancyFirstExam.lbloodPressure" " id='lbloodPressure' maxlength='3' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none">mmHg</label>
+                         <label class="col-sm-1 control-label text-right p-r-none">血压右</label>
+                         <div class="col-sm-2">
+                             #formIntInput("rbloodPressure" "$!pregnancyFirstExam.rbloodPressure" " id='rbloodPressure' maxlength='3' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-left p-r-none">mmHg</label>
+                     </div>
+                   <div class="row" id="gravidaExamItemTBody">  
+                     
+                     <!--  孕检项目信息 -->
+                      <div class="text-box">
+                         <h5>听诊信息</h5>
+                         <div data-toggle="buttons-checkbox" class="btn-group pull-right">
+                         </div>
+                      </div>
+                      
+                     <!--  孕检项目 - 听诊信息 循环-->
+                     #foreach($option in $dicData.dicAuscultationExamItemType.keySet())
+                      #set($item = $gravidaExamItemMap.get($option))
+                           <div class="trRow form-group col-md-6 ">
+                                    <label class="col-md-2 control-label text-right p-r-none">${dicData.dicAuscultationExamItemType.get($option)}</label>   
+                                    <div class="col-md-4">
+                                        #formHiddenInput("gravidaExamItemId" "$!item.gravidaExamItemId" "")<!-- 对照表主键id -->
+                                        #formHiddenInput("examItemType" "$option" "")<!-- 类型值 -->
+                                        #formSingleSelectFirstNone("examFlag" "$!item.examFlag" $!{dicData.dicExceptional} "class='form-control'" "")
+                                     </div> 
+                                    <div class="col-md-6">
+                                     #formTextInput("examContent" "#htmlEscape($!item.examContent)" " maxlength='50' class='form-control'")
+                                 </div>                
+                           </div>
+                      #set($item = '')<!-- 记得清空 -->
+                     #end
+                <div class="row"></div><!-- 分割线的显示 -->
+                   <div class="text-box">
+                        <h5>妇科检查</h5>
+                        <div data-toggle="buttons-checkbox" class="btn-group pull-right">
+                        </div>
+                   </div>
+                      
+                    <!--  孕检项目- 妇科检查  循环-->
+                      #foreach($option in $dicData.dicWomenExamItemType.keySet())
+                        #set($item = $gravidaExamItemMap.get($option))
+                            <div class="trRow form-group col-md-6 ">
+                                    <label class="col-md-2 control-label text-right p-r-none">${dicData.dicWomenExamItemType.get($option)}</label>   
+                                    <div class="col-md-4">
+                                        #formHiddenInput("gravidaExamItemId" "$!item.gravidaExamItemId" "")<!-- 对照表主键id -->
+                                        #formHiddenInput("examItemType" "$option" "")<!-- 类型值 -->
+                                        #formSingleSelectFirstNone("examFlag" "$!item.examFlag" $!{dicData.dicExceptional} "class='form-control'" "")
+                                     </div> 
+                                    <div class="col-md-6">
+                                     #formTextInput("examContent" "#htmlEscape($!item.examContent)" " maxlength='50' class='form-control'")
+                                 </div>                
+                            </div>
+                       #set($item = '')<!-- 记得清空 -->
+                     #end
+                     
+                     </div><!-- 分割线的显示 -->
+                     
+                      <!-- 化验信息 -->
+                      <div class="text-box"><h5>化验信息</h5></div>
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">血常规 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("bloodRoutineExam" "#htmlEscape($!pregnancyFirstExam.bloodRoutineExam)" " id='bloodRoutineExam' maxlength='10' class='form-control'")
+                         </div>
+                       </div>
+                      
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">MCV</label>
+                         <div class="col-sm-3">
+                             #formIntInput("mcvExam" "$!pregnancyFirstExam.mcvExam" " id='mcvExam' maxlength='3' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">MCH</label>
+                         <div class="col-sm-3">
+                             #formFloInput("mchExam" "$!pregnancyFirstExam.mchExam" " id='mchExam' maxlength='3' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">血型 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("bloodType" "#htmlEscape($!pregnancyFirstExam.bloodType)" " id='bloodType' maxlength='5' class='form-control'")
+                         </div>
+                     </div>
+                     
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">血小板</label>
+                         <div class="col-sm-3">
+                             #formTextInput("bloodPlatelet" "#htmlEscape($!pregnancyFirstExam.bloodPlatelet)" " id='bloodPlatelet' maxlength='10' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">肝功能</label>
+                         <div class="col-sm-3">
+                             #formTextInput("liverFunction" "#htmlEscape($!pregnancyFirstExam.liverFunction)" " id='liverFunction' maxlength='5' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">HBsAg </label>
+                         <div class="col-sm-3">
+                             #formTextInput("hbsag" "#htmlEscape($!pregnancyFirstExam.hbsag)" " id='hbsag' maxlength='5' class='form-control'")
+                         </div>
+                     </div>
+                     
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">心电图</label>
+                         <div class="col-sm-3">
+                             #formTextInput("ecgPicture" "#htmlEscape($!pregnancyFirstExam.ecgPicture)" " id='ecgPicture' maxlength='10' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">尿常规</label>
+                         <div class="col-sm-3">
+                             #formTextInput("urinalysis" "#htmlEscape($!pregnancyFirstExam.urinalysis)" " id='urinalysis' maxlength='5' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">白带常规 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("leucorrhea" "#htmlEscape($!pregnancyFirstExam.leucorrhea)" " id='leucorrhea' maxlength='5' class='form-control'")
+                         </div>
+                     </div>
+                     
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">HIV</label>
+                         <div class="col-sm-3">
+                             #formTextInput("hiv" "#htmlEscape($!pregnancyFirstExam.hiv)" " id='hiv' maxlength='5' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">梅毒</label>
+                         <div class="col-sm-3">
+                             #formTextInput("syphilis" "#htmlEscape($!pregnancyFirstExam.syphilis)" " id='syphilis' maxlength='5' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">丙肝 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("hcv" "#htmlEscape($!pregnancyFirstExam.hcv)" " id='hcv' maxlength='5' class='form-control'")
+                         </div>
+                     </div>
+                     
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">超声波诊断</label>
+                         <div class="col-sm-6">
+                             #formTextInput("pacsDiagnose" "#htmlEscape($!pregnancyFirstExam.pacsDiagnose)" " id='pacsDiagnose' maxlength='50' class='form-control'")
+                         </div>
+                     </div>
+                     
+                      <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">诊断</label>
+                         <div class="col-sm-6">
+                             #formTextInput("diagnose" "#htmlEscape($!pregnancyFirstExam.diagnose)" " id='diagnose' maxlength='50' class='form-control'")
+                         </div>
+                     </div>
+                     <div class="text-box"><h5>丈夫健康状况信息</h5></div>
+                       <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">不良 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("husbandLiveWay" "#htmlEscape($!pregnancyFirstExam.husbandLiveWay)" " id='husbandLiveWay' maxlength='10' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">遗传病</label>
+                         <div class="col-sm-3">
+                             #formTextInput("husbandGeneticDisease" "#htmlEscape($!pregnancyFirstExam.husbandGeneticDisease)" " id='husbandGeneticDisease' maxlength='10' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">丈夫血型 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("husbandBloodType" "#htmlEscape($!pregnancyFirstExam.husbandBloodType)" " id='husbandBloodType' maxlength='5' class='form-control'")
+                         </div>
+                     </div>
+                     
+                      <!-- 孕妇辅助检查项目表 -->
+                      <div class="text-box">
+                         <h5>辅助检查项目</h5>
+                      </div>
+                      
+                      <div class="form-group" id="gravidaAuxExamTBody">
+                      #foreach($option in $dicData.dicPregnancyExamItemType.keySet())
+                      
+                          <div class="form-group">
+                                <span style="font-weight: bold;padding-left: 20px;">  
+                                   ${dicData.dicPregnancyExamItemType.get($option)}
+                                </span>
+	                      </div>
+                               <!-- 检查项目循环 -->
+                               #foreach($item in $pegnancyExamItemTypeMap.get($option))
+                                   #set($gravidaAuxExam = $!gravidaAuxExamMap.get($!item.pregnancyExamItemId))
+                                   
+                                   <div class="trRow col-md-4 form-group">
+                                          #formHiddenInput("pregnancyExamItemId" "$!item.pregnancyExamItemId")
+                                          #formHiddenInput("gravidaAuxExamId" "$!gravidaAuxExam.gravidaAuxExamId")
+                                          #formHiddenInput("examItemUnit" "$!item.examItemUnit")
+				                        <label class="col-sm-3 control-label text-right p-r-none">$!item.examItemName</label>
+				                         <div class="col-sm-6">
+				                            #formTextInput("examItemContem" "#htmlEscape($!gravidaAuxExam.examItemContem)" " id='examItemContem' maxlength='20' class='form-control'")
+				                         </div>
+				                         <label class="col-sm-3 control-label text-left p-r-none" > $!item.examItemUnit</label>
+				                    </div>
+				                    
+                                   #set($gravidaAuxExam = '')
+                                #end<!-- 检查项目循环 -->
+                         <div class="row"></div>
+                         
+                       #end<!-- 分类循环 -->
+                      </div>
+                     
+                     
+                     <div class="text-box"><h5>保健指导</h5></div>
+                       <div class="form-group">                         
+                         <div class="col-sm-12">
+                         #foreach($option in $dicData.dicGravidaHealthGuideType.keySet())
+                             <label  class="checkbox-inline i-checks" style="float:left">
+                             <input type="checkbox" name="healthGuideTypes" value="${option}" id="healthGuideTypes_${option}"
+                             #foreach($item in  $!gravidaHealthGuideList)
+                                 #if($item.healthGuideType == $option)
+                                     checked="checked"
+                                     #if($dicData.dicGravidaHealthGuideType.get($option) == '其他')
+                                    #set($OtherContent = $item )
+                               #end
+                                 #end
+                             #end
+                               />${dicData.dicGravidaHealthGuideType.get($option)}  &nbsp;
+                             </label>
+                         #end
+                             #if($OtherContent)
+                                 #formTextInput("healthGuideOtherContent" "#htmlEscape($!OtherContent.healthGuideOtherContent)" 
+                                 " id='healthGuideOtherContent' maxlength='100' class='form-control' style='width: 30%; float: left;' ")
+                             #else
+                                 #formTextInput("healthGuideOtherContent" "#htmlEscape($!OtherContent.healthGuideOtherContent)" 
+                                 " id='healthGuideOtherContent' maxlength='100' class='form-control' style='width: 30%;  float: left;' readonly ")
+                     #end
+                         </div>                 
+                        </div>
+                   
+                     
+                     <div class="text-box"><h5>登记信息</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">检查医院名称</label>
+                         <div class="col-sm-3">
+                             #formTextInput("hospitalName" "#htmlEscape($!pregnancyFirstExam.hospitalName)" " id='hospitalName' maxlength='100' class='form-control' readonly ")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">科室 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("transDiagnosisOfficeName" "#htmlEscape($!pregnancyFirstExam.transDiagnosisOfficeName)" " id='transDiagnosisOfficeName' maxlength='10' class='form-control' readonly ")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">责任医生 </label>
+                         <div class="col-sm-3">
+                             #formTextInput("dutyDoctorName" "#htmlEscape($!pregnancyFirstExam.dutyDoctorName)" " id='dutyDoctorName' maxlength='10' class='form-control' readonly ")
+                         </div>
+                        
+                     </div>
+                     
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">备注</label>
+                         <div class="col-sm-7">
+                             #formTextInput("remark" "#htmlEscape($!pregnancyFirstExam.remark)" " id='remark' maxlength='100' class='form-control'")
+                         </div>
+                     </div>
+                     
+                      </div>
+                 </div>
+             </form>
+        
+	<div class="tool-table-fixed" style="width: 100%">
+		#if('show' != $!mode)
+		    <button onclick="savePregnancyFirstExam();" type="button" class="btn btn-success">
+                      <i class="fa fa-save"></i> 保 存
+                  </button>
+	    #end
+	</div>
+     
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm") 
+	#parse("./common/common.js.vm")
+    #parse("./publichealth/gravida/pregnancyFirstExamEdit.js.vm")
+</body>
+</html>

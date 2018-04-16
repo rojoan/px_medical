@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>糖尿病患者登记</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+<style>
+html, body {
+	height: 100%
+}
+</style>
+</head>
+<body class="gray-bg top-navigation">
+	<div id="page-wrapper" class="gray-bg full-height">
+		<div class="wrapper wrapper-content">
+			<div class="row">
+				<div class="ibox float-e-margins full-height">
+					<div class="ibox-content">
+						<form id="queryForm" class="form-horizontal">
+							<div class="row">
+								<div class="col-sm-2 m-b-sm ">
+									<label class="control-label p-r-n col-sm-4">患者姓名</label>
+									<div class="col-sm-8">
+										<input type="text" name="patientName" id="patientName" class="form-control">
+									</div>
+								</div>
+								<div class="col-sm-2 m-b-sm ">
+									<label class="control-label p-r-n col-sm-4">性 别</label>
+									<div class="col-sm-8">
+										#formSingleSelectFirstNone("gender" "" $dicData.dicSex "id='gender' class='form-control' data-placeholder='&nbsp;'" "")
+									</div>
+								</div>
+								<div class="col-sm-3 m-b-sm ">
+									<label class="control-label p-r-n col-sm-4">身份证号</label>
+									<div class="col-sm-8">
+										<input type="text" name="idCard" id="idCard" class="form-control">
+									</div>
+								</div>
+								<div class="col-sm-4 m-b-sm ">
+									<label class="control-label col-sm-3">患病日期</label>
+									<div class="col-sm-9 input-daterange input-group">
+                                        <input class="input-sm form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="beginAttackDate" name="beginAttackDate" placeholder="开始日期" type="text" value="" >
+                                        <span class="input-group-addon">到</span>
+                                        <input class="input-sm form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="endAttackDate" name="endAttackDate" placeholder="截止日期" type="text" value="" >
+                                    </div>
+								</div>
+								<div class="col-sm-1 m-b-sm ">
+									<button type="button" id="btn_query" class="btn btn-sm btn-primary">
+										<i class="fa fa-search"></i> <span>查 询</span>
+									</button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-2 m-b-sm ">
+									<label class="control-label p-r-n col-sm-4">确诊医院</label>
+									<div class="col-sm-8">
+										<input type="text" name="diagnosisHospital" id="diagnosisHospital" class="form-control">
+									</div>
+								</div>
+								<div class="col-sm-2 m-b-sm ">
+									<label class="control-label p-r-n col-sm-4">医院类型</label>
+									<div class="col-sm-8">
+										#formSingleSelectFirstNone("diagnosisHospitalType" "" $dicData.dicDiagnosisHospitalType "id='diagnosisHospitalType' class='form-control' data-placeholder='&nbsp;'" "")
+									</div>
+								</div>
+								<div class="col-sm-3 m-b-sm ">
+									<label class="control-label p-r-n col-sm-4">患病级别</label>
+									<div class="col-sm-8">
+										#formSingleSelectFirstNone("chronicLevel" "" $dicData.dicHypLevel "id='chronicLevel' class='form-control' data-placeholder='&nbsp;'" "")
+									</div>
+								</div>
+								<div class="col-sm-4 m-b-sm ">
+									<label class="control-label col-sm-3">确诊日期</label>
+									<div class="col-sm-9 input-daterange input-group">
+                                        <input class="input-sm form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="beginConfirmDate" name="beginConfirmDate" placeholder="开始日期" type="text" value="" >
+                                        <span class="input-group-addon">到</span>
+                                        <input class="input-sm form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="endConfirmDate" name="endConfirmDate" placeholder="截止日期" type="text" value="" >
+                                    </div>
+								</div>
+								<div class="col-sm-1 m-b-sm ">
+									<button type="button" id="btn_clean" class="btn btn-sm btn-info">
+										<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="ibox float-e-margins full-height m-b-none">
+					<div class="ibox-content p-b-n">
+						<div class="table-responsive">
+							<div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+								<button id="btn_add_register" type="button" class="btn btn-sm btn-primary">
+									<i class="glyphicon glyphicon-plus" aria-hidden="true"></i> <span>新 增</span>
+								</button>
+								&nbsp;
+								<button id="btn_delete" type="button" class="btn btn-sm btn-default">
+									<i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+									<span>删 除</span>
+								</button>
+							</div>
+							<div class="example">
+								<table id="personHypList" class="table table-bordered" data-mobile-responsive="true"></table>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm") 
+	#parse("./common/common.js.vm")
+	<!-- 页面js -->
+	#parse("./publichealth/personDMRecordList.js.vm")
+</body>
+</html>

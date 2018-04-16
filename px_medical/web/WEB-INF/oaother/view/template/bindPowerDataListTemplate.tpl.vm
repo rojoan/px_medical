@@ -1,0 +1,53 @@
+#if("${_layoutdatalist.displayType}" != "have")
+<div class="table_page_clear">
+ <table cellpadding="0" cellspacing="0" class="form_tab">
+<form name="dataListForm" method="post" action="">
+ ##表头
+  <tr>
+   #foreach($dc in ${_layoutdatalist.dataList})
+    <td class="form_tab_th" align="center" #if(${dc.width})width="$!{dc.width}"#end><B>${dc.title}</B></td>
+   #end
+  </tr>
+ ##数据列表
+  #foreach($data in ${page.data})
+    #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+    #set($css = "#tableCellCss($velocityCount)") ##注意这里  选择单双行颜色的方法，$velocityCount是循环的行号变量，它从1开始
+   <tr onMouseOver="this.className='table_page_m_move'" onMouseOut="this.className='table_page_row_focus'">
+     #foreach($dc in ${_layoutdatalist.dataList})
+       #if(${dc.field})
+      <td align=#if(${dc.align})"$!{dc.align}"#{else}left#end >
+            #if(${dc.tdonclick})
+                <a class="table_page_row_aline" href="#" onclick="#buttonUrl($dc $dataBeanMap)">#viewField($dc $dataBeanMap)</a>
+            #else
+             #viewField($dc $dataBeanMap)
+            #end
+            #if(${dc.showDing})
+                #if ("${dataBeanMap.get(${dc.showDing.field})}" == "${dc.showDing.showvalue}")
+                    <img src="../images/ding.gif" width="15" height="13" border="0">
+                #end
+            #end
+            #if(${dc.shownew})
+                #if ("#displayOnlyDate(${dataBeanMap.get(${dc.shownew.field})})" == "#getCurrentDate()")
+                    <img src="../images/icon_new.gif" width="24" height="10" border="0">
+                #end
+            #end
+      </td>
+       #elseif('button' == ${dc.type})
+        <td align=#if(${dc.align})"$!{dc.align}"#{else}center#end>
+         ##按钮列表
+          #foreach($bt in ${_layoutOpButtonList.buttonList})
+             #buttonField($bt "button_2" $dataBeanMap)
+          #end
+        </td>
+       #end
+     #end
+   </tr>
+  #end
+</form>
+ </table>
+#end
+
+#if(${_layout.operateRule})
+    #parse("/template/OperateRuleTemplate.tpl.vm")
+#end
+</div>

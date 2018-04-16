@@ -1,0 +1,28 @@
+<div class="clear_Up">
+<table cellpadding="0" cellspacing="0" class="table_form">
+<form name="$!{_layout.editForm.name}" method="post" action="#getRequestUri()?action=$!{_layout.editForm.action}" onsubmit="saveData(this)" #if(${_layout.editForm.enctype})enctype="multipart/form-data"#end>
+    <input type="hidden" name="submitFlag" value="0" />
+#set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+#foreach($cell in $_layout.editFieldList)
+#if("hidden" != ${cell.type})
+              <tr>
+                <td width="18%" class="table_form_color_td">#if(${cell.titlecondition})#conditionView($!{cell} ${editBeanMap}) #{else}#inputTitle($!{cell.title} $!{cell.required})#end</td>
+                <td width="82%" >
+#if(${cell.view})
+#viewInputField(${cell} $editBeanMap)
+#else
+#inputField(${cell} $editBeanMap)##if(${cell.required})#requiredTag()#end
+#end
+                 </td>
+              </tr>
+#else
+#inputField(${cell} $editBeanMap)
+#end
+
+#end
+    #if($_layout.attach)
+        #parse("/template/attach.tpl.vm")
+    #end
+</form>
+</table>
+</div>

@@ -1,0 +1,115 @@
+<script >
+    var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+    
+    //添加患者按钮
+    function add(){
+        var title = '新增患者信息';
+        var url = '../patient/edit.do';
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+    
+  //验证单选
+    function singleCheck(rows){
+        if (rows.length != 1 || !rows[0].patientHospitalId ) {
+            common.alert("请选择将要编辑的行且仅能选择一行",0);
+            return false;
+        }
+        return true;
+    }
+  
+    // 患者查询条件清空
+    function clearQuery(){
+        var $form = $('#patient_queryForm');
+        $form.find('[name=patientName]').val('');
+        $form.find('[name=patientCardNo]').val('');
+        $form.find('[name=patientIdCard]').val('');
+        $form.find('[name=insuranceNo]').val('');
+    }
+    
+    // 患者查询
+    function query(){
+        var queryParams = common.serializeObject($('#patient_queryForm'));
+        var options = {url: '../patient/listData.do', silent: false, query: queryParams};
+        $('#patientGrid').bootstrapTable('refresh', options); 
+    }
+    
+    $(document).ready(
+        function() {
+            //查询患者列表
+            $('#patientGrid').bootstrapTable(
+                $.extend(baseTable, {
+                    url : "../patient/listData.do",
+                    queryParams : function (params){
+                        var requestParams = common.serializeObject($('#patient_queryForm'));
+                        requestParams.pageSize = params.pageSize;
+                        requestParams.pageNumber = params.pageNumber;
+                        return requestParams;
+                    },
+                    columns : [
+                    {checkbox : true},         
+                    {
+                        field : 'patientName',
+                        title : '患者姓名'
+                    },{
+                        field : 'patientSex',
+                        title : '性别',
+                        formatter :function (value, row, index) {
+                            return dicSex[value];
+                        }
+                    },{
+                        field : 'patientBirth',
+                        title : '出生日期'
+                    },{
+                        field : 'patientCardNo',
+                        title : '就诊卡号'
+                    },{
+                        field : 'patientIdCard',
+                        title : '证件号码'
+                    },{
+                        field : 'insuranceNo',
+                        title : '医/农保证号'
+                    },{
+                        field : 'patientHospitalNo',
+                        title : '患者住院号码'
+                    },{
+                        field : 'patientPhone',
+                        title : '患者电话'
+                    },{
+                        field : 'patientNowAddr',
+                        title : '现居地址'
+                    },{
+                        field : 'validFlag',
+                        title : '状态',
+                        formatter :function (value) {
+                            if ('0' == value) {
+                                return '<span style="color: red">无效</span>';
+                            }else{
+                                return '有效';
+                            }
+                        }
+                    }],
+                    onCheck: function(row){
+                        if (parent.selectPatientCallBack && typeof(parent.selectPatientCallBack) == "function") {
+                            parent.selectPatientCallBack(row);
+                            
+                            // 关闭窗口
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index); 
+                        }
+                    },
+                    onLoadSuccess : function(){
+                        var height = ($('#patientGrid').parents("body").height() - $('#patient_queryForm').parents("#pateintQury").first().height() - 130);
+                        $('#patientGrid').bootstrapTable('resetView', {height: height}); 
+                    }
+                }
+                )//extends
+              );//bootstapTable
+        }//function()
+    );//ready()
+ 
+    
+    $(window).resize(function() { 
+        var height = ($('#patientGrid').parents("body").height() - $('#patient_queryForm').parents("#pateintQury").first().height() - 130);
+        $('#patientGrid').bootstrapTable('resetView', {height: height}); 
+    })
+</script>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专家库管理</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+#parse("./common/modalTemplate.vm")
+<style>
+html, body { height: 100% }
+</style>
+</head>
+
+<body class="gray-bg top-navigation">	
+	<div class="wrapper wrapper-content">			
+		<div class="ibox float-e-margins full-height">
+			<div class="ibox-content">
+				<div class="row">
+					<form id="professor_queryForm" method="get" class="form-horizontal">
+						<div class="col-sm-3 m-b-sm ">
+							<label class="control-label col-sm-4">专家姓名</label>
+							<div class="input-daterange input-group date col-sm-8 ">
+								<input type="text" id="q_name" name="name" class="form-control "  />
+							</div>
+						</div>
+						<div class="col-sm-2 m-b-sm ">
+							<label class="control-label p-r-n col-sm-3">性别</label>
+							<div class="col-sm-8">
+								#formSingleSelectDictionary("gender" "" $dicData.dicSex "id='q_gender' data-placeholder='选择性别'  class='form-control' style='min-width: 152px; width: 100%' tabindex='1'" "选择性别" "")
+							</div>
+						</div>
+						<div class="col-sm-2 m-b-sm ">
+							<label class="control-label p-r-n col-sm-4">队内职务</label>
+							<div class="col-sm-8">
+								<input type="text" id="q_duty" name="duty" class="form-control "  />
+							</div>
+						</div>
+						<div class="col-sm-2 m-b-sm ">
+							<label class="control-label p-r-n col-sm-4">是否启用</label>
+							<div class="col-sm-8">
+								#formSingleSelectDictionary("validFlag" "" $dicData.dicYesNo "id='q_validFlag' data-placeholder='是否启用'  class='form-control' style='min-width: 152px; width: 100%' tabindex='1'" "是否启用" "")
+							</div>
+						</div>
+						<div class="col-sm-2 text-right">
+							<button type="button" onclick="query();" class="btn btn-sm btn-primary">
+								<i class="fa fa-search"></i> <span>查 询</span>
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" onclick="clearQuery();" class="btn btn-sm btn-info">
+								<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="ibox float-e-margins full-height m-b-none">
+			<div class="ibox-content p-b-n">
+				<div class="table-responsive">
+
+					<!-- 工具栏 -->
+					<div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+						<button onclick="add();" class="btn btn-sm btn-primary">
+							<i class="glyphicon glyphicon-plus" aria-hidden="true"></i> <span>新 增</span>
+						</button>
+						<button onclick="edit();" class="btn btn-sm btn-success">
+							<i class="fa fa-paste" aria-hidden="true"></i> <span>修改</span>
+						</button>
+						<button onclick="del();" class="btn btn-sm btn-success">
+							<i class="glyphicon glyphicon-trash" aria-hidden="true"></i> <span>删除</span>
+						</button>
+					</div>
+
+					<div class="example">
+						<table id="emProfessorGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	#modalElement("modal")
+
+	#parse("./common/common.js.vm")
+	#parse("./emergencyevent/emProfessorList.js.vm")
+
+</body>
+</html>

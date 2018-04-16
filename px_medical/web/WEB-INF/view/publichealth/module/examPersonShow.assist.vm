@@ -1,0 +1,311 @@
+<form id="formOrganBody" class="form-horizontal">
+	<div class="row m-l-xs m-r-xs">
+	    <div class="text-box"><h5>辅助检查</h5></div>
+	    <div class="form-group">
+	        <label class="col-sm-1 control-label text-right p-r-none">空腹血糖</label>
+	        <div class="col-sm-1">
+	        	#formTextInput("examOrganBody.fbgMmol" "$!organBody.fbgMmol" " class='form-control' readonly")
+	        </div>
+	        <div class="col-sm-1 control-label" style="text-align: left">mmol/l</div>
+            <label class="col-sm-1 control-label text-right p-r-none">或</label>
+            <div class="col-sm-1">
+            	#formTextInput("examOrganBody.fbgMg" "$!organBody.fbgMg" " class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">mg/dl</div>
+            <label class="col-sm-1 control-label text-right p-r-none">心电图</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.ecg" "$!organBody.ecg" $!{dicData.dicNormalStatus} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-4">
+            	#formTextInput("examOrganBody.ecgOtherContent" "#htmlEscape($!organBody.ecgOtherContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">尿微量白蛋白</label>
+            <div class="col-sm-1">
+            	#formTextInput("examOrganBody.microalbuminuria" "$!organBody.microalbuminuria" " class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">mg/dl</div>
+            <label class="col-sm-1 control-label text-right p-r-none">糖化血红蛋白</label>
+            <div class="col-sm-1">
+            	#formTextInput("examOrganBody.glyHemoglobin" "$!organBody.glyHemoglobin" " class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">%</div>
+            <label class="col-sm-1 control-label text-right p-r-none">大便潜血</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.fobt" "$!organBody.fobt" $!{dicData.dicBodyFobt} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">乙肝表面抗原</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examOrganBody.bsurfaceAntigen" "$!organBody.bsurfaceAntigen" $!{dicData.dicBodyFobt} "class='form-control' disabled='disabled'" "")
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">胸部X线片</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.chestx" "$!organBody.chestx" $!{dicData.dicNormalStatus} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.chestxOtherContent" "#htmlEscape($!organBody.chestxOtherContent)" " class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">胸部B超片</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.abdominalBtype" "$!organBody.abdominalBtype" $!{dicData.dicNormalStatus} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.abdominalBtypeContent" "#htmlEscape($!organBody.abdominalBtypeContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">宫颈涂片</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.papSmear" "$!organBody.papSmear" $!{dicData.dicNormalStatus} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.papSmearContent" "#htmlEscape($!organBody.papSmearContent)" " class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">B超</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("examOrganBody.btype" "$!organBody.btype" $!{dicData.dicNormalStatus} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-2">
+            	#formTextInput("examOrganBody.btypeOtherContent" "#htmlEscape($!organBody.btypeOtherContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">辅助检查其他</label>
+            <div class="col-sm-8">
+            	#formTextInput("examOrganBody.aexamOther" "#htmlEscape($!organBody.aexamOther)" " class='form-control' readonly")
+            </div>
+        </div>
+
+        <div class="row m-l-xs m-r-xs white-bg" style="border-radius: 7px; padding: 9px 9px 0 9px; border: #ededed 1px solid">
+         <div class="col-sm-1" style="width: 30px; background: #F7F9FA; padding: 9px; font-weight: bold">
+         	血<br>常<br>规
+         </div>
+         <div class="col-sm-11">
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">血红蛋白</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.hemoglobinNum" "#htmlEscape($!organBody.hemoglobinNum)" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">g/l</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">白细胞</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.hemamebaNum" "#htmlEscape($!organBody.hemamebaNum)" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">g/l</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">血小板</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.plateletNum" "#htmlEscape($!organBody.plateletNum)" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">X10^9/l</div>
+             </div>
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">其他</label>
+                 <div class="col-sm-8">
+                 	#formTextInput("examOrganBody.bloodRoutine" "#htmlEscape($!organBody.bloodRoutine)" "maxlength='25' class='form-control' readonly")
+                 </div>
+             </div>
+         </div>
+     </div>
+     <div class="row m-l-xs m-r-xs white-bg" style="border-radius: 7px; padding: 9px 9px 0 9px; border: #ededed 1px solid">
+         <div class="col-sm-1" style="width: 30px; background: #F7F9FA; padding: 9px; font-weight: bold">
+         	尿<br>常<br>规
+         </div>
+         <div class="col-sm-11">
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">尿蛋白</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.unineProtein" "#htmlEscape($!organBody.unineProtein)" " class='form-control' readonly")
+                 </div>
+                 <label class="col-sm-1 control-label text-right p-r-n">尿糖</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.urineSugar" "#htmlEscape($!organBody.urineSugar)" " class='form-control' readonly")
+                 </div>
+                 <label class="col-sm-1 control-label text-right p-r-n">尿酮体</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.urineAcetone" "#htmlEscape($!organBody.urineAcetone)" " class='form-control' readonly")
+                 </div>
+                 <label class="col-sm-1 control-label text-right p-r-n">尿潜血</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.urineOccultBlood" "#htmlEscape($!organBody.urineOccultBlood)" " class='form-control' readonly")
+                 </div>
+             </div>
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">其他</label>
+                 <div class="col-sm-8">
+                 	#formTextInput("examOrganBody.unineOtherContent" "#htmlEscape($!organBody.unineOtherContent)" "maxlength='15' class='form-control' readonly")
+                 </div>
+             </div>
+         </div>
+     </div>
+
+        <div class="row m-l-xs m-r-xs white-bg" style="border-radius: 7px; padding: 9px 9px 0 9px; border: #ededed 1px solid">
+         <div class="col-sm-1" style="width: 30px; background: #F7F9FA; padding: 9px; font-weight: bold">
+         	肝<br>功<br>能
+         </div>
+         <div class="col-sm-11">
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">血清谷丙转氨酸</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.sgpt" "$!organBody.sgpt" "maxlength='3' class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">U/L</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">血清谷草转氨酸</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.sgot" "$!organBody.sgot" "maxlength='3' class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">U/L</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">白蛋白</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.albumin" "$!organBody.albumin" "maxlength='2' class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">g/l</div>
+             </div>
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">总胆红素</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.tbil" "$!organBody.tbil" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">μmol/L</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">结合胆红素</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.dbil" "$!organBody.dbil" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">μmol/L</div>
+             </div>
+         </div>
+     </div>
+     
+     <div class="row m-l-xs m-r-xs white-bg" style="border-radius: 7px; padding: 9px 9px 0 9px; border: #ededed 1px solid">
+         <div class="col-sm-1" style="width: 30px; background: #F7F9FA; padding: 9px; font-weight: bold">
+         	肾<br>功<br>能
+         </div>
+         <div class="col-sm-11">
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">血清肌酐</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.crea" "$!organBody.crea" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">U/L</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">血尿素</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.bun" "$!organBody.bun" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">mmol/L</div>
+             </div>
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">血钾浓度</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.pconcentrat" "$!organBody.pconcentrat" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">mmol/L</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">血钠浓度</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.bsconcentrat" "$!organBody.bsconcentrat" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">mmol/L</div>
+             </div>
+         </div>
+     </div>
+     
+     <div class="row m-l-xs m-r-xs white-bg" style="border-radius: 7px; padding: 9px 9px 0 9px; border: #ededed 1px solid">
+         <div class="col-sm-1" style="width: 30px; background: #F7F9FA; padding: 9px; font-weight: bold">
+         	血<br>脂
+         </div>
+         <div class="col-sm-11">
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">总胆固醇</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.tc" "$!organBody.tc" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">mmol/L</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">甘油三酯</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.tg" "$!organBody.tg" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">mmol/L</div>
+             </div>
+             <div class="form-group">
+                 <label class="col-sm-1 control-label text-right p-r-n">低密度脂蛋白</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.ldlCholesterol" "$!organBody.ldlCholesterol" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">mmol/L</div>
+                 <label class="col-sm-1 control-label text-right p-r-n">高密度脂蛋白</label>
+                 <div class="col-sm-2">
+                 	#formTextInput("examOrganBody.hdlCholesterol" "$!organBody.hdlCholesterol" " class='form-control' readonly")
+                 </div>
+                 <div class="col-sm-1 control-label" style="text-align: left">mmol/L</div>
+             </div>
+         </div>
+     </div>
+        
+    </div>
+    <div class="row m-l-xs m-r-xs">
+        <div class="text-box"><h5>现存主要健康问题</h5></div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">脑血管疾病</label>
+            <div class="col-sm-6" style="width: auto; padding-right: 0px;">
+            	#formCheckboxesLable("cerebrovascularDiseaseIds" $!diseaseIds $!dicData.dicCerebrovascularDisease "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+            <div class="col-sm-4" style="padding-left: 0px;">
+            	#formTextInput("healthProblem.cvDiseaseContent" "#htmlEscape($!healthProblem.cvDiseaseContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">肾脏疾病</label>
+            <div class="col-sm-6" style="width: auto; padding-right: 0px;">
+            	#formCheckboxesLable("kidneyAndLiveDiseaseIds" $!diseaseIds $!dicData.dicKidneyAndLiveDisease "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+            <div class="col-sm-4" style="padding-left: 0px; ">
+            	#formTextInput("healthProblem.klDiseaseContent" "#htmlEscape($!healthProblem.klDiseaseContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">心脏疾病</label>
+            <div class="col-sm-7" style="width: auto; padding-right: 0px;">
+            	#formCheckboxesLable("heartDiseaseIds" $!diseaseIds $!dicData.dicHeartDisease "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+            <div class="col-sm-4" style="padding-left: 0px;">
+            	#formTextInput("healthProblem.heartDiseaseContent" "#htmlEscape($!healthProblem.heartDiseaseContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">血管疾病</label>
+            <div class="col-sm-5" style="width: auto; padding-right: 0px;">
+            	#formCheckboxesLable("bloodDiseaseIds" $!diseaseIds $!dicData.dicBloodDisease "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+            <div class="col-sm-4" style="padding-left: 0px;">
+            	#formTextInput("healthProblem.vascularDiseaseContent" "#htmlEscape($!healthProblem.vascularDiseaseContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">眼部疾病</label>
+            <div class="col-sm-6" style="width: auto; padding-right: 0px;">
+            	#formCheckboxesLable("ocularRegionDiseaseIds" $!diseaseIds $!dicData.dicOcularRegionDisease "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+            <div class="col-sm-4" style="padding-left: 0px;">
+            	#formTextInput("healthProblem.eyeDiseaseContent" "#htmlEscape($!healthProblem.eyeDiseaseContent)" " class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">神经系统疾病</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("healthProblem.nerveDiseaseFlag" "$!healthProblem.nerveDiseaseFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-4">
+            	#formTextInput("healthProblem.nerveDiseaseContent" "#htmlEscape($!healthProblem.nerveDiseaseContent)" " class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">其他系统疾病</label>
+            <div class="col-sm-1">
+            	#formSingleSelectFirstNone("healthProblem.otherNerveFlag" "$!healthProblem.otherNerveFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-4">
+            	#formTextInput("healthProblem.otherNerveContent" "#htmlEscape($!healthProblem.otherNerveContent)" " class='form-control' readonly")
+            </div>
+        </div>
+    </div>
+</form>

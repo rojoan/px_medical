@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lis申请远程会议</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="../resource/css/plugins/datatimepicker/datetimepicker.css"
+	rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/style/css/page.css" rel="stylesheet">
+
+<style>
+.lightBoxGallery img {
+	margin: 5px;
+	width: 90px;
+}
+
+.hzzb-tool {
+	height: 48px;
+	background: #ccc;
+	width: 100%;
+	line-height: 48px;
+	padding: 0 15px;
+}
+
+.hzzb-yxzl-left {
+	width: 20%
+}
+
+.hzzb-yxzl-right {
+	width: 77.5%
+}
+
+.form-control.full-height {
+	height: 100%
+}
+
+table.table-jcdj>tbody>tr>th, table.table-jcdj>tbody>tr>td {
+	padding: 9px 15px
+}
+
+table.table-jcdj>tbody>tr>td:hover {
+	border-bottom: #00b7ee 1px solid
+}
+</style>
+</head>
+<body class="gray-bg top-navigation full-height">
+	<div class=" full-height hzs-tabs-left">
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#lisInfo">检验报告</a></li>
+			<li class=""><a data-toggle="tab" href="#tab-2">远程会诊申请</a></li>
+		</ul>
+
+		<div class="tab-content full-height-scroll" style="height: calc(100% - 20px)">
+
+			<!-- 检验报告 -->
+			<div id="lisInfo" class="tab-pane full-height active">
+				<iframe src="../lis/surveyDetail.do?lisInspectionSampleId=$!inspectionSample.lisInspectionSampleId" style="height: 100%; width: 100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+			</div>
+
+			<!-- 申请信息 -->
+			<div id="tab-2" class="tab-pane full-height ">
+				<div class="col-sm-12 full-height white-bg">
+					<div class="ibox float-e-margins m-b-none ">
+						<div class="ibox-title" style="border: 0">
+							<h5>患者信息</h5>
+						</div>
+						<div class="ibox-content" style="padding-bottom: 0">
+							<form id="patientForm" method="get" class="form-horizontal">
+								<input type="hidden" name="patientId"
+									value="$!patientArchive.patientId" /> <input type="hidden"
+									id="submitFlag" name="submitFlag" value="" />
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">患者姓名</label>
+									<div class="col-sm-4">#formTextInput("patientName" "#htmlEscape($!inspectionSample.patientName)" "readonly")</div>
+									<label class="col-sm-2 control-label text-right p-r-none">患者性别</label>
+									<div class="col-sm-4">
+										<div class="switch">
+											<span class='switch-btn switch-right #if("$!inspectionSample.patientSex" == "1") chosen #end'>男</span>
+											<span class='switch-btn switch-right #if("$!inspectionSample.patientSex" == "2") chosen #end'>女</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group m-b-none">
+									<label class="col-sm-2 control-label text-right p-r-none">患者年龄</label>
+									<div class="col-sm-4">
+										#formTextInput("ageInput" "#htmlEscape($!inspectionSample.ageInput)" "readonly")
+									</div>
+									<label class="col-sm-2 control-label text-right p-r-none">病人类别</label>
+									<div class="col-sm-4">
+										#formTextInput("patientType" "#lookUpDict($dicData.lisInspectionSamplePatientType $!inspectionSample.patientType)" "readonly")
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="ibox float-e-margins m-b-none ">
+						<div class="ibox-title" style="border: 0">
+							<h5>申请信息</h5>
+						</div>
+						<div class="ibox-content">
+							<form id="applyForm" method="get" class="form-horizontal">
+								#formHiddenInput("patientExamId" "$!patientExam.patientExamId" "id='patientExamId'") 
+								#formHiddenInput("patientType" "$!inspectionSample.patientType" "id='patientType'")
+								#formHiddenInput("inpatientId" "$!inspectionSample.inpatientId" "id='inpatientId'") 
+								#formHiddenInput("reConsultingId" "$!reConsulting.reConsultingId" "id='reConsultingId'")
+								#formHiddenInput("patientId" "$!inspectionSample.patientId" "id='patientId'") 
+								#formHiddenInput("patientName" "$!inspectionSample.patientName" "id='patientName'")
+								#formHiddenInput("lisInspectionSampleId" "$!inspectionSample.lisInspectionSampleId" "id='lisInspectionSampleId'")
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;申请科室</label>
+									<div class="col-sm-4">
+										<div class="input-group">
+											<!-- officeName -->
+											<select id="officeId" name="officeId" data-placeholder="选择科室"
+												class="form-control" style="min-width: 150px;" tabindex="1">
+												<option value="">请选择科室</option> 
+												#foreach($item in $!officeList)
+													<option value="$!item.orgId" hassubinfo="true"
+													#if("$!reConsulting.officeId" == "$!item.orgId" || "$currentUser.orgId" == "$!item.orgId") selected #end>$!item.name</option> #end
+											</select>
+										</div>
+									</div>
+									<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;申请医生
+									</label>
+									<div class="col-sm-4">
+										<!--doctorName -->
+										<select id="doctorId" name="doctorId" data-placeholder="选择医生"
+											class="form-control" style="min-width: 150px;" tabindex="1">
+											<option value="">请选择医生</option> 
+											#foreach($item in $!doctorList)
+											<option value="$!item.userInfoId" hassubinfo="true"
+												#if("$!reConsulting.doctorId" == "$!item.userInfoId" || "$currentUser.userInfoId" == "$!item.userInfoId") selected #end>$!item.name</option> #end
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">临床诊断</label>
+									<div class="col-sm-10">
+										<textarea name="clinicalDiagnosis" maxlength="500" class="form-control" placeholder="填写临床诊断...">$!reConsulting.clinicalDiagnosis</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;会诊医院</label>
+									<div class="col-sm-10">
+										<!-- medicalInstitutionName -->
+										<select id="medicalInstitutionId" name="medicalInstitutionId"
+											data-placeholder="选择医院" class="form-control"
+											style="min-width: 220px" tabindex="2">
+											<option value="">请选择医院</option> 
+											#foreach($item in $!hospitalList)
+											<option value="$!item.orgId" hassubinfo="true"
+												#if("$!reConsulting.medicalInstitutionId" == "$!item.orgId") selected #end>$!item.name</option> #end
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">会诊要求</label>
+									<div class="col-sm-10">
+										<textarea name="consultationAsk" maxlength="500" class="form-control" placeholder="填写会诊要求...">$!reConsulting.consultationAsk</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label text-right p-r-none">病史描述</label>
+									<div class="col-sm-10">
+										<textarea name="diseaseDescribe" maxlength="500" class="form-control" placeholder="填写病史描述...">$!reConsulting.diseaseDescribe</textarea>
+									</div>
+								</div>
+
+								<div class="form-group"
+									style="padding-top: 2%; padding-left: 12%">
+									<div class="i-checks">
+										<label> 
+											<input type="radio" name="consultationType" value="1" #if("$!reConsulting.consultationType" == "1") checked #end> <i></i>
+											非交互式会诊(不支持音视频通信、文字聊天功能，仅根据发起方提交的病历资料进行会诊)
+										</label>
+									</div>
+									<div class="i-checks">
+										<label> 
+											<input type="radio" name="consultationType" value="2" #if("$!reConsulting.consultationType" == "2") checked #end> <i></i>
+											交互式会诊（协同模式:支持音视频通信、文字聊天、文档共享、桌面/程序共享、白板注释、数据交互、影音播放和协同浏览等功能）
+										</label>
+									</div>
+								</div>
+								<div class="form-group text-center">
+									#if("$!reConsulting" == "" || "$!reConsulting.consultingStatus" == "0" || "$!reConsulting.consultingStatus" == "3")
+										<button type="button" id="submitApply" class="btn btn-w-m btn-primary">提交申请</button>
+										<button type="button" id="saveApply" class="btn btn-w-m btn-success">暂存</button>
+									#else 
+										<span style="color: red">已申请且会诊未完成时，不能再次申请远程会诊</span>
+									#end
+
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 全局js -->
+	<script src="../resource/js/jquery.min.js"></script>
+	<script src="../resource/js/bootstrap.min.js"></script>
+	<script src="../resource/js/plugins/layer/layer.min.js"></script>
+	<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+
+	#parse("./common/common.js.vm")
+	<script>
+		$(document).ready(
+				function() {
+					$(".chosen-container.chosen-container-single").css({
+						width : "150px",
+						height : "30px"
+					});
+					$(".chosen-container.chosen-container-multi").css({
+						width : "100%",
+						height : "30px"
+					});
+					$("a.chosen-single").css("line-height", "30px");
+
+					// 科室与医生的联动，当选择科室时，加载科室下的医生
+					$('#officeId').change(
+							function() {
+								if ($(this).val() == "") {
+									return false;
+								}
+								var targetEle = $('#doctorId');
+								$.post("../sys/queryUserByOrgId.do", {
+									orgId : $(this).val()
+								}, function(data) {
+									$(targetEle).empty();
+									$(targetEle).append(
+											"<option value=''>请选择医生</option>");
+									if (data == null || targetEle == ""
+											|| targetEle == undefined) {
+										return false;
+									}
+									$.each(data, function() {
+										$(targetEle).append(
+												"<option value='" + this.userInfoId + "'>"
+														+ this.name
+														+ "</option>");
+									});
+									$(targetEle).trigger("chosen:updated");
+								}, "json");
+
+							});
+
+					// 提交申请
+					$('#submitApply').click(function() {
+						applySave('1');
+					});
+					// 提交暂存
+					$('#saveApply').click(function() {
+						applySave('0');
+					});
+
+					// 提交申请表单
+					function applySave(status) {
+						var applyParams = common
+								.serializeObject($('#applyForm'));
+						applyParams.consultingStatus = status;
+						applyParams.officeName = $('#officeId').find(
+								"option:selected").text();
+						applyParams.doctorName = $('#doctorId').find(
+								"option:selected").text();
+						applyParams.medicalInstitutionName = $(
+								'#medicalInstitutionId')
+								.find("option:selected").text();
+						if (applyParams.submitFlag == "1") {
+							common.alert("不能重复提交！", 0);
+							return false;
+						}
+						if (applyParams.officeId == undefined
+								|| applyParams.officeId == "") {
+							common.alert("请选择申请科室", 0);
+							return false;
+						}
+						if (applyParams.doctorId == undefined
+								|| applyParams.doctorId == "") {
+							common.alert("请选择申请医生", 0);
+							return false;
+						}
+						if (applyParams.medicalInstitutionId == undefined
+								|| applyParams.medicalInstitutionId == "") {
+							common.alert("请选择会诊医院", 0);
+							return false;
+						}
+						if (applyParams.consultationType == undefined
+								|| applyParams.consultationType == "") {
+							common.alert("请选择会诊类型", 0);
+							return false;
+						}
+						$.post("../reConsult/applySave.jo", applyParams,
+								function(result) {
+									if (result.code >= 0) {
+										if (status == "1") {
+											$('#submitFlag').val("1");
+										}
+										$('#reConsultingId').val(result.code);
+										common.alert("保存成功", 1);
+									} else {
+										common.alert(result.msg, 2);
+										$('#submitFlag').val("");
+									}
+								}, "json");
+					}
+				});
+	</script>
+</body>
+</html>

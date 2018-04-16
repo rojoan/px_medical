@@ -1,0 +1,425 @@
+<script>
+
+	$(document).ready(function() { 
+		initPage();
+		uploadExamImg();
+		uploadDicom();
+		uploadAffix();
+		imgTypeChangeEvent();
+	});
+	
+	//选择患者回调函数  
+    function selectPatientCallBack(row){
+        var outInHospitalForm = $('#outInHospital_form');
+        outInHospitalForm.find('[name=patientId]').val(row.patientId);
+        outInHospitalForm.find('[name=patientName]').val(row.patientName);
+        outInHospitalForm.find('[name=patientSex]').val(row.patientSex);
+        outInHospitalForm.find('[name=patientIdCard]').val(row.patientIdCard);
+        outInHospitalForm.find('[name=inhospitalNo]').val(row.patientHospitalNo);
+        outInHospitalForm.find('[name=patientCardNo]').val(row.patientCardNo);
+    }
+	    
+    //影像类型选择事件
+    function imgTypeChangeEvent(){
+        $('input[name="imageType"]').on('ifChecked', function(event){
+            if (this.value == 1) {
+                $('#pacsDicom').show();
+                $('#pacsImg').hide(); 
+            }else{
+                $('#pacsDicom').hide();
+                $('#pacsImg').show(); 
+            }
+        });
+    }
+	    
+	function initPage(){
+		//移除
+		$('.cancel').click(function(){
+			$(this).parent().parent().remove();
+		});
+		//移除
+		$('.rotateRight').click(function(){
+			 var jqImgDiv = $(this).parent().parent();
+			jqImgDiv.insertAfter(jqImgDiv.next());
+		});
+		//移除
+		$('.rotateLeft').click(function(){
+			 var jqImgDiv = $(this).parent().parent();
+			 jqImgDiv.prev().insertAfter(jqImgDiv);
+		});
+		//移除附件
+		$('.affixCancel').click(function(){
+			$(this).parent().remove();
+			initAffixListStyle();
+		});
+		//移除附件
+        $('.dicomRemove').click(function(){
+            $(this).parent().remove();
+            initExamDicomListStyle();
+        });
+		initAffixListStyle();
+		initExamDicomListStyle();
+	}
+	
+	//AffixList 设置样式
+	function initAffixListStyle(){
+		var affixSize = $("#affixList").find('.affixRow').size();
+		if(affixSize){
+			$("#affixList").css('background','rgb(239, 247, 255)').css('border-color','rgb(150, 194, 241)');
+		}else{
+			$("#affixList").css('background','white').css('border-color','white');
+		}
+	}
+	
+	//AffixList 设置样式
+    function initExamDicomListStyle(){
+        var dicomSize = $("#examDicomList").find('.dicomRow').size();
+        if(dicomSize){
+            $("#examDicomList").css('background','rgb(239, 247, 255)').css('border-color','rgb(150, 194, 241)');
+        }else{
+            $("#examDicomList").css('background','white').css('border-color','white');
+        }
+    }
+
+
+	function uploadExamImg(){
+		//上传图片
+		$('#examImgBtn').uploadify(
+				{
+					'auto' : false,
+					'swf' : '../resource/css/plugins/uploadify/uploadify.swf',
+					'uploader' : '../outInhospital/upload.do;jsessionid=$session.id',
+					'buttonText' : '选择图片',
+					'method' : 'post',
+					'fileTypeExts' : '.gif;*.jpg;*.jpeg;*.png',
+					'fileObjName' : 'filedata',
+					'formData' : {
+						'bdbType' : 1
+					},
+					'onUploadSuccess' : function(file, result, response) {
+						
+						 result = $.parseJSON(result);
+						   if(result.code == 0){
+							   var data = result.data;
+							   var imgRowHtml = '<div class="trRow">'
+							   				+'<img name="pacsImg" src="data:image/jpg;base64,$!item.imgBase64Data" width="110" height="110"/>'
+								    		+'  <input name="imageFileName" type="hidden" />'
+								    		+'  <input name="imageType" type="hidden" />'
+								    		+'  <input name="savePath" type="hidden" />'
+								    		+'  <input name="bdbKey" type="hidden" />'
+								    		+'  <div class="file-panel" style="height: 30px;">'
+								    		+'  <span class="cancel" >删除</span>'
+								    		+'  <span class="rotateRight">向右旋转</span>'
+								    		+'  <span class="rotateLeft">向左旋转</span>'
+								    		+'  </div>'
+								    	    +'</div>';
+							   var jqImgRow = $(imgRowHtml);
+							   jqImgRow.find('[name=pacsImg]').attr('src','data:image/jpg;base64,'+data.imgBase64Data);
+							   jqImgRow.find('[name=imageFileName]').val(data.imageFileName);
+							   jqImgRow.find('[name=imageType]').val(data.imageType);
+							   jqImgRow.find('[name=savePath]').val(data.savePath);
+							   jqImgRow.find('[name=bdbKey]').val(data.bdbKey);
+							   $('#examImgs').append(jqImgRow);
+							   initPage();
+						   }else{
+							   common.alert('上传失败');
+						   } 
+					},
+		});
+	}
+	
+	//上传dicom文件
+	function uploadDicom(){
+		$('#dicomBtn').uploadify(
+				{
+					'auto' : false,
+					'swf' : '../resource/css/plugins/uploadify/uploadify.swf',
+					'uploader' : '../common/upload.do;jsessionid=$session.id',
+					'buttonText' : '选择dicom格式文件',
+					'method' : 'post',
+					'fileTypeExts' : '.img;*.IMG;*.dcm;*.DCM',
+					'fileObjName' : 'filedata',
+					'formData' : {
+						'bdbType' : 1
+					},
+					'onUploadSuccess' : function(file, result, response) {
+						 result = $.parseJSON(result);
+						   if(result.code == 0){
+							   var data = result.data;
+							   var dicomRowHtml =
+							    	    '<div class="dicomRow">'
+						 				+'<span class="showTrueName"></span>&nbsp;&nbsp;&nbsp;'
+						 				+'<span class="showFileSize"></span>'
+						 				+'<span class="dicomRemove"> [移除]</span>'
+						 				+'<input name="instanceUid"  type="hidden" />'
+						 				+'<input name="dicomFileName" type="hidden" />'
+						 				+'<input name="savePath" type="hidden" />'
+						 				+'<input name="fileSize" type="hidden" />'
+						 				+'</div>';
+								    	    
+							   var jqDicomRow = $(dicomRowHtml);
+							   jqDicomRow.find('[class=showTrueName]').html(data.trueName);
+							   jqDicomRow.find('[class=showFileSize]').html(data.formatSize);
+							   jqDicomRow.find('[name=instanceUid]').val(data.bdbKey);
+							   jqDicomRow.find('[name=dicomFileName]').val(data.trueName);
+							   jqDicomRow.find('[name=savePath]').val(data.savePath);
+							   jqDicomRow.find('[name=fileSize]').val(data.fileSize);
+							   $('#examDicomList').append(jqDicomRow);
+							   //移除附件
+							   $('.dicomRemove').click(function(){
+								$(this).parent().remove();
+							   });
+							   initPage();
+						   }else{
+							   common.alert('上传失败');
+						   } 
+					},
+		});
+	}
+	
+	//上传附件
+    function uploadAffix(){
+        $('#affixBtn').uploadify(
+                {
+                    'auto' : false,
+                    'swf' : '../resource/css/plugins/uploadify/uploadify.swf',
+                    'uploader' : '../common/upload.do;jsessionid=$session.id',
+                    'buttonText' : '选择附件',
+                    'method' : 'post',
+                    'fileTypeExts' : '*.*',
+                    'fileObjName' : 'filedata',
+                    'formData' : {
+                        'bdbType' : 3
+                    },
+                    'onUploadSuccess' : function(file, result, response) {
+                         result = $.parseJSON(result);
+                           if(result.code == 0){
+                               var data = result.data;
+                               var affixRowHtml =
+                                        '<div class="affixRow">'
+                                        +'<span class="showTrueName"></span>&nbsp;&nbsp;&nbsp;'
+                                        +'<span class="showFileSize"></span>'
+                                        +'<span class="affixCancel"> [移除]</span>'
+                                        +'<input name="trueName" type="hidden" />'
+                                        +'<input name="saveName" type="hidden" />'
+                                        +'<input name="fileSize" type="hidden" />'
+                                        +'<input name="savePath" type="hidden" />'
+                                        +'<input name="bdbKey"  type="hidden" />'
+                                        +'<input name="isImage" type="hidden" />'
+                                        +'<input name="pdfFlag" type="hidden" />'
+                                        +'</div>';
+                                            
+                               var jqAffixRow = $(affixRowHtml);
+                               jqAffixRow.find('[class=showTrueName]').html(data.trueName);
+                               jqAffixRow.find('[class=showFileSize]').html(data.formatSize);
+                               jqAffixRow.find('[name=trueName]').val(data.trueName);
+                               jqAffixRow.find('[name=saveName]').val(data.saveName);
+                               jqAffixRow.find('[name=fileSize]').val(data.fileSize);
+                               jqAffixRow.find('[name=savePath]').val(data.savePath);
+                               jqAffixRow.find('[name=bdbKey]').val(data.bdbKey);
+                               jqAffixRow.find('[name=isImage]').val(data.isImage);
+                               jqAffixRow.find('[name=pdfFlag]').val(data.pdfFlag);
+                               $('#affixList').append(jqAffixRow);
+                               //移除附件
+                               $('.affixCancel').click(function(){
+                                $(this).parent().remove();
+                               });
+                               initPage();
+                           }else{
+                               common.alert('上传失败');
+                           } 
+                    },
+        });
+    }
+	
+	//进入双向转诊申请
+	function applyHd(element) {
+		// 关闭窗口
+        var url = $(element).attr('option-href');
+		var title = '双向转诊-上转';
+		if ('applyHdDown' == $(element).attr('id')) {
+			title = '双向转诊-下转';
+		}
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.title(title, index)  //再改变当前层的标题
+        parent.layer.iframeSrc(index, url);
+	}
+
+	// 进入远程会诊申请
+	function applyReconsult(element) {
+		var url = $(element).attr('option-href');
+		location.href = url;
+	}
+	
+	// 显示患者列表 进行选择患者
+	function selectCommonPatientList() {
+        var title = '选择患者';
+        var url = '../patient/selectCommonPatientList.do';
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+	
+	//判断只要在影像信息form表单有内容就进行保存
+	function isAddPatientExam(){
+		var outInhospParams = common.serializeObject($('#outInHospital_form'));
+		if( !isBlank($('#patientExamId').val())
+			|| outInhospParams.patientExamNum ||outInhospParams.patientArchiveNum 
+			|| outInhospParams.examPart ||outInhospParams.mainDesc 
+			|| $('#examImgs').find(".trRow").size() > 0 
+			|| $('#examDicomList').find(".dicomRow").size() > 0 
+		){
+			return true;
+		}
+		return false;
+	}
+	
+	// 保存患者登记
+	function saveOutInhospital() {
+		var outInhospParams = common.serializeObject($('#outInHospital_form'));
+		 
+		if (outInhospParams.patientName == undefined || outInhospParams.patientName == '') {
+			common.alert("请选择患者",0);
+			return false;
+		}
+		if (outInhospParams.patientType == undefined || outInhospParams.patientType == '') {
+			common.alert("请勾选患者类别",0);
+			return false;
+		}
+		if (outInhospParams.outInNum == undefined || outInhospParams.outInNum == '') {
+			common.alert("请填写门诊/住院号",0);
+			return false;
+		}
+ 
+		 //门诊|住院区别处理
+		if(outInhospParams.patientType == 1){
+			outInhospParams.inhospitalId = outInhospParams.outInNum;
+		}else{
+			outInhospParams.outpatientId = outInhospParams.outInNum;
+		}
+ 
+		 //传递后台参数 
+		 var dataParams = {};
+		 var patientImageParams = buildPatientImageParams(outInhospParams);
+		 var patientAffixParams = buildAffixParams();
+		 var pacsDetailParams = buildDicomParams();
+		 
+		 dataParams.outpatientInhospitalEditInfo = outInhospParams;
+		 dataParams.patientExamEditInfo = buildPatientExamParams(outInhospParams); 
+		 dataParams.patientImageEditInfoList = patientImageParams;
+		 dataParams.patientAffixEditInfoList = patientAffixParams;
+		 dataParams.pacsDetailEditInfoList = pacsDetailParams;
+	 
+		//提交后台保存转诊申请信息
+		$.post("../outInhospital/saveOutInhospital.do",{regPatientExamData:JSON.stringify(dataParams)}, function(result){
+			if (result.code == "0") {
+				common.alert("保存成功",0);   
+				$('#btn_query', window.parent.document).click();
+				 
+				var outInhospital =  result.data.outInhospital;
+				//回显后台新增属性的值
+				if (isAddPatientExam()) {
+					var jqForm = $('#outInHospital_form');
+					jqForm.find('input[name="patientExamNum"]').val(result.data.patientExam.patientExamNum);
+					jqForm.find('input[name="patientExamNum"]').attr('readonly',true);
+					$('#patientExamId').val(result.data.patientExam.patientExamId);
+				}
+				$('#outpatientInhospitalId').val(outInhospital.outpatientInhospitalId);
+				if ('0' == outInhospital.diagnosisFlag) {
+					$('#applyHdUp').attr('option-href','../gradingclinics/applyUpAdd.do?outpatientInhospitalId='+outInhospital.outpatientInhospitalId).show();
+					$('#applyHdDown').attr('option-href','../gradingclinics/applyDownAdd.do?outpatientInhospitalId='+outInhospital.outpatientInhospitalId).show();
+					if (isAddPatientExam()) {
+					 	$('#applyReconsult').attr('option-href','../reConsult/applyEdit.do?patientExamId='+ result.data.patientExam.patientExamId).show();
+					}
+				}
+			} else {
+				common.alert(result.msg);
+			}
+		}, "json",0);
+	}
+	
+	// patientExam 病人检查信息
+	function buildPatientExamParams(option){
+		 if(!isAddPatientExam()) return '' ;
+		 var  patientExamParams = $.extend({}, option);
+		 patientExamParams.hospitalNo = option.hospitalNo;
+		 patientExamParams.htFsPacsMark = option.examCategory==2?'1':'2';
+		 patientExamParams.patientType = option.patientType;
+		 patientExamParams.inpatientId = option.outInNum;
+		 patientExamParams.imageDeptNum = option.examCategory;
+		 patientExamParams.examDate = option.registerDate;
+		 patientExamParams.imageType = $("input[name='imageType']:checked").val();  
+		return patientExamParams;
+	}
+	
+	//图像数组参数
+	function buildPatientImageParams(option){
+		var imageType = $("input[name='imageType']:checked").val();  
+		if (imageType == 1) { //如果选择影像是dicom类型，则返回空数组
+			$('#examImgs').empty();
+			return new Array();
+		}
+		
+		var patientImgArr = buildRowInputJSON($('#examImgs'));
+		$(patientImgArr).each(function(i){
+			this.imageSort = i;
+			this.patientExamNum = option.patientExamNum;
+			this.imageDate = $('[name=registerDate]').val();
+			this.hospitalNo = option.hospitalNo;
+			this.htFsPacsMark = option.examCategory==2?'1':'2';
+			this.imageIsAvailable = 'Y';
+		}); 
+		return patientImgArr;
+	}
+	
+	//附件数组参数
+	function buildAffixParams(){
+		var affixArr = [];
+		$('#affixList').find(".affixRow").each(function() {
+			var obj = {};
+			$(this).find("input").each(function() {
+				obj[this.name] = this.value;
+			});
+			affixArr.push(obj);
+		}); 
+		return affixArr;
+	}
+	
+	//Dicom文件数组参数
+	function buildDicomParams(){
+		var imageType = $("input[name='imageType']:checked").val();  
+        if (imageType == 2) { //如果选择影像是图片类型，则返回空数组
+        	$('#examDicomList').empty();
+            return new Array();
+        }
+		var dicomArr = [];
+		
+		$('#examDicomList').find(".dicomRow").each(function() {
+			var obj = {};
+			$(this).find("input").each(function() {
+				obj[this.name] = this.value;
+			});
+			dicomArr.push(obj);
+		}); 
+		return dicomArr;
+	}
+	
+	// 将行单元格中的输入框value转为json格式
+	function buildRowInputJSON(element) { 
+		var array = [];
+		$(element).find(".trRow").each(function() {
+			var obj = {};
+			$(this).find("input").each(function() {
+				obj[this.name] = this.value;
+			});
+			$(this).find("textarea").each(function() {
+				obj[this.name] = this.value;
+			});
+			$(this).find("select").each(function() {
+				obj[this.name] = $(this).find('option:selected').val();
+				obj[this.name+'Text'] = $(this).find('option:selected').text().replace(/[\r\n]/g, "").trim();;
+			});
+			array.push(obj);
+		}); 
+		return array;
+	}
+	
+</script>

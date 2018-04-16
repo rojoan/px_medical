@@ -1,0 +1,106 @@
+<script type="text/javascript">
+    // 提交表单
+    function savePregnancyExam() {
+         var pregnancyExamParam = common.serializeObject($('#pregnancyExamForm'));
+         if (isBlank(pregnancyExamParam.gravidaName)) {
+             common.alert("请填写姓名",0);
+             $("#gravidaName").focus();
+             return false;
+         }  
+         if (isBlank(pregnancyExamParam.curExamTime)) {
+             common.alert("请填写孕检日期",0);
+             $("#curExamTime").focus();
+             return false;
+         }  
+         if (isBlank(pregnancyExamParam.pregnancyWeek)) {
+             common.alert("请填写孕周",0);
+             $("#pregnancyWeek").focus();
+             return false;
+         }  
+         if (isBlank(pregnancyExamParam.chiefAction)) {
+             common.alert("请填写主诉",0);
+             $("#chiefAction").focus();
+             return false;
+         }  
+         if (isBlank(pregnancyExamParam.regionId)) {
+             common.alert("人员的所在街道信息不存在，请先完善街道信息",0);
+             return false;
+         }
+         if (isBlank(pregnancyExamParam.highRiskPregnancy)) {
+             common.alert("请选择是否高危",0);
+             $("#highRiskPregnancy").focus();
+             return false;
+         }  
+        
+         var pregnancyExamRetionData = {};
+         pregnancyExamRetionData.pregnancyExamEditInfo = pregnancyExamParam; // 孕期检查 主表
+         pregnancyExamRetionData.gravidaHealthGuideEditInfoList = buidGravidaHealthGuideParam();//孕妇保健指导表
+         
+         
+         $.post("../pregnancyExam/savePregnancyExam.jo", 
+        		 {pregnancyExamRetionData:JSON.stringify(pregnancyExamRetionData)},  
+        	function (result) {
+             if (result.code == "0") {
+                 common.alert("保存成功",0);
+                 parent.queryPregnancyExam();//重新查询
+              // 关闭窗口
+                 var index = parent.layer.getFrameIndex(window.name);
+                 parent.layer.close(index); 
+             } else {
+                 common.alert(result.msg,2);
+             }
+         }, "json");
+     }
+    
+
+    //孕妇保健指导表  -- 提交参数
+    function buidGravidaHealthGuideParam(){
+        //字典
+        var dicGravidaHealthGuideType = JSON.parse('$dicTools.changeMapToJson($dicData.dicGravidaHealthGuideType)'); 
+        var gravidaHealthGuideArr = new Array();  
+        $('input[name="healthGuideTypes"]:checked').each(function(i) {
+            var gravidaHealthGuide = {};  
+            gravidaHealthGuide.healthGuideType = $(this).val();
+            var healthGuideTypeName = dicGravidaHealthGuideType[gravidaHealthGuide.healthGuideType];
+            if(healthGuideTypeName == '其他'){
+                gravidaHealthGuide.healthGuideOtherContent = $('#healthGuideOtherContent').val();
+            }
+            gravidaHealthGuide.gravidaDetailId = $('#gravidaDetailId').val();
+            gravidaHealthGuideArr.push(gravidaHealthGuide);//向数组中添加元素  
+        });
+        return gravidaHealthGuideArr;
+    }
+    
+    //页面初始化
+    $(document).ready(function() {
+    	////查看 设置 readonly、disabled
+        var jqForm = $('#pregnancyExamForm');
+        if('show' == '$!mode'){
+            jqForm.find('input').attr('readonly',true);
+            jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+            jqForm.find('select').attr('disabled',true);
+            jqForm.find('textarea').attr('readonly',true);
+        }
+        //健康指导类型-选择事件
+        healthGuideTypeEvent();
+    });
+    
+    //健康指导类型-选择事件
+    function healthGuideTypeEvent(){
+        var dicGravidaHealthGuideType = JSON.parse('$dicTools.changeMapToJson($dicData.dicGravidaHealthGuideType)'); 
+        $('input[name="healthGuideTypes"]').on('ifClicked', function(event){
+             var healthGuideType = $(this).val();
+             var healthGuideTypeName = dicGravidaHealthGuideType[healthGuideType];
+             //如果是其他
+             if(healthGuideTypeName == '其他'){
+                 if($(this).is(':checked')){//当前状态是否为选中  ，click事件在change事件之前
+                    //设置- 其他情况 的输入内容
+                    $('#healthGuideOtherContent').val('');
+                    $('#healthGuideOtherContent').attr('readonly',true);
+                 }else{
+                     $('#healthGuideOtherContent').attr('readonly',false);
+                 }
+             }
+        });
+    }
+</script>

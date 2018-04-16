@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>重性精神病患者登记编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal">
+		<!--如果弹窗没有底部菜单栏则 -44px -->
+		<div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	        	<div class="text-box"><h5>患者基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">姓名</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("patientName" "#htmlEscape($!personInsanity.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">性别</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                    #formRadioButtons("gender" "$!personInsanity.gender" $!dicData.dicSex "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">出生日期</label>
+	                <div class="col-sm-2">
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd', $!personInsanity.birthDate)" " id='birthDate' class='input-sm form-control layer-date' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">专项档案号</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("specialArchiveNum" "#htmlEscape($!personInsanity.specialArchiveNum)" " id='specialArchiveNum' maxlength='20' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">监护人姓名</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("guardianName" "#htmlEscape($!personInsanity.guardianName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">监护人与患者关系</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formTextInput("familyRelId" "#lookUpDict($dicData.dicFamilyRel $!personInsanity.familyRelId)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">监护人地址</label>
+	                <div class="col-sm-2">
+						#formTextInput("guardianAddr" "#htmlEscape($!personInsanity.guardianAddr)" " id='guardianAddr' maxlength='100' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">监护人电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("guardianPhone" "#htmlEscape($!personInsanity.guardianPhone)" " id='guardianPhone' maxlength='20' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">联系人户别</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("censusFlag" "#lookUpDict($dicData.dicPersonDetailCensusType $!personInsanity.censusFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">联系人姓名</label>
+	                <div class="col-sm-2">
+						#formTextInput("linkmanName" "#htmlEscape($!personInsanity.linkmanName)" " id='linkmanName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">联系人电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("linkmanPhone" "#htmlEscape($!personInsanity.linkmanPhone)" " id='linkmanPhone' maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">联系人职业</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("careerId" "#lookUpDict($dicData.dicCareer $!personInsanity.careerId)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="text-box"><h5>知情同意</h5></div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">知情同意</label>
+	            	<div class="col-sm-3">
+	                	#formTextInput("agreeManageFlag" "#lookUpDict($dicData.dicAgreeManageFlag $!personInsanity.agreeManageFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">签字</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("signPerson" "#htmlEscape($!personInsanity.signPerson)" " id='signPerson' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">签字时间</label>
+	                <div class="col-sm-3">
+						#formTextInput("signTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personInsanity.signTime)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            				
+	            <div class="text-box"><h5>危险行为</h5></div>
+	            <div id="behaviorList">
+		            <div class="form-group">  
+			            #foreach($item in $!dicData.dicInsanityType.keySet())
+			            	#set($num=$!velocityCount % 5)
+			            	#if($!num == 0)
+								</div>
+								<div class="form-group"> 
+							#end
+							<label class="col-sm-1 control-label text-right p-r-none p-l-none">$!dicData.dicInsanityType.get($!item)(次)</label>
+							<div class="col-sm-2">
+								#set($behavior = "")
+								#set($behavior = $!behaviorMap.get($!item))
+								#formIntZeroInput("insanityTypeCount" "$!behavior.insanityTypeCount" "id='$!item' maxlength='3' class='form-control' readOnly")
+							</div>
+						#end
+		            </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>病情和治疗情况</h5></div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">经济状况</label>
+	                <div class="col-sm-3">
+						#formTextInput("economicFlag" "#lookUpDict($dicData.dicEconomicFlag $!personInsanity.economicFlag)" "class='form-control' readOnly")
+	                </div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none ">既往关锁情况</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("lockingFlag" "#lookUpDict($dicData.dicLockingFlag $!personInsanity.lockingFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">初次发病时间</label>
+	                <div class="col-sm-3">
+						#formTextInput("diseaseTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personInsanity.diseaseTime)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">既往主要症状</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                    #formCheckboxesLable("symptomIds" $!insanitySymIds $!dicData.dicInsanitySymptom "&nbsp;" "class='m-t-xs m-r-xs i-checks' disabled='disabled'" "")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">其他症状</label>
+	                <div class="col-sm-11">
+	                    #formTextInput("otherSym" "#htmlEscape($!personInsanity.otherSym)" " id='otherSym' maxlength='100' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">曾住院(次)</label>
+	                <div class="col-sm-3">
+	                	#formIntZeroInput("inhospitalCount" "$!personInsanity.inhospitalCount" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">最近一次治疗效果</label>
+	                <div class="col-sm-3" style="padding-top: 6px;">
+	                    #formTextInput("nextTherapy" "#htmlEscape($!personInsanity.nextTherapy)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">首次抗病治疗日期</label>
+	                <div class="col-sm-3">
+						#formTextInput("therapyTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personInsanity.therapyTime)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            <label class="col-sm-1 control-label text-right p-r-none p-l-none">门诊治疗</label>
+	                <div class="col-sm-3" style="padding-top: 6px;">
+	                	#formTextInput("outpatientFlag" "#lookUpDict($dicData.dicOutpatientFlag $!personInsanity.outpatientFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">确诊医院</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("diagnosisHospital" "#htmlEscape($!personInsanity.diagnosisHospital)" "maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">确诊日期</label>
+	                <div class="col-sm-3" style="padding-top: 6px;">
+						#formTextInput("diseaseConfirmTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personInsanity.diseaseConfirmTime)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">目前诊断</label>
+	                <div class="col-sm-11">
+	                    #formTextarea("curDiagnosis" "#htmlEscape($!personInsanity.curDiagnosis)" " id='curDiagnosis' maxlength='1000' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">专科医生意见</label>
+	                <div class="col-sm-11">
+	                    #formTextarea("docotorAdvice" "#htmlEscape($!personInsanity.docotorAdvice)" " id='docotorAdvice' maxlength='1000' class='form-control' readOnly")
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+</html>

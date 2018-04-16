@@ -1,0 +1,204 @@
+<script>
+  //验证单选函数
+    function singleCheck(rows){
+        if (rows.length != 1 || !rows[0].vaccineId) {
+            common.alert("请选择将要编辑的行且仅能选择一行",0);
+            return false;
+        }
+        return true;
+    }
+ //查询方法
+function queryRecord() {
+        var queryParams = common.serializeObject($('#vaccine_queryForm'));
+        var options = {url: '../vaccine/vaccineListData.jo', silent: false, query: queryParams};
+        $('#vaccineListGrid').bootstrapTable('refresh', options); 
+}
+//编辑方法
+function editVaccine(vaccineId) {
+        layer.open({
+            type: 2,
+            title: '疫苗程序编辑 <span class="must-red font-14">(  带红色*号为必填)</span>',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccine/vaccineEdit.do?vaccineId=' + vaccineId
+        });
+}
+
+//展示方法
+function showVaccine(vaccineId) {
+        layer.open({
+            type: 2,
+            title: '疫苗程序详情',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccine/vaccineShow.do?vaccineId=' + vaccineId
+        });
+}
+
+$(document).ready(function () {
+    // 新增
+    $('#btn_add').click(function (){
+        layer.open({
+            type: 2,
+            title: '疫苗程序编辑<span class="must-red font-14">( 带红色*号为必填 )</span>',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccine/vaccineEdit.do'
+        });
+    });
+
+    // 查询按钮
+    $('#btn_query').click(function (){
+        queryRecord();
+    });
+
+    // 删除按钮
+    $('#btn_del').click(function (){
+        var rows = common.getTableSelectRow('vaccineListGrid', false);
+        if (rows.length != 1 || !rows[0].vaccineId ) {
+            common.alert("请选择一条要删除的数据",0);
+            return false;
+        }
+        common.confirm("您确定要删除吗？", function (){
+             $.post("../vaccine/delVaccine.jo", {vaccineId:rows[0].vaccineId}, function (result) {
+                 if (result.code == "0") {
+                        common.alert("删除成功",0);
+                        queryRecord();
+                    } else if (result.code == "4"){
+                       common.alert("后台删除失败!",0);
+                    } else {
+                        common.alert(result.msg,0);
+                    }
+            }, "json");
+        });
+        
+    });
+
+    // 清空按钮
+    $('#btn_clean').click(function (){
+        $('#q_vaccineCode').val('');
+        $('#q_vaccineName').val('');
+    });
+    
+            //查询疫苗程序表列表2
+            $('#vaccineListGrid').bootstrapTable(
+                $.extend(baseTable, {
+                    url : "../vaccine/vaccineListData.jo",
+                    singleSelect: false,
+                    queryParams : function (params){
+                        var requestParams = common.serializeObject($('#vaccine_queryForm'));
+                        requestParams.pageSize = params.pageSize;
+                        requestParams.pageNumber = params.pageNumber;
+                        return requestParams;
+                    },
+                    columns : [
+                    {checkbox : true} ,
+                    {
+                        field : 'planFlag',
+                        title : '是否计划内'
+                    },
+                    {
+                        field : 'useFlag',
+                        title : '是否使用'
+                    },
+                    {
+                        field : 'vaccineCode',
+                        title : '疫苗简称'
+                    },
+                    {
+                        field : 'vaccineDose',
+                        title : '接种剂次'
+                    },
+                    {
+                        field : 'vaccineDoseNum',
+                        title : '接种剂量/剂次'
+                    },
+                    {
+                        field : 'vaccineName',
+                        title : '疫苗名称'
+                    },
+                    {
+                        field : 'vaccineObject',
+                        title : '接种对象'
+                    },
+                    {
+                        field : 'vaccinePart',
+                        title : '接种部位'
+                    },
+                    {
+                        field : 'vaccineRemark',
+                        title : '备注'
+                    },
+                    {
+                        field : 'vaccineUse',
+                        title : '接种途径'
+                    },
+                    {
+                    field : 'operate',
+                    title : '操作',
+                    width : '150px',
+                    events : operateEvents,
+                    formatter : operateFormatter
+                    }     
+                ],
+                    onDblClickRow : function (row, element){
+                        $('#vaccineListGrid').bootstrapTable('check',element.attr('data-index'));
+                        showVaccine(row.vaccineId);
+                    },
+                    onLoadSuccess : function(){
+                        var height = ($('#vaccineListGrid').parents("body").height() - $('#vaccine_queryForm').parents(".ibox").first().height()  - 130);
+                        $('#vaccineListGrid').bootstrapTable('resetView', {height: height}); 
+                    }
+                }
+                )//extends
+              );//bootstapTable
+         });//document.ready() event function
+
+    //操作栏操作按钮#* (加号<i class="fa fa-plus-square"></i>)*#
+    function operateFormatter(value, row, index) {
+        var btnArray=[];
+        btnArray.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+        btnArray.push('<a id="btn_edit" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>');
+        btnArray.push('<a id="btn_delete" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>');
+        return btnArray.join("&nbsp;");
+    }
+
+    //操作栏操作按钮的事件
+    window.operateEvents = {
+        "click #btn_edit" : function (e, value, row, index) {
+            editVaccine(row.vaccineId);
+        },
+        "click #btn_show" : function (e, value, row, index) {
+            showVaccine(row.vaccineId);
+        },
+        "click #btn_delete" : function(e, value, row, index) {
+            if(!confirm("确定要删除此条疫苗程序数据吗？")) {
+                 return ;
+            }
+            $.post("../vaccine/delVaccine.jo", {vaccineId: row.vaccineId}, function (result){
+                   if (result.code == "0") {
+                        common.alert("疫苗程序删除成功",0);
+                        queryRecord();
+                    } else if (result.code == "4"){
+                        common.alert("后台执行疫苗程序删除失败!",0);
+                    } else {
+                        common.alert(result.msg,0);
+                    }
+            }, "json").error(function(jqXHR) {
+                                jqueryPostError(jqXHR);
+                           }
+                       );//post;
+        }
+    };
+
+    $(window).resize(function() { 
+        var height = ($('#vaccineListGrid').parents("body").height() - $('#vaccine_queryForm').parents(".ibox").first().height() - 130);
+        $('#vaccineListGrid').bootstrapTable('resetView', {height: height}); 
+    })
+</script>

@@ -1,0 +1,206 @@
+<script>
+$(document).ready(function () {
+	// 新增
+    $('#btn_add_register').click(function (){
+    	layer.open({
+            type: 2,
+            title: '重性精神病患者随访编辑<span class="must-red font-14">( 红字为必填 )</span>',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: [contextPath + '/personInsanity/personInsanityVisitEdit.do?view=personInsanityVisitEdit', 'no']
+        });
+    });
+	
+	// 修改
+	$('#btn_edit_register').click(function (){
+		var row = common.getTableSelectRow('personInsanityVisitList', false);
+		if (row.length == undefined || row.length != 1 || row[0].personInsanityVisitId == undefined) {
+			common.alert("请选择要修改的数据", 0);
+    		return ;
+		}
+
+    	layer.open({
+            type: 2,
+            title: '重性精神病患者随访编辑 <span class="must-red font-14">( 红字为必填 )</span>',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/personInsanity/personInsanityVisitEdit.do?view=personInsanityVisitEdit&personInsanityVisitId=' + row[0].personInsanityVisitId
+        });
+    });
+	
+	// 删除
+	$('#btn_delete').click(function (){
+		var ids = [];
+		var row = common.getTableSelectRow('personInsanityVisitList', true);
+		if (row.length == undefined || row.length <= 0) {
+			common.alert("请选择要删除的数据", 0);
+    		return ;
+		}
+		$.each(row, function (){
+			ids.push(this.personInsanityVisitId);
+		});
+		common.confirm("确定要删除吗？", function (){
+			$.post(
+					contextPath +'/personInsanity/deletePersonInsanityVisit.jo',
+					{ids: ids.join(',')}, 
+					function (result){
+						if (result.code == "0") {
+							$('#btn_query').click();
+						} else {
+							common.alert(result.msg, 2);
+						}
+					}, 
+			'json').error(function (e){jqueryPostError(e)});
+		});
+    });
+	
+    // 查询按钮
+    $('#btn_query').click(function (){
+    	var queryParams = common.serializeObject($('#queryForm'));
+    	var options = {url: '../personInsanity/personInsanityVisitDataList.jo', silent: false, query: queryParams};
+    	$('#personInsanityVisitList').bootstrapTable('refresh', options); 
+    });
+    
+ 	// 清空按钮
+    $('#btn_clean').click(function (){
+    	$('#patientName').val('');
+    	$('#gender').val('');
+    	$('#visitClassify').val('');
+    	$('#beginVisitDate').val('');
+    	$('#endVisitDate').val('');
+    });
+    
+    var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+    var dicVisitClassify = JSON.parse('$dicTools.changeMapToJson($dicData.dicVisitClassify)'); 
+ 	// 初始化列表数据
+    $('#personInsanityVisitList').bootstrapTable({
+		url : "../personInsanity/personInsanityVisitDataList.jo",
+		mobileResponsive : true,
+		pagination : true,
+		pageNumber : true,
+		cache : false,
+		striped: true,
+		//clickToSelect: true,
+		singleSelect: false,
+		pageSize : "10",
+		pageNumber : "1",
+		height : "500",
+		queryParamsType : "",
+		sidePagination : 'server',
+		halign : "center",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		columns : [
+		{ checkbox:true }, 
+		{
+			field : 'personInsanity.patientName',
+			title : '患者姓名'
+		}, {
+			field : 'personInsanity.gender',
+			title : '性 别',
+			formatter :function (value, row, index) {
+				return dicSex[row.personInsanity.gender];
+			}
+		}, {
+			field : 'personInsanity.birthDate',
+			title : '出生日期'
+		}, {
+			field : 'visitWay',
+			title : '随访分类',
+			formatter :function (value, row, index) {
+				return dicVisitClassify[row.visitWay];
+			}
+		}, {
+			field : 'visitDoctorName',
+			title : '随访医生'
+		}, {
+			field : 'hospitalName',
+			title : '随访医院'
+		}, {
+			field : 'visitTime',
+			title : '随访时间'
+		}, {
+   			field : 'operate',
+   			title : '操作',
+   			events : operateEvents,
+   			formatter : operateFormatter
+   		}],
+		onDblClickRow: function (row, element){
+			layer.open({
+				id: 'win',
+	            type: 2,
+	            move: false,
+	            title: '重性精神病患者随访详情</span>',
+	            shadeClose: false,
+	            shade: 0.5,
+	            maxmin: false, //开启最大化最小化按钮
+	            area: ['100%', '100%'],
+	            content: contextPath + '/personInsanity/personInsanityVisitEdit.do?view=personInsanityVisitShow&personInsanityVisitId=' + row.personInsanityVisitId
+	        });
+		},
+		onLoadSuccess : function(){
+			var height = ($('#personInsanityVisitList').parents("body").height() - $('#queryForm').parents(".ibox").height() - 72);
+			$('#personInsanityVisitList').bootstrapTable('resetView', {height: height}); 
+		}
+	});
+});
+window.operateEvents = {
+		"click #btn_show_visit": function(e, value, row, index) {
+			layer.open({
+				id: 'win',
+	            type: 2,
+	            move: false,
+	            title: '重性精神病患者随访详情</span>',
+	            shadeClose: false,
+	            shade: 0.5,
+	            maxmin: false, //开启最大化最小化按钮
+	            area: ['100%', '100%'],
+	            content: contextPath + '/personInsanity/personInsanityVisitEdit.do?view=personInsanityVisitShow&personInsanityVisitId=' + row.personInsanityVisitId
+	        });
+		},
+		"click #btn_edit_visit": function(e, value, row, index) {
+			layer.open({
+				id: 'win',
+	            type: 2,
+	            move: false,
+	            title: '重性精神病患者随访编辑 <span class="must-red font-14">( 红字为必填 )</span>',
+	            shadeClose: false,
+	            shade: 0.5,
+	            maxmin: false, //开启最大化最小化按钮
+	            area: ['100%', '100%'],
+	            content: contextPath + '/personInsanity/personInsanityVisitEdit.do?view=personInsanityVisitEdit&personInsanityVisitId=' + row.personInsanityVisitId
+	        });
+		},
+		"click #btn_del_visit": function(e, value, row, index) {
+			common.confirm("确定要删除吗？", function (){
+				$.post(
+						contextPath +'/personInsanity/deletePersonInsanityVisit.jo',
+						{ids: row.personInsanityVisitId}, 
+						function (result){
+							if (result.code == "0") {
+								$('#btn_query').click();
+							} else {
+								common.alert(result.msg, 2);
+							}
+						}, 
+				'json').error(function (e){jqueryPostError(e)});
+			});
+		}
+	};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_show_visit" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+	            '<a id="btn_edit_visit" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+	            '<a id="btn_del_visit" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+	            ];
+	return html.join('&nbsp;&nbsp;');
+}
+</script>

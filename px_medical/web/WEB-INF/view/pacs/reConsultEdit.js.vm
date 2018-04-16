@@ -1,0 +1,178 @@
+<script>
+  $(document).ready(function() {
+	// 打包下载图片
+    $('#downloadImg').click(function (){
+    	$('#downloadMsg').html('正在打包压缩要下载的图片...');
+    	$.post("../pacs/compressImg.do", {patientExamId : "$!patientExam.patientExamId"}, function(result){
+    		if (result == "0") {
+    			$('#downloadMsg').html('正在下载图片');
+    			$('#downloadIfrmae').attr('src','../pacs/downloadImg.do?patientExamId=$!patientExam.patientExamId');
+    			$('#downloadMsg').html('');
+    		} else {
+    			$('#downloadMsg').html('压缩图片失败, 请检查是否有可压缩的图片数据');
+    		}
+    		
+    	},"json");
+    });
+	//图片浏览插件
+	
+    var viewer = new Viewer(document.getElementById('dowebok'), {
+        url: 'data-original'
+    });
+
+    $('.viewer-in').css({position: "relative", width: "100%", height: "100%", top: "0", left: "0"});
+	
+	$(".chosen-container.chosen-container-single").css({
+		width : "150px",
+		height : "30px"
+	});
+	$(".chosen-container.chosen-container-multi").css({
+		width : "100%",
+		height : "30px"
+	});
+
+	
+	// 科室与医生的联动，当选择科室时，加载科室下的医生
+	$('#officeId').change(function (){
+		if ($(this).val() == "") {return false;}
+		var targetEle = $('#doctorId');
+		$.post("../sys/queryUserByOrgId.do",{orgId: $(this).val()},function(data){
+			$(targetEle).empty();
+			$(targetEle).append("<option value=''>请选择医生</option>");
+			if (data == null || targetEle == "" || targetEle == undefined) {
+				return false;
+			}
+			$.each(data, function (){
+				$(targetEle).append("<option value='" + this.userInfoId + "'>" + this.name + "</option>");
+			});
+			$(targetEle).trigger("chosen:updated");
+		},"json");
+		
+	});
+	
+	// 提交申请
+	$('#submitApply').click(function (){
+		applySave('1');
+	});
+	// 提交暂存
+	$('#saveApply').click(function (){
+		applySave('0');
+	});
+
+	// 提交申请表单
+	function applySave(status) {
+		var patientParams = common.serializeObject($('#patientForm'));
+		var applyParams = common.serializeObject($('#applyForm'));
+		applyParams.consultingStatus = status;
+		applyParams.officeName = $('#officeId').find("option:selected").text();
+		applyParams.doctorName = $('#doctorId').find("option:selected").text();
+		applyParams.medicalInstitutionName = $('#medicalInstitutionId').find("option:selected").text();
+		$.extend(applyParams, patientParams);
+		if (applyParams.submitFlag == "1") {
+			common.alert("不能重复提交！", 0);
+			return false;
+		}
+		if (applyParams.officeId == undefined || applyParams.officeId == "") {
+			common.alert("请选择申请科室", 0);
+			return false;
+		}
+		if (applyParams.doctorId == undefined || applyParams.doctorId == "") {
+			common.alert("请选择申请医生", 0);
+			return false;
+		}
+		if (applyParams.medicalInstitutionId == undefined || applyParams.medicalInstitutionId == "") {
+			common.alert("请选择会诊医院", 0);
+			return false;
+		}
+		if (applyParams.consultationType == undefined || applyParams.consultationType == "") {
+			common.alert("请选择会诊类型", 0);
+			return false;
+		}
+		$.post("../reConsult/applySave.jo", applyParams, function(result){
+			if (result.code >= 0) {
+				if (status == "1") {
+					$('#submitFlag').val("1");
+				}
+				$('#reConsultingId').val(result.code);
+				common.alert("保存成功", 1);
+			} else {
+				common.alert(result.msg, 2);
+				$('#submitFlag').val("");
+			}
+		}, "json");
+	}
+	
+	// 审核提交申请
+    $('#btn_audit_pass').click(function (){
+        reqeustSave('1');
+    });
+    // 审核提交暂存
+    $('#btn_audit_save').click(function (){
+        reqeustSave('0');
+    });
+    
+    
+    // 审核提交与暂存
+    function reqeustSave(operateType) {
+        var params = common.serializeObject($('#auditEditForm'));
+        params.submitType = operateType;
+
+        // 获取参会人ID及参会人
+        var professors = [];
+        var selectOptions = $("#ponsultingProfessor").find("option");
+        var selectEle = $("#ponsultingProfessor_chosen").find(".chosen-choices").find("a");
+        $.each(selectEle, function() {
+            var index = $(this).attr('data-option-array-index');
+            var option = selectOptions[index];
+            professors.push($(option).val() + "|" + $(option).text());
+
+        });
+        params.ponsultingProfessor = professors.join(",");
+        if (params.submitFlag == "1") {
+            common.alert("不能重复提交！", 0);
+            return false;
+        }
+        if (params.topic == undefined || params.topic == "") {
+            common.alert("请填写会议名称", 0);
+            return false;
+        }
+        if (params.ponsultingProfessor == undefined || params.ponsultingProfessor == "") {
+            common.alert("请选择会议参与人", 0);
+            return false;
+        }
+        if (params.beginTime == undefined || params.beginTime == "") {
+            common.alert("请选择会议开始时间", 0);
+            return false;
+        }
+        if (params.endTime == undefined || params.endTime == "") {
+            common.alert("请选择会议结束时间", 0);
+            return false;
+        }
+
+        var cur = new Date();
+        var endTime = new Date(params.endTime.replace("-", "/").replace("-", "/"));
+        if (cur > endTime) {
+            common.alert("会议结束时间必须大于当前时间", 0);
+            return false;
+        }
+        $.post("../reConsult/saveAudit.jo", params, function(result) {
+            if (result.code == "0") {
+                common.alert("保存成功", 1);
+                if (operateType == "0") {
+                    return false;
+                }
+                $('#submitFlag').val("1");
+                $('#btn_search', window.parent.document).click();
+                // 关闭窗口
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index); 
+            } else {
+                common.alert(result.msg, 2);
+                $('#submitFlag').val("");
+            }
+        }, "json").error(function (e){jqueryPostError(e)});
+    }
+    
+    
+});
+</script>

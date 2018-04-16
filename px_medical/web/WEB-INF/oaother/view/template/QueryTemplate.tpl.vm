@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+#set($queryBeanMap = ${HELPER_BEAN.getBeanNameMap(${command})})
+#set($dynamicTitle = $queryBeanMap.get("DYTITLE"))
+  <title>#if(${_layout.title})$!{_layout.title}#else $!{dynamicTitle} #end</title>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script language="JavaScript">
+#if($message)
+alert("$esc.javascript($message)");
+#end
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+
+<body>
+<div class="gradual">
+
+##以下是查询界面的工具条
+#parse("/template/QueryToolBar.tpl.vm")
+
+##以下是录入查询条件的表格
+#parse("/template/QueryGrid4.tpl.vm")
+
+#if(${__tipMessage})
+<center><font color=red>${__tipMessage}</font></center>
+#else
+#if($page && ${page.token})
+    #if(${_layout.pageTool} && ${_layout.pageTool.chekcbox} == false)
+        #set($__page_chekcboxname = "false")
+    #end
+    #if(!${_layout.pageTool.align})
+        #set($__page_align = ${_layout.pageTool.align})
+    #end
+#parse("/template/PageToolBar.tpl.vm")
+#end
+#parse("/template/DataListTemplate.tpl.vm")
+#end
+</div>
+</body>
+##<script language="JavaScript">
+##    if(!isNullByForm(document.queryForm)) {
+##        doExpand("queryBody", document.getElementById("doExpandButton"));
+##    }
+##</script>
+</html>

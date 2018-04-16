@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭基本档案管理</title>
+#parse("./common/pageCss.vm")
+<style>
+    html,body { height: 100%}
+    button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px; }
+</style>
+</head>
+
+<body class="gray-bg top-navigation">
+	<div class="wrapper wrapper-content">
+		<div class="ibox float-e-margins full-height">
+			<div class="ibox-content">
+				<div class="row">
+					<form id="familyDetail_queryForm" method="get" class="form-horizontal">					
+						 
+						<div class="col-sm-3  ">
+							<label class="control-label p-r-n col-sm-3">家庭类型</label>
+							<div class="col-sm-8">
+								#formSingleSelectDictionary("familyType" "" $dicData.dicFamilyType "id='q_familyType' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+							</div>
+						</div>
+						
+						<div class="col-sm-3  ">
+							<label class="control-label p-r-n col-sm-4">户籍类型</label>
+							<div class="col-sm-8">
+								#formSingleSelectDictionary("censusType" "" $dicData.dicCensusType "id='q_censusType' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+							</div>
+						</div>
+						
+						<div class="col-sm-3 ">
+							<label class="control-label col-sm-4">户主姓名</label>
+							<div class="input-daterange input-group date col-sm-8 ">
+								<input type="text" id="q_familyOwnerName" name="familyOwnerName" class="form-control "  />
+							</div>
+						</div>						
+						
+						<div class="col-sm-3 text-center">
+							<button type="button" id="btn_query" onclick="query();" class="btn btn-sm btn-primary">
+								<i class="fa fa-search"></i> <span>查 询</span>
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" onclick="clearQuery();" class="btn btn-sm btn-info">
+								<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="ibox float-e-margins full-height m-b-none">
+			<div class="ibox-content p-b-n">
+				<div class="table-responsive">
+				    <!-- 列表表格 工具栏-->
+                        <div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+                            &nbsp;
+                            <button onclick="add();" type="button" class="btn btn-sm btn-primary">
+                                <i class="glyphicon glyphicon-plus" aria-hidden="true"></i> <span>新 增</span>
+                            </button> 
+                        </div>
+					<!-- 列表表格 -->
+					<div class="example">
+						<table id="familyDetailGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	#parse("./common/pageJs.vm")
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/select/selectCommonPersonFamily.js.vm")
+</body>
+</html>

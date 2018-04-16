@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>居民档案信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<!--城市插件-->
+<link href="../resource/css/plugins/citypicker/city-picker.css" rel="stylesheet">
+<link href="../resource/css/plugins/popover/bootstrap-popover-x.css" rel="stylesheet">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<script src="../resource/js/plugins/citypicker/city-picker.data.js"></script>
+<script src="../resource/js/plugins/citypicker/city-picker.js"></script>
+<script src="../resource/js/plugins/popover/bootstrap-popover-x.js"></script>
+<style>
+html, body { height: 100% }
+.jk-popover {width: 460px; max-width: 500px;}
+.show{
+   margin: 5px 5px 8px 0px;
+   padding-top: 5px;
+   border-bottom:1px solid #e5e6e7;
+}
+.popover {
+    width:auto;
+    max-width:800px;
+}
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+
+<!-- 主体 -->
+<div class="modal-body full-height" style="height: calc(100% - 49px); padding: 0;">
+	<!--如果弹窗没有底部菜单栏则 -44px 没有标题减去49 -->
+	<ul class="nav nav-tabs">
+		<li class="active"><a data-toggle="tab" href="#personBase">个人基本档案</a></li>
+		<li class=""><a data-toggle="tab" href="#personHeath">个人健康信息</a></li>
+		#if($personDetail.personDetailId)
+		  <li class=""><a data-toggle="tab" href="#personFamily">家庭信息</a></li>
+        #end
+	</ul>
+	<div class="tab-content table-content full-height-scroll" style="height: calc(100% - 30px); padding: 9px 8px 9px 12px;">
+		
+		#if("$!mode" == "show")
+        	#parse("./publichealth/personDetail/personDetailShow.baseInfo.vm")<!-- 个人的基本信息 -->
+        	#parse("./publichealth/personDetail/personDetailShow.health.vm")<!-- 个人的健康信息 -->
+        #else
+        	#parse("./publichealth/personDetail/personDetailEdit.baseInfo.vm")<!-- 个人的基本信息 -->
+        	#parse("./publichealth/personDetail/personDetailEdit.health.vm")<!-- 个人的健康信息 -->
+        #end
+        
+        #if($personDetail.personDetailId)
+		  <div id="personFamily" class="tab-pane full-height"> 
+		        <iframe src="../familyDetail/simpleFamilyDetail.do?mode=show&familyDetailId=$personDetail.familyDetailId" id="familyDetailIframe" name="familyDetailIframe"
+                       style="height: 100%; width: 100%;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" >   
+                </iframe>
+		  </div>
+		#end
+	</div>
+</div>
+
+    <!-- 底部 start -->      
+    <div class="tool-table-fixed" style="width: calc(100%)">
+        #if('show' != $!mode)
+            <button onclick="savePersonDetail();" type="button" class="btn btn-success">
+                      <i class="fa fa-save"></i> 保 存
+            </button>
+        #end
+    </div>
+    <!-- 底部 end -->      
+                
+    <!-- 全局js -->
+    <!-- 个人的健康信息新增行的模板 -->
+	#parse("./publichealth/personDetail/personDetailEdit.template.vm")
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/personDetail/personDetailEdit.js.vm")
+</body>
+</html>

@@ -1,0 +1,36 @@
+  <table cellpadding="0" cellspacing="0" class="table_page">
+<form name="dataListForm" method="post">
+    <tr class="form_title_char">
+#foreach($dc in ${_layout.dataList})
+      <td #if(${dc.width})width="$!{dc.width}"#end #if("${dc.type}" == "hidden")style="display:none"#end>${dc.title}</td>
+#end
+    </tr>
+#foreach($data in ${page.data})
+    #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+    #set($css = "#tableCellCss($velocityCount)") ##注意这里  选择单双行颜色的方法，$velocityCount是循环的行号变量，它从1开始
+    <tr onMouseOver="this.className='table_page_m_move'" onMouseOut="this.className='table_page_row_focus'">
+    #foreach($dc in ${_layout.dataList})
+        #if(${dc.field})
+      <td align=#if(${dc.align})"$!{dc.align}"#{else}left#end #if("${dc.type}" == "hidden")style="display:none"#end>
+            #if(${dc.tdonclick})
+                <a class="table_page_row_aline" href="#" onclick="#buttonUrl($dc $dataBeanMap)">#viewField($dc $dataBeanMap)</a>
+            #else
+             #viewField($dc $dataBeanMap)
+            #end
+      </td>
+        #elseif('button' == ${dc.type})
+      <td align=#if(${dc.align})"$!{dc.align}"#{else}center#end>
+            #foreach($bt in ${dc.buttonList})
+                #buttonField($bt "button_2" $dataBeanMap)
+            #end
+      </td>
+        #end
+    #end
+    </tr>
+#end
+</form>
+  </table>
+#if(${_layout.operateRule})
+    #parse("/template/OperateRuleTemplate.tpl.vm")
+#end
+</div>

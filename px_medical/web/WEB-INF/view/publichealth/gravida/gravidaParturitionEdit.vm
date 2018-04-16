@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孕妇分娩信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { height: 100% }
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+        <!-- form start -->
+     <form id="gravidaParturitionForm" class="form-horizontal table-content full-height-scroll">
+          #formHiddenInput("gravidaParturitionId" "$!gravidaParturition.gravidaParturitionId" " id='gravidaParturitionId' ")
+          #formHiddenInput("gravidaDetailId" "$!gravidaParturition.gravidaDetailId" " id='gravidaDetailId' ")
+          #formHiddenInput("personDetailId" "$!gravidaParturition.personDetailId" " id='personDetailId' ")
+          #formHiddenInput("regionId" "$!gravidaParturition.regionId" " id='regionId' ")
+          #formHiddenInput("hospitalId" "$!{gravidaParturition.hospitalId}" " id='hospitalId' ")
+          #formHiddenInput("deliverDoctorId" "$!{gravidaParturition.deliverDoctorId}" " id='deliverDoctorId' ")
+          <div class="modal-body  full-height-scroll" style=" padding: 0 15px 40px">
+	          <div class="row">
+	              <div class="text-box"><h5>基础信息</h5></div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">姓名</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("gravidaName" "#htmlEscape($!gravidaParturition.gravidaName)" " id='gravidaName' maxlength='10' class='form-control'")
+	                  </div>
+	              </div>
+	          
+	               <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">保健卡号</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("gravidaCard" "#htmlEscape($!gravidaDetail.gravidaCard)" " id='gravidaCard' maxlength='20' class='form-control' readonly ")
+	                  </div>
+	              </div>
+	                <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">年龄</label>
+	                  <div class="col-md-8">
+	                      #formIntInput("gravidaAge" $!gravidaParturition.gravidaAge  " id='gravidaAge' maxlength='2' class='form-control'")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">本次分娩次</label>
+	                  <div class="col-md-8">
+	                      #formIntInput("parturitionNum" $!gravidaParturition.parturitionNum  " id='parturitionNum' maxlength='2' class='form-control'")
+	                  </div>
+	              </div>
+	          
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label red">孕周</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("pregnancyWeek" "#htmlEscape($!gravidaParturition.pregnancyWeek)" " id='pregnancyWeek' maxlength='10' class='form-control'")
+	                  </div>
+	              </div>
+	          
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">胎位</label>
+	                  <div class="col-md-8">
+	                      #formSingleSelectFirstNone("fetusPosition" "$!gravidaParturition.fetusPosition" $!{dicData.dicFetusPosition} "class='form-control'" "")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">分娩日期</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("parturitionTime" "$!date.format('yyyy-MM-dd', $!gravidaParturition.parturitionTime)" " onclick='$layerDate' id='parturitionTime' class='form-control  layer-date' readonly ")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label red">胎数</label>
+	                  <div class="col-md-8">
+	                       #formIntInput("fetusNum" $!gravidaParturition.fetusNum  " id='fetusNum' maxlength='2' class='form-control'")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">分娩方式</label>
+	                  <div class="col-md-8">
+	                       #formSingleSelectFirstNone("parturitionWay" "$!gravidaParturition.parturitionWay" $!{dicData.dicParturitionWay} "class='form-control'" "")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">外缝针线</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("surgicalSuture" "#htmlEscape($!gravidaParturition.surgicalSuture)" " id='surgicalSuture' maxlength='20' class='form-control'")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label red">血流量</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("bloodFlowVolume" "$!gravidaParturition.bloodFlowVolume" " id='bloodFlowVolume' maxlength='3' class='form-control'")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">会阴裂伤情况</label>
+	                  <div class="col-md-8">
+	                       #formSingleSelectFirstNone("perinealLaceration" "$!gravidaParturition.perinealLaceration" $!{dicData.dicPerinealLaceration} "class='form-control'" "")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">分娩地点</label>
+	                  <div class="col-md-8">
+	                       #formSingleSelectFirstNone("parturitionAddrType" "$!gravidaParturition.parturitionAddrType" $!{dicData.dicParturitionAddrType} "class='form-control'" "")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">分娩地点</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("parturitionAddr" "#htmlEscape($!gravidaParturition.parturitionAddr)" " id='parturitionAddr' maxlength='100' class='form-control'")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">有无生育证</label>
+	                  <div class="col-md-8">
+	                    #formSingleSelectFirstNone("birthCertificateFlag" "$!gravidaParturition.birthCertificateFlag" $!{dicData.dicYesNo} "class='form-control'" "")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">生育证编号</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("birthCertificateNum" "#htmlEscape($!gravidaParturition.birthCertificateNum)" " id='birthCertificateNum' maxlength='20' class='form-control'")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">出院时间</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("outhospitalTime" "$!date.format('yyyy-MM-dd', $!gravidaParturition.outhospitalTime)" " onclick='$layerDate' id='outhospitalTime' class='form-control  layer-date' ")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">身体状况</label>
+	                  <div class="col-md-8">
+	                      #formSingleSelectFirstNone("puerperaBodyFlag" "$!gravidaParturition.puerperaBodyFlag" $!{dicData.dicPuerperaBodyFlag} "class='form-control'" "")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">产休地</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("puerperaAddr" "#htmlEscape($!gravidaParturition.puerperaAddr)" " id='puerperaAddr' maxlength='100' class='form-control'")
+	                  </div>
+	              </div>
+	               <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">接生医生</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("deliverDoctorName" "#htmlEscape($!gravidaParturition.deliverDoctorName)" " id='deliverDoctorName' maxlength='10' class='form-control'")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">接产医院</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("hospitalName" "#htmlEscape($!gravidaParturition.hospitalName)" " id='hospitalName' maxlength='20' class='form-control'")
+	                  </div>
+	              </div>
+	             <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">登记日期</label>
+	                  <div class="col-md-8">
+	                       #formTextInput("curCreateTime" "$!gravidaParturition.curCreateTime" "   id='curCreateTime' class='form-control  layer-date' readonly ")
+	                  </div>
+	              </div>
+	              <div class="col-md-6 form-group">
+	                  <label class="col-md-4 control-label">备注</label>
+	                  <div class="col-md-8">
+	                      #formTextInput("remark" "#htmlEscape($!gravidaParturition.remark)" " id='remark' maxlength='100' class='form-control'")
+	                  </div>
+	              </div>
+	
+	          </div>
+          
+          </div>
+      </form>
+     <!-- form end -->
+    <!-- 底部 start -->      
+	<div class="tool-table-fixed" style="width: calc(100%)">
+		#if('show' != $!mode)
+		    <button onclick="saveGravidaParturition();" type="button" class="btn btn-success">
+                      <i class="fa fa-save"></i> 保 存
+                  </button>
+	    #end
+	</div>
+    <!-- 底部 end -->      
+				
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm") 
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/gravida/gravidaParturitionEdit.js.vm")
+</body>
+</html>

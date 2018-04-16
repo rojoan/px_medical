@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高血压-慢性病患者登记编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal" style="height: calc(100% - 44px)">
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>患者基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">患者姓名</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("patientName" "#htmlEscape($!personChronic.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">性别</label>
+	                <div class="col-sm-3" style="padding-top: 6px;">
+	                    #formRadioButtons("gender" "$!personChronic.gender" $!dicData.dicSex "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">出生日期</label>
+	                <div class="col-sm-3">
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd', $!personChronic.birthDate)" " id='birthDate' class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">身份证号码</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("idCard" "#htmlEscape($!personChronic.idCard)" " id='idCard' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">联系人电话</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("linkmanPhone" "#htmlEscape($!personChronic.linkmanPhone)" " id='linkmanPhone' maxlength='15' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">联系地址</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("contactAddr" "#htmlEscape($!personChronic.contactAddr)" "id='contactAddr' maxlength='100' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">患者与家庭关系</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("familyRelId" "#lookUpDict($dicData.dicFamilyRel $!personChronic.familyRelId)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">登记编号</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("recordNum" "#htmlEscape($!personChronic.recordNum)" " id='recordNum' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">邮编</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("zipCode" "#htmlEscape($!personChronic.zipCode)" " id='zipCode' maxlength='10' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>慢性病基本信息</h5></div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">专项档案号</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("personChronicType.specialArchive" "#htmlEscape($!chronicType.specialArchive)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断分级</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personChronicType.chronicLevel" "#lookUpDict($dicData.dicChronicCopdLevel $!chronicType.chronicLevel)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">发病日期</label>
+	                <div class="col-sm-3">
+						#formTextInput("personChronicType.attackDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.attackDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">诊断医院类型</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personChronicType.diagnosisHospitalType" "#lookUpDict($dicData.dicDiagnosisHospitalType $!chronicType.diagnosisHospitalType)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断医院名称</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("personChronicType.diagnosisHospital" "#htmlEscape($!chronicType.diagnosisHospital)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">确诊日期</label>
+	                <div class="col-sm-3">
+						#formTextInput("personChronicType.confirmDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.confirmDate)" "id='confirmDate' class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+
+	            <div class="text-box"><h5>曾经接受过的治疗</h5></div>
+	            <div class="form-group">
+	                <div class="col-md-1"></div>
+	                <div class="col-sm-8" style="padding-top: 6px;">
+	                	#formCheckboxesLable("nonDrugType" $!chronicNonDrugIds $!dicData.dicChronicNonDrugCopd "&nbsp;" "class='m-t-xs m-r-xs i-checks' disabled='disabled'" "")
+	                </div>
+	            </div>
+	            <div class="text-box"><h5>危险因素</h5></div>
+	            <div class="form-group">
+	                <div class="col-md-1"></div>
+	                <div class="col-sm-8" style="padding-top: 6px;">
+	                	#formCheckboxesLable("dangerType" $!dangerTypes $!dicData.dicCopdDangerType "&nbsp;" "class='m-t-xs m-r-xs i-checks' disabled='disabled'" "")
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+</html>

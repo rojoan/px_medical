@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="manageMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="manage/departmentTree.do">manageController</prop>
+				<!-- 选单位下属部门，不含单位 -->
+                <prop key="manage/commonFindView.do">manageController</prop>
+                <prop key="manage/selectMulDepartmentTree.do">manageController</prop>
+                <prop key="manage/selectMulAllDeptTree.do">manageController</prop>
+                <prop key="manage/departmentStaffList.do">manageController</prop>
+				<!-- 部门人员选择 begin -->
+                <!-- 选择唯一部门 -->
+                <prop key="manage/selectDepartmentSingleWithoutUnit.do">depSelectWithoutUnitController</prop>
+                <prop key="manage/selectRootIdDepTree.do">manageController</prop>
+                <!-- 选择多部门 -->
+                <prop key="manage/selectMulDepartmentTree2.do">manageController</prop>
+                <prop key="manage/selectRootIdMultiDepTree.do">manageController</prop>
+                <!-- 选择多单位,不含部门 -->
+                <prop key="manage/selectRootIdMultiUnitRanksTree.do">manageController</prop>
+                <!-- 选择多部门 不包含短信-->
+                <prop key="manage/selectMulOrgTree.do">manageController</prop>
+                <!--  -->
+                <prop key="manage/selectSingleDepartmentTree.do">manageController</prop>
+                <prop key="manage/selectSingleDepartmentTree.action">manageController</prop>
+                <prop key="manage/selectSingleProviceCityCountryUniFromAll.action">manageController</prop>
+                <!-- 选择只包含省/市/县的单位 -->
+                <prop key="manage/selectProviceCityContryUnits.action">manageController</prop>
+                <prop key="manage/selectRegionUnitInScope.do">manageController</prop>
+                <prop key="manage/selectMultiStaffWithFilter.do">manageController</prop>
+                <prop key="manage/selectDepTreeWithCandidate.do">manageController</prop>
+                <prop key="manage/selectUnitDepTreeWithCandidate.do">manageController</prop>
+                <prop key="manage/selectUnitDepTreeWithCandidateNotProvice.do">manageController</prop>
+                <prop key="manage/selectParentUnitDepTreeWithCandidate.do">manageController</prop>
+                <prop key="manage/selectParentUnitDepTree.do">manageController</prop>
+                <prop key="manage/selectMultiDepBox.do">manageController</prop>
+                <prop key="manage/selectSingleStaffFromCandidate.do">manageController</prop>
+                <prop key="manage/selectDepListWithCandidate.do">manageController</prop>
+                <prop key="manage/selectDepListWithEquallyCandidate.do">manageController</prop>
+                <prop key="manage/selectMultiStaffFromCandidate.do">manageController</prop>
+                <prop key="manage/selectMultiStaffFromCandidateDeliver.do">manageController</prop>
+                <prop key="manage/selectUserInScope.do">manageController</prop>
+                <prop key="manage/selectMultiStaffFromAll.do">manageController</prop>
+                <!-- 部门人员选择 end -->
+                <!-- 部门 -->
+                <prop key="manage/selectMultiStaff.do">staffSelectController</prop>
+                <prop key="manage/selectSingleStaff.do">staffSelectController</prop>
+                <prop key="manage/selectDepMultiStaff.do">staffSelectController</prop>
+
+                <prop key="manage/departmentSelect.do">departmentSelectController</prop>
+                <prop key="manage/unitDeptSingleSelect.do">unitDeptSingleSelectController</prop>
+				<!-- 单位 -->
+				<prop key="manage/departmentSingleSelectWithoutUnit.do">staffSelectWithoutUnitController</prop>
+                <prop key="manage/departmentSingleSelectWithoutUnit2.do">staffSelectWithoutUnit2Controller</prop>
+				<!-- 人员选择 -->
+                <prop key="manage/staffSingleSelect.do">staffSingleSelectController</prop>
+                <prop key="manage/staffSingleSelect2.do">staffSingleSelectController2</prop>
+                <prop key="manage/staffMultiSelect.do">staffMultiSelectController</prop>
+                <prop key="manage/staffMultiSelect2.do">staffMultiSelectController2</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="functionMenuTreeQueryUtil" class="com.bofan.basesystem.common.utils.FullQueryMethod">
+        <property name="selectClause"><value>sysfunc.functionId as id, sysfunc.parentId as parentid, sysfunc.name as text, sysfunc.functionOperate as href, sysfunc.sort as sorted, sysfunc.sysType as sysType</value></property>
+        <property name="fromClause"><value>com.manage.valueobject.SysFunction sysfunc</value></property>
+        <property name="defaultWhereClause"><value></value></property>
+        <property name="groupByClause"><value></value></property>
+        <property name="orderByClause"><value>parentid, sorted</value></property>
+        <property name="queryParam">
+            <list>
+            	<value>sysfunc.sysType,sysType, EQU</value>
+            	<value>sysfunc.code,code, LEFTLIKE</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="depUserQueryUtil" class="com.bofan.basesystem.common.utils.FullQueryMethod">
+        <property name="selectClause"><value>userInfo, org, orgmapping</value></property>
+        <property name="fromClause"><value>com.manage.valueobject.SysUserInfo userInfo, com.manage.valueobject.SysOrg org, com.manage.valueobject.SysUserOrgMapping orgmapping</value></property>
+        <property name="defaultWhereClause"><value>userInfo.sysUser.userId = orgmapping.compId.userId and orgmapping.compId.orgId = org.orgId</value></property>
+        <property name="groupByClause"><value></value></property>
+        <property name="orderByClause"><value>org.sort asc, userInfo.sort asc</value></property>
+        <property name="queryParam">
+            <list>
+                <value>userInfo.userId,userId, EQU</value>
+                <value>userInfo.sysUser.account,account, EQU</value>
+                <value>userInfo.userInfoId,userIds,IN</value>
+                <value>userInfo.name,name, LIKE</value>
+                <value>userInfo.name,names,IN</value>
+                <value>userInfo.sysUser.delFlag, userDelFlag, NOT_EQU</value>
+                <value>orgmapping.compId.orgId,orgId, EQU</value>
+                <value>orgmapping.compId.orgId,orgIds,IN</value>
+                <value>org.name,orgName, LIKE</value>
+                <value>org.delFlag, delFlag, EQU</value>
+                <value>org.unitOrgId,unitOrgId, EQU</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="manageController" class="com.manage.controller.ManageController">
+        <property name="departmentTreeBuilder"><ref bean="departmentTreeBuilder" /></property>
+    </bean>
+
+    <bean id="unitDeptSingleSelectController" parent="departmentSelectController">
+        <property name="selectView"><value>manage/unitDeptSingleSelect</value></property>
+    </bean>
+
+<!--部门选择，及由此衍生出的部门单选、单位单选等-->
+    <bean id="departmentSelectController" class="com.manage.controller.DepartmentSelectController">
+        <property name="selectView"><value>manage/departmentMultipleSelect</value></property>
+    </bean>
+
+<!--人员选择-->
+    <bean id="staffSelectController" class="com.manage.controller.StaffSelectController" lazy-init="true">
+        <property name="departmentTreeBuilder"><ref bean="departmentTreeBuilder" /></property>
+    </bean>
+
+    <bean id="staffSingleSelectController" parent="staffSelectController">
+        <property name="selectStaffView"><value>manage/selectSingleStaff</value></property>
+    </bean>
+    <bean id="staffSingleSelectController2" parent="staffSelectController">
+        <property name="selectStaffView"><value>manage/staffSingleSelect2</value></property>
+    </bean>
+    <bean id="staffMultiSelectController" parent="staffSelectController">
+        <property name="selectStaffView"><value>manage/selectMultiStaff</value></property>
+    </bean>
+    <bean id="staffMultiSelectController2" class="com.manage.controller.StaffMultiSelectController" parent="staffSelectController" lazy-init="true">
+        <property name="selectStaffView"><value>manage/staffMultiSelect2</value></property>
+    </bean>
+
+    <bean id="departmentTreeBuilder" class="com.manage.service.spring.DepartmentTreeBuilder">
+    </bean>
+
+<!--  人员选择，只选本单位下属部门，不含下属单位 -->
+    <bean id="staffSelectWithoutUnitController" class="com.manage.controller.StaffSelectWithoutUnitController" lazy-init="true">
+        <property name="departmentTreeBuilder"><ref bean="departmentTreeBuilder" /></property>
+        <property name="selectStaffView"><value>manage/departmentTree</value></property>
+    </bean>
+    <bean id="staffSelectWithoutUnit2Controller" parent="staffSelectWithoutUnitController">
+        <property name="selectStaffView"><value>manage/departmentTree2</value></property>
+    </bean>
+<!--  部门选择，只选本单位下属部门，不含下属单位 -->
+    <bean id="depSelectWithoutUnitController" parent="staffSelectWithoutUnitController">
+        <property name="selectStaffView"><value>manage/departmentTreeSelect</value></property>
+    </bean>
+</beans>

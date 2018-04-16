@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预防接种异常表编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+
+#parse("./common/pageCss.vm")
+
+<style>
+html, body { height: 100% }
+</style>
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+</head>
+
+<body class="gray-bg top-navigation">
+
+    <!--新增 预防接种异常表-->
+    <form id="vaccinationAbnormalForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+        <input type="hidden" id="submitFlag" >
+        #formHiddenInput("vaccinationDetailId" "$!{vaccinationAbnormal.vaccinationDetailId}" " id='vaccinationDetailId' ")
+        #formHiddenInput("hospitalNo" "$!{vaccinationAbnormal.hospitalNo}" " id='hospitalNo' ")
+        #formHiddenInput("hospitalId" "$!{vaccinationAbnormal.hospitalId}" " id='hospitalId' ")
+        #formHiddenInput("vaccineId" "$!{vaccinationAbnormal.vaccineId}" " id='vaccineId' ")
+        #formHiddenInput("vaccinationCardId" "$!{vaccinationAbnormal.vaccinationCardId}" " id='vaccinationCardId' ")
+        #formHiddenInput("reportDoctorId" "$!{vaccinationAbnormal.reportDoctorId}" " id='reportDoctorId' ")
+        #formHiddenInput("personDetailId" "$!{vaccinationAbnormal.personDetailId}" " id='personDetailId' ")
+        #formHiddenInput("childDetailId" "$!{vaccinationAbnormal.childDetailId}" " id='childDetailId' ")
+
+        <div class="modal-body full-height-scroll" style="height: calc(100% - 49px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+            <div class="table-content"><!-- 表单可视域 内容 开始 -->
+                <div class="text-box"><h5>预防接种异常表</h5></div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">被接种人姓名</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccinatedName" "#htmlEscape($!{vaccinationAbnormal.vaccinatedName})" " id='vaccinatedName' maxlength='50' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>预防接种卡编号</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccinationCardNo" "#htmlEscape($!{vaccinationAbnormal.vaccinationCardNo})" " id='vaccinationCardNo' maxlength='20' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">接种日期</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccineDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationAbnormal.vaccineDate})" "maxlength='20' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">接种部位</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccineSite" "#htmlEscape($!{vaccinationAbnormal.vaccineSite})" " id='vaccineSite' maxlength='100' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">疫苗批号</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccineBatch" "#htmlEscape($!{vaccinationAbnormal.vaccineBatch})" " id='vaccineBatch' maxlength='100' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">疫苗名称</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccineName" "#htmlEscape($!{vaccinationAbnormal.vaccineName})" " id='vaccineName' maxlength='50' class='form-control'")
+                             </div>
+                       </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">反应时间</label>
+                             <div class="col-sm-3">
+                                #formTextInput("abnormalTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationAbnormal.abnormalTime})" "maxlength='20' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">就诊时间</label>
+                             <div class="col-sm-3">
+                                #formTextInput("clinicTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationAbnormal.clinicTime})" "maxlength='20' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">就诊机构</label>
+                             <div class="col-sm-3">
+                                #formTextInput("clinicHospital" "#htmlEscape($!{vaccinationAbnormal.clinicHospital})" " id='clinicHospital' maxlength='100' class='form-control'")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">接种医疗机构</label>
+                             <div class="col-sm-3">
+                                #formTextInput("hospitalName" "#htmlEscape($!{vaccinationAbnormal.hospitalName})" " id='hospitalName' maxlength='80' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">是否住院</label>
+                             <div class="col-sm-3">
+                                #formRadioButtonsLabel("inHospitalFlag" "$!{vaccinationAbnormal.inHospitalFlag}" ${dicData.dicYesNo} "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">报告日期</label>
+                             <div class="col-sm-3">
+                                #formTextInput("reportTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationAbnormal.reportTime})" "maxlength='20' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label text-right p-r-none p-l-none ">报告医生</label>
+                             <div class="col-sm-3">
+                                #formTextInput("reportDoctor" "#htmlEscape($!{vaccinationAbnormal.reportDoctor})" " id='reportDoctor' maxlength='20' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">临床诊断</label>
+                             <div class="col-sm-7">
+                                #formDefArea("clinicDiagnose" "$!{vaccinationAbnormal.clinicDiagnose}" "4000" " class='form-control' rows='2' label='填写logicName' validator='maxLength:4000'")
+                             </div>
+                        </div>
+             </div><!--表单可视域内容 结束 -->
+        </div>
+    </form>
+
+    <div class="tool-table-fixed" style="width: calc(100%)">
+        <button onclick="saveVaccinationAbnormal();" type="button" class="btn btn-success"><i class="fa fa-save"></i> 保 存</button>
+        &nbsp;
+    </div>
+<!--编 预防接种异常表 表单及控件结束-->
+
+#parse("./common/pageJs.vm")
+#parse("./common/common.js.vm")
+#parse("./publichealth/vaccine/vaccinationAbnormalEdit.js.vm")
+ </body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../app/right/right.css" rel="stylesheet" type="text/css" />
+#if(${_layout.printButton})
+	<link href="../css/print.css" rel="stylesheet" type="text/css" />
+#end
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script>
+#set($_layout.editFieldList = $_layout.mainFieldList)
+#parse("/template/ValidatorTemplate.tpl.vm")
+
+#set($_layout.editFieldList = $_layout.idsFieldList)
+#parse("/template/ValidatorTemplate.tpl.vm")
+
+
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+
+<body scroll="no">
+<div class="gradual">
+
+##以下是编辑界面的工具条
+#parse("/template/EditToolBar.tpl.vm")
+##以下是编辑用的表格
+##根据编辑列的数量设置默认使用的模板
+<table cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td>
+<form name="$!{_layout.editForm.name}" method="post" action="#getRequestUri()?action=$!{_layout.editForm.action}" onsubmit="saveData(this)">
+#parse("/template/MaterilaEditWithIdsGrid4.tpl.vm")
+#parse("/template/IdsList.tpl.vm")
+</form>
+#parse("/template/IdsListNewRow.tpl.vm")
+
+        </td>
+    </tr>
+</table>
+
+#if(${_layout.printButton})
+<div id="noteContent" style="display:none">
+	#set($printcss = "table_print_title")
+    #parse("/template/MaterilaPrintEditWithIdsGrid4.tpl.vm")
+    #parse("/template/PrintIdsList.tpl.vm")
+</div>
+#end
+
+</div>
+</body>
+</html>

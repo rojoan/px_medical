@@ -1,0 +1,149 @@
+<script> 
+	//验证单选
+	function singleCheck(rows){
+		if (rows.length != 1 || !rows[0].hdDiagnosisApplyId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行",0);
+			return false;
+		}
+		return true;
+	}
+ 
+	//修改
+	function edit(){
+		var rows = common.getTableSelectRow('applyTurnOutGrid', false);
+		if (!singleCheck(rows) )   return ;
+		if (rows[0].transStatus == '0' || rows[0].transStatus == '1' ) {
+			openModal('modal','../gradingclinics/applyTurnOutEdit.do?hdDiagnosisApplyId=' + rows[0].hdDiagnosisApplyId);
+		}
+	}
+	
+   //查询按钮时间
+   function query(){
+	  var queryParams = common.serializeObject($('#applay_queryForm'));
+		var options = {url: '../gradingclinics/applyTurnOutListData.do?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		$('#applyTurnOutGrid').bootstrapTable('refresh', options); 
+   }
+	  //清空查询框
+   function clearQuery(){
+		$("#patientName").val("");
+		$("#idCard").val("");
+		$("#beginApplyTime").val("");
+		$("#endApplyTime").val("");
+		var $formObj = $("#applay_queryForm");
+		$form.find("#transStatus").val("");
+		$form.find("#transStatus").trigger("chosen:updated");
+		$form.find("#q_institutionUpId").val("");
+		$form.find("#q_institutionUpId").trigger("chosen:updated");
+   }
+	  
+	// Grid 数据列表
+	$(document).ready(function() {
+		$('#applyTurnOutGrid').bootstrapTable(
+		  $.extend(baseTable, { 
+			url : "../gradingclinics/applyTurnOutListData.do",
+			queryParams : function (params){
+				var requestParams = common.serializeObject($('#applay_queryForm'));
+		        requestParams.pageSize = params.pageSize;
+		        requestParams.pageNumber = params.pageNumber;
+		        return requestParams;
+			},
+			columns : [
+			{checkbox:true},
+			{
+				field : 'hdDiagnosisNum',
+				title : '转诊单号',
+			}, 
+			{
+				field : 'patientName',
+				title : '患者姓名'
+			}, {
+				field : 'patientSex',
+				title : '患者性别',
+				formatter : function(value, row, index) {
+					return JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)')[value];
+				}
+			},{
+				field : 'idCard',
+				title : '身份证号'
+			}, {
+				field : 'applyTime',
+				title : '申请时间'
+			}, {
+				field : 'institutionUpName',
+				title : '转入医院'
+			},{
+				field : 'officeUpName',
+				title : '转入科室'
+			},{
+				field : 'doctorUpName',
+				title : '转入医生'
+			}, {
+				field : 'transStatus',
+				title : '转诊状态',
+				formatter : function(value, row, index) {
+					return JSON.parse('$dicTools.changeMapToJson($dicData.dicTransStatus)')[value];
+				}
+			}, {
+				field : 'hdType',
+				title : '转诊类型',
+				formatter : function(value, row, index) {
+					return JSON.parse('$dicTools.changeMapToJson($dicData.dicHdType)')[value];
+				}
+			},{
+                field : 'operate',
+                title : '操作',
+                events : operateEvents,
+                formatter : operateFormatter
+            }],
+		    onDblClickRow : function (row, element){
+				$('#applyTurnOutGrid').bootstrapTable('check',element.attr('data-index'));
+				openModal('modal','../gradingclinics/applyTurnOutShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+	   		},
+			onLoadSuccess : function(){
+				adaptTableHeight();
+			}
+		})
+		);
+	});
+	
+	$(window).resize(function() { 
+		adaptTableHeight();
+	})
+	
+    window.operateEvents = {
+        "click #btn_show_applyOut": function(e, value, row, index) {
+            openModal('modal','../gradingclinics/applyTurnOutShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+        },
+        
+        "click #btn_turnOutPrint": function(e, value, row, index) {
+            var title = '转诊单打印';
+            var url = '../gradingclinics/applyTurnOutReceiptPrint.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId + '&hdType=' + row.hdType ;
+            common.open(url, title, {area: ['99%', '99%']});
+        },
+         
+        "click #btn_diagnosisReportPrint": function(e, value, row, index) {
+             var title = '诊断报告单打印';
+                var url = '../gradingclinics/diagnosisReportPrintPage.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId ;
+                common.open(url, title, {area: ['99%', '99%']});
+        }
+    }
+    
+    function operateFormatter(value, row, index) {
+        var html = [
+                    '<a id="btn_show_applyOut" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+                    '<a id="btn_turnOutPrint" href="javascript:void(0)" title="打印转诊单"><i class="fa fa-print"></i></a>',
+                    '<a id="btn_diagnosisReportPrint" href="javascript:void(0)" title="打印诊断报告"><i class="fa fa-print"></i></a>'
+                   ];
+        return html.join('');
+    }
+	
+	function adaptTableHeight() {
+		var height = ($('#applyTurnOutGrid').parents("body").height() - $('#applay_queryForm').parents(".ibox").first().height() - 42);
+		$('#applyTurnOutGrid').bootstrapTable('resetView', {height: height}); 
+	}
+	
+	$(document).ready(function() {
+		//清除模态框的缓存
+		clearModal('modal');
+	});
+</script>

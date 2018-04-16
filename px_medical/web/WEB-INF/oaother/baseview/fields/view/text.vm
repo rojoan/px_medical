@@ -1,0 +1,3 @@
+#if(${datamap.get(${cell.field})})
+$!{cell.prefix}#if(${cell.maxshow})#requiredContent("#htmlEscape($!{datamap.get(${cell.field})})" ${cell.maxshow} '')#{else}#htmlEscape($!{datamap.get(${cell.field})})#end$!{cell.suffix}
+#end

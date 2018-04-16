@@ -1,0 +1,177 @@
+<script type="text/javascript">
+	$(function() {
+		// 清空
+		$('#btn_clean').click(function (){
+			$('#emrKbTitle').val('');
+			$('#emrKbDetailId').val('');
+			window.EMR.editor.setContent('');
+		});
+		// 修改知识内容保存按钮
+		$('#btn_save').click(function (){
+			if ($('#emrKbDetailId').val() == "") {
+				common.alert("请选择要修改的数据！", 0);
+	    		return ;
+	    	}
+			saveKbDetail();
+		});
+		// 新增知识内容保存按钮
+		$('#btn_add').click(function (){
+			$('#emrKbDetailId').val('');
+			saveKbDetail();
+		});
+		// 删除知识内容
+		$('#btn_delete').click(function (){
+			if ($('#emrKbDetailId').val() == "") { common.alert("没有可删除的数据！", 0); return ; }
+			common.confirm("您确定要删除吗？", function (){
+				$.post('../emrKb/deleteEmrKbDetail.jo', {emrKbDetailId: $('#emrKbDetailId').val()}, function (result){
+					if (result.code != "0") {
+						swal("错误", result.msg, "error");
+					} else {
+						$('#kb_' + $('#emrKbDetailId').val(), window.frames["kbListIframe"].document).empty();
+						$("#kb_" + $('#emrKbDetailId').val(), window.frames["kbListIframe"].document).remove();
+
+						$('#emrKbTitle').val('');
+						$('#emrKbDetailId').val('');
+						$('#left_text').html('');
+						$('#editor_title').html('');
+						window.EMR.editor.setContent('');
+					}
+				}, "json");
+			});
+		});
+		
+		// 新增保存知识分类
+		$('#btn_kb_add').click(function (){
+			saveKbType('0');
+		});
+		// 修改保存知识分类
+		$('#btn_kb_edit').click(function (){
+			saveKbType('1');
+		});
+		// 删除知识分类
+		$('#btn_kb_delete').click(function (){
+			if ($('#editEmrKbTypeId').val() == "") { common.alert("没有可删除的数据！", 0); return ; }
+			common.confirm("您确定要删除吗？", function (){
+				$.post('../emrKb/deleteEmrKbType.jo', {emrKbTypeId: $('#editEmrKbTypeId').val()}, function (result){
+					if (result.code == "0") {
+						$('#editEmrKbTypeId').val('');
+						$('#editEmrKbTypeCode').val('');
+						$('#editEmrKbTypeName').val('');
+						$("#emrKbTree").jstree().refresh(true);
+					} else {common.alert(result.msg, 2);}
+				}, "json");
+			});
+		});
+		
+		// 初始化树形分类
+		$("#emrKbTree").jstree({
+			"core" : {
+				"themes" : { "responsive" : false },
+				'data' : function(obj, callback) {
+					var jsonarray = [];
+					var root = {typeId: "0", expanded: true, faqTypeName: "根目录", children: [], faqTypeCode: "0", id: "0", text: "根目录", cls: "file", leaf: false, state : {opened : true }};
+					$.ajax({
+						type : "GET",
+						url : "../emrKb/getEmrKbTree.do",
+						dataType : "json",
+						async : false,
+						success : function(result) {
+							if (null != result && result.length > 0) {
+		            			result.splice(0,1, $.extend(result[0], {state: {opened : true }}));
+							}
+							root.children = result;
+						}
+					});
+					jsonarray.push(root);
+					callback.call(this, jsonarray);
+				}
+			},
+			"plugins" : [ "dnd", "state", "types", "wholerow" ]
+		}).bind("loaded.jstree", function(event, data) {
+		}).bind("activate_node.jstree", function(event, data) {
+			var node = data.node;
+			var parentNode = $('#emrKbTree').jstree("get_node", node.parent);
+			
+			$('#emrKbTypeId').val(node.original.kbId);
+			$('#editEmrKbTypeId').val(node.original.kbId);
+			$('#editEmrKbTypeCode').val(node.original.code);
+			$('#editEmrKbTypeName').val(node.original.name);
+			if (node.id == "0") {
+				$('#editEmrKbTypeName').val("");
+			}
+			if (parentNode.parent == "#") {
+				$('#parentTypeName').val(parentNode.text);
+			} else if (parentNode.id == "#") {
+				$('#parentTypeName').val(node.text);
+			} else {
+				$('#parentTypeName').val(parentNode.original.name);
+			}
+
+			var navArray = [];
+			navArray.push(node.text);
+			getParentNode(navArray, node.parent);
+			$('#editor_title').html('知识分类：' + navArray.reverse().join(" 》"));
+			
+			$('#kbListIframe').attr('src', '../emrKb/emrKbDetailListByTypeId.do?emrKbTypeId=' + node.original.kbId);
+
+		});
+	});
+	// 给在线编辑器赋值
+	function setEditor(obj, emrKbDetailId) {
+		var title = $(obj, window.frames["kbListIframe"].document).text();
+		var content = $(obj, window.frames["kbListIframe"].document).next().html();
+		$('#emrKbDetailId').val(emrKbDetailId);
+		$('#emrKbTitle').val(title);
+		window.EMR.editor.setContent(content);
+	}
+	// 获取属性父节点
+	function getParentNode(navArray, parent) {
+		var parentNode = $('#emrKbTree').jstree("get_node", parent);
+		if (parentNode.parent != "#") {
+			navArray.push(parentNode.text);
+			getParentNode(navArray, parentNode.parent);
+		}
+	}
+	// 保存知识内容
+	function saveKbDetail() {
+		if ($('#emrKbTypeId').val() == "") {
+			common.alert("请选择知识分类", 0);
+    		return ;
+		}
+		if ($('#emrKbTitle').val() == "") {
+			common.alert("请填写标题", 0);
+    		return ;
+		}
+		if (window.EMR.editor.getContent() == "") {
+			common.alert("请填写内容", 0);
+    		return ;
+		}
+		var params = {
+			emrKbTitle: $('#emrKbTitle').val(),
+			emrKbTypeId: $('#emrKbTypeId').val(),
+			emrKbDetailId: $('#emrKbDetailId').val(), 
+			emrKbContent: window.EMR.editor.getContent()
+		};
+		$.post('../emrKb/saveEmrKbDetail.jo', params, function (result){
+			if (result.code == "0") {
+				common.alert(result.msg, 1);
+			} else {
+				common.alert(result.msg, 2);
+			}
+		}, "json");
+	}
+	// 保存知识分类
+	function saveKbType(flag) {
+		if ($('#editEmrKbTypeName').val() == "") {
+			common.alert("请填写知识分类名称", 0);
+    		return ;
+		}
+		var params = common.serializeObject($('#editTypeForm'))
+		if (flag == "0"){ params.emrKbTypeId = "" }
+		$.post('../emrKb/saveEmrKbType.jo', params, function (result){
+			if (result.code == "0") {
+				$("#emrKbTree").jstree().refresh(true);
+			} else { common.alert(result.msg, 2); }
+		}, "json");
+	}
+</script>

@@ -1,0 +1,40 @@
+## 发布时要把 "DEBUG_OPEN"改为 :false再进行发布
+#set($_constants = {
+    "DEL_PIC" : "1",
+    "DEBUG_OPEN" : false,
+    "COMMON_PAGE_SIZE" : 17,
+    "BREAK_LINE" : "<tr class='noprint'><td><hr></hr></td></tr>",
+    "PAGE_NUM_DIV" : "",
+    "BUILD_TABLE_CSS" : [
+        {
+            "TYPE" : "EDIT",
+            "table_css" : "label_form_tab",
+            "co_cell_css_1" : "form_gray_unit"
+        },
+        {
+            "TYPE" : "PRINT",
+            "table_css" : "jbqk_tab",
+            "co_cell_css_2" : "cyry_td",
+            "st_css" : "cyry_td",
+            "co_align_1" : "center",
+            "co_align_2" : "center"
+        },
+        {
+            "TYPE" : "QUERYLIST",
+            "table_css" : "list_tab"
+        },
+        {
+            "TYPE" : "PRINTLIST",
+            "table_css" : "jbqk_tab",
+            "cell_css" : "cyry_td"
+        },
+        {
+            "TYPE" : "FRAMEQUERYLIST",
+            "table_css" : "list_tab2",
+            "nowrap" : true
+        }
+    ]
+}
+)
+
+##  "PAGE_NUM_DIV" : "<div class='page_num_div' name='page_num_div'></div>",

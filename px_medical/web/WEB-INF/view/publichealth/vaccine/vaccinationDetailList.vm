@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预防接种明细管理</title>
+#parse("./common/pageCss.vm") 
+<!-- <link rel="stylesheet" type="text/css" href="../resource/css/plugins/webuploader/webuploader-demo.css?v=2"> -->
+<style>
+    html,body { height: 100%}
+    button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px;}
+    table.table-jcdj > tbody > tr > td:hover { border-bottom: 0}
+    table.table-hover > tbody > tr > td { font-size: 12px;}
+</style>
+</head>
+
+
+<body class="gray-bg top-navigation">
+    <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins full-height">
+                <div class="ibox-content">
+                    <div class="row">
+                        <form id="vaccinationDetail_queryForm" method="get" class="form-horizontal">
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">医疗机构代码</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_hospitalNo" name="hospitalNo" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">被接种人姓名</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_vaccinatedName" name="vaccinatedName" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">预防接种卡编号</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_vaccinationCardNo" name="vaccinationCardNo" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 text-center">
+                                <button type="button" id="btn_query" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-search"></i> <span>查 询</span>
+                                </button>
+                                &nbsp;&nbsp;&nbsp;
+                                <button type="button" id="btn_clean" class="btn btn-sm btn-info">
+                                    <i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+                                </button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ibox float-e-margins full-height m-b-none">
+                <div class="ibox-content p-b-n">
+                    <div class="table-responsive">
+                        <!-- 列表表格 工具栏-->
+                        <div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+
+                            <button id="btn_add" type="button" class="btn btn-sm btn-primary">
+                                <i class="glyphicon glyphicon-plus" aria-hidden="true"></i> <span>新增</span>
+                            </button> 
+                            <button id="btn_del" type="button" class="btn btn-sm btn-danger">
+                                <i class="fa fa-ban" aria-hidden="true"></i> <span>删 除</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 列表表格 -->
+                        <div class="example">
+                            <table id="vaccinationDetailListGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+    </div>
+
+    <!-- 全局js -->
+    #parse("./common/pageJs.vm") 
+    #parse("./common/common.js.vm")
+    <!-- 页面js -->
+    #parse("./publichealth/vaccine/vaccinationDetailList.js.vm")
+</body>
+</html>
+ 
+
+

@@ -1,0 +1,134 @@
+<script type="text/javascript">
+	$(function() {
+		// 打开专家设置对话框
+		$('#btn_setProfessor').click(function (){
+			var row = common.getTableSelectRow('sysUserData', false);
+			if (row[0] == undefined || row[0].userInfoId == "" || row[0].userInfoId == undefined) {
+				common.alert("请选择用户", 0);
+				return ;
+			}
+			$.post('../consult/getProfessorUserInfo.do', {userInfoId: row[0].userInfoId}, function(data){
+				if (null == data || data == "") {
+					return ;
+				} 
+				
+				$('#doctorSex').val(data.sex);
+				$('#doctorName').val(data.name);
+				$('#doctorPost').val(data.dutyName);
+				$('#hospitalId').val(data.unitOrgId);
+				$('#professorId').val(data.userInfoId);
+				$('#doctorMobilePhone').val(data.phone);
+				$('#doctorGoodat').val(data.doctorGoodat);
+				$("#validFlag" + data.validFlag).iCheck('check');
+				$('#orgName').val(data.unitName + "(" + data.orgName + ")");
+				$('#doctorSexText').val((data.sex == "1" ? "男" : (data.sex == "2" ? "女" : "")));
+				$('#setProfessorDialog').modal({keyboard: true});
+			}, "json");
+		});
+	
+		// 保存为专家
+		$('#btn_save').click(function(){
+			var params = common.serializeObject($('#editForm'));
+			$.post('../reConsult/saveProfessor.jo', params, function(result){
+				if (result.code == "0") {
+					common.alert("设置成功", 1);
+					$("#colose_setProfessorDialog").click();
+				} else {
+					common.alert(result.msg, 2);
+				}
+			});
+		});
+		
+		// 查询按钮
+		$('#btn_search').click(function(){
+			var queryParams = common.serializeObject($('#lis_queryForm'));
+			var options = {url: '../sys/queryUser.do', silent: false, query: queryParams};
+			$('#sysUserData').bootstrapTable('refresh', options);
+		});
+		
+		// 清空按钮
+		$('#btn_clean').click(function(){
+			$("#name").val("");
+			$("#sex").val("");
+			$("#sex").trigger("chosen:updated");
+			$("#unitOrgId").val("");
+			$("#unitOrgId").trigger("chosen:updated");
+		});
+		
+		// 初始化树形分类
+		$("#orgTree").jstree({
+			"core" : {
+				"themes" : { "responsive" : false },
+				'data' : function(obj, callback) {
+					var jsonstr = "[]";
+					var jsonarray = eval('(' + jsonstr + ')');
+					$.ajax({
+						type : "GET",
+						url : "../sys/getDepTree.do",
+						dataType : "json",
+						async : false,
+						success : function(result) {
+							jsonarray = result;
+						}
+					});
+					callback.call(this, jsonarray);
+				}
+			}, "plugins" : [ "dnd", "state", "types", "wholerow" ]
+		}).bind("loaded.jstree", function(event, data) {
+		}).bind("activate_node.jstree", function(event, data) {
+			var queryParams = common.serializeObject($('#lis_queryForm'));
+			queryParams.orgId = data.node.original.orgId;
+			var options = {url: '../sys/queryUser.do', silent: false, query: queryParams};
+			$('#sysUserData').bootstrapTable('refresh', options); 
+		});
+
+		// 初始化列表数据
+		var tableParams = {
+			url : "../sys/queryUser.do",
+			queryParams : function(params) {
+				var requestParams = {};
+				requestParams.pageSize = params.pageSize;
+				requestParams.pageNumber = params.pageNumber;
+				return requestParams;
+			},
+			columns : [ 
+			    { checkbox : true }, 
+			   	{
+					field : 'name',
+					title : '姓名'
+				}, {
+					field : 'sex',
+					title : '性别',
+					formatter: function (value, row, index) {
+						if (row.sex == "1") {
+							return "男";
+						} else if (row.sex == "2") {
+							return "女";
+						}
+		            } 
+				}, {
+					field : 'age',
+					title : '年龄'
+				}, {
+					field : 'dutyId',
+					title : '职位',
+					formatter: function (value, row, index) {
+						return $("#sysDuty option[value='" + row.dutyId + "']").text()
+		            } 
+				}, {
+					field : 'phone',
+					title : '联系方式'
+				} 
+			],
+			onDblClickRow : function(row, element) {
+				return;
+			},
+			onLoadSuccess : function(){
+				var height = ($('#sysUserData').parents("body").height() - $('#lis_queryForm').parents(".ibox").height() - 83);
+				$('#sysUserData').bootstrapTable('resetView', {height: height}); 
+			}
+		}
+		$('#sysUserData').bootstrapTable($.extend(baseTable, tableParams));
+
+	});
+</script>

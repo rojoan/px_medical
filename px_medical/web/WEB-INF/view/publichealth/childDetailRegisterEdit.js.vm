@@ -1,0 +1,112 @@
+<script type="text/javascript">
+$(function (){
+	// 选择家庭信息
+	$('#familyOwnerName').click(function(){
+		layer.open({
+            type: 2,
+            title: '选择家庭及信息',
+            shadeClose: true,
+            shade: false,
+            maxmin: false,
+            area: ['85%', '90%'],
+            content: contextPath + '/personDetail/selectCommonPersonFamily.do'
+        });
+	});
+	
+	// 保存
+	$('#btn_register_save').click(function(){
+		var params = common.serializeObject($('#registerForm'));
+
+		if ($('#submitFlag').val() == "1") {
+			common.alert("不能重复提交", 0);
+    		return ;
+		}
+		if (params.familyDetailId == "" || params.familyDetailId == undefined) {
+    		common.alert("请选择家庭户主", 0);
+    		return ;
+    	}
+		if (params.childName == "" || params.childName == undefined) {
+    		common.alert("请填写姓名", 0);
+    		return ;
+    	}
+		if (params.birthDate == "" || params.birthDate == undefined) {
+    		common.alert("请选择出生时间", 0);
+    		return ;
+    	}
+		if (params.gender == "" || params.gender == undefined) {
+    		common.alert("请选择性别", 0);
+    		return ;
+    	}
+		if (params.newBorn == "" || params.newBorn == undefined) {
+    		common.alert("请选择是否新生儿", 0);
+    		return ;
+    	}
+		if (params.birthStifle == "" || params.birthStifle == undefined) {
+    		common.alert("请选择新生儿窒息", 0);
+    		return ;
+    	}
+		if (params.committeeId == "" || params.committeeId == undefined) {
+    		common.alert("请选择社区/村委会", 0);
+    		return ;
+    	}
+		if (params.regionId == "" || params.regionId == undefined) {
+    		common.alert("请选择行政区域", 0);
+    		return ;
+    	}
+		if (params.birthLocType == "" || params.birthLocType == undefined) {
+    		common.alert("请选择出生地点分类", 0);
+    		return ;
+    	}
+		if (params.hospitalId == "" || params.hospitalId == undefined) {
+    		common.alert("请选择助产机构", 0);
+    		return ;
+    	}
+		 
+		params.regionId = $("#regionId").parent().find(".select-item").last().attr('data-code');
+		params.hospitalNo = $("#hospitalId").find("option:selected").attr('orgNo');
+		params.hospitalName = $("#hospitalId").find("option:selected").text();
+		params.committeeName = $("#committeeId").find("option:selected").text();
+		$.post("../childDetail/saveRegister.jo", params, function (result){
+			if (result.code == "0") {
+				$('#submitFlag').val('1');
+				common.alertCall("保存成功。", 1, function (){
+					// 刷新父页面
+					$('#btn_query', window.parent.document).click();
+					// 关闭窗口
+					var index = parent.layer.getFrameIndex(window.name);
+			        parent.layer.close(index); 
+				});
+			} else {
+				common.alert(result.msg, 2);
+			}
+		},"json").error(function (e){jqueryPostError(e)});
+	});
+	
+	
+	// 页面初始化时加载助产医院
+	$.post('../sys/queryUnit.do', {}, function (data){
+		if (null == data || data.length == undefined || data.length <= 0) {
+			return ;
+		}
+		
+		var html = [];
+		var selected = "";
+		html.push('<option value=""></option>');
+		$.each(data, function (){
+			if (this.orgId == "$!childDetail.hospitalId") {
+				selected = "selected='selected'"
+			}
+			html.push('<option orgNo=' + this.orgNo + ' value="' + this.orgId + '" ' + selected + '>' + this.name + '</option>');
+		});
+		$('#hospitalId').html(html.join(''));
+	}, 'json');
+	
+});
+
+// 选择家庭信息回调函数
+function selectFamilyCallBack(obj) {
+	$('#familyAddr').val(obj.familyAddr);
+	$('#familyOwnerName').val(obj.familyOwnerName);
+	$('#familyDetailId').val(obj.familyDetailId);
+}
+</script>

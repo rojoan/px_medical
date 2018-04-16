@@ -1,0 +1,131 @@
+<script>
+    var dicFamilyType = JSON.parse('$dicTools.changeMapToJson($dicData.dicFamilyType)'); 
+    var dicCensusType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCensusType)'); 
+    // 添加按钮
+    function add(){
+        var title = '添加家庭档案 '+common.mustHit;
+        var url = '../familyDetail/editFamilyDetail.do' ;
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+	//查询按钮时间
+	function query(){
+		var queryParams = common.serializeObject($('#familyDetail_queryForm'));
+		var options = {url: '../familyDetail/familyDetailListData.jo?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		$('#familyDetailGrid').bootstrapTable('refresh', options); 
+	}
+    //清空查询框
+    function clearQuery(){
+		var $form = $("#familyDetail_queryForm");
+		$form.find("#q_familyOwnerName").val("");
+		$form.find("#q_familyType").val("");//选择框
+		$form.find("#q_familyType").trigger("chosen:updated");
+		$form.find("#q_censusType").val("");//选择框
+		$form.find("#q_censusType").trigger("chosen:updated");
+		$form.find("#q_censusAttribute").val("");//选择框
+		$form.find("#q_censusAttribute").trigger("chosen:updated");
+    }
+	
+	$(function() {
+		$('#familyDetailGrid').bootstrapTable(//bootstrapTable
+				$.extend(baseTable, {
+					url : "../familyDetail/familyDetailListData.jo",
+					queryParams : function (params){
+						var requestParams = common.serializeObject($('#familyDetail_queryForm'));
+				        requestParams.pageSize = params.pageSize;
+				        requestParams.pageNumber = params.pageNumber;
+				        return requestParams;
+					},
+					columns : [
+					{checkbox:true},
+					{
+						field : 'familyOwnerName',
+						title : '户主姓名'
+					}, {
+						field : 'familyNumber',
+						title : '家庭编号'
+					}, {
+						field : 'householdNumber',
+						title : '户口薄编号'
+					},{
+						field : 'familyType',
+						title : '家庭类型',
+						formatter :function (value, row, index) {
+							if (value) return dicFamilyType[value];
+						}
+					},{
+						field : 'censusType',
+						title : '户籍类型',
+						formatter :function (value, row, index) {
+							if (value) return dicCensusType[value];
+						}
+					}, {
+						field : 'contactPhone',
+						title : '联系电话'
+					}, {
+						field : 'familyCount',
+						title : '成员数量'
+					},{
+						field : 'createTime',
+						title : '建档时间'
+					},{
+			            field : 'operate',
+			            title : '操作',
+			            events : operateEvents,
+			            formatter : operateFormatter
+			        }],
+					onDblClickRow : function (row, element){
+						var title = '家庭档案 家庭编号' + row.familyNumber;
+			            var url = '../familyDetail/editFamilyDetail.do?mode=show&familyDetailId=' + row.familyDetailId ;
+			            common.open(url, title, {area: ['99%', '99%']});
+			   		},
+					onLoadSuccess : function(){
+						var height = ($('#familyDetailGrid').parents("body").height() - $('#familyDetail_queryForm').parents(".ibox").first().height() - 72);
+						$('#familyDetailGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				})//$.extend
+		);//bootstrapTable
+	});//(function(){})
+
+	$(window).resize(function() { 
+		var height = ($('#familyDetailGrid').parents("body").height() - $('#familyDetail_queryForm').parents(".ibox").first().height() - 72);
+		$('#familyDetailGrid').bootstrapTable('resetView', {height: height});
+	})
+	
+	window.operateEvents = {
+        "click #btn_show_family": function(e, value, row, index) {
+        	var title = '家庭档案 家庭编号' + row.familyNumber;
+            var url = '../familyDetail/editFamilyDetail.do?mode=show&familyDetailId=' + row.familyDetailId ;
+            common.open(url, title, {area: ['99%', '99%']});
+        },
+        
+        "click #btn_edit_family": function(e, value, row, index) {
+        	var title = '修改家庭档案 编号' + row.familyNumber;
+            var url = '../familyDetail/editFamilyDetail.do?familyDetailId=' + row.familyDetailId ;
+            common.open(url, title, {area: ['99%', '99%']});
+        },
+         
+        "click #btn_del_family": function(e, value, row, index) { 
+        	common.confirm("确定要删除吗？", function (){
+        		$.post( '../familyDetail/delFamilyDetail.jo',
+                        {familyDetailId:row.familyDetailId}, 
+                        function (result){
+                            if (result.code == "0") {
+                                 common.alert("删除成功",0);    
+                                 $('#btn_query').click();
+                            } else {
+                                common.alert(result.msg, 2);
+                            }
+                        },
+                'json');
+            });
+        }
+    };
+	function operateFormatter(value, row, index) {
+	    var html = [
+	                '<a id="btn_show_family" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+	                '<a id="btn_edit_family" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+	                '<a id="btn_del_family" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+	                ];
+	    return html.join('');
+	}
+	</script>

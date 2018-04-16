@@ -1,0 +1,156 @@
+<script>
+$(document).ready(function () {
+	// 新增
+    $('#btn_add_register').click(function (){
+    	var title = '3-6岁儿童检查编辑 <span class="must-red font-14">( 红字为必填 )</span>';
+    	common.open(contextPath + '/childVisit/childVisitEdit.do?view=sixUnderChildVisitEdit', title, {area: ['99%', '99%']});
+    });
+
+	// 删除
+	$('#btn_delete').click(function (){
+		var ids = [];
+		var row = common.getTableSelectRow('childVisitList', true);
+		if (row.length == undefined || row.length <= 0) {
+			common.alert("请选择要删除的数据", 0);
+    		return ;
+		}
+		$.each(row, function (){
+			ids.push(this.childVisitId);
+		});
+		common.confirm("删除后无法恢复，确定要删除吗？", function (){
+			$.post(
+					contextPath +'/childVisit/deleteChildVisit.jo',
+					{ids: ids.join(',')}, 
+					function (result){
+						if (result.code == "0") {
+							$('#btn_query').click();
+						} else {
+							common.alert(result.msg, 2);
+						}
+					}, 
+			'json').error(function (e){jqueryPostError(e)});
+		});
+    });
+	
+    // 查询按钮
+    $('#btn_query').click(function (){
+    	var queryParams = common.serializeObject($('#queryForm'));
+    	var options = {url: '../childVisit/sixUnderChildVisitDataList.jo', silent: false, query: queryParams};
+    	$('#childVisitList').bootstrapTable('refresh', options); 
+    });
+    
+ 	// 清空按钮
+    $('#btn_clean').click(function (){
+    	$('#gender').val('');
+    	$('#childName').val('');
+    	$('#visitDoctor').val('');
+    	$('#beginVisitDate').val('');
+    	$('#endVisitDate').val('');
+    });
+ 	
+    var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+    var dicBirthLocType = JSON.parse('$dicTools.changeMapToJson($dicData.dicBirthLocType)'); 
+ 	// 初始化列表数据
+    $('#childVisitList').bootstrapTable({
+		url : "../childVisit/sixUnderChildVisitDataList.jo",
+		mobileResponsive : true,
+		pagination : true,
+		pageNumber : true,
+		cache : false,
+		striped: true,
+		//clickToSelect: true,
+		singleSelect: false,
+		pageSize : "10",
+		pageNumber : "1",
+		height : "500",
+		queryParamsType : "",
+		sidePagination : 'server',
+		halign : "center",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		columns : [
+		{ checkbox:true }, 
+		{
+			field : 'childName',
+			title : '姓 名'
+		}, {
+			field : 'gender',
+			title : '性 别',
+			formatter :function (value, row, index) {
+				return dicSex[row.gender];
+			}
+		}, {
+			field : 'birthDate',
+			title : '出生时间'
+		}, {
+			field : 'hospitalName',
+			title : '助产机构'
+		}, {
+			field : 'visitDoctor',
+			title : '随访医生'
+		}, {
+			field : 'visitDoctorPhone',
+			title : '医生联系电话'
+		}, {
+			field : 'visitDate',
+			title : '随访日期'
+		}, {
+			field : 'nextVisitTime',
+			title : '下次随访日期'
+		}, {
+			field : 'nextVisitAddr',
+			title : '下次随访地址'
+		}, {
+   			field : 'operate',
+   			title : '操作',
+   			events : operateEvents,
+   			formatter : operateFormatter
+   		}],
+		onDblClickRow: function (row, element){
+			var title = '3-6岁儿童检查详情';
+	    	common.open(contextPath + '/childVisit/childVisitEdit.do?view=sixUnderChildVisitShow&childVisitId=' + row.childVisitId, title, {area: ['99%', '99%']});
+		},
+		onLoadSuccess : function(){
+			var height = ($('#childVisitList').parents("body").height() - $('#queryForm').parents(".ibox").height() - 72);
+			$('#childVisitList').bootstrapTable('resetView', {height: height}); 
+		}
+	});
+});
+window.operateEvents = {
+		"click #btn_show_register": function(e, value, row, index) {
+			var title = '3-6岁儿童检查详情';
+	    	common.open(contextPath + '/childVisit/childVisitEdit.do?view=sixUnderChildVisitShow&childVisitId=' + row.childVisitId, title, {area: ['99%', '99%']});
+		},
+		"click #btn_edit_register": function(e, value, row, index) {
+			var title = '3-6岁儿童检查编辑 <span class="must-red font-14">( 红字为必填 )</span>';
+	    	common.open(contextPath + '/childVisit/childVisitEdit.do?view=sixUnderChildVisitEdit&childVisitId=' + row.childVisitId, title, {area: ['99%', '99%']});
+		},
+		"click #btn_del_register": function(e, value, row, index) {
+			common.confirm("删除后无法恢复，确定要删除吗？", function (){
+				$.post(
+						contextPath +'/childVisit/deleteChildVisit.jo',
+						{ids: row.childVisitId}, 
+						function (result){
+							if (result.code == "0") {
+								$('#btn_query').click();
+							} else {
+								common.alert(result.msg, 2);
+							}
+						}, 
+				'json').error(function (e){jqueryPostError(e)});
+			});
+		}
+	};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_show_register" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+	            '<a id="btn_edit_register" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+	            '<a id="btn_del_register" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+	            ];
+	return html.join('');
+}
+</script>

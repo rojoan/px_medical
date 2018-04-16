@@ -1,0 +1,112 @@
+<script>
+
+	// 保存 提交表单
+	function savePersonDetail() {
+		var personDetailParams = common.serializeObject($('#personDetailForm'));
+		if (personDetailParams.personalName == undefined || personDetailParams.personalName == "") {
+			common.alert("请填写居民姓名",0);
+			$("#personalName").focus();
+			return false;
+		}
+		if (personDetailParams.personalType == undefined || personDetailParams.personalType == "") {
+			common.alert("请选择个人类别",0);
+			$("#personalType").focus();
+			return false;
+		}
+		if (personDetailParams.certificateType == undefined  || personDetailParams.certificateType == "") {
+			common.alert("请选择证件类型",0);
+			$("#certificateType").focus();
+			return false;
+		}
+		if (personDetailParams.certificateNumber == undefined  || personDetailParams.certificateNumber == "") {
+			common.alert("请填写证件编号",0);
+			$("#certificateNumber").focus();
+			return false;
+		} else {
+			if (personDetailParams.certificateNumber == 1 && checkIDcard(personDetailParams.certificateNumber)) {
+				common.alert("身份证号码格式错误",0);
+				$("#certificateNumber").focus();
+			}
+		}
+
+		if (personDetailParams.certificateNumber == undefined  || personDetailParams.certificateNumber == "") {
+			common.alert("请填写本人电话！",0);
+			$("#myselfPhone").focus();
+		} else {
+			if (!checkMobile(personDetailParams.myselfPhone) && !checkPhone(personDetailParams.myselfPhone)) {
+				common.alert("本人电话格式错误！",0);
+				$("#myselfPhone").focus();
+				return false;
+			}
+		}
+
+		if (personDetailParams.contactPhone) {
+			if (!checkMobile(personDetailParams.contactPhone) && !checkPhone(personDetailParams.contactPhone)) {
+				common.alert("联系人电话格式错误！",0);
+				$("#contactPhone").focus();
+				return false;
+			}
+		}
+
+		//街道
+		if ($('#personDetailForm').find("#regionId").parent().find(".select-item").last().attr( 'data-code') == undefined) {
+			personDetailParams.regionId = '';
+			common.alert('请选择城镇街道');
+			return false;
+		} else {
+			personDetailParams.regionId = $('#personDetailForm').find("#regionId").parent().find( ".select-item").last().attr('data-code');
+		}
+
+		//判断家庭关系选择
+		if (personDetailParams.familyOwner && !personDetailParams.familyDetailId) {
+			common.alert("家庭信息不存在,请重新选择家庭！",0);
+			return false;
+		}
+		if (personDetailParams.familyDetailId && !personDetailParams.familyRelId) {
+			common.alert("请选择与户主的关系！",0);
+			return false;
+		}
+		if (!personDetailParams.familyDetailId && personDetailParams.familyRelId) {
+			common.alert("请选择家庭！",0);
+			return false;
+		}
+
+		var personDetailRetionData = {};
+		//设置到传递参数json
+		personDetailRetionData.personDetailEditInfo = personDetailParams; //个人基本档案
+		
+		
+		
+		$.post("../personDetail/savePersonDetail.jo", {
+			personDetailRetionData : JSON.stringify(personDetailRetionData)
+		}, function(result) {
+			if (result.code == "0") {
+				$('#submitFlag').val("1");
+				$("#personDetailId").val(result.data.personDetailId);
+				$("#archivePersonalNum").val(result.data.archivePersonalNum);
+				
+				common.alertCall("保存成功!", 1, function (){
+                    // 保存成功回调函数
+                    if (parent.savePersonDetailCallBack && typeof(parent.savePersonDetailCallBack) == "function") {
+                    	var person =  {};
+                        var dicFamilyRel = JSON.parse('$dicTools.changeMapToJson($dicData.dicFamilyRel)'); 
+                        person.personalName = personDetailParams.personalName;
+                        person.familyRelText = dicFamilyRel[personDetailParams.familyRelId];
+                        person.genderText = personDetailParams.gender==1?'男':'女';
+                        person.birthDateText = personDetailParams.birthDate;
+                        person.certificateNumber = personDetailParams.certificateNumber;
+                        parent.savePersonDetailCallBack(person);
+                    }
+                    // 关闭窗口
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index); 
+                });
+			 
+			} else {
+				common.alert(result.msg,2); 
+			}
+		}, "json");
+	}
+	//savePersonDetail 提交表单 方法 end 
+ 
+</script>

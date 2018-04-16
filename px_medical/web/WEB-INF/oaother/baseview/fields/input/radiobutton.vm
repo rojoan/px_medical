@@ -1,0 +1,3 @@
+#foreach($elemment in $cell.valuesList)
+   $!{elemment.prefix}<input type="radio" id="$!{cell.field}$velocityCount" name="$!{cell.field}" value="$!{elemment.fieldValue}"  #if(${datamap.get(${cell.field})} == ${elemment.fieldValue}) checked#end #if(${elemment.readonly})readonly#end class='inputobject' $!{elemment.custom} #if(${elemment.style})style=#singleQuotes()${elemment.style}#singleQuotes()#end /><LABEL for="$!{cell.field}$velocityCount">${elemment.title}</LABEL> $!{elemment.suffix}
+#end

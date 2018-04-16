@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产前筛查检查/手术记录 信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<!--城市插件-->
+<link href="../resource/css/plugins/citypicker/city-picker.css" rel="stylesheet">
+<script src="../resource/js/plugins/citypicker/city-picker.data.js"></script>
+<script src="../resource/js/plugins/citypicker/city-picker.js"></script>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style type="text/css">
+.m-r-xs .form-group div{padding: 7px;}
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+
+ 
+<!-- 主体 -->
+<div class="modal-body full-height" style="height: calc(100% - 49px); padding: 0;">
+ 
+	<div class="tab-content table-content full-height-scroll form-horizontal" style="height: calc(100% - 40px); padding: 9px 8px 9px 12px;">
+		 
+		 	<div class="row">
+		 		
+		 	
+		 		<div class="col-sm-3">
+	                 <div class="row m-l-xs m-r-xs">
+	                     <div class="text-box"><h5>居民档案</h5></div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">居民姓名</label>
+	                         <div class="col-sm-9">
+	                                #htmlEscape($!personDetail.personalName)
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">性别</label>
+	                         <div class="col-sm-9">
+	                         	#textValueOutput("$!personDetail.gender" $dicData.dicSex) 
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">民族</label>
+	                         <div class="col-sm-9">
+	                         	#textValueOutput("$!personDetail.nationId" $dicData.dicNation) 
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">证件类型</label>
+	                         <div class="col-sm-9">
+	                         	#textValueOutput("$!personDetail.certificateType" $dicData.dicCertificateType) 
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">证件号码</label>
+	                         <div class="col-sm-9">
+	                         	 #htmlEscape($!personDetail.certificateNumber)
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">本人电话</label>
+	                         <div class="col-sm-9">
+	                          #htmlEscape($!personDetail.myselfPhone)
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">工作单位</label>
+	                         <div class="col-sm-9">
+	                          #htmlEscape($!personDetail.workOrg)
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">个人职业</label>
+	                         <div class="col-sm-9">
+	                         #textValueOutput("$!personDetail.careerId" $dicData.dicCareer) 
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">家庭地址</label>
+	                         <div class="col-sm-9">
+	                          #htmlEscape($!personDetail.familyAddr)
+	                         </div>
+	                     </div>
+	                     <div class="form-group">
+	                         <label class="col-sm-3 control-label text-right p-r-none">户籍地址</label>
+	                         <div class="col-sm-9">
+	                          #htmlEscape($!personDetail.censusAddr)
+	                         </div>
+	                     </div>
+	                 </div>
+				</div>
+		 		<div class="col-sm-3">
+	                 <form id="personChangeFrom">
+		                 <div class="row m-l-xs m-r-xs">
+		                     <div class="text-box"><h5>当前家庭</h5></div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">户主</label>
+		                         <div class="col-sm-9">
+		                         	#htmlEscape($!familyDetail.familyOwnerName)
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                     <label class="col-sm-3 control-label text-right p-r-none p-l-none">与户主关系</label>
+								<div class="col-sm-9">
+									#textValueOutput($!personDetail.familyRelId $dicData.dicFamilyRel) 
+								</div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">户口薄编号</label>
+		                         <div class="col-sm-9">
+		                         	#htmlEscape($!familyDetail.householdNumber)
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">家庭编号</label>
+		                         <div class="col-sm-9">
+		                              #htmlEscape($!familyDetail.familyNumber)
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">家庭类型</label>
+		                         <div class="col-sm-9">
+		                              #textValueOutput("$!familyDetail.familyType" $dicData.dicFamilyType) 
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">户籍类型</label>
+		                         <div class="col-sm-9">
+		                              #textValueOutput($!familyDetail.censusType $dicData.dicCensusType) 
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">家庭地址</label>
+		                         <div class="col-sm-9">
+		                              #htmlEscape($!familyDetail.familyAddr)
+		                         </div>
+		                     </div>
+		                 </div>
+		                 <div id="newFamily" class="row m-l-xs m-r-xs">
+		                     #formHiddenInput("personDetailId" "$!personDetail.personDetailId" " id='personDetailId' ")
+		                     #formHiddenInput("familyDetailId" "" " id='familyDetailId' ")
+		                     
+		                     <div class="text-box"><h5>迁入家庭</h5></div>
+		                      <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">户主</label>
+		                         <div class="col-sm-9">
+		                              #formTextInput("familyOwnerName" "" "class='form-control' readonly ")
+		                         </div>
+		                     </div> 
+		                     <div class="form-group">
+		                        <label class="col-sm-3 control-label text-right p-r-none p-l-none red">与户主关系</label>
+								<div class="col-sm-9">
+									  #formSingleSelectDictionary("familyRelId" "" $dicData.dicFamilyRel 
+										"id=''  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+								</div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">户口薄编号</label>
+		                         <div class="col-sm-9">
+		                              #formTextInput("householdNumber" "" "class='form-control' readonly ")
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">家庭编号</label>
+		                         <div class="col-sm-9">
+		                              #formTextInput("familyNumber" "" "class='form-control' readonly ")
+		                         </div>
+		                     </div>
+		                    
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">户籍类型</label>
+		                         <div class="col-sm-9">
+		                              #formTextInput("censusType" "" "class='form-control' readonly ")
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-3 control-label text-right p-r-none">家庭地址</label>
+		                         <div class="col-sm-9">
+		                              #formTextInput("familyAddr" "" "class='form-control' readonly ")
+		                         </div>
+		                     </div>
+		                 </div>
+					</form>
+				</div>
+		 		<div class="col-sm-6">
+	                 <div id="familyList" class="row m-l-xs m-r-xs">
+                     	 <div class="text-box"><h5>家庭列表</h5></div>
+                    	 <div class="row" style="padding-bottom: 10px">
+								<form id="familyDetail_queryForm"  class="form-horizontal">
+									
+									<div class="col-sm-6 m-b-sm ">
+										<label class="control-label col-sm-4">户主姓名</label>
+										<div class="input-daterange input-group date col-sm-8 ">
+											<input type="text" name="familyOwnerName" class="form-control "  />
+										</div>
+									</div>
+									<div class="col-sm-6 m-b-sm ">
+										<label class="control-label col-sm-4">家庭编号</label>
+										<div class="input-daterange input-group date col-sm-8 ">
+											<input type="text" name="familyNumber" class="form-control "  />
+										</div>
+									</div>
+									<div class="col-sm-12 text-right">
+										<button type="button" onclick="query();" class="btn btn-sm btn-primary">
+											<i class="fa fa-search"></i> <span>查 询</span>
+										</button>
+										&nbsp;&nbsp;&nbsp;
+										<button type="button" onclick="clearQuery();" class="btn btn-sm btn-info">
+											<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+										</button>
+									</div>
+									
+								</form>
+						 </div>
+	                     <div class="table-responsive">
+								<!-- 列表表格 -->
+								<div class="example">
+									<table id="familyDetailGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+								</div>
+						</div>
+	                 </div>
+				</div>
+		 		
+		 	</div>
+		 
+	</div>
+</div>
+
+ 
+ 
+
+
+     <!-- 底部 start -->      
+    <div class="tool-table-fixed" style="width: calc(100%)">
+        #if('show' != $!mode)
+            <button onclick="changPersonFamily();" type="button" class="btn btn-success">
+                      <i class="fa fa-save"></i> 保 存
+            </button>
+        #end
+    </div>
+    <!-- 底部 end -->      
+                
+    <!-- 全局js -->
+    <script src="../resource/style/js/ui.js"></script>
+    #parse("./common/common.js.vm")
+    #parse("./publichealth/family/familyDetailEdit.js.vm")   
+    
+    <script>
+function changPersonFamily() {
+     var personChangeParams = common.serializeObject($('#personChangeFrom'));
+     if (!personChangeParams.familyRelId) {
+        common.alert('请选择家庭关系', 0);
+        return false;
+     } 
+     $.post('../personDetail/changPersonFamily.jo', personChangeParams, function(result) {
+        if (result.code == '0') { 
+            common.alertCall("人员变动保存成功!", 1, function (){
+                // 刷新父页面
+                var $btnQuery = $('#btn_query', window.parent.document);
+                if($btnQuery.length > 0 ) $btnQuery.click();
+         
+                // 关闭窗口
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index); 
+            });
+        } else {
+            common.alert(result.msg, 2);
+        }
+    }, "json");
+}
+//查询按钮时间
+function query(){
+      var jqForm = $('#familyDetail_queryForm');
+      var queryParams = common.serializeObject($('#familyDetail_queryForm'));
+      var options = {url: '../familyDetail/familyDetailListData.jo?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+      $('#familyDetailGrid').bootstrapTable('refresh', options); 
+}
+//清空查询框
+function clearQuery(){
+        var $formObj = $('#familyDetail_queryForm');
+        $formObj.find('[name="familyOwnerName"]').val(''); 
+        $formObj.find('[name="familyNumber"]').val(''); 
+}
+
+$(function() {
+    $('#familyDetailGrid').bootstrapTable(//bootstrapTable
+            $.extend(baseTable, {
+                url : "../familyDetail/familyDetailListData.jo",
+                queryParams : function (params){
+                    var requestParams = common.serializeObject($('#familyDetail_queryForm'));
+                    requestParams.pageSize = params.pageSize;
+                    requestParams.pageNumber = params.pageNumber;
+                    return requestParams;
+                },
+                columns : [
+                {checkbox:true},
+                {
+                    field : 'familyOwnerName',
+                    title : '户主姓名'
+                }, {
+                    field : 'familyNumber',
+                    title : '家庭编号'
+                }, {
+                    field : 'householdNumber',
+                    title : '户口薄编号'
+                }],
+                onCheck:function(row){
+                    var jqNewFamily = $('#newFamily');
+                    jqNewFamily.find('input[name="familyDetailId"]').val(row.familyDetailId);
+                    jqNewFamily.find('input[name="familyOwnerName"]').val(row.familyOwnerName);
+                    jqNewFamily.find('input[name="familyNumber"]').val(row.familyNumber);
+                    jqNewFamily.find('input[name="householdNumber"]').val(row.householdNumber);
+                    jqNewFamily.find('input[name="familyAddr"]').val(row.familyAddr);
+                    var dicCensusType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCensusType)'); 
+                    if (row.censusType) jqNewFamily.find('input[name="censusType"]').val(dicCensusType[row.censusType]);
+                     
+                },
+                onDblClickRow : function (row, element){
+                    $('#familyDetailGrid').bootstrapTable('check',element.attr('data-index'));
+                },
+                onLoadSuccess : function(){ 
+                    var height = ($('#familyDetailGrid').parents("body").height() - $('#familyList').find('.row').height() - 220);
+                    $('#familyDetailGrid').bootstrapTable('resetView', {height: height}); 
+                }
+            })//$.extend
+    );//bootstrapTable
+});//(function(){})
+
+$(window).resize(function() { 
+    var height = ($('#familyDetailGrid').parents("body").height() - $('#familyList').find('.row').height() - 220);
+    $('#familyDetailGrid').bootstrapTable('resetView', {height: height}); 
+})
+</script>
+</body>
+</html>
+ 
+

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老年人一般健康评估</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm") 
+<style>
+html, body {
+	height: 100%
+}
+
+.menu {
+	margin-top: 2px;
+	padding-left: 18px;
+	line-height: 34px;
+	background: #f6f7f8;
+	color: #555;
+	font-weight: bold;
+}
+</style>
+</head>
+
+<body class="gray-bg top-navigation">
+                    <div class="col-md-3 full-height-scroll white-bg" style="padding: 0; border-right: #ccc 1px solid">
+                        
+                        <div class="sub-nav" >
+                            <ul>
+                                <li class="sub-nav-item">
+                                    <div class="menu">
+	                                    <span>个人详细信息</span>&nbsp;&nbsp;
+	                                    <span href="javascript:void(0);" style="padding: 2px 8px;cursor: pointer;" onclick="showPersonDetail();"><i class="fa fa-eye"></i></span>
+	                                    <span href="javascript:void(0);" style="padding: 2px 8px;cursor: pointer;" onclick="editPersonDetail();"><i class="fa fa-pencil-square-o"></i></span>
+                                    </div>
+                                </li>
+                            
+                                <li class="sub-nav-item">
+                                    <a href="javascript:;"><span>一般健康评估列表</span><i class="my-icon nav-more"></i></a>
+                                    <ul>
+                                          #foreach($item in $elderHealthAssessList ) 
+                                            <li dataId="$!dicTools.getRondomNum(4)">
+	                                            <span>$!date.format('yyyy-MM-dd', $!item.assessTime) </span>
+	                                            <a href="javascript: void(0); " onclick="delElderHealthAssess($!item.elderHealthAssessId,this);" title="删除">
+	                                               <i class="fa fa-times"></i>
+	                                            </a>
+	                                            <a href="../elder/editElderHealthAssess.do?personDetailId=$item.personDetailId&elderHealthAssessId=$item.elderHealthAssessId" title="修改" target="showIframe">
+	                                              <i class="fa fa-pencil-square-o"></i>
+	                                            </a>
+	                                            <a href="../elder/editElderHealthAssess.do?personDetailId=$item.personDetailId&elderHealthAssessId=$item.elderHealthAssessId&mode=show" title="查看" target="showIframe">
+	                                              <i class="fa fa-eye"></i>
+	                                            </a>
+	                                           
+                                            </li>
+                                          #end
+                                    </ul>
+                                </li>
+                                 
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-9 full-height">
+                       <!-- <div class="col-md-12">孕妇基础信息</div> -->
+                       <div class="col-md-12  full-height-scroll " style="height: calc(100% - 10px)">
+                        <!--内容开始-->
+                        <iframe src="" id="showIframe" name="showIframe"
+                                style="height: 100%; width: 100%;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" >   
+                         </iframe>
+                        <!--内容结束-->
+                       </div>
+
+                    </div>
+	#parse("./common/common.js.vm")
+	<script type="text/javascript">
+	    function showPersonDetail(){
+	        var title = '居民个人档案 -  $personDetail.personalName ' ;
+	        var url = '../personDetail/editPersonDetail.do?mode=show&personDetailId=' + $personDetail.personDetailId ;
+	        common.open(url, title, {area: ['99%', '99%']});
+	    }
+	    
+	    function editPersonDetail(){
+	        var title = '居民个人档案 -  $personDetail.personalName ' ;
+	        var url = '../personDetail/editPersonDetail.do?personDetailId=' + $personDetail.personDetailId ;
+	        common.open(url, title, {area: ['99%', '99%']});
+	    }
+	    
+	       // 删除  老年人一般健康评估
+        function delElderHealthAssess(elderHealthAssessId, ele) {
+            common.confirm("删除后无法恢复，确定要删除吗？", function (){
+                $.post( '../elder/delElderHealthAssess.jo',
+                        {elderHealthAssessId: elderHealthAssessId}, 
+                        function (result){
+                            if (result.code == "0") {
+                                 common.alert("删除成功", 1);
+                                 clearElement(ele);
+                            } else {
+                                common.alert(result.msg, 2);
+                            }
+                        }, 
+                'json');
+            });
+        }
+	
+	    //删除时清除页面元素
+        function clearElement(ele) { 
+            $(ele).parent().remove();
+            var dataId = $(ele).parent().attr('dataId');
+            var ifDataId = $('#showIframe').attr('dataId');
+            if (dataId == ifDataId) {
+                $('#showIframe').contents().find('body').html('');
+            }
+        }
+        //初始化操作
+        $(document).ready(function() {
+        	$('li.sub-nav-item >ul').find('a').on('click', function(){
+                setIframeId(this);
+            });
+		});
+        
+        //设置右侧 iframe的id
+        function setIframeId(ele) {
+            var dataId = $(ele).parent().attr('dataId');
+            $('#showIframe').attr('dataId',dataId);
+        }
+	</script>
+</body>
+</html>

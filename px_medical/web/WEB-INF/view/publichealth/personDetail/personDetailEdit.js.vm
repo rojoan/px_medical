@@ -1,0 +1,554 @@
+<script>
+
+	// 保存 提交表单
+	function savePersonDetail() {
+		var personDetailParams = common.serializeObject($('#personDetailForm'));
+		if (personDetailParams.personalName == undefined || personDetailParams.personalName == "") {
+			common.alert("请填写居民姓名",0);
+			$("#personalName").focus();
+			return false;
+		}
+		if (personDetailParams.personalType == undefined || personDetailParams.personalType == "") {
+			common.alert("请选择个人类别",0);
+			$("#personalType").focus();
+			return false;
+		}
+		if (personDetailParams.certificateType == undefined  || personDetailParams.certificateType == "") {
+			common.alert("请选择证件类型",0);
+			$("#certificateType").focus();
+			return false;
+		}
+		if (personDetailParams.certificateNumber == undefined  || personDetailParams.certificateNumber == "") {
+			common.alert("请填写证件编号",0);
+			$("#certificateNumber").focus();
+			return false;
+		} else {
+			if (personDetailParams.certificateType == 1 && !checkIDcard(personDetailParams.certificateNumber)) {
+				common.alert("身份证号码格式错误",0);
+				$("#certificateNumber").focus();
+			}
+		}
+
+		if (personDetailParams.certificateNumber == undefined  || personDetailParams.certificateNumber == "") {
+			common.alert("请填写本人电话！",0);
+			$("#myselfPhone").focus();
+		} else {
+			if (!checkMobile(personDetailParams.myselfPhone) && !checkPhone(personDetailParams.myselfPhone)) {
+				common.alert("本人电话格式错误！",0);
+				$("#myselfPhone").focus();
+				return false;
+			}
+		}
+
+		if (personDetailParams.contactPhone) {
+			if (!checkMobile(personDetailParams.contactPhone) && !checkPhone(personDetailParams.contactPhone)) {
+				common.alert("联系人电话格式错误！",0);
+				$("#contactPhone").focus();
+				return false;
+			}
+		}
+
+		//街道
+		if ($("#regionId").parent().find(".select-item").last().attr( 'data-code') == undefined) {
+			personDetailParams.regionId = '';
+			common.alert('请选择城镇街道');
+			return false;
+		} else {
+			personDetailParams.regionId = $("#regionId").parent().find( ".select-item").last().attr('data-code');
+		}
+
+		//判断家庭关系选择
+		if (isBlank(personDetailParams.familyDetailId) ) {
+			common.alert("家庭信息不存在,请选择家庭！",0);
+			return false;
+		}
+		if (personDetailParams.familyDetailId && !personDetailParams.familyRelId) {
+			common.alert("请选择与户主的关系！",0);
+			return false;
+		}
+		if (!personDetailParams.familyDetailId && personDetailParams.familyRelId) {
+			common.alert("请选择家庭！",0);
+			return false;
+		}
+
+		var personDetailRetionData = {};
+		var familyPersonEditInfo = {};
+		var preventJson = buildTrInputJSON($('#pastDisease'));
+
+		familyPersonEditInfo.familyPersonId = personDetailParams.familyPersonId;//家庭成员关系id
+		familyPersonEditInfo.personDetailId = personDetailParams.personDetailId;//个人id
+		familyPersonEditInfo.familyDetailId = personDetailParams.familyDetailId;//家庭id
+		familyPersonEditInfo.familyRelId = personDetailParams.familyRelId;//个人-家庭关系id
+		
+		//判断既往史输入内容是否正确
+		var pastData = buildPastDiseaseData();
+		if(!pastData.valid){
+			return false;
+		}
+ 
+		var personSurgeryData = buildPersonSurgeryData();
+		if(!personSurgeryData.valid){
+			return false;
+		}
+		var familyDiseaseData = buildFamilyDiseaseData();
+		if(!familyDiseaseData.valid){
+			return false;
+		}
+		 
+		//设置到传递参数json
+		personDetailRetionData.personDetailEditInfo = personDetailParams; //个人基本档案
+		personDetailRetionData.familyPersonEditInfo = familyPersonEditInfo;//个人-家庭关系信息
+		personDetailRetionData.pastDiseaseEditInfoList = pastData.patsDiseaseArr;//个人既往史
+		personDetailRetionData.exposeDiseaseEditInfoList = buildExposeDiseaseData();//个人暴露史
+		personDetailRetionData.drugAllergyEditInfoList = buildDrugAllergyData();//药物过敏史
+		personDetailRetionData.personDisabilityList = buildPersonDisabilityData();//残疾情况史
+		personDetailRetionData.personSurgeryList = personSurgeryData.personSurgeryArr;//手术、创伤、输血史
+		personDetailRetionData.familyDiseaseList = familyDiseaseData.familyDiseaseArr;//家族史
+		
+		$.post("../personDetail/savePersonDetail.jo", {
+			personDetailRetionData : JSON.stringify(personDetailRetionData)
+		}, function(result) {
+			if (result.code == "0") {
+				$('#submitFlag').val("1");
+				$("#personDetailId").val(result.data.personDetailId);
+				$("#archivePersonalNum").val(result.data.archivePersonalNum);
+				
+				common.alertCall("保存成功!", 1, function (){
+                    // 刷新父页面
+                    var $btnQuery = $('#btn_query', window.parent.document);
+                    if($btnQuery.length > 0 ) $btnQuery.click();
+             
+                    // 关闭窗口
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index); 
+                });
+			} else {
+				common.alert(result.msg,2); 
+			}
+		}, "json");
+	}
+	//savePersonDetail 提交表单 方法 end
+
+	 // 选择家庭信息
+	 function selectPersonFamilyModal(){
+          var title = '选择家庭';
+          var url = '../personDetail/selectCommonPersonFamily.do' ;
+          common.open(url, title, {area: ['85%', '90%']});
+     }
+	
+	  //选择家庭后的回调 函数
+	 function selectFamilyCallBack(obj){
+		 $("#familyOwner").val(obj.familyOwnerName);//家庭
+         $("#familyDetailId").val(obj.familyDetailId);//家庭主键id
+     }
+
+	//对街道重置
+	$(document).ready(
+	  function() {
+		$('#regionIdReset').click(function() {
+			$('#regionId').citypicker('reset');
+		});
+		$("span.city-picker-span, .city-picker-dropdown").css('width', '300px');
+	});
+
+	//读取familyOwner
+	function readFamilyOwner() {
+		var q_familyOwnerName = $("#q_familyOwnerName").val();
+		return q_familyOwnerName;
+	}
+
+	// 家庭查询
+	function queryFamilyDetail() {
+		var options = {
+			url : '../familyDetail/familyDetailListData.jo',
+			silent : false,
+			query : {
+				familyOwnerName : readFamilyOwner()
+			}
+		};
+		$('#familyDetailGrid').bootstrapTable('refresh', options);
+	}
+
+	//个人既往史js start  ***************************
+	$('#add-pastDisease').click( function() {
+		var pastDiseaseRowHtml = $('#template > #pastDiseaseTemplate').html();
+		pastDiseaseRowHtml = pastDiseaseRowHtml.replaceAll('name="familyDiseaseFlag"', 'name="familyDiseaseFlag' + new Date().getTime() + '"');
+		$('#pastDisease').append(pastDiseaseRowHtml);
+		$('#pastDisease > #blankRow').remove();
+		reApplyPlugins();
+		
+		 var content =  $('#pastDisNamePopover').html();
+		 $(".pastDiseaseSelect").popover({
+			    trigger:"manual",    
+			    placement:"auto",
+			    html:true,
+			    content:content
+		 });
+	});
+	
+	//删除按钮操作 删除
+	function delPastDisease(element) {
+		$(element).parent().parent().remove();
+	}
+	
+	/**
+	* patsDiseaseArr 既往史数据数组，对其添加数据
+	* return 返回验证结果 boolean
+	*/
+	function buildPastDiseaseData(){
+		var pastData = {};
+		pastData.valid = true;
+		//获取既往史输入数据
+		var patsDiseaseArr = buildTrInputJSON($('#pastDisease'));
+		
+		//判断疾病名称是否重复
+		var uniqueMap = {};
+		$(patsDiseaseArr).each(function() {
+			//验证疾病名称是否为空
+			if(isBlank(this.diseaseName)){
+				common.alert("疾病名称不能为空！",0);
+				pastData.valid = false;
+				return false;//只是跳出循环
+			}
+			uniqueMap[this.diseaseName] = $.trim(this.diseaseName);
+		});
+
+		if(!pastData.valid){
+			return pastData;
+		}
+		
+		var mapLength = Object.keys(uniqueMap).length;
+		if (patsDiseaseArr.length != 0 && mapLength < patsDiseaseArr.length) {
+			common.alert("疾病名称不能重复！",0);
+			pastData.valid = false;
+			return pastData;
+		}
+		
+		//由于多组redio的name不能一样，需要特殊处理,设置familyDiseaseFlag的值
+		$('#pastDisease').find(".trRow").each(function(i) {
+			$(this).find("div[class*=checked] > input[name^='familyDiseaseFlag']").each( function() {
+				patsDiseaseArr[i].familyDiseaseFlag = this.value;
+			});
+		});
+		pastData.patsDiseaseArr = patsDiseaseArr;
+		return pastData;
+	}
+	//个人既往史js end  ***************************
+	
+
+	
+	//个人暴露史js  start***************************
+
+	//添加按钮
+	function addExposeDisease(element) {
+		var exposeDiseaseRowHtml = $('#template > #exposeDiseaseTemplate').html();
+		$('#exposeDisease').append(exposeDiseaseRowHtml);
+		$('#exposeDisease > #blankRow').remove();
+		reApplyPlugins();
+	}
+	
+	//删除按钮
+	function delExposeDisease(element) {
+		$(element).parent().parent().remove();
+	}
+	
+	/**
+	* exposeDiseaseArr 既往史数据数组，对其添加数据
+	* return 返回验证结果 boolean
+	*/
+	function buildExposeDiseaseData(){
+		//字典
+		var dicExpose = JSON.parse('$dicTools.changeMapToJson($dicData.dicExpose)'); 
+		var exposeDiseaseArr = new Array();  
+		
+		$('#exposeDiseaseCks').find('input[name="exposeId"]:checked').each(function(i) {
+			var exposeDisease = {};  
+			exposeDisease.exposeId = parseInt($(this).val());
+			exposeDisease.exposeName = dicExpose[exposeDisease.exposeId];
+			exposeDiseaseArr.push(exposeDisease);//向数组中添加元素  
+		});
+		return exposeDiseaseArr;
+	}
+	//个人暴露史js end  ***************************
+	
+	
+	//个人过敏史js  start***************************
+
+	function addDrugAllergy(element) {
+		var drugAllergyRowHtml = $('#template > #drugAllergyTemplate').html();
+		$('#drugAllergyRows').append(drugAllergyRowHtml);
+		$('#drugAllergyRows > #blankRow').remove();
+		reApplyPlugins();
+	}
+	
+	function delDrugAllergy(element) {
+		$(element).parent().parent().remove();
+	}
+	 
+	
+	/**
+	* 验证药物过敏史表单，并且写入数组
+	* return 返回验证结果drugAllergyData{boolean,array[]}  
+	*/
+	function buildDrugAllergyData(){
+		//字典
+		var dicDrugAllergy = JSON.parse('$dicTools.changeMapToJson($dicData.dicDrugAllergy)'); 
+		var drugAllergyArr = new Array();  
+		
+		$('#drugAllergyRows').find('input[name="drugAllergyId"]:checked').each(function(i) {
+			var drugAllergy = {};  
+			drugAllergy.drugAllergyId = parseInt($(this).val());
+			drugAllergy.drugAllergyName = dicDrugAllergy[drugAllergy.drugAllergyId];
+			if(5 == drugAllergy.drugAllergyId){
+				drugAllergy.drugAllergyOther = $(this).parent().parent().find('[name=drugAllergyOther]').val();
+			}
+			drugAllergyArr.push(drugAllergy);//向数组中添加元素  
+		});
+		return drugAllergyArr;
+	}
+	//个人过敏史js end  ***************************
+	
+	
+	//个人残疾js start  ***************************
+	function buildPersonDisabilityData(){
+		var personDisabilityArr = new Array();  
+		$('#personDisabilitRows').find('input[name="disabilityId"]:checked').each(function() {
+			personDisabilityArr.push(parseInt($(this).val()));//向数组中添加元素  
+		});
+		console.log(personDisabilityArr);
+		return personDisabilityArr;
+	}
+	//个人残疾js end  ***************************
+	
+	
+	
+	//手术、创伤、输血史js start  ***************************
+	function buildPersonSurgeryData(){
+
+		var personSurgeryData = {};
+		personSurgeryData.valid = true;
+		//获取手术、创伤、输血史输入数据
+		var personSurgeryArr = buildTrInputJSON($('#personSurgeryRows'));
+		
+		//判断检验
+		$(personSurgeryArr).each(function() {
+			
+			switch (this.surgeryType) {
+			case 'surgeryType':
+				//检验手术名称
+				if(isBlank(this.surgeryName)){
+					common.alert("手术名称不能为空！",0);
+					drugAllergyData.valid = false;
+				} 
+				break;
+			case 'traumaType':
+				//检验外伤名称
+				if(isBlank(this.traumaName)){
+					common.alert("外伤名称不能为空！",0);
+					drugAllergyData.valid = false;
+				} 
+				break;
+			case 'bloodTransType':
+				//检验输血原因
+				if(isBlank(this.bloodTransReason)){
+					common.alert("输血原因不能为空！",0);
+					drugAllergyData.valid = false;
+				} 
+				break;
+		    }
+			
+			if (!personSurgeryData.valid) {
+				return false;
+			}
+		});
+		personSurgeryData.personSurgeryArr = personSurgeryArr;
+		return personSurgeryData;
+	}
+	
+	function addSurgery(surgeryType){
+		var personSurgeryRowHtml = '';
+		switch (surgeryType) {
+		case 1:
+			personSurgeryRowHtml = $('#personSurgeryTemplate > #surgeryTemplate').html();
+			var target = $('#personSurgeryRows > .surgeryRow').last();
+			if (target.length > 0) {
+				$(personSurgeryRowHtml).insertAfter(target);
+				break;
+			} 
+			$('#personSurgeryRows').prepend(personSurgeryRowHtml);
+			break;
+		case 2:
+			personSurgeryRowHtml = $('#personSurgeryTemplate > #traumaTemplate').html();
+			var target = $('#personSurgeryRows > .traumaRow').last();
+			//如果存在traumaRow直接insertAfter
+			if (target.length > 0) {
+				$(personSurgeryRowHtml).insertAfter(target);
+				break;
+			} 
+			//如果存在surgeryRow直接insertAfter
+			var target = $('#personSurgeryRows > .surgeryRow').last();
+			if (target.length > 0) {
+				$(personSurgeryRowHtml).insertAfter(target);
+				break;
+			} 
+			//都不存在则personSurgeryRows prepend
+			$('#personSurgeryRows').prepend(personSurgeryRowHtml);
+			break;
+		case 3:
+			personSurgeryRowHtml = $('#personSurgeryTemplate > #bloodTransTemplate').html();
+			var target = $('#personSurgeryRows > .bloodTransRow').last();
+			//如果存在bloodTransRow直接insertAfter
+			if (target.length > 0) {
+				$(personSurgeryRowHtml).insertAfter(target);
+				break;
+			} 
+			//不存在则往最后personSurgeryRows
+			$('#personSurgeryRows').jQueryappend(target);
+			break;
+	    }
+		
+		$('#personSurgeryRows > #blankRow').remove();
+		reApplyPlugins();
+	}
+	function delSurgery(element) {
+		$(element).parent().parent().remove();
+	}
+	//对循环出来多余的行删除
+	$(document).ready(
+	  function() {
+		$('.surgeryRow,.traumaRow,.bloodTransRow').each(function() {
+			 if(isBlank($(this).html())){
+				 $(this).remove();
+			 }
+		});
+		 
+	});
+	//手术、创伤、输血史js end
+	
+	
+	//家族史js start  ***************************
+	 
+	function buildFamilyDiseaseData(){
+		var familyDiseaseData = {};
+		familyDiseaseData.valid = true;
+		//获取过敏史输入数据
+		var familyDiseaseArr = buildTrInputJSON($('#familyDiseaseRows'));
+		
+		//判断过敏物质是否重复
+		$(familyDiseaseArr).each(function() {
+			this.diseaseName = this.diseaseNames;
+			this.familyMember = this.familyMemberFlagText;
+			//验证
+			if(isBlank(this.familyMemberFlag)){
+				common.alert("请选择家族史成员！",0);
+				familyDiseaseData.valid = false;
+				return false;
+			}
+			if(isBlank(this.diseaseNames)){
+				common.alert("请选择家族史疾病！",0);
+				familyDiseaseData.valid = false;
+				return false;
+			}
+			 
+		});
+		if(!familyDiseaseData.valid){
+			return familyDiseaseData;
+		}
+		familyDiseaseData.familyDiseaseArr = familyDiseaseArr;
+		return familyDiseaseData;
+	}
+	
+	function addFamilyDisease(element) {
+		var familyDiseaseRowHtml = $('#template > #familyDiseaseTemplate').html();
+		$('#familyDiseaseRows').append(familyDiseaseRowHtml);
+		$('#familyDiseaseRows > #blankRow').remove();
+		reApplyPlugins();
+		
+		//绑定弹框
+		 var content =  $('#familyDisNamePopover').html();
+		 $(".familyDisNameSelect").popover({
+			    trigger:"manual", 
+			    placement:"auto",
+			    html:true,
+			    content:content
+			});
+		 
+	}
+	
+	function delFamilyDisease(element) {
+		$(element).parent().parent().remove();
+	}
+	
+ 
+	
+	
+ 
+	//家族史js end  ***************************
+	
+	
+	// 将行单元格中的输入框value转为json格式
+	function buildTrInputJSON(element) {
+		var array = [];
+		$(element).find(".trRow").each(function() {
+			var obj = {};
+			$(this).find("input").each(function() {
+				obj[this.name] = this.value;
+			});
+			$(this).find("textarea").each(function() {
+				obj[this.name] = this.value;
+			});
+			$(this).find("select").each(function() {
+				obj[this.name] = $(this).find('option:selected').val();
+				obj[this.name+'Text'] = $(this).find('option:selected').text().replace(/[\r\n]/g, "").trim();;
+			});
+			array.push(obj);
+		}); 
+		return array;
+	}
+	
+	//重新渲染插件
+	function reApplyPlugins() {
+
+		//switch 单选、复选插件
+		$(".switch").click(function() {
+			if ($(".switch-left").hasClass('chosen') == true) {
+				$(".switch-left").removeClass('chosen');
+				$("input[name=male]").attr("checked", false);
+				$(".switch-right").addClass('chosen');
+				$("input[name=female]").attr("checked", true);
+			} else {
+				$(".switch-right").removeClass('chosen');
+				$("input[name=female]").attr("checked", false);
+				$(".switch-left").addClass('chosen');
+				$("input[name=male]").attr("checked", true);
+			}
+		});
+
+		//下拉表单 选择框美化插件
+		var config = {
+			'.chosen-select' : {},
+			'.chosen-select-deselect' : {
+				allow_single_deselect : true
+			},
+			'.chosen-select-no-single' : {
+				disable_search_threshold : 10
+			},
+			'.chosen-select-no-results' : {
+				no_results_text : 'Oops, nothing found!'
+			},
+			'.chosen-select-width' : {
+				width : "100%"
+			}
+		};
+		for ( var selector in config) {
+			$(selector).chosen(config[selector]);
+		}
+		;
+
+		//复选框、单选美化
+		$('.i-checks').iCheck({
+			checkboxClass : 'icheckbox_square-green',
+			radioClass : 'iradio_square-green',
+		});
+	}
+</script>

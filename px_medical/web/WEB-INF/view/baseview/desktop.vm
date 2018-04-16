@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link href="resource/style/iconfont/iconfont.css" rel="stylesheet">
+    <style>
+        html,body { margin: 0; padding: 0; width: 100%; height: 100%; background: #f1f2f3}
+        .main-banner { height: 81px; background: url("resource/style/images/main-banner-bg.png") repeat-x;}
+        .main-logo { height: 81px; background: url("resource/style/images/main-logo.png") no-repeat center;}
+        .wrapper { width: 1002px; margin: 2% auto 0; height: calc(100% - 30%) }
+        .wrapper dl{ width: 45.5%; float: left; height:90px; margin-bottom: 1.5%; border-radius: 5px; border-width: 1px; border-style: solid; background: #fff }
+        .wrapper dl i{ width: 120px; height: 90px; line-height: 90px; background: #5396CE; display: table-cell; border-radius: 5px 0 0 5px; text-align: center; font-size: 3.6rem; color: #fff; float: left}
+        .wrapper dl dt { margin-left: 150px; height: 55px; font: bold 15pt/60px "Microsoft YaHei"; color: #5396CE }
+        .wrapper dl dd {margin-left: 150px; height: 35px; font: 100 15px/100% "Microsoft YaHei"; color: #666}
+        .wrapper dl.color-a {border-color: #61B1F5;}
+        .wrapper dl.color-a i {background: #5396CE;}
+        .wrapper dl.color-a dt { color: #5396CE; }
+        .wrapper dl.color-b {border-color: #d3d141;}
+        .wrapper dl.color-b i {background: #B1B061;}
+        .wrapper dl.color-b dt {color: #B1B061;}
+        .wrapper dl.color-c {border-color: #30CB3E;}
+        .wrapper dl.color-c i{background: #5EA965;}
+        .wrapper dl.color-c dt {color: #5EA965;}
+        .wrapper dl.color-d {border-color: #C9A0E2;}
+        .wrapper dl.color-d i{background: #9C81AB;}
+        .wrapper dl.color-d dt {color: #9C81AB;}
+        .wrapper dl.color-e {border-color: #FFC470;}
+        .wrapper dl.color-e i{background: #F68D68;}
+        .wrapper dl.color-e dt{color: #F68D68;}
+        .wrapper dl.color-f {border-color: #6ED8C0;}
+        .wrapper dl.color-f i{background: #61C4C8;}
+        .wrapper dl.color-f dt{color: #61C4C8;}
+        .wrapper dl.color-g {border-color: #C0BFFB;}
+        .wrapper dl.color-g i{background: #8684D6;}
+        .wrapper dl.color-g dt{color: #8684D6;}
+        .wrapper dl.color-h {border-color: #FC9999;}
+        .wrapper dl.color-h i{background: #DB7D7D;}
+        .wrapper dl.color-h dt{color: #DB7D7D;}
+        .wrapper dl.color-a, .wrapper dl.color-c, .wrapper dl.color-e, .wrapper dl.color-g { margin-right: 8%}
+    </style>
+</head>
+<body>
+<div class="main-banner">
+    <div class="main-logo"></div>
+</div>
+<div class="wrapper">
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_GRADE}">
+        <dl class="color-a">
+            <i class="iconfont">&#xe61e;</i>
+            <dt>双向转诊</dt>
+            <dd>Grading diagnosis and treatment</dd>
+        </dl>
+    </a>
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_RECONSULT}">
+        <dl class="color-b">
+            <i class="iconfont">&#xe604;</i>
+            <dt>远程会诊</dt>
+            <dd>Remote Consultation</dd>
+        </dl>
+    </a>
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_HIS}">
+        <dl class="color-c">
+            <i class="iconfont">&#xe602;</i>
+            <dt>云HIS系统</dt>
+            <dd>Cloud HIS System</dd>
+        </dl>
+    </a>
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_PACS}">
+        <dl class="color-d">
+            <i class="iconfont">&#xe614;</i>
+            <dt>医学影像</dt>
+            <dd>Cloud PACS System</dd>
+        </dl>
+    </a>
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_LIS}">
+        <dl class="color-e">
+            <i class="iconfont">&#xe63b;</i>
+            <dt>检验</dt>
+            <dd>Cloud LIS System</dd>
+        </dl>
+    </a>
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_RIS}">
+        <dl class="color-f">
+            <i class="iconfont">&#xe6c6;</i>
+            <dt>云RIS系统</dt>
+            <dd>Cloud RIS System</dd>
+        </dl>
+    </a>
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_HEALTH}">
+        <dl class="color-g">
+            <i class="iconfont">&#xe662;</i>
+            <dt>公众卫生</dt>
+            <dd>Public health System</dd>
+        </dl>
+    </a>
+    <a href="main.do?sysType=$!{CONST.Contstants.SYS_TYPE_REPORT}">
+        <dl class="color-h">
+            <i class="iconfont">&#xe660;</i>
+            <dt>疫情上报、应急指挥平台</dt>
+            <dd>Cloud Pacs System</dd>
+        </dl>
+    </a>
+</div>
+</body>
+</html>

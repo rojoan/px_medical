@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>肿瘤-慢性病患者登记编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal" style="height: calc(100% - 44px)">
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>患者基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">患者姓名</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("patientName" "#htmlEscape($!personChronic.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">性  别</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                    #formRadioButtons("gender" "$!personChronic.gender" $!dicData.dicSex "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">身份证号码</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("idCard" "#htmlEscape($!personChronic.idCard)" " id='idCard' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">出生日期</label>
+	                <div class="col-sm-2">
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd', $!personChronic.birthDate)" " id='birthDate' class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">患者与家庭关系</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("familyRelId" "#lookUpDict($dicData.dicFamilyRel $!personChronic.familyRelId)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">联系人电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("linkmanPhone" "#htmlEscape($!personChronic.linkmanPhone)" " id='linkmanPhone' maxlength='15' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">邮  编</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("zipCode" "#htmlEscape($!personChronic.zipCode)" " id='zipCode' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">专项档案号</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personChronicType.specialArchive" "#htmlEscape($!chronicType.specialArchive)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">登记编号</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("recordNum" "#htmlEscape($!personChronic.recordNum)" " id='recordNum' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">联系地址</label>
+	                <div class="col-sm-8">
+	                    #formTextInput("contactAddr" "#htmlEscape($!personChronic.contactAddr)" "id='contactAddr' maxlength='100' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>诊断信息</h5></div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">肿瘤类别</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.tumourType" "#lookUpDict($dicData.dicTumCategory $!personTumourCure.tumourType)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断级别</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personChronicType.chronicLevel" "#lookUpDict($dicData.dicChronicTumLevel $!chronicType.chronicLevel)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">病理学类型</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("aa" "#htmlEscape($!chronicType.aa)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">发病时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personChronicType.attackDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.attackDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">ICD-10编码</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.icdCode" "#htmlEscape($!personTumourCure.icdCode)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">ICD-0-3</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.icd" "#htmlEscape($!personTumourCure.icd)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">始发部位</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.origPart" "#htmlEscape($!personTumourCure.origPart)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">就诊时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personChronicType.inhospitalDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.inhospitalDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.aa" "#htmlEscape($!personTumourCure.aa)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断医院类型</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personChronicType.diagnosisHospitalType" "#lookUpDict($dicData.dicDiagnosisHospitalType $!chronicType.diagnosisHospitalType)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断医院名称</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personChronicType.diagnosisHospital" "#htmlEscape($!chronicType.diagnosisHospital)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">确诊时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personChronicType.confirmDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.confirmDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">诊断依据</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                    #formCheckboxesLable("diagnoseBasis" $!diagnoseBasis $!dicData.dicTumDiagnoseBasis "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>相关治疗信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">治疗医院名称</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.cureHospital" "#htmlEscape($!personTumourCure.cureHospital)" "maxlength='40' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">手术医院名称</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.surgeryHospital" "#htmlEscape($!personTumourCure.surgeryHospital)" "maxlength='40' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">化疗医院名称</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.chemotherapyHospital" "#htmlEscape($!personTumourCure.chemotherapyHospital)" "maxlength='40' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">放疗医院名称</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.radiotherapyHospital" "#htmlEscape($!personTumourCure.radiotherapyHospital)" "maxlength='40' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">首次手术医院</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.firstSurgeryHospital" "#htmlEscape($!personTumourCure.firstSurgeryHospital)" "maxlength='40' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">住院号</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.hospitalNo" "#htmlEscape($!personTumourCure.hospitalNo)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">病理号</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("personTumourCure.pathologyNo" "#htmlEscape($!personTumourCure.pathologyNo)" "maxlength='40' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">首次手术时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personChronicType.surgeryDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!chronicType.surgeryDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">首次手术性质</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.surgeryType" "#lookUpDict($dicData.dicSurgeryType $!personTumourCure.surgeryType)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">治疗类型</label>
+	                <div class="col-sm-8" style="padding-top: 6px;">
+	                	#formCheckboxesLable("nonDrugType" $!chronicNonDrugIds $!dicData.dicTumNonDrugType "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>疾病进展和遗传信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">有无复发</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("personTumourCure.recurFlag" "$!personTumourCure.recurFlag" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">第一次复发时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personTumourCure.firstRecurDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personTumourCure.firstRecurDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">复发次数</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personChronicDisease.recurCount" "$!personChronicDisease.recurCount" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">第二次复发时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personTumourCure.secondRecurDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personTumourCure.secondRecurDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">有无转移</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("personTumourCure.tumourTransFlag" "$!personTumourCure.tumourTransFlag" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">转移部位</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.tumourTransPart" "#htmlEscape($!personTumourCure.tumourTransPart)" "maxlength='50' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">肿瘤家族史</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("personTumourCure.familyTumour" "$!personTumourCure.familyTumour" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">家族关系称谓</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.familyRel" "#htmlEscape($!personTumourCure.familyRel)" "maxlength='10' class='form-control' readOnly")
+	                </div>
+	            </div>
+
+	            <div class="text-box"><h5>撤销信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">撤销原因</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.backoutReason" "#lookUpDict($dicData.dicTumBackoutReason $!personTumourCure.backoutReason)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">撤销时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personTumourCure.backoutDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personTumourCure.backoutDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">死亡原因</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.deathReason" "#lookUpDict($dicData.dicTumDeathReason $!personTumourCure.deathReason)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">死亡时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personTumourCure.deathDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personTumourCure.deathDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">死亡地点</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.deathAddrFlag" "#lookUpDict($dicData.dicTumDeathAddrFlag $!personTumourCure.deathAddrFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">其他死亡地点</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personTumourCure.deathOtherAddr" "#htmlEscape($!personTumourCure.deathOtherAddr)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">生存期（年）</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personChronicDisease.lifetimeYear" "$!personChronicDisease.lifetimeYear" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">生存期（月）</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personChronicDisease.lifetimeMonth" "$!personChronicDisease.lifetimeMonth" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+</html>

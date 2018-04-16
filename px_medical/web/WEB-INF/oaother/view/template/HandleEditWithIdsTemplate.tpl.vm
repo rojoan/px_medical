@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=gbk" />
+        <title>$!{_layout.title}</title>
+        <link href="../css/style.css" rel="stylesheet" type="text/css" />
+        #parse("/template/ScriptTemplate.tpl.vm")
+    </head>
+    <script>
+#if($_layout.editFieldList)
+    #set($_layout.tuereditFieldList = $_layout.editFieldList)
+
+    #set($_layout.editFieldList = $_layout.editForm.mainFieldList)
+    #parse("/template/ValidatorTemplate.tpl.vm")
+    #set($_layout.editFieldList = $_layout.editForm.idsFieldList)
+    #parse("/template/ValidatorTemplate.tpl.vm")
+    
+    #set($_layout.editFieldList = $_layout.tuereditFieldList)
+#else
+    #set($_layout.editFieldList = $_layout.editForm.mainFieldList)
+    #parse("/template/ValidatorTemplate.tpl.vm")
+    #set($_layout.editFieldList = $_layout.editForm.idsFieldList)
+    #parse("/template/ValidatorTemplate.tpl.vm")
+
+    #set($_layout.editFieldList = false)
+#end
+    
+    #if(${_layout.script})
+    #foreach($asc in ${_layout.script})
+    $!asc
+    #end
+    #end
+    </script>
+    <body>
+        <div class="gradual">
+            ##以下是编辑界面的工具条
+            #parse("/template/EditToolBar.tpl.vm")
+            <table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td>
+                    #if(${_layout.mainFieldList})
+                        #parse("/template/EditWithIdsGrid4.tpl.vm")
+                    #end
+                    #if(${_layout.idsFieldList})
+                        #parse("/template/IdsList.tpl.vm")
+                    #end
+                    </td>
+                </tr>
+                #if($_layout.editForm)
+                    <form name="$!{_layout.editForm.name}" method="post" action="#getRequestUri()?action=$!{_layout.editForm.action}" onsubmit="saveData(this)" enctype="multipart/form-data">
+                        #if(${_layout.editForm.viewdataList})
+                            <tr>
+                                <td>
+                                #if(${_layout.editForm.mainFieldList})
+                                    #set($_layout.mainFieldList = ${_layout.editForm.mainFieldList})
+                                    #parse("/template/EditWithIdsGrid4.tpl.vm")
+                                #end
+                                #if(${_layout.editForm.idsFieldList})
+                                    #set($_layout.idsFieldList = ${_layout.editForm.idsFieldList})
+                                    #parse("/template/IdsList.tpl.vm")
+                                #end
+                                </td>
+                            </tr>
+                        #end
+                        #if($_layout.editFieldList)
+                            <tr>
+                                <td>
+                                    <div class="table_form_right_back2">
+                                        <ul>
+                                            #if($_layout.listTitle)
+                                                <li class="table_form_left_back2"><span>$_layout.listTitle</span></li>
+                                            #else
+                                                 <li class="table_form_left_back2"><span>审批填写</span></li>
+                                            #end
+                                            <li class="table_form_right_button"></li>
+                                        </ul>
+                                    </div>
+                                    #set($_layout.mainFieldList = ${_layout.editFieldList})
+                                    #set($maindata = $approvedata)
+                                    #parse("/template/EditWithIdsGrid4.tpl.vm")
+                                </td>
+                            </tr>
+                        #end
+                    </form>
+                #end
+            </table>
+        </div>
+        #parse("/template/DataListTemplate.tpl.vm")
+        #parse("/template/bindPowerDataListTemplate.tpl.vm")
+        #if(${layout.printButton})
+            #if(${_layout.columnCount}==2)
+                #parse("/template/PrintGrid2.tpl.vm")
+                #elseif(${_layout.columnCount}==8)
+                    #parse("/template/PrintGrid8.tpl.vm")
+                    #else
+                        #parse("/template/PrintGrid4.tpl.vm")
+            #end
+        #end
+    </body>
+</html>

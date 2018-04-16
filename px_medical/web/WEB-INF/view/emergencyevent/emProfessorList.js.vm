@@ -1,0 +1,127 @@
+<script>
+	//验证单选
+	function singleCheck(rows){
+		if (rows.length != 1 || !rows[0].professorId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行",0);
+			return false;
+		}
+		return true;
+	}
+	
+	// 查看按钮
+	function show(){
+		var rows = common.getTableSelectRow('emProfessorGrid', false);
+		if (!singleCheck(rows) )   return ;
+		openModal('modal','../emHealthReport/show.do?professorId=' + rows[0].professorId);
+	}
+	// 添加按钮
+	function add(){
+		openModal('modal','../emProfessor/edit.do?v=1');
+	}
+	// 编辑按钮
+	function edit(){
+		var rows = common.getTableSelectRow('emProfessorGrid', false);
+		if (!singleCheck(rows) )   return ;
+		openModal('modal','../emProfessor/edit.do?professorId=' + rows[0].professorId);
+	}
+	
+	// 删除按钮
+	function del(){
+		var rows = common.getTableSelectRow('emProfessorGrid', false);
+		if (!singleCheck(rows) )   return ;
+		$.post("../emProfessor/delEmProfessor.do", {professorId:rows[0].professorId}, function (result) {
+	         if (result.code == "0") {
+	             common.alert("删除成功",0);
+	             query();
+	         } else {
+	             common.alert(result.msg);
+	         }
+	    }, "json");
+	}
+	//查询按钮时间
+	  function query(){
+		  var $formObj = $("#professor_queryForm");
+		  var queryParams = common.serializeObject($('#professor_queryForm'));
+		  var options = {url: '../emProfessor/listData.do?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		  $('#emProfessorGrid').bootstrapTable('refresh', options); 
+	  }
+	  //清空查询框
+	  function clearQuery(){
+			var $formObj = $("#professor_queryForm");
+			$formObj.find("#q_name").val("");
+			$formObj.find("#q_duty").val("");
+			$formObj.find("#q_gender").val("");//选择框
+			$formObj.find("#q_gender").trigger("chosen:updated");
+			$formObj.find("#q_validFlag").val("");//选择框
+			$formObj.find("#q_validFlag").trigger("chosen:updated");
+	  }
+	
+	$(function() {
+		$('#emProfessorGrid').bootstrapTable(//bootstrapTable
+			$.extend(baseTable, 
+			  {
+				url : "../emProfessor/listData.do",
+				columns : [
+				{
+					checkbox:true
+				}, {
+					field : 'orgId',
+					title : '单位名称'
+				},{
+					field : 'name',
+					title : '专家姓名'
+				},{
+					field : 'orgInnerDuty',
+					title : '工作单位及职务'
+				},{
+					field : 'gender',
+					title : '性别',
+					formatter :function (value, row, index) {
+						var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+						if (value) {
+							return dicSex[value];
+						}
+					}
+				},{
+					field : 'birthDate',
+					title : '出生日期'
+				},{
+					field : 'profession',
+					title : '职称'
+				},{
+					field : 'officeTel',
+					title : '办公电话'
+				},{
+					field : 'mobile',
+					title : '手机'
+				},{
+					field : 'validFlag',
+					title : '是否有效',
+					formatter :function (value, row, index) {
+						var dicYesNo = JSON.parse('$dicTools.changeMapToJson($dicData.dicYesNo)'); 
+						if (value) {
+							return dicYesNo[value];
+						}
+					}
+				},{
+					field : 'sort',
+					title : '排序号'
+				}],
+				onDblClickRow : function (row, element){
+					$('#emProfessorGrid').bootstrapTable('check',element.attr('data-index'));
+					show();
+		   		},
+				onLoadSuccess : function(){
+					var height = ($('#emProfessorGrid').parents("body").height() - $('#professor_queryForm').parents(".ibox").height() - 72);
+					$('#emProfessorGrid').bootstrapTable('resetView', {height: height}); 
+				}	
+			  }
+			)//$.extend() end 
+		);//bootstrapTable end
+	});//$(function()
+ 
+	$(window).resize(function() { 
+		var height = ($('#emProfessorGrid').parents("body").height() - $('#professor_queryForm').parents(".ibox").height() - 72);
+		$('#emProfessorGrid').bootstrapTable('resetView', {height: height}); 
+	})
+</script>

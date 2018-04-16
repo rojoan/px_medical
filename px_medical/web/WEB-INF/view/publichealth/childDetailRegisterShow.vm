@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${SessionSysPortal.appTitle}</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+<style>
+html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<!--如果弹窗没有底部菜单栏则 -44px -->
+	<form id="registerForm"  class="form-horizontal full-height">
+		<div class="modal-body full-height-scroll full-height">
+			<div class="table-content">
+				<div class="text-box"><h5>儿童（新生儿）基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">家庭户主</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("familyOwnerName" "#htmlEscape($!familyDetail.familyOwnerName)" " id='familyOwnerName' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">儿童(新生儿)姓 名</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("childName" "#htmlEscape($!childDetail.childName)" " id='childName' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">性别</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                    #formRadioButtons("gender" "$!childDetail.gender" $!dicData.dicSex "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">出生时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!childDetail.birthDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">社区/村委会</label>
+	                <div class="col-sm-5">
+	                	#formSingleSelectFirstNone("committeeId" "$!childDetail.committeeId" $dicData.dicCommittee "id='committeeId' class='form-control' data-placeholder='&nbsp;' disabled='disabled'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">行政区域</label>
+	                <div class="col-sm-5">
+	                	#formTextInput("regionId" "#htmlEscape($!regionAddress)" " id='regionId' data-toggle='city-picker'  readonly class='form-control' readonly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">是否新生儿</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("newBorn" "$!childDetail.newBorn" $!dicData.dicYesNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">新生儿室息</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#set($birthStifle = "$!childDetail.birthStifle")
+						#if($!birthStifle == "")
+							#set($birthStifle = "0")
+						#end
+						#formRadioButtons("birthStifle" "$!birthStifle" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">母亲妊娠期患病情况</label>
+	                <div class="col-sm-5" style="padding-top: 6px;">
+	                    #formCheckboxesLable("fetationFlag" $!fetationFlags $!dicData.dicFetationFlag "&nbsp;" "class='i-checks' disabled='disabled'" "")
+	                </div>
+	            </div>
+				<div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">新生儿窒息描述</label>
+	                <div class="col-sm-5">
+	                	#formTextInput("birthStifleDesc" "#htmlEscape($!childDetail.birthStifleDesc)" " id='birthStifleDesc' maxlength='50' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">母亲妊娠期其他疾病</label>
+	                <div class="col-sm-5">
+	                	#formTextInput("fetationOther" "$!childDetail.fetationOther" " id='fetationOther' maxlength='50' class='form-control' readonly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">出生孕周（周）</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("fetationAge" "#htmlEscape($!childDetail.fetationAge)" " id='fetationAge' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">健康状况</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("healthFlag" "$!childDetail.healthFlag" $dicData.dicHealthFlag "id='healthFlag' class='form-control' style='width: 100%' data-placeholder='&nbsp;' disabled='disabled'" "")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">出生情况</label>
+	                <div class="col-sm-5" style="padding-top: 6px;">
+	                	#formCheckboxesLable("birthCondition" $!birthConditions $!dicData.dicBirthCondition "&nbsp;" "class='i-checks' disabled='disabled'" "")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">头围（cm）</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("headSize" "$!childDetail.headSize" 3 "maxlength='6' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">胸围（cm）</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("chestSize" "$!childDetail.chestSize" 3 "maxlength='6' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">其他出生情况描述</label>
+	                <div class="col-sm-5">
+	                	#formTextInput("birthOther" "#htmlEscape($!childDetail.birthOther)" " id='birthOther' maxlength='10' class='form-control' readonly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">出生体重（kg）</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("birthWeight" "$!childDetail.birthWeight" 3 "maxlength='6' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">出生身长（cm）</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("birthHeight" "$!childDetail.birthHeight" 3 "maxlength='6' class='form-control' readonly")
+	                </div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">血型</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("blood" "#htmlEscape($!childDetail.blood)" " id='blood' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">体弱儿</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("weakFlag" "$!childDetail.weakFlag" $dicData.dicWeakFlag "id='weakFlag' class='form-control' style='width: 100%' data-placeholder='&nbsp;' disabled='disabled'" "")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">Apgar评分</label>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">1分钟</label>
+	                <div class="col-sm-1">
+	                	#formTextInput("apgScoreOne" "#htmlEscape($!childDetail.apgScoreOne)" " id='apgScoreOne' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">5分钟</label>
+	                <div class="col-sm-1">
+	                	#formTextInput("apgScoreFive" "#htmlEscape($!childDetail.apgScoreFive)" " id='apgScoreFive' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <div class="col-sm-1">
+	                	<label class="checkbox-inline i-checks">
+							<input type="checkbox" name="apgScoreOther" #if("$!childDetail.apgScoreOther" == "不祥")checked="checked"#end value="不祥"  disabled='disabled'>不祥
+						</label>
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">卡介苗</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("bcgVaccine" "$!childDetail.bcgVaccine" $!dicData.dicYesNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">乙肝疫苗</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("hepatitisBVaccine" "$!childDetail.hepatitisBVaccine" $!dicData.dicYesNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">畸形</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("birthDefect" "$!childDetail.birthDefect" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">畸形说明</label>
+	                <div class="col-sm-8">
+	                	#formTextInput("birthDefectOther" "#htmlEscape($!childDetail.birthDefectOther)" " id='birthDefectOther' maxlength='50' class='form-control' readonly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">新生儿听力筛查</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("hearScreening" "$!childDetail.hearScreening" $!{dicData.dicHearScreening} "class='form-control' disabled='disabled'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">新生儿疾病筛查</label>
+	                <div class="col-sm-8" style="padding-top: 6px;">
+	                	#formCheckboxesLable("diseaseScreening" $!diseaseScreenings $!dicData.dicDiseaseScreening "&nbsp;" "class='i-checks' disabled='disabled'" "")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">与患者的关系</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("familyRel" "#htmlEscape($!childDetail.familyRel)" " id='familyRel' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">其他遗传代谢病说明</label>
+	                <div class="col-sm-8">
+	                	#formTextInput("diseaseScreeningOther" "#htmlEscape($!childDetail.diseaseScreeningOther)" "class='form-control' readonly")
+					</div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">药物过敏史</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("drugAllergy" "#htmlEscape($!childDetail.drugAllergy)" " id='drugAllergy' maxlength='25' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">与遗传有关的家族史</label>
+	                <div class="col-sm-8" style="padding-top: 6px;">
+	                	#formTextInput("familyDisease" "#htmlEscape($!childDetail.familyDisease)" " id='familyDisease' maxlength='50' class='form-control' readonly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>儿童母亲信息</h5></div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">母亲姓名</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("motherName" "#htmlEscape($!childDetail.familyRel)" " id='motherName' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">出生日期</label>
+	                <div class="col-sm-2">
+						#formTextInput("motherBirth" "$!date.format('yyyy-MM-dd', $!childDetail.motherBirth)" " id='motherBirth' class='input-sm form-control layer-date' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">证件类型</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("motherCretType" "$!childDetail.motherCretType" $dicData.dicFatherCretType " data-placeholder='&nbsp;' disabled='disabled'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">证件号</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("motherCret" "$!childDetail.motherCret" " id='motherCret' maxlength='20' class='form-control' readonly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">职业</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("motherCareer" "#htmlEscape($!childDetail.familyRel)" " id='motherCareer' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">民族</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("motherNation" "$!childDetail.motherNation" $dicData.dicNation "class='form-control' data-placeholder='&nbsp;' disabled='disabled'" "")
+					</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">国籍</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("motherCountry" "#htmlEscape($!childDetail.familyRel)" " id='motherCountry' maxlength='50' class='form-control' readonly")
+	               	</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">工作单位</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("motherWorkOrg" "#htmlEscape($!childDetail.familyRel)" " id='motherWorkOrg' maxlength='50' class='form-control' readonly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">联系电话</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("motherPhone" "#htmlEscape($!childDetail.familyRel)" " id='motherPhone' maxlength='20' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">住址</label>
+	                <div class="col-sm-8">
+	                	#formTextInput("motherAddr" "#htmlEscape($!childDetail.familyRel)" " id='motherAddr' maxlength='100' class='form-control' readonly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>儿童父亲信息</h5></div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">父亲姓名</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("fatherName" "#htmlEscape($!childDetail.familyRel)" " id='fatherName' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">出生日期</label>
+	                <div class="col-sm-2">
+							#formTextInput("fatherBirth" "$!date.format('yyyy-MM-dd', $!childDetail.fatherBirth)" "class='input-sm form-control layer-date' readOnly")
+					</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">证件类型</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("fatherCretType" "$!childDetail.fatherCretType" $dicData.dicFatherCretType " class='form-control' data-placeholder='&nbsp;' disabled='disabled'" "")
+					</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">证件号</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("fatherCret" "$!childDetail.fatherCret" " id='fatherCret' maxlength='20' class='form-control' readonly")
+					</div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">职业</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("fatherCareer" "#htmlEscape($!childDetail.familyRel)" " id='fatherCareer' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">民族</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("fatherNation" "$!childDetail.fatherNation" $dicData.dicNation "class='form-control' data-placeholder='&nbsp;' disabled='disabled'" "")
+					</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">国籍</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("fatherCountry" "#htmlEscape($!childDetail.familyRel)" " id='fatherCountry' maxlength='50' class='form-control' readonly")
+					</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">工作单位</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("fatherWorkOrg" "#htmlEscape($!childDetail.familyRel)" " id='fatherWorkOrg' maxlength='50' class='form-control' readonly")
+					</div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">联系电话</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("fatherPhone" "#htmlEscape($!childDetail.familyRel)" " id='fatherPhone' maxlength='20' class='form-control' readonly")
+					</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">住址</label>
+	                <div class="col-sm-8">
+	                	#formTextInput("fatherAddr" "#htmlEscape($!childDetail.familyRel)" " id='fatherAddr' maxlength='100' class='form-control' readonly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>其他信息</h5></div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">出生地点分类</label>
+	                <div class="col-sm-3">
+	                	#formSingleSelectFirstNone("birthLocType" "$!childDetail.birthLocType" $dicData.dicBirthLocType "id='birthLocType' class='form-control' style='width: 100%' data-placeholder='&nbsp;' disabled='disabled'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">助产机构</label>
+	                <div class="col-sm-3">
+	                	#formSingleSelectFirstNone("hospitalId" "$!childDetail.hospitalId" "" "id='hospitalId' class='form-control' style='width: 100%' data-placeholder='&nbsp;' disabled='disabled'" "")
+					</div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">出生证号</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("birthCert" "#htmlEscape($!childDetail.birthCert)" " id='birthCert' maxlength='10' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">发证人员</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("birthCertPerson" "#htmlEscape($!childDetail.birthCertPerson)" " id='birthCertPerson' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">接生人员</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("birthAttendant" "#htmlEscape($!childDetail.birthAttendant)" " id='birthAttendant' maxlength='10' class='form-control' readonly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">发证日期</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("birthCertDate" "$!date.format('yyyy-MM-dd', $!childDetail.birthCertDate)" "class='input-sm form-control layer-date' readOnly")
+					</div>
+	            </div>
+		</div>
+	</form>
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm") 
+	#parse("./common/common.js.vm")
+</body>
+</html>

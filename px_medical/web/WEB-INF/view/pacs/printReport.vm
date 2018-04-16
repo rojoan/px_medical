@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ת�ﵥ-��ִ�� ��ӡ</title> 
+	<script src="../report/js/CreateControl.js" type="text/javascript" ></script>
+	<script src="../report/js/GRUtility.js" type="text/javascript"></script>
+	<style type="text/css">
+        html,body {
+            margin:0;
+            height:100%;
+        }
+    </style>
+	<script type="text/javascript">
+		function window_onload(){
+		    AjaxReportViewerStart(ReportViewer, "../report/fsExamData.do?reConsultingId=$!reConsultingId");
+		}
+	</script>
+</head>
+<body style="margin:0" onload="window_onload()">
+    <script type="text/javascript"> 
+        //�ò�ѯ��ʾ�ؼ�չ�ֱ�����URL��../grf/1a.grf����ȡ����Ĥ�嶨�壬��������ͨ�� XMLHttpRequest ��ȡ
+        //���ﲻҪ���� DataURL ���������ĸ�����Ϊ�գ���Ҳ��Ҫ�ñ����Զ����У����ĸ�����Ϊ false��
+        //����ҳ onload ���¼��ϴ��� XMLHttpRequest ���󣬲��ɴ˶���ӱ�������URL����ȡ���ݣ�Ȼ�󽫱������ݼ��ص�����
+	    //CreateDisplayViewerEx("100%", "100%", "../report/grf/csReport.grf", "", false, "");
+	    CreatePrintViewerEx("100%", "100%", "../report/grf/csReport.grf", "", false, "");
+    </script>
+</body>
+</html>

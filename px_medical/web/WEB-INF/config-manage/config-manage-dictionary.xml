@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dicSysUserInfo" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="人员信息字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT user_id AS DICTKEY, name AS DICTVALUE FROM public_sys.sys_user_info
+            </value>
+        </property>
+    </bean>
+    <bean id="dicSysUserInfoByUserInfoId" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="人员信息字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT user_info_id AS DICTKEY, name AS DICTVALUE FROM public_sys.sys_user_info
+            </value>
+        </property>
+    </bean>
+
+    <bean id="dicSysOrgCode" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="部门信息字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, code AS DICTVALUE FROM public_sys.sys_org where len(code)=3
+            </value>
+        </property>
+    </bean>
+
+    <bean id="dicTopSysOrg" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="顶级机构字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, code AS DICTVALUE FROM public_sys.sys_org where length(code)=3 and org_id=unit_org_id and org_id=parent_org_id
+            </value>
+        </property>
+    </bean>
+    
+    
+    <bean id="dicSysOrgIdCode" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="部门IdCode信息字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, code AS DICTVALUE FROM public_sys.sys_org
+            </value>
+        </property>
+    </bean>
+
+    <bean id="dicSysOrg" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="部门信息字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, name AS DICTVALUE FROM public_sys.sys_org
+            </value>
+        </property>
+    </bean>
+    <bean id="dicSysOrgRank" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="部门信息字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, org_rank AS DICTVALUE FROM public_sys.sys_org
+            </value>
+        </property>
+    </bean>
+    <bean id="dicSysUser" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="用户信息字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT user_id AS DICTKEY, account AS DICTVALUE FROM public_sys.sys_user
+            </value>
+        </property>
+    </bean>
+
+    <bean id="dicSysDuty" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="职务字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT duty_id AS DICTKEY, name AS DICTVALUE FROM public_sys.sys_duty
+            </value>
+        </property>
+    </bean>
+
+    <bean id="dicDepartmentTree" class="com.bofan.dictionary.support.SimpleTreeDictionaryItem">
+        <property name="displayName"><value>部门树字典</value></property>
+        <property name="treeBuilder"><ref bean="departmentTreeBuilder"/></property>
+    </bean>
+
+     <bean id="dicRootParentOrgId" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="单位树可选ID字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, parent_org_id  AS DICTVALUE FROM public_sys.sys_org
+            </value>
+        </property>
+    </bean>
+
+    <bean id="dicDelFlags" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="用户标志"/>
+       <property name="dictionaryDatas">
+              <value>
+                0=无效用户
+                1=有效系统用户
+              </value>
+       </property>
+    </bean>
+
+    <bean id="dicOthers" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="模块类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                0=授权模块
+                1=公共模块
+              </value>
+       </property>
+    </bean>
+
+    <bean id="dicSexs" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="性别"/>
+       <property name="dictionaryDatas">
+              <value>
+                                          男=男
+                                          女=女
+              </value>
+       </property>
+    </bean>
+
+    <bean id="dicOrgRanks" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="组织机构性质"/>
+       <property name="dictionaryDatas">
+              <value>
+               0=|-区局机构
+               1=|-区局科室
+               2=|--市局机构
+               3=|--市局科室
+               4=|----县局机构
+               5=|----县局科室
+               6=|----卫生所（村）
+               7=|----卫生所（村）科室
+              </value>
+       </property>
+    </bean>
+ <bean id="dicSysType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="平台字典"/>
+       <property name="dictionaryDatas">
+              <value>
+               00=系统管理系统 
+               01=云HIS
+               02=双向转诊
+               03=远程会诊
+               04=云PACS
+               05=云LIS
+               06=云RIS
+               07=公共卫生
+               08=疫情上报
+             </value>
+       </property>
+    </bean>
+
+    <!-- 市字典-->
+    <bean id="dicSysOrgCity" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="市"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, name AS DICTVALUE  FROM public_sys.sys_org where parent_org_id = 1 and (org_rank = 2 or org_rank = 0) order by sort asc
+            </value>
+        </property>
+    </bean>
+
+    <!-- 区部门字典-->
+    <bean id="dicSysOrgRegion" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="区部门字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, name AS DICTVALUE  FROM public_sys.sys_org where unit_org_id = 1 and del_flag='1' order by sort asc
+            </value>
+        </property>
+    </bean>
+
+    <!-- 市级单位OrgIdCode字典-->
+    <bean id="dicSysOrgCityIdCode" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="市级信息"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, code AS DICTVALUE  FROM public_sys.sys_org where org_rank ='2' order by sort asc
+            </value>
+        </property>
+    </bean>
+
+    <!-- 市城区、县份单位OrgIdCode字典-->
+    <bean id="dicSysOrgTownIdCode" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="市城区、县份单位信息"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, code AS DICTVALUE  FROM public_sys.sys_org where org_rank in ('2','4','10') and del_flag='1' order by sort asc
+            </value>
+        </property>
+    </bean>
+
+    <!-- 市城区、县份code字典-->
+    <bean id="dicSysOrgTownCodeName" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="市城区、县份"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT code AS DICTKEY, name AS DICTVALUE  FROM public_sys.sys_org where org_rank  in ('2','4','10') and del_flag='1' order by sort asc
+            </value>
+        </property>
+    </bean>
+
+	<!-- 案由类型字典 -->
+	<bean id="dicCategoryForCause" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="平台字典"/>
+       <property name="dictionaryDatas">
+              <value>
+               1=药品
+               2=食品
+               3=保健食品
+               4=化妆品
+               5=医疗器械
+               6=广告
+        </value>
+       </property>
+    </bean>
+    <!-- 政策法规字典 -->
+    <bean id="dicCategoryForPolicy" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="平台字典"/>
+       <property name="dictionaryDatas">
+              <value>
+               1=药品
+               2=食品
+               3=保健食品
+               4=化妆品
+               5=医疗器械
+               6=广告
+        </value>
+       </property>
+    </bean>
+    <bean id="dicPolicyTypeForPolicy" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="平台字典"/>
+       <property name="dictionaryDatas">
+              <value>
+                 1=法律
+                 2=法规
+                 3=政府规章
+                 4=规范性文件
+                 6=地方性法规
+                 7=行政强制措施
+        </value>
+       </property>
+    </bean>
+
+ </beans>

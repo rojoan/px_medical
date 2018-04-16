@@ -1,0 +1,107 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{title}</title>
+  <link href="../script/css.css" rel="stylesheet" type="text/css" />
+  <link href="../script/DHTML_calendar_style.css" rel="stylesheet" type="text/css" media="all"  title="calendar_style" />
+  <script language="javascript" type="text/javascript" src="../script/common.js"></script>
+  <script language="JavaScript" type="text/javascript" src="../script/validator.js"></script>
+</head>
+<script>
+function doSend() {
+    var e = document.uploadForm;
+    if (checkInput(e) && confirm("您确定要提交数据吗？")) {
+       e.submitFlag.value = "1";
+       e.submit();
+    }
+}
+
+function checkInput(e) {
+    if (e.submitFlag.value == "1") {
+        alert("页面已提交，请稍候！");
+        return false;
+    }
+    if (!(e.uploadFile.value)) {
+        alert("请先选择上传的文件，然后再点击【发送文件】按钮！");
+        e.uploadFile.focus();
+        return false;
+    }
+    return true;
+}
+
+</script>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top" height="1">
+    <td>
+      <table width="100%" height="26" border="0" cellpadding="0" cellspacing="0" class="table_bg">
+        <tr>
+          <td height="24">
+            <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0" class="pagetitle">
+              <tr>
+                <td>
+                  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <tr> <!-- 页面标题及相关按钮 begin --->
+                      <td width="1%"></td>
+                      <td width="49%" height="24">
+                        <img src="../images/mb_top_zl1.gif" width="16" height="13" align="absmiddle" alt="工具条" />
+                        <span class="text12">$!{title}</span>
+                      </td>
+                      <td width="49%" align="right" valign="middle" class="text12">
+                      </td>
+                      <td width="1%"></td>
+                    </tr> <!-- 页面标题及相关按钮 end --->
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+ <tr valign="top">
+    <td>
+      <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0" class="table_border">
+        <tr valign="top" height="1">
+          <td>
+<form name="uploadForm" method="post" enctype="multipart/form-data">
+            <table width="100%" border="0" cellpadding="3" cellspacing="0" class="t">
+            <!-- 输入框 Begin --->
+<input type=hidden name="submitFlag" value="0">
+              <tr>
+                <td width="20%" align="right" class="textarea">上传文件名： </td>
+                <td width="80%" align="left" class="inputarea">
+                    <input type="file" name="uploadFile" class="inputobject" style="width:80%" >
+                </td>
+              </tr>
+
+              <tr align="right">
+                <td class="inputarea" colspan="2" align=center>
+                    <input type="button" class="com_btn" value="&nbsp;发送文件&nbsp;" onclick="javascript:doSend()" />
+#if(${templateFile})
+                    <input type="button" class="com_btn" value="&nbsp;下载模板文件&nbsp;" onclick="javascript:window.location = '$!{templateFile}'" />
+#end
+                </td>
+              </tr>
+#if(${explain})
+              <tr>
+                <td class="inputarea" colspan="2" align=left>
+#if(!${isHtmlExplain})<pre>#end
+$!{explain}
+#if(!${isHtmlExplain})</pre>#end
+                </td>
+              </tr>
+#end
+            </table>
+</form>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+
+</html>

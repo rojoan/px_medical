@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTDHTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+  <title>${SessionSysPortal.appTitle}</title>
+  #cssAndJs()
+
+  <script language="JavaScript" type="text/javascript" src="../script/validator.js"></script>
+  <script type="text/javascript" >
+  validator.formName = "saveForm";
+  //validator.addNormalCheckPoint("parentCode", "上级分类", "checkNotNull;checkNotEmpty");
+  validator.addNormalCheckPoint("faqTypeName", "类型名称", "checkNotNull;checkNotEmpty");
+
+  function submitSaveForm() {
+	  if (!validator.checkAll()) {
+	  	return;
+	  }
+
+	  var faqTypeCode = document.saveForm.faqTypeCode.value;
+	  var parentCode = document.saveForm.parentCode.value;
+	  if(faqTypeCode && parentCode.indexOf(faqTypeCode) == 0) {
+    	  alert("不能将类型移到自己或自己的下级");
+    	  return;
+      }
+
+      if(!confirm("确定要保存吗?")) {
+          return ;
+      }
+      document.saveForm.submit();
+  }
+
+  //删除分类
+  function deleteFaqType(){
+  	var id = document.saveForm.faqTypeId.value;
+	if(!confirm("确定要删除吗?")) {
+          return ;
+    }
+
+	var urlStr = "../faq/faqTypeDelete.do?faqTypeId=" + id;
+    window.location = urlStr;
+  }
+
+
+  function editFaqType(node){
+	var parentCode;
+	document.getElementById("addBtnSpan").style.display = "none";
+	/*
+	if(node.parentNode.id==0){
+		parentCode = 0;
+		document.getElementById("editBtnSpan").style.display = "none";
+	}else{
+		parentCode = node.parentNode.attributes.faqTypeCode
+		document.getElementById("editBtnSpan").style.display = "inline";
+	}
+	*/
+	parentCode = node.parentNode.attributes.faqTypeCode
+    document.getElementById("editBtnSpan").style.display = "inline";
+	var parentCodeSel = document.saveForm.parentCode;
+	parentCodeSel.options[0].selected = "selected";
+	for (var i = 0; i < parentCodeSel.options.length; i++) {
+		if(parentCodeSel.options[i].value == parentCode){
+			parentCodeSel.options[i].selected = "selected";
+		}
+	}
+	document.saveForm.faqTypeId.value = node.attributes.faqTypeId;
+	document.saveForm.faqTypeCode.value = node.attributes.faqTypeCode;
+	document.saveForm.faqTypeName.value = node.attributes.faqTypeName;
+  }
+
+  function init() {
+    var retTreeId = null;
+    #if($info.faqTypeCode)
+        retTreeId = '${info.faqTypeCode}';
+        top.dialogArguments.CustomValue();
+    #end
+    Ext.BLANK_IMAGE_URL = '../ext/resources/images/default/s.gif';
+    Ext.QuickTips.init();
+
+    var viewport = new Ext.Viewport({
+        layout: 'border',
+        border: false,
+        items: [{
+            region: 'north',
+            border: false,
+            contentEl: 'dymenu'
+        },{
+            id: 'tree',
+            region: 'west',
+            xtype: 'treepanel',
+            collapsible: false,
+            autoload: true,
+            lines: true,
+            width : 220,
+            autoScroll: true,
+            border: false,
+            style: 'border-right: 1px solid #CCC;',
+            animate: false,
+            containerScroll: true,
+            frame: false,
+            root: new Ext.tree.AsyncTreeNode({id: '0', text:'顶级分类', expanded: true, leaf: false}),
+            rootVisible: false,
+            remoteSort: true,
+            loader: new Ext.tree.TreeLoader({
+                dataUrl: 'getAllFaqTypeStore.jo',
+                baseParams: {scope: '$scope'}
+            }),
+            listeners: {
+                load:function(node) {
+                    var root = Ext.getCmp('tree').getRootNode();
+                    if(!root || !root.hasChildNodes()) {
+                        addFaqType();
+                        return;
+                    }
+                    var initNode = null;
+
+                    if(retTreeId) {
+                        initNode = Ext.getCmp('tree').getNodeById(retTreeId);
+                    }else{
+                        initNode = Ext.getCmp('tree').getRootNode().firstChild;
+                    }
+                    if(initNode && (initNode.id==node.id || initNode.parentNode.id==node.id)) {
+                        this.getSelectionModel().select(initNode);
+                        this.fireEvent("click",initNode);
+                    }
+
+                },
+                click: function(node) {
+                    node.select();
+                    editFaqType(node);
+                }
+            }
+        },{
+            region: 'center',
+            border: false,
+            contentEl: 'formBox'
+        }]
+    });
+
+
+  }
+
+  function addFaqType(){
+  	var form = document.saveForm;
+	document.saveForm.faqTypeId.value = "";
+	document.saveForm.faqTypeCode.value = "";
+	document.saveForm.parentCode.value = "";
+	document.saveForm.faqTypeName.value = "";
+	document.getElementById("editBtnSpan").style.display = "none";
+	document.getElementById("addBtnSpan").style.display = "inline-block";
+  }
+
+  Ext.onReady(function(){
+  	init();
+  });
+  </script>
+</head>
+<body>
+<div id="dymenu" class="dymenu">
+<a class="index" href="#"><span>法律库分类管理</span></a>
+<div class="dymenu-buttons">
+#ibutton('drop-add.gif', '新增分类', 'addFaqType();')
+#ibutton('cancel16.png', '关闭', "window.close();")
+</div>
+</div>
+<div class="i-form-wrap" id="formBox">
+<form action="../faq/faqTypeSave.do" method="post" name="saveForm">
+	#formHiddenInput("faqTypeId" "" "")
+	#formHiddenInput("faqTypeCode" "" "")
+	<table width="100%" border="0">
+            <tr>
+              <td width="15%" class="i-label-wrap">上级分类</td>
+              <td>
+				#set($options={"name":"parentCode",
+ 			                 "data":${faqTypeMap},
+							 "style":"width:81%",
+							 "identMode":{},
+							 "emptyDisplay":"",
+                             "className":'text_input'
+			  				 })
+				#identTreeSelector($options)
+			  </td>
+            </tr>
+			<tr>
+				<td width="15%" class="i-label-wrap">#requiredTag()分类名称</td>
+				<td>#formDefInput("faqTypeName" "" "30" "style='width:80%'")</td>
+			</tr>
+	</table>
+</form>
+<div>&nbsp;</div>
+<div style="text-align:center;">
+<span id="editBtnSpan" style="display:none">
+	#ibutton('save.png', '保存', 'submitSaveForm();')
+	#ibutton('delete.png', '删除', 'deleteFaqType();')
+</span>
+<span id="addBtnSpan" style="display:none">
+	#ibutton('save.png', '保存', 'submitSaveForm();')
+</span>
+</div>
+<div>&nbsp;</div>
+</div>
+</body>
+</html>

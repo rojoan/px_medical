@@ -1,0 +1,144 @@
+<script>
+	//验证单选
+	function singleCheck(rows){
+    	if (rows.length != 1 || !rows[0].epidemiologyId ) {
+    		common.alert("请选择将要编辑的行且仅能选择一行",0);
+    		return false;
+    	}
+    	return true;
+	}
+	
+ 	// 查看按钮
+    function show(){
+    	var rows = common.getTableSelectRow('epidemiologyGrid', false);
+    	if (!singleCheck(rows) )   return ;
+    	openModal('modal','../epidemiology/show.do?epidemiologyId=' + rows[0].epidemiologyId);
+    }
+ 	// 添加按钮
+    function add(){
+    	openModal('modal','../epidemiology/edit.do?v=1');
+    }
+ 	// 编辑按钮
+    function edit(){
+    	var rows = common.getTableSelectRow('epidemiologyGrid', false);
+    	if (!singleCheck(rows) )   return ;
+    	openModal('modal','../epidemiology/edit.do?epidemiologyId=' + rows[0].epidemiologyId);
+    }
+ 	// 审核按钮
+    function audit(){
+    	var rows = common.getTableSelectRow('epidemiologyGrid', false);
+    	if (!singleCheck(rows) )   return ;
+    	openModal('modal','../epidemiology/audit.do?epidemiologyId=' + rows[0].epidemiologyId);
+    }
+    //删除按钮	
+ 	function del(){
+ 		var rows = common.getTableSelectRow('epidemiologyGrid', false);
+        $.post("../epidemiology/delEpidemiology.do", {epidemiologyId:rows[0].epidemiologyId}, function (result) {
+            if (result.code == "0") {
+                common.alert("删除成功",0);
+                query();
+            } else {
+                common.alert(result.msg);
+            }
+        }, "json");
+ 		
+ 	}
+ 	
+	//查询按钮时间
+	  function query(){
+		  var $formObj = $("#epidem_queryForm");
+		  if (compareDate($formObj.find("#q_fillTimeStart").val(),$formObj.find("#q_fillTimeEnd").val())) {
+				common.alert("填写时间的开始时间不能大于结束时间！",0);
+			  	return false;
+		  }
+		  var queryParams = common.serializeObject($('#epidem_queryForm'));
+		  var options = {url: '../epidemiology/listData.do?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		  $('#epidemiologyGrid').bootstrapTable('refresh', options); 
+	  }
+	  //清空查询框
+	  function clearQuery(){
+			var $formObj = $("#epidem_queryForm");
+			$formObj.find("#q_fillTimeStart").val("");
+			$formObj.find("#q_fillTimeEnd").val("");
+			$formObj.find("#q_patientName").val("");
+			$formObj.find("#q_medicalClassify").val("");//选择框
+			$formObj.find("#q_medicalClassify").trigger("chosen:updated");
+			$formObj.find("#q_patientBelong").val("");//选择框
+			$formObj.find("#q_patientBelong").trigger("chosen:updated");
+	  }
+	
+	//加载列表
+	$(function() {
+		$('#epidemiologyGrid').bootstrapTable(//bootstrapTable
+			$.extend(baseTable, 
+				{
+					url : "../epidemiology/listData.do",
+					columns : [
+					{ 
+						checkbox:true 
+					}, {
+						field : 'patientName',
+						title : '患者姓名'
+					}, {
+						field : 'patientIdCard',
+						title : '身份证号'
+					},{
+						field : 'patientSex',
+						title : '性别',
+						formatter :function (value, row, index) {
+							var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+							if (value) {
+								return dicSex[value];
+							}
+						}
+					},{
+						field : 'medicalClassify',
+						title : '病历分类',
+						formatter :function (value, row, index) {
+							var dicEpiMedicalClassify = JSON.parse('$dicTools.changeMapToJson($dicData.dicEpiMedicalClassify)'); 
+							if (value) {
+								return dicEpiMedicalClassify[value];
+							}
+						}
+					},{
+						field : 'patientPhone',
+						title : '联系电话'
+					},{
+						field : 'fillOrgName',
+						title : '填报单位名称'
+					},{
+						field : 'fillDoctorName',
+						title : '填报医生'
+					},{
+						field : 'fillTime',
+						title : '填写日期',
+						formatter :function (value) {
+							if (value)  return getSmpFormatDateByLong(value,false);
+						}
+					} ],
+					onDblClickRow : function (row, element){
+						openModal('modal','../epidemiology/show.do?epidemiologyId=' + row.epidemiologyId);
+					},
+					onDblClickRow : function (row, element){
+						$('#epidemiologyGrid').bootstrapTable('check',element.attr('data-index'));
+						show();
+			   		},
+					onLoadSuccess : function(){
+						var height = ($('#epidemiologyGrid').parents("body").height() - $('#epidem_queryForm').parents(".ibox").first().height() - 72);
+						$('#epidemiologyGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				}
+			)//$.extend() end 
+		);//bootstrapTable end
+	});//$(function()
+	
+	
+	//清除模态框的缓存
+	$(document).ready(function() {
+		clearModal('modal');
+	});
+	$(window).resize(function() { 
+		var height = ($('#epidemiologyGrid').parents("body").height() - $('#epidem_queryForm').parents(".ibox").first().height() - 72);
+		$('#epidemiologyGrid').bootstrapTable('resetView', {height: height}); 
+	})
+</script>

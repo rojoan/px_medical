@@ -1,0 +1,27 @@
+#foreach($child in ${cell.objectList})
+    #if(${child.condition})
+        #if(${child.param})
+            #set($temp = [])
+            #foreach($p in ${child.param})
+                #set($none=${temp.add(${datamap.get($p)})})
+            #end
+            #set($condition = '#set($cellcondition=' + "${HELPER_BEAN.format(${child.condition}, ${temp})}" + ")")
+            ## use new method in current version of velocity
+            ##${render.eval($condition)}
+            #evaluate($condition)
+            #if(${cellcondition})
+                #if(${child.view})
+                    #viewField($child $datamap)
+                #else
+                    #inputField($child $datamap)
+                #end
+            #end
+        #end
+    #else
+        #if(${child.view})
+            #viewField($child $datamap)
+        #else
+            #inputField($child $datamap)
+        #end
+    #end
+#end

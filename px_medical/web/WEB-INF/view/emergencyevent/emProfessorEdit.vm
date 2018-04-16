@@ -1,0 +1,187 @@
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/style/iconfont/iconfont.css" rel="stylesheet">
+<link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="../resource/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/popover/bootstrap-popover-x.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/style/css/page.css?v=1" rel="stylesheet">
+<style>
+.jk-popover {width: 460px; max-width: 500px;}
+</style>
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span aria-hidden="true"><i class="fa fa-close"></i></span> <span class="sr-only"><i class="fa fa-close"></i></span>
+	</button>
+	<h7 class="modal-title">新增专家信息 <span class="must-red font-14">( 红字为必填 )</span></h7>
+</div>
+<div class="modal-body full-height-scroll" style="height: calc(100% - 105px)">
+	<!--如果弹窗没有底部菜单栏则 -44px -->
+	<form id="emProfessorForm" class="form-horizontal">
+		<input type="hidden" id="submitFlag" >
+		#formHiddenInput("professorId" "$!emProfessor.professorId" " id='professorId' ")
+		#formHiddenInput("orgId" "$!emProfessor.orgId" " id='orgId' ")
+		#formHiddenInput("orgName" "$!emProfessor.orgName" " id='orgName' ")
+		
+		<div class="row">
+		
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">专家姓名</label>
+				<div class="col-md-8">
+					<input type="text" id="name" name="name"  value="$!emProfessor.name" maxlength="10"  class="form-control">
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">性别</label>
+				<div class="col-md-8" style="height: 30px;">
+				#formRadioButtonsLabel("gender" "$!emProfessor.gender" $dicData.dicSex "&nbsp;" "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">手机</label>
+				<div class="col-md-8">
+					<input id="mobile" name="mobile" type="text" value="$!emProfessor.mobile" maxlength="20" class="form-control">
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">出生日期</label>
+				<div class="col-md-8">
+					<input id="birthDate" name="birthDate" value="$!emProfessor.birthDate"  type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" maxlength="15" />
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">工作单位及职务</label>
+				<div class="col-md-8">
+					<input type="text"  name="orgInnerDuty" value="$!emProfessor.orgInnerDuty" maxlength="50"  class="form-control">
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">队内职务</label>
+				<div class="col-md-8">
+					<input type="text"  name="duty" value="$!emProfessor.duty" maxlength="20"  class="form-control">
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">职称</label>
+				<div class="col-md-8">
+					<input id="profession" name="profession" type="text" value="$!emProfessor.profession" maxlength="20" class="form-control">
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">学历</label>
+				<div class="col-md-8">
+					<input id="diploma" name="diploma" type="text" value="$!emProfessor.diploma" maxlength="20" class="form-control">
+				</div>
+			</div>
+			 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">从事专业</label>
+				<div class="col-md-8">
+					<input id="subject" name="subject" type="text" value="$!emProfessor.subject" maxlength="20" class="form-control">
+				</div>
+			</div>
+			 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">办公电话</label>
+				<div class="col-md-8">
+					<input id="officeTel" name="officeTel" type="text" value="$!emProfessor.officeTel" maxlength="20" class="form-control">
+				</div>
+			</div>
+			 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">排序号</label>
+				<div class="col-md-8">
+					<!-- <input id="sort" name="sort" type="text" value="$!emProfessor.sort" maxlength="20" class="form-control"> -->
+					#formIntZeroInput("sort" "$!emProfessor.sort" " id='sort' maxlength='10' class='form-control' ")
+				</div>
+			</div>
+			 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">是否有效</label>
+				<div class="col-md-8">
+					#formRadioButtonsLabel("validFlag" "$!emProfessor.validFlag" $dicData.dicYesNo "&nbsp;" "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+    
+<div class="modal-footer" style="text-align: center">
+	<button onclick="saveEmProfessor();" type="button" class="btn btn-success">
+		<i class="fa fa-save"></i> 保存
+	</button>
+	<button type="button" class="btn btn-warning" data-dismiss="modal">
+		<i class="fa fa-close"></i> 关闭
+	</button>
+</div>
+
+#parse("./common/common.js.vm")
+<!--当前位置弹框插件-->
+<script src="../resource/js/plugins/popover/bootstrap-popover-x.js"></script>
+
+<script>
+
+        // 提交表单
+        function saveEmProfessor() {
+        	var emProfessorParams = common.serializeObject($('#emProfessorForm'));
+            if (emProfessorParams.name == undefined || emProfessorParams.name == "") {
+                common.alert("请填写专家姓名",0);
+                $("#name").focus();
+                return false;
+            }
+            if (emProfessorParams.gender == undefined || emProfessorParams.gender == "") {
+                common.alert("请勾选性别",0);
+                return false;
+            }
+            if (emProfessorParams.duty == undefined || emProfessorParams.duty == "") {
+                common.alert("请填写队内职务",0);
+                $("#duty").focus();
+                return false;
+            }
+            if (emProfessorParams.orgInnerDuty == undefined || emProfessorParams.orgInnerDuty == "") {
+                common.alert("请填写工作单位及职务",0);
+                $("#orgInnerDuty").focus();
+                return false;
+            }
+           
+            if (emProfessorParams.officeTel)  {
+            	if (!checkMobile(emProfessorParams.officeTel) && !checkPhone(emProfessorParams.officeTel)) {
+       				common.alert("办公电话格式错误！",0);
+   	    			$("#officeTel").focus();
+       				return false;
+       			}
+            }
+           
+            if (emProfessorParams.mobile == undefined || emProfessorParams.mobile == "") {
+                common.alert("请填写手机号",0);
+                $("#mobile").focus();
+                return false; 
+            }else{
+            	if (!checkMobile(emProfessorParams.mobile) && !checkPhone(emProfessorParams.mobile)) {
+       				common.alert("手机号码格式错误！",0);
+   	    			$("#mobile").focus();
+       				return false;
+       			}
+            }
+             
+            $.post("../emProfessor/saveEmProfessor.do", emProfessorParams, function (result) {
+                if (result.code == "0") {
+                    $('#submitFlag').val("1");
+                    $("#professorId").val( result.data.professorId);
+                    common.alert("保存成功",0);
+                    query();//重新查询
+                } else {
+                    common.alert("保存失败",0);
+                    $('#submitFlag').val("");
+                }
+            }, "json");
+        }
+</script>
+

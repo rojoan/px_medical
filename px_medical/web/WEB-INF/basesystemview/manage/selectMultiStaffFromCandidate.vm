@@ -1,0 +1,123 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../app/right/right.css" rel="stylesheet" type="text/css" />
+#parse("/manage/ScriptTemplate.tpl.vm")
+</head>
+<script language="JavaScript">
+function staffAdd(source_list, target_list) {
+    var source_len = source_list.options.length;
+    for (i = 0; i < source_len; i++) {
+        if(source_list.options[i].selected && !listbox_item_find(source_list.options[i].value,target_list)) {
+            new_option = new Option(source_list.options[i].text,source_list.options[i].value);
+            //new_option.orgId = source_list.options[i].orgId;
+            // new_option.orgName = source_list.options[i].orgName;
+            new_option.setAttribute("orgId", source_list.options[i].getAttribute("orgId"));
+            new_option.setAttribute("orgName", source_list.options[i].getAttribute("orgName"));
+            var len = target_list.options.length;
+            target_list.options[len] = new_option;
+         }
+    }
+}
+
+function staffAddAll(source_list, target_list) {
+    var source_len = source_list.options.length;
+    for (i = 0; i < source_len; i++) {
+        if(!listbox_item_find(source_list.options[i].value,target_list)) {
+            new_option = new Option(source_list.options[i].text,source_list.options[i].value);
+            //new_option.orgId = source_list.options[i].orgId;
+            //new_option.orgName = source_list.options[i].orgName;
+            new_option.setAttribute("orgId", source_list.options[i].getAttribute("orgId"));
+            new_option.setAttribute("orgName", source_list.options[i].getAttribute("orgName"));
+            var len = target_list.options.length;
+            target_list.options[len] = new_option;
+         }
+    }
+}
+
+function receiveSelectFromLeft(node) {
+    var target_list = document.getElementById("man_selected");
+    var filterIds = "";
+	var depIds = "";
+
+    for (i = 0; i < target_list.options.length; i++) {
+        if (i == 0) {
+            filterIds += target_list.options[i].value;
+			//depIds += target_list.options[i].orgId;
+        } else {
+            //已选人员
+            filterIds += "," + target_list.options[i].value;
+			//depIds += "," + target_list.options[i].orgId;
+        }
+    }
+    var params = top.dialogArguments.CustomValue.rightUrlInitParams;
+    var theUrl =   "../manage/selectMultiStaffFromCandidate.do?orgId="+node.id+"&filterIds="+filterIds;
+    for(var p in params ){
+        theUrl += "&"+params[p].paramName+"="+params[p].paramValue;
+    }
+    //parent.document.frames["rightFrame"].location.href = theUrl;
+    parent.window.frames["rightFrame"].location.href = theUrl;
+}
+
+function returnSelected() {
+    var userInfos = new Array();
+    var userInfo = new Object();
+    var man_selected = document.getElementById("man_selected");
+    for (i = 0; i < man_selected.options.length; i++) {
+        userInfo = new Object();
+        userInfo.userInfoId = man_selected.options[i].value ;
+        userInfo.userName = man_selected.options[i].text;
+        userInfo.orgId = man_selected.options[i].getAttribute("orgId");
+        userInfo.orgName = man_selected.options[i].getAttribute("orgName");
+        userInfos[i] = userInfo;
+    }
+    return userInfos;
+}
+
+</script>
+<body>
+<table cellpadding="0" cellspacing="0" width="100%" height="100%">
+  <form name='selectForm' action='post'>
+  <tr height="100%">
+    <td width="50%"  valign="top"  >
+      <span nowrap>可选人员</span>
+      <select id="man_list" name="man_list" style="width:100%;height:97%;border: 1px solid #696969;"  multiple onDblClick="staffAdd(man_list,man_selected)">
+        #foreach($data in $!{candidateUserList})
+          #set($userInfo = $!{data[0]})
+          #set($sysOrg = $!{data[1]})
+            <option value='$!{userInfo.userInfoId}' orgId='$!{sysOrg.orgId}' orgName='$!{sysOrg.name}'>$!{userInfo.name}</option>
+        #end
+      </select>
+    </td>
+    <td width="3%" valign="center">
+      <div align="center">
+      <a href="#" onclick="staffAdd(man_list,man_selected)"><img src="../images/arrow_right_single.gif" width="40" height="20" border="0" alt="移入选择人员"></a>
+      <br><br><p>
+      <a href="#" onclick="listbox_selecteditem_move(man_selected)"><img src="../images/arrow_left_single.gif" width="40" height="20" border="0" alt="移出选择人员"></a>
+      <br><br><p>
+      <a href="#" onclick="staffAddAll(man_list,man_selected)"><img src="../images/arrow_right.gif" width="40" height="20" border="0" alt="移入所有人员"></a>
+      <br><br><p>
+      <a href="#" onclick="listbox_selecteditem_allmove(man_selected)"><img src="../images/arrow_left.gif" width="40" height="20" border="0" alt="移出所有人员"></a>
+      </div>
+    </td>
+    <td width="47%"  valign="top">
+      <span nowrap>已选人员</span>
+      <select id="man_selected" name="man_selected" style="width:100%;height:97%;border: 1px solid #696969;" multiple onDblClick="listbox_selecteditem_move(man_selected)">
+		 #foreach($data in $!{preStaffList})
+          #set($userInfo = $!{data[0]})
+          #set($sysOrg = $!{data[1]})
+            <option value='$!{userInfo.userInfoId}' orgId='$!{sysOrg.orgId}' orgName='$!{sysOrg.name}'>$!{userInfo.name}</option>
+        #end
+      </select>
+    </td>
+	<td>
+		<div>
+			&nbsp;
+		</div>
+	</td>
+    </tr>
+    </form>
+  </table>
+</body>
+</html>

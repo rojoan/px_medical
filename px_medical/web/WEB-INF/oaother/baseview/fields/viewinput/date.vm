@@ -1,0 +1,1 @@
+#displayOnlyDate($!{datamap.get($!{cell.field})})<input type="hidden" name="${cell.field}" value="#displayOnlyDate($!{datamap.get($!{cell.field})})"/>

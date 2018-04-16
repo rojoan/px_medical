@@ -1,0 +1,620 @@
+ 
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<!-- 个人的健康信息修改 -->
+<div id="personHeath" class=" tab-pane full-height">
+	<form class="form-horizontal">
+		<!--既往疾病史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>既往疾病史</h5>
+				<div data-toggle="buttons-checkbox" class="btn-group pull-right">
+					<button class="btn btn-primary" id="add-pastDisease" type="button" style="margin-top: 2px;">
+						<i class="fa fa-plus-circle"></i> 新增
+					</button>
+				</div>
+			</div>
+			<div id="pastDisease" class="row m-l-sm">
+				#if($pastDiseaseList && $pastDiseaseList.size() > 0)
+					<!-- 列表中有数据时，循环显示 -->
+					#foreach($item in $pastDiseaseList)
+					<div class="trRow show">
+						#formHiddenInput("pastDiseaseId" "$!item.pastDiseaseId" "")
+						<div class="delBtn">
+							<a href="javascript:void(0);" onclick="delPastDisease(this);" title="删除当前记录" style="color: red;"><i class="fa fa-minus-square"></i></a>
+						</div>
+						<input type="hidden" name="pastDiseaseId" value="$!item.pastDiseaseId">
+						<div class="form-group">
+							<label class="col-sm-1 control-label text-right p-r-none red">疾病名称</label>
+							<div class="col-xs-3">
+								#formTextInput("diseaseName" "#htmlEscape($!item.diseaseName)" "onclick='showPastDiseasePop(this);' maxlength='50' readonly class='form-control tigger pastDiseaseSelect ' style='background-color: white;'")
+								#formHiddenInput("diseaseId" "$!item.diseaseId" "")
+							</div>
+							<label class="col-sm-1 control-label text-right p-r-none">得病时间</label>
+							<div class="col-sm-3">
+								<div class=" input-daterange date">
+									#formTextInput("diseaseTime" "$!date.format('yyyy-MM-dd', $!item.diseaseTime)" " onclick='$layerDate' class='form-control form_datetime'")
+								</div>
+							</div>
+							<label class="col-sm-1 control-label text-right p-r-none">是否为遗传</label>
+							<div class="col-sm-2">
+								<!-- 多组redio需要设置： name=familyDiseaseFlag+ $item.pastDiseaseId -->
+								#formRadioButtonsLabel("familyDiseaseFlag$item.pastDiseaseId" "$!item.familyDiseaseFlag" $dicData.dicYesNo "&nbsp;" "" "class='checkbox-inline i-checks' ")
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-1 control-label text-right p-r-none ">得病部位描述</label>
+							<div class="col-xs-10">
+								#formTextInput("diseaseContent" "#htmlEscape($!item.diseaseContent)" "maxlength='200' class='form-control'")
+							</div>
+						</div>
+					</div>
+					#end 
+				#else
+				
+					
+				<!-- 列表中没有数据显示空白 -->
+				<div id="blankRow" style="border: none;">
+					<div class="form-group">
+						<label class="col-sm-12 control-label text-right p-r-none" style="text-align: center;">点击新增添加内容吧！</label>
+					</div>
+				</div>
+				#end
+			</div>
+		</div>
+
+		<!--个人暴露史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>个人暴露史</h5>
+			</div>
+			
+			<div id="exposeDiseaseCks" class="row m-l-sm m-b-sm">
+				<div style="margin: 10px 5px 8px 0px;">
+					<div class="form-group" style="margin-left: 15px; margin-right: 15px;">
+						<div class="col-md-12">#formCheckboxesLable("exposeId" $!personExposeIdsList $dicData.dicExpose "&nbsp;&nbsp;&nbsp;&nbsp;" "class='checkbox-inline i-checks'")</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--个人过敏史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>个人过敏史</h5>
+			</div>
+			<div id="drugAllergyRows" class="row m-l-sm m-b-sm">
+				<div style="margin: 10px 5px 8px 0px;">
+					<div class="form-group" style="margin-left: 15px; margin-right: 15px;">
+						<div class="col-md-12">
+						 #foreach($option in $dicData.dicDrugAllergy.keySet())
+					        <label  class="checkbox-inline i-checks">
+						        <input type="checkbox" name="drugAllergyId" value="${option}" id="drugAllergyId_${option}"
+						        #foreach($item in $!drugAllergyList)
+						            #if($item.drugAllergyId == $option)
+						                checked="checked"
+						            #end
+						        #end
+						         />${dicData.dicDrugAllergy.get($option)} 
+						         #if(5 == $option)
+							         <input type="text" name="drugAllergyOther"
+							         #foreach($item in $!drugAllergyList)
+							            #if($item.drugAllergyId == $option)
+							                value="$item.drugAllergyOther"
+							            #end
+							          #end
+						            >
+							     #else
+							    	&nbsp;
+						         #end
+					        </label>
+					          
+					    #end
+					</div>  
+				</div>
+			   </div>
+			</div>
+		</div>
+
+		<!--既往手术、外伤、输血史-->
+		<div class=" m-r-xs">
+			<div class="text-box">
+				<h5>既往手术、外伤、输血史</h5>
+				<div data-toggle="buttons-checkbox" class="btn-group pull-right">
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<button aria-expanded="false" role="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" type="button" style="margin-top: -5px;">
+								<i class="fa fa-plus-circle"></i> 新增
+							</button>
+							<ul role="menu" class="dropdown-menu">
+								<li><a href="javascript:void(0);" onclick="addSurgery(1);">手术</a></li>
+								<li><a href="javascript:void(0);" onclick="addSurgery(2);">外伤</a></li>
+								<li><a href="javascript:void(0);" onclick="addSurgery(3);">输血史</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div id="personSurgeryRows" class="row m-l-sm">
+				#if($personSurgeryList && $personSurgeryList.size() > 0)
+				<!-- 列表中有数据时，循环显示 -->
+				#foreach($item in $personSurgeryList)
+				<div class="surgeryRow trRow">
+					#if($item.surgeryName) #formHiddenInput("surgeryId" "$!item.surgeryId" "") 
+					<input type="hidden" name="surgeryType" value="surgeryType">
+					<div class="delBtn">
+						<a href="javascript:void(0);" onclick="delSurgery(this);" title="删除当前记录" style="color: gray;"><i class="fa fa-minus-square"></i></a>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label text-right p-r-none ">手术名称</label>
+						<div class="col-sm-6">#formTextInput("surgeryName" "#htmlEscape($!item.surgeryName)" "maxlength='50' class='form-control'")</div>
+
+						<label class="col-sm-1 control-label text-right p-r-none ">手术时间</label>
+						<div class="col-sm-3 input-daterange date">
+							<input type="text" name="surgeryTime" value="$!date.format('yyyy-MM-dd', $!item.surgeryTime)" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" />
+						</div>
+					</div>
+					#end
+				</div>
+
+				<div class="traumaRow trRow">
+					#if($item.traumaName) #formHiddenInput("surgeryId" "$!item.surgeryId" "") 
+					<input type="hidden" name="surgeryType" value="traumaType">
+					<div class="delBtn">
+						<a href="javascript:void(0);" onclick="delSurgery(this);" title="删除当前记录" style="color: gray;"><i class="fa fa-minus-square"></i></a>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label text-right p-r-none ">外伤名称</label>
+						<div class="col-sm-6">
+							#formTextInput("traumaName" "#htmlEscape($!item.traumaName)" "maxlength='50' class='form-control'")
+						</div>
+
+						<label class="col-sm-1 control-label text-right p-r-none ">外伤时间</label>
+						<div class="col-sm-3 input-daterange date">
+							#formTextInput("traumaTime" "$!date.format('yyyy-MM-dd', $!item.traumaTime)" "  class='input-sm form-control form_datetime'")
+						</div>
+					</div>
+					#end
+				</div>
+
+				<div class="bloodTransRow trRow">
+					#if($item.bloodTransReason) #formHiddenInput("surgeryId" "$!item.surgeryId" "") 
+					<input type="hidden" name="surgeryType" value="bloodTransType">
+					<div class="delBtn">
+						<a href="javascript:void(0);" onclick="delSurgery(this);" title="删除当前记录" style="color: gray;"><i class="fa fa-minus-square"></i></a>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label text-right p-r-none ">输血原因</label>
+						<div class="col-sm-6">
+							#formTextInput("bloodTransReason" "#htmlEscape($!item.bloodTransReason)" "maxlength='100' class='form-control'")
+						</div>
+						<label class="col-sm-1 control-label text-right p-r-none ">外伤时间</label>
+						<div class="col-sm-3 input-daterange date">
+							#formTextInput("bloodTransTime" "$!date.format('yyyy-MM-dd', $!item.bloodTransTime)" " maxlength='15' class='input-sm form-control form_datetime'")
+							
+						</div>
+					</div>
+					#end
+				</div>
+				#end
+				<!-- foreach -->
+				#else
+				<!-- if list.size  -->
+				<!-- 列表中没有数据显示空白 -->
+				<div class="surgeryRow"></div>
+				<div class="traumaRow"></div>
+				<div class="bloodTransRow"></div>
+				<div id="blankRow" style="border: none;">
+					<div class="form-group">
+						<label class="col-sm-12 control-label text-right p-r-none" style="text-align: center;">点击新增添加内容吧！</label>
+					</div>
+				</div>
+				#end
+				<!-- if list.size  -->
+			</div>
+
+		</div>
+
+
+		<!--家族史-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>家族史</h5>
+				<div data-toggle="buttons-checkbox" class="btn-group pull-right">
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<button class="btn btn-primary" onclick="addFamilyDisease();" type="button" style="margin-top: 2px;">
+								<i class="fa fa-plus-circle"></i> 新增
+							</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div id="familyDiseaseRows" class="row m-l-sm">
+				#if($familyDiseaseList && $familyDiseaseList.size() > 0)
+				<!-- 列表中有数据时，循环显示 -->
+					#foreach($item in $familyDiseaseList)
+					<div class="trRow">
+						#formHiddenInput("familyDiseaseId" "$!item.familyDiseaseId" "")
+						<div class="delBtn">
+							<a href="javascript:void(0);" onclick="delFamilyDisease(this);" title="删除当前记录" style="color: gray;"><i class="fa fa-minus-square"></i></a>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-2">
+								#formSingleSelectDictionary("familyMemberFlag" $!item.familyMemberFlag $dicData.dicFamilyMemberFlag "id='familyMemberFlag' data-placeholder='请选择成员' class='form-control' style='min-width: 80px; width: 70%;margin-left: 40px;' tabindex='1'" "请选择成员" "")
+							</div>
+							<div class="col-sm-9">
+								<div class="input-group ">
+									#formTextInput("diseaseNames" "#htmlEscape($!item.diseaseName)" " onclick='showFamilyPop(this);'   maxlength='50' readonly class='form-control tigger familyDisNameSelect ' style='background-color: white;'")
+								    #formHiddenInput("diseaseId" "$!item.diseaseId" "")
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
+											<span class="caret"></span>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					#end 
+				#else
+				
+				<!-- 列表中没有数据显示空白 -->
+				<div id="blankRow" style="border: none;">
+					<div class="form-group">
+						<label class="col-sm-12 control-label text-right p-r-none" style="text-align: center;">点击新增添加内容吧！</label>
+					</div>
+				</div>
+				#end
+
+			</div>
+		</div>
+
+		<!--残疾情况-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>残疾情况</h5>
+			</div>
+			<div id="personDisabilitRows" class="row m-l-sm m-b-sm">
+				<div style="margin: 10px 5px 8px 0px;">
+					<div class="form-group" style="margin-left: 15px; margin-right: 15px;">
+						<div class="col-md-12">#formCheckboxesLable("disabilityId" $!disabilityIdsList $dicData.dicDisability "&nbsp;&nbsp;&nbsp;&nbsp;" "class='checkbox-inline i-checks'")</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</form>
+</div>
+
+
+
+
+<!-- 既往史疾病  Popover -->
+<div id="pastDisNamePopover" class="popover popover-x popover-default" style="width: 800px; max-width: 800px;" >
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">脑血管疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicCerebrovascularDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">肾肝疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicKidneyAndLiveDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">心脏疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicHeartDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">血管疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicBloodDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">肺部疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicBellowsDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">眼部疾病疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicOcularRegionDisease "&nbsp;" "未发现"  "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="popfooter" style="margin: 3px 0 -7px 0; padding-top: 3px; text-align: right; border-top: 1px solid #ebebeb;  border-radius: 0 0 5px 5px;">
+               <button type="button" onclick="surePastDiseaseCheck(this)" class="sure btn btn-sm btn-primary ">确定</button>
+               <button type="button" onclick="hidePastDiseasePop(this)" class="cancle btn btn-sm btn-default">取消</button>
+         </div> 
+		
+		<script type="text/javascript">
+		
+		$(document).ready(function(){ 
+			//加载插件
+			reApplyPlugins();
+			pastDiseasePopover();
+		});
+		
+		//弹窗popover
+		function showPastDiseasePop(elemnet){
+			$(elemnet).popover('show');
+		}
+		//既往史确定选择
+		function surePastDiseaseCheck(element){
+			checkPastDisease(element);
+		}
+		//关闭弹框
+		function hidePastDiseasePop(element){
+			var diseaseNamesInput = $(element).parents(".popover").parent().find('[name=diseaseName]');
+			diseaseNamesInput.popover('hide');
+		}
+		
+		function pastDiseasePopover() {
+			//绑定弹框
+			 var content =  $('#pastDisNamePopover').html();
+			$(".pastDiseaseSelect").popover({
+			    	trigger:"manual",  
+				    placement:"auto",
+				    html:true,
+				    content:content
+			});
+			
+			//注册加载时事件 - 关闭其他popover
+			$('.pastDiseaseSelect').on('show.bs.popover', function () { //展示时,关闭非当前所有弹窗
+			   $(this).parent().parent().parent().siblings().find('input[name="diseaseName"]').popover('hide');
+	        });
+			
+			//注册加载成功事件 - 回显、选中事件
+			$('.pastDiseaseSelect').on('shown.bs.popover', function () {
+				var popThis = this;
+				//绑定选择事件
+				$('input[name="disabilityIds"]').on('ifChanged', function(event){
+					//checkPastDisease(this,popThis);
+				});
+				
+				//回显选中值
+				var diseaseId  =  $(this).parent().find('[name="diseaseId"]').val();
+				var ids = diseaseId.split(',');
+				$(ids).each(function(){
+					$('#disabilityIds_' + this ).iCheck('check');
+					$('#disabilityIds_' + this).iCheck('update'); 
+				});
+				
+			});
+		}
+		
+		//点击事件 赋值
+		function checkPastDisease(element,popover){
+			var dicDisease = JSON.parse('$dicTools.changeMapToJson($dicData.dicDisease)'); 
+			var diseaseNames = [];
+			var diseaseIds = [];
+			$('input[name="disabilityIds"]:checked').each(function(i){
+			 	if($.inArray($(this).val(), diseaseIds) == -1){
+			 		diseaseIds.push($(this).val()); 
+			 		diseaseNames.push(dicDisease[$(this).val()]);
+			 	}
+	        });
+			var diseaseNamesInput = $(element).parents(".popover").parent().find('[name=diseaseName]');
+			var diseaseIdInput = $(element).parents(".popover").parent().find('[name=diseaseId]');
+			diseaseNamesInput.val(diseaseNames.join(","));//去掉最后的",",并赋值
+			diseaseIdInput.val(diseaseIds.join(","));//去掉最后的",",并赋值
+			diseaseNamesInput.popover('hide');
+		}
+		
+		//重新渲染插件
+		function reApplyPlugins() {
+			//下拉表单 选择框美化插件
+			var config = {
+				'.chosen-select' : {},
+				'.chosen-select-deselect' : {
+					allow_single_deselect : true
+				},
+				'.chosen-select-no-single' : {
+					disable_search_threshold : 10
+				},
+				'.chosen-select-no-results' : {
+					no_results_text : 'Oops, nothing found!'
+				},
+				'.chosen-select-width' : {
+					width : "100%"
+				}
+			};
+			for ( var selector in config) {
+				$(selector).chosen(config[selector]);
+			}
+			;
+
+			//复选框、单选美化
+			$('.i-checks').iCheck({
+				checkboxClass : 'icheckbox_square-green',
+				radioClass : 'iradio_square-green',
+			});
+		}
+		</script>
+</div>
+
+<!-- 家族史 弹窗选择  家族史疾病  Popover -->
+<div id="familyDisNamePopover" class="popover popover-x popover-default" style="width: 800px; max-width: 800px;" >
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">脑血管疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicCerebrovascularDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">肾肝疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicKidneyAndLiveDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">心脏疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicHeartDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">血管疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicBloodDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">肺部疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicBellowsDisease "&nbsp;" "未发现" "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="form-group" style="height: 27px; margin: 1px 1px 25px 1px;">
+			<label class="col-sm-2 control-label text-right p-r-none">眼部疾病疾病</label>
+			<div class="col-md-10">
+				#formRadioLableExcludeCheckName("disabilityIds" "" $dicData.dicOcularRegionDisease "&nbsp;" "未发现"  "class='checkbox-inline i-checks'")
+			</div>
+		</div>
+		<div class="popfooter" style="margin: 3px 0 -7px 0; padding-top: 3px; text-align: right; border-top: 1px solid #ebebeb;  border-radius: 0 0 5px 5px;">
+               <button type="button" onclick="sureFamilyDiseaseCheck(this)" class="sure btn btn-sm btn-primary ">确定</button>
+               <button type="button" onclick="hideFamilyDiseasePop(this)" class="cancle btn btn-sm btn-default">取消</button>
+         </div> 
+		
+		<script type="text/javascript">
+		
+		$(document).ready(function(){ 
+			//加载插件
+			reApplyPlugins();
+			pastDiseasePopover();
+			familyDiseasePopover();
+		});
+		
+		//弹窗popover
+		function showFamilyPop(elemnet){
+			$(elemnet).popover('show');
+		}
+		
+		//确定选择 -家族史
+		function sureFamilyDiseaseCheck(element){
+			checkFamilyDisease(element);
+		}
+		//关闭家弹框-家族史
+		function hideFamilyDiseasePop(element){
+			var diseaseNamesInput = $(element).parents(".popover").parent().find('[name=diseaseNames]');
+			diseaseNamesInput.popover('hide');
+		}
+		
+		//绑定弹框-家族史
+		function familyDiseasePopover() {
+			var content =  $('#familyDisNamePopover').html();
+			$(".familyDisNameSelect").popover({
+				    trigger:"manual", 
+				    placement:"auto",
+				    html:true,
+				    content:content
+			});
+			
+			//注册加载时事件 - 关闭其他popover
+			$('.familyDisNameSelect').on('show.bs.popover', function () { //展示时,关闭非当前所有弹窗
+			   $(this).parent().parent().parent().parent().siblings().find('input[name="diseaseNames"]').popover('hide');
+	        });
+			
+			//注册加载成功事件 - 回显、选中事件
+			$('.familyDisNameSelect').on('shown.bs.popover', function () {
+				//绑定选择事件
+				$('input[name="disabilityIds"]').on('ifChanged', function(event){
+					//checkFamilyDisease(this);
+				});
+				
+				//回显选中值
+				var diseaseId  =  $(this).parent().find('[name="diseaseId"]').val();
+				var ids = diseaseId.split(',');
+				$(ids).each(function(){
+					$('#disabilityIds_' + this ).iCheck('check');
+					$('#disabilityIds_' + this).iCheck('update'); 
+				});
+				
+			});
+		}
+		
+		//点击事件 赋值
+		function checkFamilyDisease(element){
+			var dicDisease = JSON.parse('$dicTools.changeMapToJson($dicData.dicDisease)'); 
+			var diseaseNames = [];
+			var diseaseIds = [];
+			$('input[name="disabilityIds"]:checked').each(function(i){
+			 	if($.inArray($(this).val(), diseaseIds) == -1){
+			 		diseaseIds.push($(this).val()); 
+			 		diseaseNames.push(dicDisease[$(this).val()]);
+			 	}
+	        });
+			var diseaseNamesInput = $(element).parents(".popover").parent().find('[name=diseaseNames]');
+			var diseaseIdInput = $(element).parents(".popover").parent().find('[name=diseaseId]');
+			diseaseNamesInput.val(diseaseNames.join(","));//去掉最后的",",并赋值
+			diseaseIdInput.val(diseaseIds.join(","));//去掉最后的",",并赋值
+			diseaseNamesInput.popover('destroy');
+		}
+		
+		//重新渲染插件
+		function reApplyPlugins() {
+			//下拉表单 选择框美化插件
+			var config = {
+				'.chosen-select' : {},
+				'.chosen-select-deselect' : {
+					allow_single_deselect : true
+				},
+				'.chosen-select-no-single' : {
+					disable_search_threshold : 10
+				},
+				'.chosen-select-no-results' : {
+					no_results_text : 'Oops, nothing found!'
+				},
+				'.chosen-select-width' : {
+					width : "100%"
+				}
+			};
+			for ( var selector in config) {
+				$(selector).chosen(config[selector]);
+			}
+			;
+
+			//复选框、单选美化
+			$('.i-checks').iCheck({
+				checkboxClass : 'icheckbox_square-green',
+				radioClass : 'iradio_square-green',
+			});
+		}
+		</script>
+</div>
+
+
+#**
+ * formRadioLableExcludeCheckName
+ * 仅本页面使用
+ * 产生一组checkbox按钮。
+ *
+ * @param fieldName  按钮的名字
+ * @param fieldValue  按钮的当前取值集合。
+ * @param options 一个由(value=label)组成的map, 是这组按钮的内容
+ * @param separator 按钮之间的分隔文本，一般是html的文本，用来分隔按钮。例如'&nbsp;'、'<br>'等。
+ * @param excludeCheckName 不显示集合里某个按钮的名称，如："按钮的名称为'未发现',则checbox组里将不会"未出现"这个复选框  等
+ * @param labelAttributes label的其他属性
+*#
+#macro( formRadioLableExcludeCheckName $fieldName $fieldValue $options $separator $excludeCheckName $labelAttributes)
+    #foreach($option in $options.keySet())
+       #if($options.get($option) != $excludeCheckName )
+	        <label  ${labelAttributes}>
+	        <input type="radio" name="$fieldName" value="${option}" id="${fieldName}_${option}"
+	        #foreach($item in $fieldValue)
+	            #if($item == $option)
+	                checked="checked"
+	            #end
+	        #end
+	        />${options.get($option)} $!{separator}
+	        </label>
+        #end
+    #end
+#end

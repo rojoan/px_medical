@@ -1,0 +1,28 @@
+<!-- 已将标题和按钮合并至一行 -->
+<div class="title_tab"> 
+    <div class="title_char" style="padding:8px 5px;float:left;">    
+         <img src="../app/right/images/folder_go.png" border="0" align="absmiddle">
+         <span>$!{_layout.title}</span>
+     </div>
+     <div style="float:right;padding:5px;">
+         #if(${_layout.buttonList})
+          #set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+          #foreach($button in ${_layout.buttonList})
+              #buttonField($button "input_style" $editBeanMap)
+          #end
+          #else
+            <input type="button" class="input_style" value="保存" onclick="javascript:saveData(document.$!{_layout.editForm.name})" />
+          #end
+          #if(${_layout.printButton})
+            <input type="button" class="input_style" value="打印" onclick="javascript:return printNote();" />
+          #end
+          #if(${_layout.notshowreturnButton})
+          #else
+            &nbsp;<input type="button" class="input_style" value="返回" onclick="javascript:history.back()" />
+          #end
+          #if(${_layout.closeButton})
+            <input type="button" class="input_style" value="关闭" onclick="window.open('', '_self', ''); window.close(); top.close();" style="cursor:pointer;" />
+          #end
+         </div> 
+    <div height="1" bgcolor="#80a6e6" colspan="2"></div> 
+</div> 

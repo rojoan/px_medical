@@ -1,0 +1,26 @@
+
+**************   项目部署发布说明  *******************
+
+一、配置文件 ，各个系统对应替换：
+    /webMETA-INF/context.xml              --数据库连接配置
+    /webWEB-INF/sso.client.properties     -- sso单点登录配置
+    /web/pacsView/app.js   -- dicomService服务配置
+    /web/WEB-INF/uploadfile.properties -- 文件下载的处理配置
+    /web/WEB-INF/webservice.properties -->调用openapi webservice 的服务
+
+二、替换说明
+    1、如下文件如果需要添加，需要下载服务器上文件修改
+        /web/WEB-INF/uploadfile.properties 
+        /web/WEB-INF/webservice.properties  
+
+    2、dicom service 服务器ip地址改变，需要更新文件
+                  部署目录/pacsView/app.js 文件 （修改配置参数： PacsClient.local.Global.wsStr = "ws://120.77.84.3:5000";）
+
+三、各单位系统特有文件，对应替换
+    1.登录页面  (文件存在在 /系统发布说明/..文件夹下)
+           /web/index.html
+           /web/resource/style/loginstyle/images/logo.png
+           /web/resource/style/loginstyle/images/unit.png
+    
+    2.头部菜单页面（main.vm）
+    		web/WEB-INF/view/baseview/main.vm

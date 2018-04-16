@@ -1,0 +1,56 @@
+#if(${field.type} == 'custom')
+#set($html = ${field.option('html')})
+#if($html)#evaluate($html)#end
+#else
+<div class="i-detail-box">
+<div class="i-input" id="i-field-${info.name}-${field.name}">
+#if(${field.type} == "text")
+$!{field.valueString}
+#elseif(${field.type} == "select")
+#set($options = ${field.option("options")})
+#set($detail = ${options.get(${field.value})})
+#if($detail) ${detail} ss #else  $!{options.get(${field.valueString})} #end
+#elseif(${field.type} == "checkboxes")
+#foreach($v in ${field.value})#if($velocityCount > 1),$!{field.option("options").get($v)}#end #end
+#elseif(${field.type} == "radios")
+$!{field.option("options").get(${field.valueString})}
+#elseif(${field.type} == "textarea")
+#set($boxHeight = ${math.mul($rowHeight, ${field.option("rows", "4")})})
+<div style="height: ${boxHeight}px;overflow:auto;width:100%;">$!{field.valueString}</div>
+#elseif(${field.type} == "rich")
+#set($boxHeight = ${math.mul($rowHeight, ${field.option("rows", "8")})})
+<div style="height:${boxHeight}px;overflow:auto;width:100%;">$!{field.valueString}</div>
+#elseif(${field.type} == "date")
+#displayOnlyDate(${field.value})
+#elseif(${field.type} == "datetime")
+#displayOnlyTime(${field.value})
+#elseif(${field.type} == "dateRange")
+#set($endFieldName = ${field.option('endDate')})
+从 #displayOnlyDate(${field.value}) 到 #displayOnlyDate($!{field.valueOf(${endFieldName})})
+#elseif(${field.type} == "affix")
+#foreach($affixItem in ${field.option("items")})
+<span style="white-space: nowrap">${affixItem.trueName} <a href="../affix/download.do?area=${field.option('area')}&fileId=${affixItem.fileId}" target=_blank><IMG title="另存为..." border=0 src="../app/right/images/download.png"></a></span>
+#end
+#elseif(${field.type} == 'org')
+#lookUpDict($dicData.dicSysOrg ${field.value})
+#elseif(${field.type} == 'orgs')
+#foreach($org in ${field.value})#if($velocityCount != 1), #end#lookUpDict($dicData.dicSysOrg $org)#end
+#elseif(${field.type} == "user")
+#if(${field.value})
+#if(${field.option('withOrg')})
+#lookUpDict($dicData.dicSysUserInfoByUserInfoId ${field.value.userInfoId})(#lookUpDict($dicData.dicSysOrg ${field.value.orgId}))
+#else
+#lookUpDict($dicData.dicSysUserInfoByUserInfoId ${field.value})
+#end
+#end
+#elseif(${field.type} == "users")
+#if(${field.option('withOrg')})
+#foreach($user in ${field.value})#if($velocityCount != 1), #end #lookUpDict($dicData.dicSysUserInfoByUserInfoId $user.userInfoId)(#lookUpDict($dicData.dicSysOrg $user.orgId))#end
+#else
+#foreach($user in ${field.value})#if($velocityCount != 1), #end #lookUpDict($dicData.dicSysUserInfoByUserInfoId $user)#end
+#end
+#elseif(${field.type} == 'treePicker')
+ $!{field.option('text')}
+#end
+</div></div>
+#end

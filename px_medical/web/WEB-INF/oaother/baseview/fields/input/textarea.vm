@@ -1,0 +1,40 @@
+#set( $q = '"')
+#formTextarea($!{cell.field} "$!{datamap.get($!{cell.field})}" "#if(${cell.checkInput} && ${cell.maxlen}) id=$!{cell.field} onpropertychange=${q}onModChange(this.value, ${cell.maxlen}, document.getElementById('post_status${cell.field}'))${q}#end #if(${cell.width})style=#singleQuotes()width:${cell.width};#singleQuotes()#{else}style=#singleQuotes()width:85%#singleQuotes()#end $!{cell.custom} #if(${cell.cols})cols=${cell.cols}#end #if(${cell.rows})rows=${cell.rows}#end #if(${cell.readonly})readonly#end  class='inputobject' #if(${cell.style})style=#singleQuotes()${cell.style}#singleQuotes()#end#if(${cell.maxlen}) maxlength=${cell.maxlen}#end") $!{cell.button}$!{cell.suffix}
+
+#if($cell.checkInput && ${cell.maxlen})
+    #set($statusfun = "onModChange(this.value, ${cell.maxlen}, document.getElementById('post_status'))")
+    <div><em id="post_status${cell.field}">已输入<font color=green>0</font>个字符(最多${cell.maxlen}个字符)</em></div>
+
+<script>
+
+#if(!$INCLUDE_ONMODCHANGE_JSCRIPT)
+    #set($INCLUDE_ONMODCHANGE_JSCRIPT = true)
+function onModChange(s, max, o) {    //实时显示输入字数的
+    if(document.readyState != "complete") {
+        //s = escape(s);
+        setTimeout('onModChange(s,'+ max+ ',document.getElementById("'+ o.id+ '"))', 10);
+        return;
+    }
+
+    setWords(s, max, o) ;
+
+}
+
+function setWords(s, max, o) {
+    var words=s.lenB();
+    if(words > max) {
+       words = "<font color=red>"+ words+ "</font>";
+    } else {
+        words = "<font color=green>"+ words+ "</font>";
+    }
+    o.innerHTML = "已输入"+ words+ "个字符(最多"+ max + "个字符)";
+}
+#end
+
+#if(${datamap.get($!{cell.field})})
+var str = document.getElementById("$!{cell.field}");
+setWords(str.value, ${cell.maxlen}, document.getElementById('post_status${cell.field}'));
+#end
+
+</script>
+#end

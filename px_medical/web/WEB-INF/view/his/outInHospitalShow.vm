@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>门诊/住院患者登记</title>
+<link href='../resource/css/plugins/uploadify/uploadify.css' rel='stylesheet'>
+<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<script src="../resource/style/js/img-viewer.min.js"></script>
+<script src="../resource/style/js/ui.js"></script>
+<script src="../resource/js/plugins/uploadify/jquery.uploadify.min.js"></script>
+<style>
+.trRow{float: left;margin-right: 8px;}
+
+.pic-viewer { position: relative; width: 100%; height: 100%; top: 0; left: 0;}
+
+dl#dowebok dd img { margin: 2%; float: left;}
+</style>
+ 
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+
+<form id="outInHospital_form" class="form-horizontal full-height"  >
+	<!-- 主体 -->
+	<div class="modal-body full-height" style="height: calc(100%); padding: 0;">
+			<div class="tab-content table-content full-height-scroll" style="height: calc(100% - 20px); padding: 9px 8px 9px 12px;">
+				<!-- 隐藏字段 -->
+			  	#formHiddenInput("orgId" "$!outInHospital.orgId" "") 
+				#formHiddenInput("hospitalNo" "$!outInHospital.hospitalNo" "") 
+				#formHiddenInput("patientId" "" "") 
+				#formHiddenInput("inhospitalNo" "" "") 
+				#formHiddenInput("patientCardNo" "" "")
+				
+				#if($!outInHospital.inhospitalId)
+	               #set($patientType = "1")
+	               #set($outInNum = "$!outInHospital.inhospitalId")
+	            #else
+	           	 #set($patientType = "2")
+	           	 #set($outInNum = "$!outInHospital.outpatientId")
+	            #end
+				
+				<div id="tab-1" class="tab-pane active">
+					<!-- 患者基本信息 -->
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>登记信息</h5>
+						</div>
+						<div class="ibox-content" id="registerContext">
+	                         <div class="form-group">
+	                             <label class="col-sm-1 control-label text-right p-r-none red">患者姓名</label>
+	                             <div class="col-sm-2">#formTextInput("patientName" "$!outInHospital.patientName" "onclick='selectPatient();' maxlength='10' class='form-control' placeholder='点击选择...' readonly ")</div>
+	                             <label class="col-sm-1 control-label text-right p-r-none">证件号码</label>
+	                             <div class="col-sm-3">#formTextInput("patientIdCard" "$!outInHospital.patientIdCard" "maxlength='25' class='form-control' readonly ")</div>
+	                             <label class="col-sm-1 control-label text-right p-r-none" style="width: 120px;">就诊卡号</label>
+	                             <div class="col-sm-3">#formTextInput("patientCardNo" "$!outInHospital.patientCardNo" "maxlength='25' class='form-control' readonly ")</div>
+	                         </div>
+	 
+	                         <div class="form-group">
+	                             <label class="col-sm-1 control-label text-right p-r-none p-l-none red">患者类别</label>
+	                             <div class="col-sm-2">#formRadioButtonsLabel("patientType" "$patientType" $dicData.dicOutInhosPatientType "" "" "class='checkbox-inline i-checks'")</div>
+	                             <label class="col-sm-1 control-label text-right p-r-none p-l-none red">门诊/住院流水号</label>
+	                             <div class="col-sm-3">#formIntInput("outInNum" "$outInNum" "maxlength='18' class='form-control' ")</div>
+	                             <label class="col-sm-1 control-label text-right p-r-none" style="width: 120px;">门诊/住院就诊日期</label>
+	                             <div class="col-sm-3">
+	                             #formTextInput("diagnosisDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!outInHospital.diagnosisDate)" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+	                             </div>
+	                              
+	                         </div>
+	                     </div>
+					</div>
+	
+	
+	                <div class="ibox float-e-margins ">
+	                        <div class="ibox-title">
+	                            <h5>影像信息</h5>
+	                        </div>
+	                        <div class="ibox-content" id="examContext" style="height: calc(100% - 40px); padding-bottom: 0">
+	                            <div class="form-group">
+	                                <label class="col-sm-1 control-label text-right p-r-none">患者检查号</label>
+	                                <div class="col-sm-4">#formTextInput("patientExamNum" "$!patientExam.patientExamNum" "maxlength='18' class='form-control'")</div>
+	                                <label class="col-sm-1 control-label text-right p-r-none ">患者档案号</label>
+	                                <div class="col-sm-4">#formTextInput("patientArchiveNum" "$!patientExam.patientArchiveNum" "maxlength='18' class='form-control' ")</div>
+	                            </div>
+	                            <div class="form-group">
+	                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">检查分类</label>
+	                                <div class="col-sm-4">
+	                                    #if($patientExam.examCategory )
+	                                       #set($examCategory = $patientExam.examCategory)
+	                                    #else
+	                                       #set($examCategory = '1')
+	                                    #end
+	                                    #formRadioButtonsLabel("examCategory" "$examCategory" $dicData.dicExamCategory "" "" "class='checkbox-inline i-checks'")
+	                                </div>
+	                                <label class="col-sm-1 control-label text-right p-r-none">检查部位</label>
+	                                <div class="col-sm-4">#formTextInput("examPart" "$!patientExam.examPart" "maxlength='10' class='form-control'")</div>
+	                            </div>
+	                            <div class="form-group">
+	                                <label class="col-sm-1 control-label text-right p-r-none">主诉</label>
+	                                <div class="col-sm-9">#formTextarea("mainDesc" "$!patientExam.mainDesc" "maxlength='150' class='form-control'")</div>
+	                            </div>
+	                                
+	                                    #if(!$patientExam)
+	                                     #set($imageType = "1")
+	                                    #else
+	                                     #set($imageType = $!patientExam.imageType)
+	                                    #end
+	                            <div class="form-group">
+	                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">影像类型</label>
+	                                <div class="col-sm-4">
+	                                    #formRadioButtonsLabel("imageType" "$imageType" $dicData.dicPacsImageType "" "" "class='checkbox-inline i-checks'")
+	                                </div>
+	                            </div>
+	                             
+	                            <div id="pacsImg" class="form-group m-b-none" #if($!patientExam.imageType == 1 || !($patientExam))  style="display: none" #end>                         
+	                                <label class="col-sm-1 control-label text-right p-r-none">检查图片</label>
+	                                
+	                                <div class="col-sm-9">
+	                                    <dl id="dowebok">
+	                                    #foreach($item in $!patientImageList)
+	                                    <dd>
+	                                        <img src="data:image/jpg;base64,$!item.imgBase64Data" width="110" height="110"/>
+	                                    </dd>
+	                                    #end
+	                                </dl>
+	                                </div>
+	                            </div>
+	                            
+	                            <div id="pacsDicom" class="form-group m-b-none" #if($!patientExam.imageType == 2)  style="display: none" #end>                         
+	                                <label class="col-sm-1 control-label text-right p-r-none">dicom文件</label>
+	                                <div class="col-sm-9">
+	                                    <div id="examDicomList" style="margin: 5px auto 0 5px;">
+	                                            #foreach($item in $!pacsDetailList)
+	                                            <div class="dicomRow">
+	                                            <span class="showTrueName">$!item.dicomFileName</span>&nbsp;&nbsp;&nbsp;
+	                                            <span class="showFileSize">$!item.formatSize</span>
+	                                            <input name="instanceUid" value="$!item.instanceUid" type="hidden" />
+	                                            <input name="seriesUid" value="$!item.seriesUid" type="hidden" />
+	                                            <input name="dicomFileName" value="$!item.dicomFileName" type="hidden" />
+	                                            <input name="fileSize" value="$!item.fileSize" type="hidden" />
+	                                            <input name="savePath" value="$!item.savePath" type="hidden" />
+	                                            </div>
+	                                            #end
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div class="row">&nbsp;</div>
+	                        </div>
+	                    </div>
+	                    
+	                    
+						
+					<div class="ibox float-e-margins full-height">
+						<div class="ibox-title">
+							<h5>附件信息</h5>
+						</div>
+						<div class="ibox-content full-height" style="height: calc(100% - 40px);">
+							 
+							<div class="form-group">
+								<label class="col-sm-1 control-label text-right p-r-none">附件</label>
+								<div class="col-sm-9 ">
+									<div id="affixList">
+									#foreach($item in $!patientAffixItemList)
+									 		<div class="affixRow">
+									 				<span class="showTrueName"><a href="../pateintAffix/download.do?affixItemId=$!item.affixItemId">$!item.trueName</a></span>&nbsp;&nbsp;&nbsp;
+									 				<span class="showFileSize">$!item.formatSize</span>
+										    		<input name="affixItemId" value="$!item.affixItemId" type="hidden" />
+										    		<input name="trueName" value="$!item.trueName" type="hidden" />
+										    		<input name="saveName" value="$!item.saveName" type="hidden" />
+										    		<input name="fileSize" value="$!item.fileSize" type="hidden" />
+										    		<input name="savePath" value="$!item.savePath" type="hidden" />
+										    		<input name="bdbKey" value="$!item.bdbKey" type="hidden" />
+										    		<input name="isImage" value="$!item.isImage" type="hidden" />
+										    		<input name="pdfFlag" value="$!item.pdfFlag" type="hidden" />
+										    </div>
+									#end
+								    </div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+	</div>
+
+</form>
+
+
+#parse("./common/common.js.vm")
+#parse("./his/outInHospitalEdit.js.vm") 
+<script type="text/javascript">
+
+ $(document).ready(function() {
+ 	var jqForm = $('#outInHospital_form');
+ 	jqForm.find('input').attr('readonly',true);
+ 	jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+	
+ 	//图片查看插件
+	var viewer = new Viewer(document.getElementById('dowebok'), {
+		url : 'data-original'
+	});
+
+	$('.viewer-in').css({
+		position : "relative",
+		width : "100%",
+		height : "100%",
+		top : "0",
+		left : "0"
+	});
+ });
+</script>
+
+    <div class="tool-table-fixed" style="width: calc(100%)"> </div>
+
+</body>
+</html>

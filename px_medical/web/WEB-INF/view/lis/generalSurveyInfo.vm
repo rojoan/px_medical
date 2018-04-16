@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 导入头部信息及css -->
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/plugins/jsTree/style.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/css/plugins/datatimepicker/datetimepicker.css" rel="stylesheet">
+<link href="../resource/style/css/page.css" rel="stylesheet">
+<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+<style>
+.pic-viewer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+html, body {
+	height: 100%;
+}
+
+dl#dowebok dd img {
+	width: 20%;
+	max-height: 120px;
+	margin: 2%;
+	float: left;
+}
+</style>
+</head>
+<body>
+	<div class="modal-body full-height" style="padding: 0;">
+		<ul class="nav nav-tabs">
+			<li class=""><a data-toggle="tab" href="#patientInfo">患者基本信息</a></li>
+<!-- 			<li class=""><a data-toggle="tab" href="#examInfo">影像资料</a></li> -->
+			<li class="active"><a data-toggle="tab" href="#lisInfo">检验报告</a></li>
+<!-- 			<li class=""><a data-toggle="tab" href="#tab-4">病历文书</a></li> -->
+		</ul>
+
+		<!-- 检验资料 -->
+		<div class="tab-content full-height" >
+			<!-- 患者资料 -->
+			<div id="patientInfo" class="tab-pane full-height">
+				<div class="full-height-scroll full-height">
+					<div class="table-responsive">
+						<table class="table table-bordered table-jcdj">
+							<tbody>
+								<tr>
+									<th class="text-nowrap">患者姓名</th>
+									<td>$!inspectionSample.patientName</td>
+									<th class="text-nowrap">身份证号</th>
+									<td></td>
+								</tr>
+
+								<tr>
+									<th class="text-nowrap">性 别</th>
+									<td>$!inspectionSample.patientSex</td>
+									<th class="text-nowrap">年龄</th>
+									<td>$!inspectionSample.ageInput</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">血型</th>
+									<td>$!inspectionSample.bloodtypeAbo</td>
+									<th class="text-nowrap">RH血型</th>
+									<td>$!inspectionSample.bloodtypeRh</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">民族</th>
+									<td>$!inspectionSample.patientNationName</td>
+									<th class="text-nowrap">特殊条件</th>
+									<td>$!inspectionSample.especialCondition</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 
+			<div id="examInfo" class="tab-pane full-height">
+				<div class="ibox float-e-margins ">
+					<div class="ibox-content">
+						<div class="row">
+							<div class="col-xs-3">
+								<div class="table-responsive">
+
+									<table class="table table-bordered table-jcdj">
+										<tbody>
+											
+											<tr>
+												<th class="text-nowrap">检查部位</th>
+												<td>$!patientExam.examPart</td>
+												<th class="text-nowrap">检查方式</th>
+												<td>$!patientExam.examWay</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">登记医生</th>
+												<td>$!patientExam.registerDoctor</td>
+												<th class="text-nowrap">诊断医生</th>
+												<td>$!patientExam.diagnosisDoctor</td>
+											</tr>
+											<tr>
+												<th class="text-nowrap">主诉</th>
+												<td colspan="3">$!patientExam.mainDesc</td>
+												 
+											</tr>
+											<tr>
+												<th class="text-nowrap">检查所见</th>
+												<td colspan="3">$!examResult.examFindings</td>
+											</tr>
+
+											<tr>
+												<th class="text-nowrap">检查提示</th>
+												<td colspan="3">$!examResult.examHint</td>
+											</tr>
+
+											<tr>
+												<th class="text-nowrap">病理诊断</th>
+												<td colspan="3">$!examResult.pathologicDiagnosis</td>
+											</tr>
+
+											<tr>
+												<th class="text-nowrap">检查建议</th>
+												<td colspan="3">$!examResult.examAdvise</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+							</div>
+
+							<div class="col-xs-9 " style="min-height: 450px;">
+								#if($!examType == '1')
+								<iframe src="../pacsView/index.html?patientid=$!patientArchive.patientArchiveId&pacsaccessnumber=" width="100%" height="500px" style="border: none"></iframe>
+								#else
+									<dl id="dowebok">
+										#foreach($item in $!patientExamJpgList)
+										<dd>
+											<img src="data:image/jpg;base64,$!item" />
+										</dd>
+										#end
+								 
+									</dl>
+								#end
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			 -->
+			
+			<div id="lisInfo" class="tab-pane full-height active">
+					<iframe style="height: 100%; width: 100%" frameborder="no" border="0" marginwidth="0" marginheight="0" 
+					scrolling="no" src="../lis/surveyDetail.do?lisInspectionSampleId=$!lisInspectionSampleId"></iframe>
+			</div>
+
+<!-- 			<div id="tab-4" class="tab-pane"></div> -->
+		</div>
+
+	</div>
+	<!-- 全局js -->
+	<script src="../resource/js/jquery.min.js"></script>
+	<script src="../resource/js/bootstrap.min.js"></script>
+	<!-- Chosen -->
+	<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+	<!-- Data time picker -->
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	<!-- iCheck -->
+	<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+	<!-- Bootstrap table -->
+	<script src="../resource/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="../resource/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+	<script src="../resource/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script src="../resource/style/js/img-viewer.min.js"></script>
+	#parse("./common/common.js.vm")
+	<script>
+		//预加载
+		$(document).ready(function() {
+			//图片查看插件
+			var viewer = new Viewer(document.getElementById('dowebok'), {
+				url : 'data-original'
+			});
+
+			$('.viewer-in').css({
+				position : "relative",
+				width : "100%",
+				height : "100%",
+				top : "0",
+				left : "0"
+			});
+
+		});
+	</script>
+</body>
+</html>

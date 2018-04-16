@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>疫苗程序表管理</title>
+#parse("./common/pageCss.vm") 
+<!-- <link rel="stylesheet" type="text/css" href="../resource/css/plugins/webuploader/webuploader-demo.css?v=2"> -->
+<style>
+    html,body { height: 100%}
+    button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px;}
+    table.table-jcdj > tbody > tr > td:hover { border-bottom: 0}
+    table.table-hover > tbody > tr > td { font-size: 12px;}
+</style>
+</head>
+
+
+<body class="gray-bg top-navigation">
+    <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins full-height">
+                <div class="ibox-content">
+                    <div class="row">
+                        <form id="vaccine_queryForm" method="get" class="form-horizontal">
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">疫苗简称</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_vaccineCode" name="vaccineCode" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 ">
+                                <label class="control-label col-sm-4">疫苗名称</label>
+                                <div class="input-daterange input-group date col-sm-8 ">
+                                    <input type="text"  id="q_vaccineName" name="vaccineName" class="form-control "  />
+                                </div>
+                            </div> 
+
+                            <div class="col-sm-4 text-center">
+                                <button type="button" id="btn_query" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-search"></i> <span>查 询</span>
+                                </button>
+                                &nbsp;&nbsp;&nbsp;
+                                <button type="button" id="btn_clean" class="btn btn-sm btn-info">
+                                    <i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+                                </button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ibox float-e-margins full-height m-b-none">
+                <div class="ibox-content p-b-n">
+                    <div class="table-responsive">
+
+                        <!-- 列表表格 -->
+                        <div class="example">
+                            <table id="vaccineListGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+    </div>
+
+    <!-- 全局js -->
+    #parse("./common/pageJs.vm") 
+    #parse("./common/common.js.vm")
+    <script>
+    
+ //查询函数
+function queryRecord() {
+        var queryParams = common.serializeObject($('#vaccine_queryForm'));
+        var options = {url: '../vaccine/vaccineListData.jo', silent: false, query: queryParams};
+        $('#vaccineListGrid').bootstrapTable('refresh', options); 
+}
+
+    $(document).ready(function () {
+
+            // 查询按钮
+            $('#btn_query').click(function (){
+                queryRecord();
+            });
+        
+            // 清空按钮
+            $('#btn_clean').click(function (){
+                // 清空按钮
+                $('#q_vaccineCode').val('');
+                $('#q_vaccineName').val('');
+            });
+
+
+            //查询疫苗程序表列表
+            $('#vaccineListGrid').bootstrapTable(
+                $.extend(baseTable, {
+                    url : "../vaccine/vaccineListData.jo",
+                    queryParams : function (params){
+                        var requestParams = common.serializeObject($('#vaccine_queryForm'));
+                        requestParams.pageSize = params.pageSize;
+                        requestParams.pageNumber = params.pageNumber;
+                        return requestParams;
+                    },
+                    columns : [
+                    {checkbox : true},
+                    {
+                        field : 'planFlag',
+                        title : '是否计划内',
+                        formatter :function (value, row) {
+                            var dicYesNo = JSON.parse('$dicTools.changeMapToJson($dicData.dicYesNo)'); 
+                            if (value) {
+                                return dicYesNo[value];
+                            }
+                        }
+                    },
+                    {
+                        field : 'useFlag',
+                        title : '是否使用',
+                        formatter :function (value, row) {
+                            var dicYesNo = JSON.parse('$dicTools.changeMapToJson($dicData.dicYesNo)'); 
+                            if (value) {
+                                return dicYesNo[value];
+                            }
+                        }
+                    },
+                    {
+                        field : 'vaccineCode',
+                        title : '疫苗简称'
+                    },
+                    {
+                        field : 'vaccineDose',
+                        title : '接种剂次'
+                    },
+                    {
+                        field : 'vaccineDoseNum',
+                        title : '接种剂量/剂次'
+                    },
+                    {
+                        field : 'vaccineName',
+                        title : '疫苗名称'
+                    },
+                    {
+                        field : 'vaccineObject',
+                        title : '接种对象'
+                    },
+                    {
+                        field : 'vaccinePart',
+                        title : '接种部位'
+                    },
+                    {
+                        field : 'vaccineRemark',
+                        title : '备注'
+                    },
+                    {
+                        field : 'vaccineUse',
+                        title : '接种途径'
+                    }                    ], 
+                    onCheck:function(row){
+##                        window.parent.callVaccine(row);
+                        parent.selectVaccineCallBack(row);
+                        // 关闭窗口
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index); 
+                    },
+                    onLoadSuccess : function(){
+                        var height = ($('#vaccineListGrid').parents("body").height() - $('#vaccine_queryForm').parents("#vaccineQuery").first().height() - 130);
+                        $('#vaccineListGrid').bootstrapTable('resetView', {height: height}); 
+                    }
+                }
+                )//extends
+              );//bootstapTable
+        }//document ready function
+    );//function /document ready()
+ 
+
+    </script>
+</body>
+</html>

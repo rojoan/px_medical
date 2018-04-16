@@ -1,0 +1,10 @@
+#if(${_layout.jslib.calendar})  <link href="../script/DHTML_calendar_style.css" rel="stylesheet" type="text/css" media="all"  title="calendar_style" />
+#end
+  <script language="javascript" type="text/javascript" src="../script/common.js"></script>
+  <script language="javascript" type="text/javascript" src="../app/script/appcommon.js"></script>
+#if(${_layout.jslib.validator})  <script language="JavaScript" type="text/javascript" src="../script/validator.js"></script>
+#end
+#if(${_layout.jslib.calendar})  <script language="JavaScript" type="text/javascript" src="../script/DHTML_calendar.js"></script>
+#end
+#if(${_layout.jslib.attach})  <script language="JavaScript" type="text/javascript" src="../script/attach.js"></script>
+#end

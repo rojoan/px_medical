@@ -1,0 +1,7 @@
+#foreach($childCell in ${cell.objectList})
+    #if(${childCell.view})
+        #viewField($childCell $datamap)
+    #else
+        #inputField($childCell $datamap)
+    #end
+#end

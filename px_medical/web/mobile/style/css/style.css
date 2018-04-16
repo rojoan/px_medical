@@ -1,0 +1,70 @@
+/*字体颜色*/
+.green { color: #01990b; }
+.parakeet { color: #2bb123; }
+.seafoam { color: #01B6D0;}
+.sky_blue{ color: #2182E7; }
+.blue{ color: #029AFF; }
+.sky_green { color: #05CDDA; }
+.arctic { color: #82fcfe; }
+.violet { color: #6F0394; }
+.purple { color: #A32CCD; }
+.orchid { color: #AF6AEE; }
+.fuscia { color: #FC47A5; }
+.wate { color: #FC638A; }
+.taffy { color: #F988C6; }
+.dark_red { color: #B71E33; }
+.rose { color: #E3262E; }
+.orange { color: #FF664D; }
+.yellow { color: #FFB400 }
+.yellow2 { color: #FFFF66 }
+
+
+/*背景色*/
+.bg_round_white{ background: #ffffff}
+.bg_round_green { background: #018D0B; }
+.bg_round_parakeet { background: #2bb123; }
+.bg_round_seafoam { background: #01B6D0;}
+.bg_round_sky_blue { background: #2182E7; }
+.bg_round_blue { background: #029AFF; }
+.bg_round_sky_green { background: #05CDDA; }
+.bg_round_arctic { background: #82fcfe; }
+.bg_round_violet { background: #6F0394; }
+.bg_round_purple { background: #A32CCD; }
+.bg_round_orchid { background: #AF6AEE; }
+.bg_round_fuscia { background: #FC47A5; }
+.bg_round_wate { background: #FC638A; }
+.bg_round_taffy { background: #F988C6; }
+.bg_round_black_red { background: #642100}
+.bg_round_dark_red { background: #B71E33; }
+.bg_round_rose { background: #E3262E; }
+.bg_round_orange { background: #FF664D; }
+.bg_round_yellow { background: #FFB400 }
+
+
+.bg_browse { background: #23c6c8 }   /*浏览、查看*/
+.bg_referral {background: #078c6b}   /*转诊申请*/
+.bg_into {background: #09a981}       /*进入会诊*/
+.bg_temporary {background: #6b8eae}  /*暂存*/
+.bg_edit, .bg_audit {background: #04954f}       /*修改、审核*/
+.bg_image {background: #04979c}      /*影像*/
+.bg_report {background: #5295d3}     /*报告*/
+.bg_save { background: #085fb0 }     /*保存*/
+.bg_write {background: #09916f}      /*填写报告*/
+.bg_close { background: #FF664D }    /*关闭*/
+.bg_tip { background: #029AFF }      /*提示*/
+.bg_notice { background: #B71E33 }   /*警告*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

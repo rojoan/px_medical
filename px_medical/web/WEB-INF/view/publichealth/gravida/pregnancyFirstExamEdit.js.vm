@@ -1,0 +1,240 @@
+<script type="text/javascript">
+       // 提交表单
+      function savePregnancyFirstExam() {
+          var pregnancyFirstExamFormParams = common.serializeObject($('#pregnancyFirstExamForm'));
+           //街道
+           
+           //检查项目 参数
+          var gravidaExamItemData = buildGravidaExamItemParam();
+          if(!gravidaExamItemData.valid){
+              return false;
+          }
+           //孕妇辅助检查项目 参数
+          var gravidaAuxExamData = buildGravidaAuxExamParam();
+          if(!gravidaAuxExamData.valid){
+              return false;
+          }
+           
+          var pregnancyFirstExamRetionData = {};
+          pregnancyFirstExamRetionData.pregnancyFirstExamEditInfo = pregnancyFirstExamFormParams;
+          pregnancyFirstExamRetionData.gravidaPregnancyEditInfoList = buidGravidaPregnancyParam();//早期情况
+          pregnancyFirstExamRetionData.gravidaExamItemEditInfoList = gravidaExamItemData.gravidaExamItemArr;//检查项目 参数
+          pregnancyFirstExamRetionData.gravidaAuxExamEditInfoList = gravidaAuxExamData.gravidaAuxExamArr;//检查项目 参数
+          pregnancyFirstExamRetionData.gravidaHealthGuideEditInfoList = buidGravidaHealthGuideParam();//孕妇保健指导表
+          
+          $.post("../gravidaHeathCare/savePregnancyFirstExam.jo", 
+                {pregnancyFirstExamRetionData : JSON.stringify(pregnancyFirstExamRetionData)},  
+                function (result) {
+                    if (result.code == "0") {
+                        common.alert("保存成功",0);
+                        //parent.queryPregnancyFirst();//重新查询
+                     // 关闭窗口
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index); 
+                    } else {
+                        common.alert(result.msg,2);
+                    }
+          }, "json");
+      }
+       
+       //孕妇早期情况  -- 提交参数
+       function buidGravidaPregnancyParam(){
+           //字典
+           var dicPregnancyCase = JSON.parse('$dicTools.changeMapToJson($dicData.dicPregnancyCase)'); 
+           var pregnancyCaseArr = new Array();  
+           $('input[name="pregnancyCaseIds"]:checked').each(function(i) {
+               var pregnancyCase = {};  
+               pregnancyCase.pregnancyCaseId = parseInt($(this).val());
+               pregnancyCase.pregnancyCase = dicPregnancyCase[pregnancyCase.pregnancyCaseId];
+               pregnancyCase.gravidaDetailId = $('#gravidaDetailId').val();
+               pregnancyCaseArr.push(pregnancyCase);//向数组中添加元素  
+           });
+           return pregnancyCaseArr;
+       }
+  
+       //孕妇保健指导表  -- 提交参数
+       function buidGravidaHealthGuideParam(){
+           //字典
+           var dicGravidaHealthGuideType = JSON.parse('$dicTools.changeMapToJson($dicData.dicGravidaHealthGuideType)'); 
+           var gravidaHealthGuideArr = new Array();  
+           $('input[name="healthGuideTypes"]:checked').each(function(i) {
+               var gravidaHealthGuide = {};  
+               gravidaHealthGuide.healthGuideType = $(this).val();
+               var healthGuideTypeName = dicGravidaHealthGuideType[gravidaHealthGuide.healthGuideType];
+               if(healthGuideTypeName == '其他'){
+               	gravidaHealthGuide.healthGuideOtherContent = $('#healthGuideOtherContent').val();
+               }
+               gravidaHealthGuide.gravidaDetailId = $('#gravidaDetailId').val();
+               gravidaHealthGuideArr.push(gravidaHealthGuide);//向数组中添加元素  
+           });
+           return gravidaHealthGuideArr;
+       }
+  
+       //页面初始化函数
+       $(document).ready(function() {
+       	//妇科手术史选择事件
+           gynOperationFlagChangeEvent();
+           //孕妇早期情况-选择事件
+           pregnancyCaseChangeEvent();
+           //健康指导类型-选择事件
+           healthGuideTypeEvent();
+       });
+            
+         //孕妇早期情况-选择事件
+         function pregnancyCaseChangeEvent(){
+         	var dicPregnancyCase = JSON.parse('$dicTools.changeMapToJson($dicData.dicPregnancyCase)'); 
+         	$('input[name="pregnancyCaseIds"]').on('ifClicked', function(event){
+          	 var pregnancyCaseId = parseInt($(this).val());
+          	 var pregnancyCase = dicPregnancyCase[pregnancyCaseId];
+                  if (pregnancyCase == '无') { 
+                 	 //1.全部取消
+                 	 $('input[name="pregnancyCaseIds"]').iCheck('uncheck'); //移除 checked 状态 
+                 	 //2.选中  "无"
+                 	 $('input[id="pregnancyCaseIds_'+ pregnancyCaseId +'"]').iCheck('check');
+                 	//设置- 其他情况 的输入内容
+                      $('#pregnancyContent').val('');
+                      $('#pregnancyContent').attr('readonly',true);
+                  } else {
+                 	 //取消掉"无"选项
+                 	 $.each(dicPregnancyCase,function(pregnancyCaseId,pregnancyCase){  
+                 		 if(pregnancyCase == '无'){
+                 			 $('input[id="pregnancyCaseIds_'+ pregnancyCaseId +'"]').iCheck('uncheck'); 
+                          }
+                 	 }); 
+                 	 //如果是其他
+                 	 if(pregnancyCase == '其他'){
+                          if($(this).is(':checked')){//当前状态是否为选中  ，click事件在change事件之前
+                             //设置- 其他情况 的输入内容
+                         	$('#pregnancyContent').val('');
+                             $('#pregnancyContent').attr('readonly',true);
+                          }else{
+                              $('#pregnancyContent').attr('readonly',false);
+                          }
+                      }
+                  }
+             });
+         }
+         
+         //妇科手术史-选择事件
+         function gynOperationFlagChangeEvent(){
+             $('input[name="gynOperationFlag"]').on('ifChecked', function(event){
+                 if (this.value == 1) {
+                     $('#gynOperationContent').attr('readonly',false);
+                 }else{
+                     $('#gynOperationContent').val('');
+                     $('#gynOperationContent').attr('readonly',true);
+                 }
+             });
+         }
+         
+         //健康指导类型-选择事件
+         function healthGuideTypeEvent(){
+             var dicGravidaHealthGuideType = JSON.parse('$dicTools.changeMapToJson($dicData.dicGravidaHealthGuideType)'); 
+             $('input[name="healthGuideTypes"]').on('ifClicked', function(event){
+                  var healthGuideType = $(this).val();
+                  var healthGuideTypeName = dicGravidaHealthGuideType[healthGuideType];
+                  //如果是其他
+                  if(healthGuideTypeName == '其他'){
+                      if($(this).is(':checked')){//当前状态是否为选中  ，click事件在change事件之前
+                         //设置- 其他情况 的输入内容
+                         $('#healthGuideOtherContent').val('');
+                         $('#healthGuideOtherContent').attr('readonly',true);
+                      }else{
+                          $('#healthGuideOtherContent').attr('readonly',false);
+                      }
+                  }
+             });
+         }
+ </script>
+    
+    
+<script type="text/javascript">
+     //添加检查项目行
+     function addGravidaExamItemTr() {
+        var gravidaExamItemTrHtml = $('#gravidaExamItemTemplate').find('tbody').html();
+        gravidaExamItemTrHtml = gravidaExamItemTrHtml.replaceAll('name="examFlag"', 'name="examFlag' + new Date().getTime() + '"');
+        $('#gravidaExamItemTBody').append(gravidaExamItemTrHtml);
+        iCheckApply();
+     }
+     
+     //删除检查项目行
+     function removeGravidaExamItemTr() {
+        var gravidaExamItemTr = $("#gravidaExamItemTBody tr:last");
+        $(gravidaExamItemTr).remove();
+     }
+     
+     //检查项目
+     function buildGravidaExamItemParam(){
+         var gravidaExamItemData = {};
+         gravidaExamItemData.valid = true;
+         //获取检查项目数据
+         var gravidaExamItemArrData = buildTrInputJSON($('#gravidaExamItemTBody'));
+         var gravidaExamItemArr = new Array();
+         //验证信息
+         $(gravidaExamItemArrData).each(function(i) {
+             if( !isBlank(this.examFlag)){
+            	 gravidaExamItemArrData[i].gravidaDetailId = $('#gravidaDetailId').val();
+            	 gravidaExamItemArrData[i].pregnancyFirstExamId = $('#pregnancyFirstExamId').val();
+            	 gravidaExamItemArr.push(gravidaExamItemArrData[i]);
+             }
+         });
+         
+         gravidaExamItemData.gravidaExamItemArr = gravidaExamItemArr;
+         return gravidaExamItemData;
+     }
+     //检查项目js end  ***************************
+     
+     
+     //孕妇辅助检查项目
+     function buildGravidaAuxExamParam(){
+         var gravidaAuxExamData = {};
+         gravidaAuxExamData.valid = true;
+         //获取既往史输入数据
+         var gravidaAuxExamArrData = buildTrInputJSON($('#gravidaAuxExamTBody'));
+         var gravidaAuxExamArr = new Array();
+         //验证信息
+         $(gravidaAuxExamArrData).each(function(i) {
+              //若果gravidaAuxExamId == null 说明还没有保存到数据库中 ；examItemContem == null说明没有值；二者说明是新增的数据，则需要保存，从数组中移除
+             if( !(isBlank(this.gravidaAuxExamId) && isBlank(this.examItemContem))){
+                 gravidaAuxExamArrData[i].gravidaDetailId = $('#gravidaDetailId').val();
+                 gravidaAuxExamArr.push(gravidaAuxExamArrData[i]);
+             }
+             
+         });
+         gravidaAuxExamData.gravidaAuxExamArr = gravidaAuxExamArr;
+         return gravidaAuxExamData;
+     }
+     //孕妇辅助检查项目js end  ***************************
+     
+     
+        // 将行单元格中的输入框value转为json格式
+    function buildTrInputJSON(element) {
+        var array = [];
+        $(element).find(".trRow").each(function() {
+            var obj = {};
+            $(this).find("input").each(function() {
+                obj[this.name] = this.value;
+            });
+            $(this).find("textarea").each(function() {
+                obj[this.name] = this.value;
+            });
+            $(this).find("select").each(function() {
+                obj[this.name] = $(this).find('option:selected').val();
+                obj[this.name+'Text'] = $(this).find('option:selected').text().replace(/[\r\n]/g, "").trim();;
+            });
+            array.push(obj);
+        }); 
+        return array;
+    }
+     
+    //查看 设置 readonly、disabled
+    $(document).ready(function() {
+        var jqForm = $('#pregnancyFirstExamForm');
+        if('show' == '$!mode'){
+            jqForm.find('input').attr('readonly',true);
+            jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+            jqForm.find('select').attr('disabled',true);
+            jqForm.find('textarea').attr('readonly',true);
+        }
+    });
+     </script>

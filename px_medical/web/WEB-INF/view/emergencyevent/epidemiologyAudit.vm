@@ -1,0 +1,178 @@
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/style/iconfont/iconfont.css" rel="stylesheet">
+<link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="../resource/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/style/css/page.css?v=1" rel="stylesheet">
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span aria-hidden="true"><i class="fa fa-close"></i></span> <span class="sr-only"><i class="fa fa-close"></i></span>
+	</button>
+	<h7 class="modal-title">流行病学审核 <span class="must-red font-14"></span></h7>
+</div>
+<div class="modal-body full-height-scroll" style="height: calc(100% - 105px)">
+	<!--如果弹窗没有底部菜单栏则 -44px -->
+	<form id="epidemiologyAuditForm" class="form-horizontal">
+		<input type="hidden" id="submitFlag" >
+		<input type="hidden" id="healthCheckId" name="healthCheckId" value="$!emHealthCheck.healthCheckId" >
+		<input type="hidden" id="epidemiologyId" name="epidemiologyId" value="$!emHealthCheck.epidemiologyId" >
+
+		<!-- 表格显示内容 开始 -->
+		<div class="table-responsive">
+			<table class="table table-bordered table-jcdj">
+				<tbody>
+				    <tr>
+						<td colspan="4">
+							<div style="text-align: center;font-size: 16px;  color: #098bec;">流行病学信息</div>
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">患者姓名</th>
+						<td>$!epidemiology.patient.name</td>
+						<th class="text-nowrap">患者家长姓名</th>
+						<td>$!epidemiology.patientParentName </td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">患者档案编号</th>
+						<td>$!epidemiology.patientArchive</td>
+						<th class="text-nowrap">身份证号</th>
+						<td>$!epidemiology.patientIdCard</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">性别:</th>
+						<td >
+							#textValueOutput($!epidemiology.patientSex $dicData.dicSex  )
+						</td>
+						<th class="text-nowrap">出生日期:</th>
+						<td >$!date.format('yyyy-MM-dd', $!epidemiology.birthDate)</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">工作单位:</th>
+						<td >$!epidemiology.worksOrg</td>
+						<th class="text-nowrap">患者联系电话:</th>
+						<td >$!epidemiology.patientPhone</td>
+					</tr>
+					 
+					 
+					<tr>
+						<th class="text-nowrap">病人属于</th>
+						<td> 
+						#textValueOutput($!epidemiology.patientBelong $dicData.dicEpiPatientBelong )
+						</td>
+						<th class="text-nowrap">现住址</th>
+						<td>$!epidemiology.patientAddr</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">患者职业</th>
+						<td>$!epidemiology.careerId</td>
+						<th class="text-nowrap">病历分类</th>
+						<td>
+						#textValueOutput($!epidemiology.medicalClassify $dicData.dicEpiMedicalClassify )
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">发病日期</th>
+						<td> $!date.format('yyyy-MM-dd', $!epidemiology.illTime)</td>
+						<th class="text-nowrap">诊断时间</th>
+						<td> $!date.format('yyyy-MM-dd', $!epidemiology.diagnosisTime)</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">死亡时间</th>
+						<td colspan="3"> $!date.format('yyyy-MM-dd', $!epidemiology.dieTime)</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">他法定管理及重点监测传染病:</th>
+						<td colspan="3">$!epidemiology.keyMonitor</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">订正病名:</th>
+						<td colspan="3">$!epidemiology.modifyIllName</td>
+					</tr>
+					 
+					<tr>
+						<th class="text-nowrap">填报单位</th>
+						<td>$!epidemiology.fillOrgName</td>
+						<th class="text-nowrap">单位联系电话</th>
+						<td>$!epidemiology.fillOrgPhone</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">填报医生</th>
+						<td>$!epidemiology.fillDoctorName</td>
+						<th class="text-nowrap">填写日期</th>
+						<td> $!date.format('yyyy-MM-dd', $!epidemiology.fillTime)</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">备注</th>
+						<td colspan="3">$!epidemiology.remark</td>
+					</tr>
+					 
+					<tr>
+						<td colspan="4">
+							<div style="text-align: center;font-size: 16px;  color: #098bec;">审核信息</div>
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">审核单位</th>
+						<td>
+							<input type="text" name="checkOrgName" value="$!emHealthCheck.checkOrgName" readonly="readonly" class="form-control">
+							#formHiddenInput("checkOrgId" "$!emHealthCheck.checkOrgId" " id='checkOrgId' ")<!-- 审核单位ID-->
+						 </td>
+						<th class="text-nowrap">审核人</th>
+						<td> 
+							<input name="checkerName" type="text" value="$!emHealthCheck.checkerName"  readonly="readonly" class="form-control" /> 
+					 	    #formHiddenInput("checkerId" "$!emHealthCheck.checkerId" " id='checkerId' ")
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap must-red">审核意见和建议</th>
+						<td colspan="3">
+							<input name="checkOpinion" value="$!emHealthCheck.checkOpinion"  maxlength="300" type="text" class="form-control" style="width: 94.8%">
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+		<!-- 表格显示内容 结束 -->
+	</form>
+	
+	
+</div>
+<div class="modal-footer" style="text-align: center">
+	<button onclick="saveEmHealthCheck();" type="button" class="btn btn-success">
+		<i class="fa fa-save"></i> 保存
+	</button>
+	<button type="button" class="btn btn-warning" data-dismiss="modal">
+		<i class="fa fa-close"></i> 关闭
+	</button>
+</div>
+
+#parse("./common/common.js.vm")
+
+<script>
+        // 提交审核内容
+        function saveEmHealthCheck() {
+        	 var reportAuditParams = common.serializeObject($('#epidemiologyAuditForm'));
+       
+            if (reportAuditParams.checkOpinion == undefined || reportAuditParams.checkOpinion == "") {
+                common.alert("请填写审核意见和建议",0);
+                return false;
+            }
+            
+            $.post("../epidemiology/saveEmHealthCheck.do", reportAuditParams, function (result) {
+                if (result.code == "0") {
+                    $('#submitFlag').val("1");
+                    $("#healthCheckId").val( result.data.healthCheckId);
+                    common.alert("保存成功",0);
+                    query();//重新查询
+                } else {
+                    common.alert("保存失败",0);
+                    $('#submitFlag').val("");
+                }
+            }, "json");
+        }
+</script>
+

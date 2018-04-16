@@ -1,0 +1,32 @@
+##内部转办专用页面
+#set($_layout = {
+    "title" : "选择人员 <font size='2px' color='red'>内部转办：流程将停留在本环节，流程流向下个环节，请您点击下一步（***）</font>",
+    "jslib" : {
+        "validator" : "1"
+    },
+    "notshowreturnButton" : true,
+    "buttonList" : [
+        {
+            "type" : "imgButton",
+            "title" : "确定",
+            "src": "../app/right/images/ok16.png",
+            "onclick" : "javascript:sendSelectFromRight();"
+        },
+        {
+            "type" : "imgButton",
+            "title" : "关闭",
+            "src": "../app/right/images/cancel16.png",
+            "onclick" : "window.open('', '_self', ''); window.close();top.close();"
+        }
+    ],
+    "queryForm" : {
+        "name":"queryForm"
+    },
+     "leftUrl" : {
+        "onclick" : "../manage/selectDepTreeWithCandidate.do?rootId=$!{request.getParameter('rootId')}&orgIds=$!{request.getParameter('orgIds')}&userIds=$!{request.getParameter('userIds')}"
+    },
+    "rightUrl" : {
+        "onclick" : "../manage/selectMultiStaffFromCandidateDeliver.do"
+    }
+})
+#parse("/manage/SelectMainFrameTemplate.tpl.vm")

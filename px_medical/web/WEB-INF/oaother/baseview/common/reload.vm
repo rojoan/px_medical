@@ -1,0 +1,11 @@
+<html>
+<head>
+<script type="text/javascript">
+function go() {
+    window.location.reload();
+ }
+setTimeout('go()', 300000);
+</script>
+</head>
+<body></body>
+</html>

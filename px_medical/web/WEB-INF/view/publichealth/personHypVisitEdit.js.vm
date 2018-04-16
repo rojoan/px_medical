@@ -1,0 +1,128 @@
+<script type="text/javascript">
+$(function (){
+	// 选择患者信息
+	$('#inportPerson').click(function(){
+		layer.open({
+            type: 2,
+            title: '选择患者信息',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false,
+            area: ['95%', '95%'],
+            content: contextPath + '/personChronic/selectCommonPersonChronicList.do?chronicType=1'
+        });
+	});
+	
+	// 添加药物
+	$('#btn_add_drug').click(function (){
+		var html = $('#drugFormTemplet').html();
+		$('#drugList').append(html);
+	});
+	
+	// 保存
+	$('#btn_save').click(function(){
+		var params = common.serializeObject($('#editForm'));
+		
+		if ($('#submitFlag').val() == "1") {
+			common.alert("不能重复提交", 0);
+    		return ;
+		}
+		if (params.personChronicId == "" || params.personChronicId == undefined) {
+    		common.alert("请选择患者", 0);
+    		return ;
+    	}
+		if (params.visitWay == "" || params.visitWay == undefined) {
+    		common.alert("请选择随访方式", 0);
+    		return ;
+    	}
+		if (params.visitTime == "" || params.visitTime == undefined) {
+    		common.alert("请选择随访日期", 0);
+    		return ;
+    	}
+		
+		// 将用药情况信息以json格式传到后台
+		params.personVisitDrugJson = buildFormJSON($('#drugList'));
+		$.post("../personChronicVisit/savePersonChronicVisit.jo", params, function (result){
+			if (result.code == "0") {
+				$('#submitFlag').val('1');
+				common.alertCall("保存成功。", 1, function (){
+					if (parent.savedShow && typeof(parent.savedShow) == "function") {
+						parent.savedShow(params.chronicVisitId);
+					} else {
+						// 刷新父页面
+						$('#btn_query', window.parent.document).click();
+						// 关闭窗口
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index); 
+					}
+				});
+			} else {
+				common.alert(result.msg, 2);
+			}
+		},"json").error(function (e){jqueryPostError(e)});
+	});
+	
+	// 将容器中的表单转为json格式
+	function buildFormJSON(container) {
+		var array = [];
+		$(container).find(".form-group").each(function (){
+			var obj = {};
+			$(this).find("input, select").each(function (){
+				if (this.value != "") {
+					obj[this.name] = this.value;
+				}
+			});
+			array.push(obj);
+		});
+		return JSON.stringify(array);
+	}
+});
+
+var tempEle;
+// 删除药物
+function deleteDrugForm(obj, visitDrugId){
+	if (visitDrugId != "" && visitDrugId != undefined) {
+		common.confirm("确定要彻底删除吗？", function (){
+			$.post(contextPath + '/personChronicVisit/deletePersonVisitDrug.jo', {visitDrugId: visitDrugId}, function (result){
+				if (result.code == "0") {
+					common.alert(result.msg, 1);
+					$(obj).parents("div .form-group").remove();
+				} else {
+					common.alert(result.msg, 2);
+				}
+			}).error(function (e){jqueryPostError(e)});
+		});
+	} else {
+		$(obj).parents("div .form-group").remove();
+	}
+}
+// 选择用药
+function selectDrug(ele) {
+	tempEle = $(ele).parents('div .form-group');
+	layer.open({
+        type: 2,
+        title: '选择用药',
+        shadeClose: false,
+        shade: 0.5,
+        maxmin: false,
+        area: ['85%', '95%'],
+        content: contextPath + '/diseaseDrug/selectCommonChronicDrugList.do'
+    });
+}
+//选择药品回调函数
+function selectDrugCallBack(obj) {
+	$(tempEle).find("select[name='diseaseDrugType']").val(obj.diseaseDrugType);
+	$(tempEle).find("input[name='diseaseDrugName']").val(obj.diseaseDrugName);
+	$(tempEle).find("input[name='diseaseDrugId']").val(obj.diseaseDrugId);
+	$(tempEle).find("input[name='drugQuantity']").val(obj.drugQuantity);
+	$(tempEle).find("input[name='drugUnit']").val(obj.drugUnit);
+	$(tempEle).find("input[name='drugFreq']").val(obj.drugFreq);
+}
+
+// 选择慢性病患者调函数
+function selectPersonChronicCallBack(obj) {
+	$('#personDetailId').val(obj.personDetailId);
+	$('#personChronicId').val(obj.personChronicId);
+	$('#patientName').val(obj.personChronic.patientName);
+}
+</script>

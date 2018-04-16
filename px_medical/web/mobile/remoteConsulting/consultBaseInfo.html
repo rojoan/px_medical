@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>客户端</title>
+	<link rel="stylesheet" type="text/css" href="../style/css/css.css?v=17.11.24" />
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+
+</head>
+<body>
+    <!--top start-->
+    <header>
+        <div class="top form_add">
+            <div class="fl">
+                <a href="javascript:history.back()"><i class="iconfont back">&#xe89b;</i></a>
+            </div>
+            <div class="txt form_add">
+				会诊基本信息
+            </div>
+            <div class="fr">
+            	<a href="../index.html"><i class="iconfont back">&#xe60b;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end  article start-->
+    <article class="top-min">
+        <div class="head_clear"></div>
+        <div class="con_tit">会诊基本信息</div>
+        <div class="form_list bg_round_white">
+            <dl>
+            	<dt>
+                    <label>会诊类型</label><input id="consultType" type="text" class="input-txt" disabled>
+                </dt>
+                <dt>
+                    <label>会议号</label><input id="meetingNo" type="text" class="input-txt" disabled >
+                </dt>
+                <dt>
+                    <label>会诊时间</label><input id="consultStartTime" type="text" class="input-txt" disabled>
+                </dt>
+                <dt>
+                    <label>结束时间</label><input id="consultEndTime" type="text" class="input-txt" disabled>
+                </dt>
+                <dt>
+                    <label>申请时间</label><input id="applyTime" type="text" class="input-txt" disabled>
+                </dt>
+                <dt>
+                    <label>发起人</label><input id="proposerName" type="text" class="input-txt" disabled>
+                </dt>
+                
+                <dt class="input-row">
+                    <label>会诊要求</label><input id="consultationAsk" type="text" class="input-txt" disabled>
+                </dt>
+            </dl>
+        </div>
+
+        <div class="con_tit">患者基本信息</div>
+        <div class="form_list bg_round_white">
+            <dl> 
+            	<dt class="input-row">
+                    <label>患者姓名</label><input id="patientName" type="text" class="input-txt" disabled>
+                </dt>  
+                <dt>
+                    <label>患者性别</label><input id="patientsex" type="text" class="input-txt" disabled>
+                </dt>
+                <dt>
+                    <label>患者年龄</label><input id="patientAge" type="text" class="input-txt" disabled>
+                </dt>
+                <dt class="input-row">
+                    <label>临床诊断</label><input id="clinicalDiagnosis" type="text" class="input-txt" disabled>
+                </dt>     
+                <dt class="input-row">
+                    <label>病史描述</label><input id="diseaseDescribe" type="text" class="input-txt" disabled>
+                </dt>          
+            </dl>
+        </div>
+        <div id="enter_meeting">
+	        <div class="form-clear"></div>   
+	        <div class="form_btn w" >
+	            <dl>                
+	                <a  href="javascript:void(0);">
+	                	<dt>进入会议</dt>
+	                </a>
+	            </dl>
+	        </div>
+        </div>
+
+    </article>
+
+    <!--article end-->
+    <iframe id="enterMeetingIframe" src="" width="100%" height="0" style="border: none;"></iframe>
+</body>
+<script type="text/javascript">
+var consultInfo = {
+	loadData: function (){
+		var consultingId = common.getCache(common.rowId);
+		common.loading();
+		$.post(rootPath + '/mobile.reconsult/consultInfo.do', {reConsultingId: consultingId}, function (data){
+			var consult = data.consult;
+			var meeting = data.meeting;
+			var fromFlag = data.fromFlag;
+			var patient = data.patient;
+			var professorList = data.professorList;
+			var meetingStatus = data.meetingStatus;
+			if (meeting != undefined) {
+				$('#meetingNo').val(meeting.confId);
+			}
+			if (patient != undefined) {
+				$('#patientsex').val(common.getSex(patient.patientSex));
+				$('#patientAge').val(patient.currentAge);
+			}
+			if (consult != undefined) {
+				$('#applyTime').val(consult.reApplyTime);
+				$('#proposerName').val(consult.proposerName);
+				$('#consultEndTime').val(consult.reConsultingEnd);
+				$('#consultStartTime').val(consult.reConsultingStart);
+				$('#consultationAsk').val(consult.consultationAsk);
+				$('#patientName').val(consult.patientName);
+				$('#diseaseDescribe').val(consult.diseaseDescribe);
+				$('#clinicalDiagnosis').val(consult.clinicalDiagnosis);
+				if (consult.consultationType == "1") {
+					$('#enter_meeting').hide();
+					$('#consultType').val("非交互式");
+				} else if (consult.consultationType == "2"){
+					$('#consultType').val("交互式");
+				}
+			}
+			common.loaded();
+		}, 'json');
+	}
+}
+
+$(function (){
+	$('#enter_meeting').click(function (){
+		var consultingId = common.getCache(common.rowId);
+		common.loading();
+		$.post(rootPath + "/meeting/enterMeeting.do", {reConsultingId: consultingId, isMobile: "1"},  function(result){
+			if (result.isSuccess == "0") {
+				//$("#enterMeetingIframe").attr("src", result.msg);
+				window.open(result.msg)
+			} else {
+				alert(result.msg);
+			}
+			common.loaded();
+		},"json");
+
+	});
+	
+	// 初始化数据
+	consultInfo.loadData();
+});
+
+</script>
+</html>

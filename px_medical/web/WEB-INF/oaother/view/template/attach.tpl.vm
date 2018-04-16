@@ -1,0 +1,7 @@
+##附件模板
+#set($cell = $_layout.attach)
+#if($cell.view)
+#parse("fields/view/attach.vm")
+#else
+#parse("fields/input/attach.vm")
+#end

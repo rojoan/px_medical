@@ -1,0 +1,28 @@
+			<table cellpadding="0" cellspacing="0" width="100%">
+	<!--按钮行 begin-->
+				<tr>
+		<td align="right">
+
+#if(${_layout.buttonList})
+    #set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+    #foreach($button in ${_layout.buttonList})
+        #buttonField($button "input_style" $editBeanMap)
+    #end
+#else
+      <input type="button" class="input_style" value="保存" onclick="javascript:saveData(document.$!{_layout.editForm.name})" />
+#end
+#if(${_layout.printButton})
+      <input type="button" class="input_style" value="打印" onclick="javascript:return printNote();" />
+#end
+#if(${_layout.notshowreturnButton})
+#else
+      &nbsp;<input type="button" class="input_style" value="返回" onclick="javascript:history.back()" />
+#end
+#if(${_layout.closeButton})
+      <input type="button" class="input_style" value="关闭" onclick="javascript:window.close();" />
+#end
+
+			     </td>
+              </tr>
+            </table>
+	<!--按钮行 end-->

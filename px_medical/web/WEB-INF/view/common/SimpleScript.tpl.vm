@@ -1,0 +1,68 @@
+#set($_editTable = { 
+    &quot;name&quot; : &quot;&quot;, 
+    &quot;id&quot; : &quot;&quot;, 
+    &quot;attr&quot; :&quot;&quot;, 
+    &quot;head&quot; : &quot;&quot;, 
+    &quot;tr&quot; : [ 
+        { 
+            &quot;id&quot; : &quot;&quot;, 
+            &quot;align&quot; : &quot;&quot;, 
+            &quot;attr&quot; : &quot;&quot;, 
+            &quot;td&quot; : [ 
+                { 
+                    &quot;id&quot; : &quot;&quot;, 
+                    &quot;cType&quot; : &quot;co|st|无 表示为独立的单元;co:表示该单元类型是复合型的即包含标题单元格和编辑域单元格;st:表示该单元格仅是标题单元格&quot;, 
+                    &quot;tdclass&quot; : &quot;当cType为co时的样式类名&quot;, 
+                    &quot;title&quot; : &quot;单元格的标题，当cType为st时只要设置该属性，不需要设置&ldquo;field&rdquo;属性&quot;, 
+                    &quot;req&quot; : &quot;true|无 在标题td上打红色*号&quot;, 
+                    &quot;attr&quot; : &quot;单元格的自定义属性。仅设置标题单元格&quot;, 
+                    &quot;nowrap&quot; : &quot;仅设置标题单元格&quot;, 
+                    &quot;width&quot; : &quot;10%|10%,90%|当cType为co时用逗号分割，前一个数字为标题单元格的列宽，后一个数字为编辑域单元格的列宽&quot;, 
+                    &quot;height&quot; : &quot;单元格的高度&quot;, 
+                    &quot;align&quot; : &quot;对齐|仅设置标题单元格&quot;, 
+                    &quot;rowspan&quot; : &quot;2合并行数&quot;, 
+                    &quot;colspan&quot; : &quot;2|2,4|当cType为co时用逗号分割，前一个数字为标题单元格所占的列数，后一个数字为编辑域单元格所占的列数&quot;, 
+                    &quot;cla&quot; : &quot;样式类名|仅设置标题单元格，编辑域单元格均无样式&quot;, 
+                    &quot;value&quot; : &quot;当cType为co时设置该值就不构建fields属性的内容&quot;, 
+                    &quot;fields&quot; : [ 
+                        { 
+                            &quot;id&quot; : &quot;field ID&quot;, 
+                            &quot;title&quot; : &quot;field 标题，radio和checkbox域使用。当fType是href时title作为链接的内容&quot;, 
+                            &quot;field&quot; : &quot;域名字&quot;, 
+                            &quot;fType&quot; : &quot;span|hidden|text|textarea|select|button|img|date|checkbox|radio|file|href&quot;, 
+                            &quot;dataType&quot; : &quot;text域的格式类型有INT|FLO选择&quot;, 
+                            &quot;len&quot; : &quot;text、textarea域的文本长度&quot;, 
+                            &quot;value&quot; : &quot;域的当前值&quot;, 
+                            &quot;dict&quot; : &quot;字典，select域使用&quot;, 
+                            &quot;source&quot; : &quot;select控件的数据源&quot;, 
+                            &quot;showTime&quot; : &quot;true&quot;, 
+                            &quot;ary&quot; : &quot;排布radio或checkbox组件参数，即每行排放几个按钮&quot;, 
+                            &quot;src&quot; : &quot;文件的来源 img域使用。当fType是href时src作为链接的href值&quot;, 
+                            &quot;defVal&quot; : &quot;默认值，其优先级高于value&quot;, 
+                            &quot;prefix&quot; : &quot;域前缀innerHTML&quot;, 
+                            &quot;suffix&quot; : &quot;域后缀innerHTML&quot;, 
+                            &quot;attr&quot; : &quot;自定义属性&quot;, 
+                            &quot;checked&quot; : &quot;初始时选中，radio和checkbox域使用&quot;, 
+                            &quot;innerHtml&quot; : &quot;自定义HTML代码&quot;, 
+                            &quot;cond&quot; : &quot;条件&quot;, 
+                            &quot;onclick&quot; : &quot;&quot;, 
+                            &quot;onchange&quot; : &quot;&quot;, 
+                            &quot;onkeypress&quot; : &quot;&quot; 
+                        } 
+                    ] 
+                } 
+            ] 
+        } 
+    ], 
+    &quot;check&quot; : [ 
+        { 
+            &quot;name&quot; : &quot;校验项目的名称&quot;, 
+            &quot;field&quot; : &quot;校验项目的页面域名称&quot;, 
+            &quot;checkType&quot; : &quot;校验的类型现在仅支持写法：checkNotNull;checkNotEmpty&quot; 
+        }, 
+        { 
+            &quot;name&quot; : &quot;校验项目的名称 下面的写法为了校验两个页面域之间的关系 即：f1与f2的关系&quot;, 
+            &quot;field&quot; : &quot;第一校验域 即：f1&quot;, 
+            &quot;relationFieldName&quot; : &quot;第二校验项的名称 即：f2的name&quot;, 
+            &quot;relationField&quot; : &quot;第二校验域的名称 即：f2的名称&quot;, 
+            &quot;relationType&quot; : &quot;f1和f2的关系 现在支持的类型：f1&lt;=f2 checkLesserEqual，f1

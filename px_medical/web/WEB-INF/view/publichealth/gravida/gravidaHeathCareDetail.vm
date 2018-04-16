@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孕产保健管理</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm") 
+<style>
+    html,body { height: 100%}
+    button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px; }
+</style>
+</head>
+
+<body class="gray-bg top-navigation">
+                    <div class="col-md-3 full-height-scroll white-bg" style="padding: 0; border-right: #ccc 1px solid">
+                        <div class="sub-nav" >
+                            <ul>
+                                <li class="sub-nav-item">
+                                    <a href="javascript:;"><span>前期体检</span><i class="my-icon nav-more"></i></a>
+                                    <ul>
+                                          #foreach($item in $pregnancyFirstExamList ) 
+                                            <li dataId="$!dicTools.getRondomNum(4)">
+	                                            <span>$!date.format('yyyy-MM-dd', $!item.curExamTime) </span>
+	                                            <a href="javascript: void(0); " onclick="delPregnancyFirstExam($!item.pregnancyFirstExamId,this);" title="删除" dataTitle="前期体检  $!date.format('yyyy-MM-dd', $!item.curExamTime)">
+	                                               <i class="fa fa-times"></i>
+	                                            </a>
+	                                            <a href="../gravidaHeathCare/editPregnancyFirstExam.do?gravidaDetailId=$item.gravidaDetailId&pregnancyFirstExamId=$item.pregnancyFirstExamId" title="修改" target="gravidaDetailIframe">
+	                                              <i class="fa fa-pencil-square-o"></i>
+	                                            </a>
+	                                            <a href="../gravidaHeathCare/editPregnancyFirstExam.do?gravidaDetailId=$item.gravidaDetailId&pregnancyFirstExamId=$item.pregnancyFirstExamId&mode=show" title="查看" target="gravidaDetailIframe">
+	                                              <i class="fa fa-eye"></i>
+	                                            </a>
+	                                           
+                                            </li>
+                                          #end
+                                    </ul>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a href="javascript:;"><span>中期体检</span><i class="my-icon nav-more"></i></a>
+                                    <ul>
+                                        #foreach($item in $pregnancyExamList ) 
+                                            <li dataId="$!dicTools.getRondomNum(4)">
+                                                <span>$!date.format('yyyy-MM-dd', $!item.curExamTime) </span>
+                                                <a href="javascript: void(0); " onclick="delPregnancyExam($!item.pregnancyExamId,this);" title="删除">
+                                                   <i class="fa fa-times"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editPregnancyExam.do?gravidaDetailId=$item.gravidaDetailId&pregnancyExamId=$item.pregnancyExamId" title="修改" target="gravidaDetailIframe" dataTitle="中期体检  $!date.format('yyyy-MM-dd', $!item.curExamTime)">
+                                                  <i class="fa fa-pencil-square-o"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editPregnancyExam.do?gravidaDetailId=$item.gravidaDetailId&pregnancyExamId=$item.pregnancyExamId&mode=show" title="查看" target="gravidaDetailIframe" dataTitle="中期体检  $!date.format('yyyy-MM-dd', $!item.curExamTime)">
+                                                  <i class="fa fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        #end
+                                    </ul>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a href="javascript:;"><span>分娩体检</span><i class="my-icon nav-more"></i></a>
+                                    <ul>
+                                        #foreach($item in $gravidaParturitionList ) 
+                                            <li dataId="$!dicTools.getRondomNum(4)">
+                                                <span>$!date.format('yyyy-MM-dd', $!item.curCreateTime)   </span>
+                                                <a href="javascript: void(0); " onclick="delGravidaParturition($!item.gravidaParturitionId,this);" title="删除">
+                                                   <i class="fa fa-times"></i>
+                                                </a>
+                                                <a  href="../gravidaHeathCare/editGravidaParturition.do?gravidaDetailId=$item.gravidaDetailId&gravidaParturitionId=$item.gravidaParturitionId" title="修改" target="gravidaDetailIframe">
+                                                  <i class="fa fa-pencil-square-o"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editGravidaParturition.do?gravidaDetailId=$item.gravidaDetailId&gravidaParturitionId=$item.gravidaParturitionId&mode=show" title="查看" target="gravidaDetailIframe">
+                                                  <i class="fa fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        #end
+                                    </ul>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a href="javascript:;"><span>产后访视</span><i class="my-icon nav-more"></i></a>
+                                    <ul>
+                                        #foreach($item in $postpartumVisitList ) 
+                                            <li dataId="$!dicTools.getRondomNum(4)">
+                                                <span>$!date.format('yyyy-MM-dd', $!item.visitTime) </span>
+                                                <a href="javascript: void(0); " onclick="delPostpartumVisit($!item.postpartumVisitId,this);" title="删除">
+                                                   <i class="fa fa-times"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editPostpartumVisit.do?gravidaDetailId=$item.gravidaDetailId&postpartumVisitId=$item.postpartumVisitId" title="修改" target="gravidaDetailIframe">
+                                                  <i class="fa fa-pencil-square-o"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editPostpartumVisit.do?gravidaDetailId=$item.gravidaDetailId&postpartumVisitId=$item.postpartumVisitId&mode=show" title="查看" target="gravidaDetailIframe">
+                                                  <i class="fa fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        #end
+                                    </ul>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a href="javascript:;"><span>产后42天检查访视</span><i class="my-icon nav-more"></i></a>
+                                    <ul>
+                                        #foreach($item in $fortyTwoVisitList ) 
+                                            <li dataId="$!dicTools.getRondomNum(4)">
+                                                <span>$!date.format('yyyy-MM-dd', $!item.visitTime) </span>
+                                                <a href="javascript: void(0); " onclick="delPostpartumVisit($!item.postpartumVisitId,this);" title="删除">
+                                                   <i class="fa fa-times"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editPostpartumVisit.do?gravidaDetailId=$item.gravidaDetailId&postpartumVisitId=$item.postpartumVisitId" title="修改" target="gravidaDetailIframe">
+                                                  <i class="fa fa-pencil-square-o"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editPostpartumVisit.do?gravidaDetailId=$item.gravidaDetailId&postpartumVisitId=$item.postpartumVisitId&mode=show" title="查看" target="gravidaDetailIframe">
+                                                  <i class="fa fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        #end
+                                    </ul>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a href="javascript:;"><span>产前筛查检查/手术</span><i class="my-icon nav-more"></i></a>
+                                    <ul>
+                                        #foreach($item in $gravidaSurgeryList ) 
+                                            <li dataId="$!dicTools.getRondomNum(4)">
+                                                <span>$!date.format('yyyy-MM-dd', $!item.curSurgeryTime) </span>
+                                                <a href="javascript: void(0); " onclick="delGravidaSurgery($!item.gravidaSurgeryId,this);" title="删除">
+                                                   <i class="fa fa-times"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editGravidaSurgery.do?gravidaDetailId=$item.gravidaDetailId&gravidaSurgeryId=$item.gravidaSurgeryId" title="修改" target="gravidaDetailIframe">
+                                                  <i class="fa fa-pencil-square-o"></i>
+                                                </a>
+                                                <a href="../gravidaHeathCare/editGravidaSurgery.do?gravidaDetailId=$item.gravidaDetailId&gravidaSurgeryId=$item.gravidaSurgeryId&mode=show" title="查看" target="gravidaDetailIframe">
+                                                  <i class="fa fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        #end
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-9 full-height">
+                       <!-- <div class="col-md-12"><span id="dataTitle">孕妇基本信息</span></div> -->
+                       <div class="col-md-12  full-height-scroll " style="height: calc(100% - 10px)">
+                        <!--内容开始-->
+                        <iframe src="../gravidaDetail/edit.do?mode=show&gravidaDetailId=$gravidaDetailId" id="gravidaDetailIframe" name="gravidaDetailIframe"
+                                style="height: 100%; width: 100%;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" >   
+                         </iframe>
+                        <!--内容结束-->
+                       </div>
+
+                    </div>
+	#parse("./common/common.js.vm")
+	<script type="text/javascript">
+        //  删除  孕妇孕前体检
+	    function delPregnancyFirstExam(pregnancyFirstExamId, ele) {
+	    	common.confirm("删除后无法恢复，确定要删除吗？", function (){
+	            $.post(
+	                    '../gravidaHeathCare/delPregnancyFirstExam.jo',
+	                    {pregnancyFirstExamId: pregnancyFirstExamId}, 
+	                    function (result){
+	                        if (result.code == "0") {
+	                            common.alert("删除成功", 1);
+	                            clearElement(ele);
+	                        } else {
+	                            common.alert(result.msg, 2);
+	                        }
+	                    }, 
+	            'json');
+	        });
+		}
+	    
+	    // 删除  孕妇孕期体检
+	    function delPregnancyExam(pregnancyExamId, ele) {
+	    	common.confirm("删除后无法恢复，确定要删除吗？", function (){
+	            $.post(
+	                    '../gravidaHeathCare/delPregnancyExam.jo',
+	                    {pregnancyExamId: pregnancyExamId}, 
+	                    function (result){
+	                        if (result.code == "0") {
+	                        	 common.alert("删除成功", 1);
+	                        	 clearElement(ele);
+	                        } else {
+	                            common.alert(result.msg, 2);
+	                        }
+	                    }, 
+	            'json');
+	        });
+		}
+	 
+	    // 删除  产后访视--42天检查
+	    function delPostpartumVisit(postpartumVisitId, ele) {
+	    	common.confirm("删除后无法恢复，确定要删除吗？", function (){
+	            $.post(
+	                    '../gravidaHeathCare/delPostpartumVisit.jo',
+	                    {gravidaParturitionId: postpartumVisitId}, 
+	                    function (result){
+	                        if (result.code == "0") {
+	                        	 common.alert("删除成功", 1);
+	                        	 clearElement(ele);
+	                        } else {
+	                            common.alert(result.msg, 2);
+	                        }
+	                    }, 
+	            'json');
+	        });
+		}
+	    
+	    //  删除 孕妇分娩记录
+	    function delGravidaParturition(gravidaParturitionId, ele) {
+	    	common.confirm("删除后无法恢复，确定要删除吗？", function (){
+	            $.post(
+	                    '../gravidaHeathCare/delGravidaParturition.jo',
+	                    {gravidaParturitionId: gravidaParturitionId}, 
+	                    function (result){
+	                        if (result.code == "0") {
+	                        	 common.alert("删除成功", 1);
+	                        	 clearElement(ele);
+	                        } else {
+	                            common.alert(result.msg, 2);
+	                        }
+	                    }, 
+	            'json');
+	        });
+		}
+	    
+	    // 删除 产前筛查检查/手术记录
+	    function delGravidaSurgery(gravidaSurgeryId, ele) {
+	    	common.confirm("删除后无法恢复，确定要删除吗？", function (){
+	            $.post(
+	                    '../gravidaHeathCare/delGravidaSurgery.jo',
+	                    {gravidaSurgeryId: gravidaSurgeryId}, 
+	                    function (result){
+	                        if (result.code == "0") {
+	                        	 common.alert("删除成功", 1);
+	                        	 clearElement(ele);
+	                        } else {
+	                            common.alert(result.msg, 2);
+	                        }
+	                    }, 
+	            'json');
+	        });
+		}
+	
+	    //删除时清除页面元素
+        function clearElement(ele) { 
+            $(ele).parent().remove();
+            var dataId = $(ele).parent().attr('dataId');
+            var ifDataId = $('#gravidaDetailIframe').attr('dataId');
+            if (dataId == ifDataId) {
+                $('#gravidaDetailIframe').contents().find('body').html('');
+            }
+        }
+        //初始化操作
+        $(document).ready(function() {
+        	$('li.sub-nav-item >ul').find('a').on('click', function(){
+                setShow(this);
+            });
+		});
+        
+        //设置右侧 iframe的id
+        function setShow(ele) {
+            var dataId = $(ele).parent().attr('dataId');
+            var dataTitle = $(ele).attr('dataTitle');
+            $('#dataTitle').html(dataTitle);
+            $('#gravidaDetailIframe').attr('dataId',dataId);
+        }
+	</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>会诊审核</title>
+    <link href="../style/css/css.css" type="text/css" rel="stylesheet" />
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+</head>
+<body>
+    <!--top start-->
+    <header>
+        <div class="top">
+            <div class="fl">
+                <a href="../index.html"><i class="iconfont back">&#xe89b;</i></a>
+            </div>
+            <div class="txt">
+				会诊审核
+            </div>
+            <div class="fr top-sch-box">
+                <a href="javascript:void(0);"><i class="iconfont back">&#xe683;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end article start-->
+    <article>
+        <div class="head_clear"></div>
+        <div id="dataList" class="con_list yxyp"></div>
+        <div id="drop_div"></div>
+    </article>
+
+    <!-- 搜索层 start-->
+    <div class="pop-schwrap">
+        <div class="ui-scrollview">
+            <div class="poo-mui">		        
+	            <div class="fl">
+
+	            </div>
+	            <div class="txt">
+					会诊查询
+	            </div>
+	            <a href="javascript: void(0);" id="btn-closeQuery" class="btn-back top-sch-box" >关闭</a>
+
+            </div>
+            <div class="scroll-wrap">            
+               <div class="form_search">
+                   <form id="queryForm" action="">
+	                    <dl>
+	                        <dt>
+	                            <label>患者姓名</label>
+	                            <input type="text" name="patientName" value="" class="input-txt" >
+	                        </dt>
+	                        <dt>
+	                            <label>开始申请时间</label>
+	                            <input type="text" id="beginQueryDate" name="beginQueryDate" value="" class="input-txt" >
+	                        </dt>
+	                        <dt>
+	                            <label>截止申请时间</label>
+	                            <input type="text" id="endQueryDate" name="endQueryDate" value="" class="input-txt" >
+	                        </dt>
+	                        <dt class="search-btn">
+	                        	<input type="hidden" name="queryDateType" value="apply" />
+		                    	<button type="button" class="btn" onClick="auditList.query(true);"> 查 询 </button>
+		                    	<button type="button" class="btn" onclick="auditList.cleanQueryForm()"> 重 置 </button>                        
+	                        </dt>
+	                    </dl>  
+                   	</form>             
+               </div>
+            </div>
+        </div>
+    </div>
+    <!-- 搜索层 end-->
+    <!--article end-->
+    
+</body>
+<script type="text/javascript">
+	//初始化日期控件
+	;!function(){
+		//laydate.skin('molv');
+		laydate({
+		   elem: '#beginQueryDate',
+		   format: 'YYYY-MM-DD',
+		   start: laydate.now(0, 'YYYY-MM-DD'),
+		   festival: true,
+		   istime: false
+		});
+	}();
+	//初始化日期控件
+	;!function(){
+		//laydate.skin('molv');
+		laydate({
+		   elem: '#endQueryDate',
+		   format: 'YYYY-MM-DD',
+		   start: laydate.now(0, 'YYYY-MM-DD'),
+		   festival: true,
+		   istime: false
+		});
+	}();
+	var auditList = {
+		loadData: function (me, data){
+			var params = {
+				consultingStatus: $('#consultingStatus').val(),
+				consultationType: $('#consultationType').val()
+			}
+			var html = [];
+			$.each(data, function(){
+				params = this.reConsultingId + ',\''+ this.inspectionId+'\','+ this.lisInspectionSampleId + ',' + this.patientId + ',' + this.patientExamId;
+				html.push('<dl class="table">');
+				html.push('<dt><label>患者：</label>' + (null != this.patientName ? this.patientName : "") + '<span class="fr">申请时间：' + (null != this.reApplyTime ? this.reApplyTime : "") + '</span></dt>');
+				html.push('<dd><p>' + (null != this.clinicalDiagnosis ? this.clinicalDiagnosis : "") + '</p></dd>');
+				html.push('<dd><label>发起人：</label>' + (null != this.proposerName ? this.proposerName : "") + '</dd>');
+				html.push('<dd><span class="fl state">');
+				html.push(common.getConsultStatus(this.consultingStatus));
+				html.push('</span><span class="fl tip">['+common.getConsultType(this.consultationType)+']</span><span class="fr">');
+				html.push('<button type="button" class="btn bg_browse" onClick="auditList.showDetail(' + params + ')">查 看</button>');
+				html.push('<button type="button" class="btn bg_into" onClick="auditList.audit('+ this.reConsultingId +')">审 核</button>');
+				html.push('</span></dd></dl>');
+			});
+			$('#dataList').html(html.join(''));
+			// 每次数据插入，必须重置
+			me.resetload();
+		},
+		audit: function (consultId){
+			common.setCache(common.rowId, consultId);
+			window.location.href = "auditForm.html";
+		},
+		showDetail: function (reConsultingId, inspectionId, lisInspectionSampleId, patientId, patientExamId){
+			common.setCache(common.rowId, reConsultingId);
+			common.setCache(common.patientId, patientId);
+			common.setCache(common.patientExamId, patientExamId);
+			common.setCache(common.inspectionId, inspectionId);
+			common.setCache(common.lisInspectionSampleId, lisInspectionSampleId);
+			window.location.href = "consultDetail.html";
+		},
+		query: function (isCloseQuery) {
+			if (isCloseQuery) {
+				$('#dataList').html('');
+				$('#btn-closeQuery').click();
+				common.queryParams.pageNumber = 0;
+			}
+			var queryParam = $.extend(common.queryParams, $('#queryForm').serializeObject());
+			common.initDropload(rootPath + '/mobile.reconsult/auditList.do', queryParam, '#drop_div', auditList.loadData);
+		},
+		cleanQueryForm: function (){
+			$('#queryForm').find("input[name='patientName']").val('');
+			$('#queryForm').find("input[name='beginQueryDate']").val('');
+			$('#queryForm').find("input[name='endQueryDate']").val('');
+		}
+	}
+	$(function (){
+		auditList.query(false);
+	})
+</script>
+</html>

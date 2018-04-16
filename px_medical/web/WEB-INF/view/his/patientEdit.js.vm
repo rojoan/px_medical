@@ -1,0 +1,145 @@
+<script>
+
+        // 提交表单
+        function savePatient() {
+        	var patientParams = common.serializeObject($('#patientForm'));
+        	console.log('patientParams == '+ JSON.stringify(patientParams));
+            if (patientParams.patientName == undefined || patientParams.patientName == "") {
+                common.alert("请填写患者姓名",0);
+                $("#patientName").focus();
+                return false;
+            }
+        	
+            if (patientParams.patientSex == undefined || patientParams.patientSex == "") {
+                common.alert("请选择患者性别",0);
+                return false;
+            }
+            if (patientParams.patientCardNo == undefined || patientParams.patientCardNo == "") {
+                common.alert("请填写就诊卡号",0);
+                return false;
+            }
+            
+            if (patientParams.patientPhone)  {
+            	if (!checkMobile(patientParams.patientPhone) && !checkPhone(patientParams.patientPhone)) {
+       				common.alert("电话格式错误！",0);
+   	    			$("#patientPhone").focus();
+       				return false;
+       			}
+            } 
+          
+            $.post("../patient/savePatient.do", patientParams,  function (result) {
+                if (result.code == "0") {
+                   	common.alertCall("保存成功!", 1, function (){
+                        // 刷新父页面
+                        var $btnQuery = $('#btn_query', window.parent.document);
+                        if($btnQuery.length > 0 ) $btnQuery.click();
+                 
+                        // 关闭窗口
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index); 
+                    });
+                } else {
+                    common.alert(result.msg,0);
+                }
+            }, "json");
+        }
+        
+    //匹配患者信息 标识
+    var isHadMatch = 0;
+    
+    //姓名+身份证 匹配
+    function matchPatientIdCard() {
+		var params = {};
+    	if (isHadMatch) {
+			return;
+		}
+    	var patientName = $('#patientName').val();
+		var patientIdCard = $('#patientIdCard').val();
+    	params.patientName = patientName;
+		params.patientIdCard = patientIdCard;
+		if ( $.trim(params.patientIdCard).length < 5) {
+			return;
+		}
+		selectPatient(params);
+	}
+    
+     //姓名+医/农保证号 匹配
+    function matchInsuranceNo() {
+		var params = {};
+    	if (isHadMatch) {
+			return;
+		}
+    	var patientName = $('#patientName').val();
+		var insuranceNo = $('#insuranceNo').val();
+		params.patientName = patientName;
+		params.insuranceNo = insuranceNo;
+		if ( $.trim(params.insuranceNo).length < 5) {
+			return;
+		}
+		selectPatient(params);
+	}
+    
+     //姓名+手机号 匹配
+    function matchPatientPhone() {
+		var params = {};
+		var patientName = $('#patientName').val();
+    	if (isHadMatch) {
+			return;
+		}
+    	if ($.trim(patientName) == '') {
+			return;
+		}
+		var patientPhone = $('#patientPhone').val();
+		params.patientName = patientName;
+		params.patientPhone = patientPhone;
+		if ( $.trim(params.patientPhone).length < 10) {
+			return;
+		}
+		selectPatient(params);
+	}
+    
+    function selectPatient(params) {
+    	 $.post("../patient/matchPatient.jo", params,  function (result) {
+             if (result.code == "0") {
+            	 var patient = result.data.patient;
+            	 var patientHospita = result.data.patientHospita;
+                 $('#patientId').val(patient.patientId);
+                 $('#patientHospitalId').val(patientHospita.patientHospitalId);
+                 
+                 $('#patientName').val(patient.patientName);
+                 $('#patientCardNo').val(patientHospita.patientCardNo);
+                 $('#patientHospitalNo').val(patientHospita.patientHospitalNo);
+                 
+                 
+            	 $('#patientSex_' + patient.patientSex ).iCheck('check');
+            	 if (patient.patientBirth) {
+            		 $('#patientBirth').val(getSmpFormatDateByLong(patient.patientBirth,false));
+				 }
+            	 
+                 $('#certificateType').val(patient.certificateType);
+            	 $('#patientIdCard').val(patient.patientIdCard);
+            	 $('#insuredType').val(patient.insuredType);
+            	 $('#insuranceNo').val(patient.insuranceNo);
+            	 $('#patientAllergy').val(patient.patientAllergy);
+            	
+            	 $('#marryFlag').val(patient.marryFlag); 
+            	 $('#patientNation').val(patient.patientNation);
+            	 $('#patientPhone').val(patient.patientPhone);
+            	 $('#contactName').val(patient.contactName);
+            	 $('#contactRelation').val(patient.contactRelation);
+            	 $('#contactPhone').val(patient.contactPhone);
+            	 $('#homePhone').val(patient.homePhone);
+            	 $('#homeAddr').val(patient.homeAddr);
+            	 $('#patientNowAddr').val(patient.patientNowAddr);
+            	 $('#companyPhone').val(patient.companyPhone);
+            	 $('#companyAddr').val(patient.companyAddr);
+            	 $('#patientCreer').val(patient.patientCreer);
+            	 isHadMatch = 1;//标识已匹配过，不再进行匹配
+             } else if(result.code == "1"){
+            	 alert(result.msg);
+             }
+             
+         }, "json");
+	}
+        
+</script>

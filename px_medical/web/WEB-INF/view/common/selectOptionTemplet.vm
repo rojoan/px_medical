@@ -1,0 +1,175 @@
+<div id="checkboxDialog" title="新增分类" style="display:none">
+	<table width="100%">
+		<tr>
+			<td>
+				可选项类型&nbsp;#formRadioButtons("itemType" "1" $dicData.dicOptionType "" "class='_itemType'")<hr/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				可选项定义&nbsp;
+				<select onchange="handlDefaultOption(this)" id="itemModeSelect">
+			        <option value=0>请选择</option>
+			        #foreach($opt in $!{defaultOptionList})
+			        	#set($optionName = "")
+				        #foreach($key in $!{opt.optionKeys})
+							#set($optionName = $!optionName + "$!{key.optionName}{@}$!{key.optionNameFlag}{@}$!{key.optionScore}{#}")
+						#end
+			         <option text="$!{optionName}" value=${opt.optionTypeId}>$!{opt.optionTypeName}</option>
+			        #end
+		       </select>
+		       <hr/>
+			</td>
+		</tr>
+		<tbody id="selectItem"></tbody>
+		##<tr><td><hr/>#qbutton('drop-add.gif' '追加' "addSelectItem('')")</td></tr>
+	</table>
+</div>
+<script>
+	//弹出选项窗口
+	function addAuditPrjType(index) {
+		$("#selectItem").empty();
+        //设置每次进来都默认为第一个选项
+        $("#itemModeSelect option").each(function(){
+            var optVal = $(this).val();
+            if(optVal == 0) {
+                $("#itemModeSelect").val(0);
+            }
+        });
+        $("#itemModeSelect").get(0).selectedIndex;
+		getExistHtml(index);
+		$("#checkboxDialog").dialog({
+		resizable: false,
+		height: 420,
+		width: 550,
+		modal: true,
+		buttons: {
+			"确定": function () {
+				var selectType = $(this).find("[name=itemType]:checked").val();
+				var boxType = "radio";
+				if (selectType == "1") {
+					boxType = "radio";
+				} else if (selectType == "2") {
+					boxType = "checkbox";
+				}
+				var html = "";
+				var validatePass = true;
+				var itemRatioScore = "";
+				var optionRows = 0;
+				$(this).find("#selectItem").find("tr").each(function (i){
+					var name = $(this).find("[name=selectName]").val();
+					var score = $(this).find("[name=selectCcore]").val();
+					var tlpId = $(this).find("[name=tlpId]").val();
+					var nameFlag = $(this).find("[name=selectNameFlag]").val();
+					var rowNumber = index + "_" + (i + 1);
+					if (name == "") {
+						validatePass = false;
+					}
+					html += "<input type='hidden' name='optionTlpId_" + rowNumber + "' value='" + tlpId + "'>"
+						+ "<input type='hidden' name='optionScore_" + rowNumber + "' value='" + score + "'>"
+						+ "<input type='hidden' name='optionName_" + rowNumber + "' value='" + name + "'>"
+						+ "<input type='hidden' name='optionNameFlag_" + rowNumber + "' value='" + nameFlag + "'>"
+						+ "<input type='" + boxType + "' />" + name + "<br/>";
+					optionRows++;
+				});
+				html += "<input type='hidden' name='itemType_" + index + "' value='" + selectType + "'>"
+					+ "<input type='hidden' name='optionRows_" + index + "' value='" + optionRows + "'>";
+				if (validatePass) {
+					$("#cur_index_" + index).empty();
+					$("#cur_index_" + index).append(html);
+					$(this).dialog("close");
+				} else {
+					alert("选项名称不能为空。");
+				}
+			},
+			"取消": function () {
+				$(this).dialog("close");
+			}}
+		});			
+	}
+    //处理默认选择项
+    function handlDefaultOption(obj) {
+        $("#selectItem").empty();
+        var text = $("#itemModeSelect option:selected").attr("text");
+        if (typeof(text) == "undefined" || null == text || "" == text) {
+            alert("请选择可选项定义！");
+            return;
+        }
+        var array = text.split("{#}");
+        var html = $("#boxHtml").html();
+        var result = "";
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] == "") {
+                continue;
+            }
+            var item = array[i].split("{@}");
+            var temp = html.replace("value=''", "value='" + item[0] + "'");
+            temp = temp.replace("value=''", "value='" + item[1] + "'");
+            result = result + temp;
+        }
+        $("#selectItem").append(result);
+    }
+	//添加选项
+	function addSelectItem(falg) {
+		$("#selectItem").append($("#boxHtml").html());
+	}
+	//删除选项
+	function deleteSelectItem(obj, id) {
+		if (id != "") {
+			if (!confirm("确定要删除吗？")) {
+				return ;
+			}
+			$ .get("../examineTlp/deleteExamineOptionTlp.do",{optionTlpId: id},function(data,state){
+				if (data == "1") {
+					$(obj).parent().parent().remove(); 
+				}
+			});
+		} else {
+			$(obj).parent().parent().remove(); 
+		}
+	}
+	function getExistHtml(index) {
+		var li_ele = $("#cur_index_" + index).find("li");
+		var itemType = $("#cur_index_" + index).find("[name=itemType_" + index + "]");
+		$("._itemType").each(function (){
+			if ($(this).val() == $(itemType).val()){
+				$(this).attr("checked", true);
+			}
+		});
+		$(li_ele).each(function (i){$("#boxHtml").find("[name=tlpId]").val();
+			var curIndex = i + 1;
+			var optionTlpId = $(this).find("[name=optionTlpId_" + index + "_" + curIndex + "]").val();
+			var optionName = $(this).find("[name=optionName_" + index + "_" + curIndex + "]").val();
+			var optionNameFlag = $(this).find("[name=optionNameFlag_" + index + "_" + curIndex + "]").val();
+			var optionScore = $(this).find("[name=optionScore_" + index + "_" + curIndex + "]").val();
+			var html = $("#replaceBoxHtml").html();
+			html = html.replace("{@}", optionTlpId);
+			html = html.replace("{@}", optionName);
+			html = html.replace("{@}", optionScore);
+			html = html.replace("{@}", optionNameFlag);
+			$("#selectItem").append(html);
+		});
+	}
+</script>
+<script id="boxHtml" type="text/x-jquery-tmpl">
+	<tr>
+		<td>
+			<input type="hidden" name="tlpId" value="">&nbsp;
+			选项名称<input name="selectName" maxlength='500' value=''/>&nbsp;&nbsp;
+			<input type='hidden' name="selectNameFlag" value=''/>&nbsp;&nbsp;
+			分值<input name="selectCcore" value='' maxlength='3' onkeyup=this.value=this.value.replace(/\D/g,'') onafterpaste=this.value=this.value.replace(/\D/g,'')/>&nbsp;
+			<img class="img_button_21" onclick="deleteSelectItem(this,'')" alt="删除" src="../app/right/images/minus.png"/>
+		</td>
+	</tr>
+</script>
+<script id="replaceBoxHtml" type="text/x-jquery-tmpl">
+	<tr>
+		<td>
+			<input type="hidden" name="tlpId" value="{@}">&nbsp;
+			选项名称<input name="selectName" maxlength='500' value='{@}'/>&nbsp;&nbsp;
+			<input type='hidden' name="selectNameFlag"  value=''/>&nbsp;&nbsp;
+			分值<input name="selectCcore" value='{@}' maxlength='3' onkeyup=this.value=this.value.replace(/\D/g,'') onafterpaste=this.value=this.value.replace(/\D/g,'')/>&nbsp;&nbsp;
+			<img class="img_button_21" onclick="deleteSelectItem(this,'{@}')" alt="删除" src="../app/right/images/minus.png"/>
+		</td>
+	</tr>
+</script>

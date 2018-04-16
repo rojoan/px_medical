@@ -1,0 +1,268 @@
+<script>
+	$(document).ready(function () {
+		    //下拉表单
+		var config = {
+		    '.chosen-select': {},
+		    '.chosen-select-deselect': { allow_single_deselect: true },
+		    '.chosen-select-no-single': { disable_search_threshold: 10 },
+		    '.chosen-select-no-results': { no_results_text: 'Oops, nothing found!' },
+		    '.chosen-select-width': { width: "100%" }
+		};
+		for (var selector in config) {
+		    $(selector).chosen(config[selector]);
+		}
+		
+		// begin住院治疗情况（住院史）, 添加、删除按钮
+		$('#add-treat').click(function (){
+			var attribute = 'class="form-control" style="width:100%;border:none"';
+			var inHospitalTime = '<input name="inHospitalTime" maxlength="10" ' + attribute + ' placeholder="如：2017-10-31">';
+			var outHospiralTime = '<input name="outHospiralTime" maxlength="10" ' + attribute + ' placeholder="如：2017-10-31">';
+			var inHospitalReason = '<input name="inHospitalReason" maxlength="50" ' + attribute + '>';
+			var hospitalOrg = '<input name="hospitalOrg" maxlength="40" ' + attribute + '>';
+			var patientNum = '<input name="patientNum" maxlength="10" ' + attribute + '>';
+			var html = '<tr><td>' + inHospitalTime + '</td>';
+			html += '<td>'+ outHospiralTime +'</td>';
+			html += '<td>' + inHospitalReason + '</td>';
+			html += '<td>' + hospitalOrg + '</td>';
+			html += '<td>' + patientNum + '</td></tr>';
+			$('#add-treat-tr').append(html);
+		});
+		$('#del-treat').click(function (){
+			var eleTr = $("#add-treat-tr tr:last");
+			var inHospitalId = $(eleTr).find("input[name='inHospitalId']").val();
+			if (inHospitalId == "" || inHospitalId == undefined) {
+				$(eleTr).remove();
+				return ;
+			}
+			deleteServerTrData("../examPerson/deleteInHospital.do", {inHospitalId: inHospitalId}, eleTr);
+		});
+		// end住院治疗情况（住院史）, 添加、删除按钮
+		
+		// begin主要用药情况, 添加、删除按钮
+		$('#add-dosage').click(function (){
+			var attribute = 'class="form-control" style="width:100%;border:none"';
+			var diseaseDrugName = '<input name="diseaseDrugName" maxlength="20" ' + attribute + ' onclick="selectDosage(this)" />';
+			diseaseDrugName += '<input type="hidden" name="diseaseDrugId" value="" />';
+			var drugUsage = '<input name="drugUsage" maxlength="10" ' + attribute + '>';
+			var drugQuantity = '<input name="drugQuantity" maxlength="10" ' + attribute + '>';
+			var eatDrugTime = '<input name="eatDrugTime" maxlength="20" ' + attribute + '>';
+			var eatDrugBelong = '<input name="eatDrugBelong" maxlength="40" ' + attribute + '>';
+			var html = '<tr><td>' + diseaseDrugName + '</td>';
+			html += '<td>'+ drugUsage +'</td>';
+			html += '<td>' + drugQuantity + '</td>';
+			html += '<td>' + eatDrugTime + '</td>';
+			html += '<td>' + eatDrugBelong + '</td></tr>';
+			$('#add-dosage-tr').append(html);
+		});
+		$('#del-dosage').click(function (){
+			var eleTr = $("#add-dosage-tr tr:last");
+			var personDrugId = $(eleTr).find("input[name='personDrugId']").val();
+			if (personDrugId == "" || personDrugId == undefined) {
+				$(eleTr).remove();
+				return ;
+			}
+			deleteServerTrData("../examPerson/deletePersonDrug.do", {personDrugId: personDrugId}, eleTr);
+			
+		});
+		// end主要用药情况, 添加、删除按钮
+		
+		// begin非免疫规划预防接种史, 添加、删除按钮
+		$('#add-prevent').click(function (){
+			var attribute = 'class="form-control" style="width:100%;border:none"';
+			var vacName = '<input name="vacName" maxlength="40" ' + attribute + '>';
+			var vacTime = '<input name="vacTime" maxlength="10" ' + attribute + ' placeholder="如：2017-10-31">';
+			var vacOrg = '<input name="vacOrg" maxlength="40" ' + attribute + '>';
+			var html = '<tr><td>' + vacName + '</td>';
+			html += '<td>'+ vacTime +'</td>';
+			html += '<td>' + vacOrg + '</td></tr>';
+			$('#add-prevent-tr').append(html);
+		});
+		$('#del-prevent').click(function (){
+			var eleTr = $("#add-prevent-tr tr:last");
+			var novacId = $(eleTr).find("input[name='personNovacId']").val();
+			if (novacId == "" || novacId == undefined) {
+				$(eleTr).remove();
+				return ;
+			}
+			deleteServerTrData("../examPerson/deletePersonNovac.do", {personNovacId: novacId}, eleTr);
+		});
+		// end非免疫规划预防接种史, 添加、删除按钮
+		
+		$('#btn_save').click(function(){
+			var formBaeInfo = common.serializeObject($('#formBaeInfo'));
+			var formLiveWayInfo = common.serializeObject($('#formLiveWayInfo'));
+			var formOrganBody = common.serializeObject($('#formOrganBody'));
+			var formOther = common.serializeObject($('#formOther'));
+			
+			$.extend(formBaeInfo, formLiveWayInfo);
+			$.extend(formBaeInfo, formOrganBody);
+			$.extend(formBaeInfo, formOther);
+
+			formBaeInfo.dutyDoctor = $('#dutyDoctorId').find("option:selected").text();
+			// 住院治疗情况信息
+			formBaeInfo.treatJson = buildTrInputJSON($('#add-treat-tr'));
+			// 主要用药情况信息
+			formBaeInfo.dosageJson = buildTrInputJSON($('#add-dosage-tr'));
+			// 非免疫规划预防接种史信息
+			formBaeInfo.preventJson = buildTrInputJSON($('#add-prevent-tr'));
+
+			if (formBaeInfo.personDetailId == "" || formBaeInfo.personDetailId == undefined 
+					|| formBaeInfo.examedPersonName == "" || formBaeInfo.examedPersonName == undefined){
+				common.alert("请选择参检人姓名", 0);
+				return false;
+			}
+			if (formBaeInfo.examedPersonGender == "" || formBaeInfo.examedPersonGender == undefined){
+				common.alert("请选择体检参检人性别", 0);
+				return false;
+			}
+			if (formBaeInfo.examBillNo == "" || formBaeInfo.examBillNo == undefined){
+				common.alert("请填写体检编号", 0);
+				return false;
+			}
+			if (formBaeInfo.dutyDoctorId == "" || formBaeInfo.dutyDoctorId == undefined){
+				common.alert("请选择责任医生", 0);
+				return false;
+			}
+
+			$.post("../examPerson/saveExamPerson.do", formBaeInfo, function (result){
+				if (result.code == "0") {
+					common.alertCall("保存成功。", 1, function (){
+						// 刷新父页面
+						$('#btn_query', window.parent.document).click();
+						// 关闭窗口
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index); 
+					});
+				} else {
+					common.alert(result.msg, 2);
+				}
+			},"json").error(function (e){jqueryPostError(e)});
+			//alert(JSON.stringify(editBaeInfo));
+		});
+		
+		$('input[name="healthDangerTypeIds"]').on('ifChecked', function(event){
+			showHealthDangerType(this.value, true);
+		}); 
+		$('input[name="healthDangerTypeIds"]').on('ifUnchecked', function(event){
+			showHealthDangerType(this.value, false);
+		});
+		
+		// 删除tr行的同时也删除服务端数据库的数据
+		function deleteServerTrData(url, params, _ele) {
+			common.confirm("将要删除服务端的数据，您确定要删除吗？", function (){
+				$.post(url, params,function(result){
+					if (result.code == "0") {
+						$(_ele).remove();
+					} else {
+						common.alert(result.msg, 2);
+					}
+				},"json").error(function (e){jqueryPostError(e)});
+			});
+		}
+		
+		// 将tr多行单元格中的输入框value转为json格式
+		function buildTrInputJSON(tbody) {
+			var array = [];
+			$(tbody).find("tr").each(function (){
+				var obj = {};
+				$(this).find("input").each(function (){
+					if (this.value != "") {
+						obj[this.name] = this.value;
+					}
+				});
+				array.push(obj);
+			});
+			return JSON.stringify(array);
+		}
+		
+		// 控制健康危险因素输入框的隐藏和显示
+		function showHealthDangerType(index, isShow) {
+			if (index != "5" && index != "6" && index != "7"){
+				return false;
+			}
+			if (isShow) {
+				$('#show-' + index).show();
+				$('#show-label-' + index).show();
+				$('#show-kg-' + index).show();
+			} else {
+				$('#show-' + index).hide();
+				$('#show-label-' + index).hide();
+				$('#show-kg-' + index).hide();
+			}
+		}
+		
+		// $!examPerson.hospitalId（机构ID）不为空标识重新修改，需要重新加载该机构下的用户
+		if ("$!examPerson.hospitalId" != "") {
+			getUser("$!examPerson.hospitalId", "$!examPerson.dutyDoctorId");
+		}
+	});
+	
+	// 临时存放tr元素变量（用于打开选择药品回调时用）
+	var tempEle = "";
+	// 打开选择药品对话框
+	function selectDosage(obj) {
+		tempEle = $(obj).parent().parent();
+		$('#selectDiseaseDrug').modal({ keyboard: true });
+		$(".modal-backdrop").remove();
+	}
+	// 选择药品回调的方法
+	function callDosage(dosage) {
+		if (tempEle != "") { 
+			var selected = false;
+			$('#add-dosage-tr').find("input[name='diseaseDrugId']").each(function (){
+				if (dosage.id == this.value) {
+					selected = true;
+					return false;
+				}
+			});
+			if (selected) {
+				common.alert("该药品名称已存在，不能重复选择", 0);
+				return ;
+			}
+			
+			$(tempEle).find("input[name='diseaseDrugId']").val(dosage.id);
+			$(tempEle).find("input[name='diseaseDrugName']").val(dosage.name);
+			$(tempEle).find("input[name='drugUsage']").val(dosage.usage);
+			$(tempEle).find("input[name='drugQuantity']").val(dosage.quantity);
+		}
+	}
+	// 打开选择居民信息对话框
+	function selectPersonDetail() {
+		$('#selectPersonDetail').modal({ keyboard: true });
+		$(".modal-backdrop").remove();
+	}
+	// 选择居民信息回调的方法
+	function callPersonDetail(person) {
+		if (person) { 
+			$("input[name='regionId']").val(person.regionId);
+        	$("input[name='hospitalId']").val(person.hospitalId);
+			$("input[name='hospitalNo']").val(person.hospitalNo);
+			$("select[name='hospitalName']").val(person.hospitalName);
+			$("input[name='personDetailId']").val(person.personDetailId);
+			$("input[name='examedPersonName']").val(person.personalName);
+			$("select[name='examedPersonGender']").val(person.gender);
+			
+			if (person.hospitalId == "" || person.hospitalId == undefined) {
+				return ;
+			}
+			getUser(person.hospitalId, '');
+		}
+	}
+	// 根据机构ID获取机构下的用户
+	function getUser(hospitalId, defValue) {
+		var targetEle = $('#dutyDoctorId');
+		$.post("../sys/queryUserByUnitId.do",{unitId: hospitalId},function(data){
+			$(targetEle).empty();
+			$(targetEle).append("<option value=''></option>");
+			if (data == null || targetEle == "" || targetEle == undefined) {
+				return false;
+			}
+			var selected = "";
+			$.each(data, function (){
+				selected = (this.userInfoId == defValue ? "selected='selected'" : "");
+				$(targetEle).append("<option value='" + this.userInfoId + "'" + selected + ">" + this.name + "</option>");
+			});
+			$(targetEle).trigger("chosen:updated");
+		},"json");
+	}
+</script>

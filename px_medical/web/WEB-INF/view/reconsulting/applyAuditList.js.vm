@@ -1,0 +1,94 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	// 搜索按钮
+	$('#btn_search').click(function (){
+		var queryParams = common.serializeObject($('#queryForm'));
+		var options = {url: '../reConsult/auditList.do', silent: false, query: queryParams};
+		$('#applyAuditList').bootstrapTable('refresh', options); 
+	});
+	// 清空按钮
+	$('#btn_clean').click(function (){
+		$("#patientName").val("");
+		$("#endQueryDate").val("");
+		$("#beginQueryDate").val("");
+		$("#consultationType").val("");
+	});
+});
+	
+$(function() {
+	var consultType =  JSON.parse('$dicTools.changeMapToJson($dicData.consultingConsultationType)');
+	var tableParams = {
+		url : "../reConsult/auditList.do",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+		    requestParams.pageSize = params.pageSize;
+		    requestParams.pageNumber = params.pageNumber;
+		    return requestParams;
+		},
+		columns : [
+	   		//{ checkbox:true }, 
+	   		{
+	   			field : 'indexNo',
+	   			title : '序号',
+	   			width : '50px',
+	   			formatter: function (value, row, index) {return  index + 1} 
+	   		}, {
+	   			field : 'patientName',
+	   			title : '患者姓名'
+	   		}, {
+	   			field : 'officeName',
+	   			title : '申请科室(医生)',
+	   			formatter: function (value, row, index) {  
+	                   return  row.officeName + "(" + row.doctorName + ")";  
+	               } 
+	   		}, {
+	   			field : 'consultationType',
+	   			title : '会诊类型',
+	   			formatter: function (value, row, index) {
+	   				return consultType[row.consultationType];
+	   			}  
+	   		}, {
+	   			field : 'reApplyTime',
+	   			title : '申请时间'
+	   		}, {
+	   			field : 'reConsultingStart',
+	   			title : '会议时间',
+	   			formatter: function (value, row, index) {  
+	                   return (row.reConsultingStart == null ? "" : row.reConsultingStart) + " - " + (row.reConsultingEnd == null ? "" : row.reConsultingEnd);  
+	               } 
+	   		}, {
+	   			field : 'operate',
+	   			title : '操作',
+	   			width : '100px',
+	   			events : operateEvents,
+	   			formatter : operateFormatter
+	   		}],
+   		onDblClickRow : function (row, element){
+   			var title = '申请详情';
+   			common.open("../reConsult/showMedicalRecord.do?reConsultingId=" + row.reConsultingId, title, {area: ['99%', '99%']});
+   		},
+   		onLoadSuccess : function(){
+   			var height = ($('#applyAuditList').parents("body").height() - $('#queryForm').parents(".ibox-content").height() - 65);
+   			$('#applyAuditList').bootstrapTable('resetView', {height: height}); 
+   		}
+	}
+	$('#applyAuditList').bootstrapTable($.extend(baseTable, tableParams));
+});
+window.operateEvents = {
+	"click #btn_audit" : function (e, value, row, index) {
+		var title = '申请审核';
+		common.open('../reConsult/showConsult.do?show=1&mode=1&reConsultingId=' + row.reConsultingId, title, {area: ['80%', '95%']});
+	},
+	"click #btn_show" : function (e, value, row, index) {
+		var title = '申请详情';
+		common.open("../reConsult/showMedicalRecord.do?reConsultingId=" + row.reConsultingId, title, {area: ['99%', '99%']});
+	}
+};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_audit" href="javascript:void(0)" title="审核"><i class="fa fa-check-square-o"></i></a>',
+				'<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>'
+	            ];
+	return html.join('');
+}
+</script>

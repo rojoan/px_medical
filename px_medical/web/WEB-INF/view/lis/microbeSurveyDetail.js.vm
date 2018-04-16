@@ -1,0 +1,101 @@
+<script>
+	$(function() {
+		var inspectionId = $("#inspectionId").val();
+		if (inspectionId == "") {
+			return false;
+		}
+		$('#groupSurveyResult').bootstrapTable({
+			url : "../lis/microbeGroupList.do?inspectionId=" + inspectionId,
+			mobileResponsive : true,
+			pagination : false,
+			pageNumber : false,
+			cache : false,
+			height : "170",
+			columns : [
+			{
+				field : 'indexNo',
+				title : '序号',
+				width : "50px",
+				formatter: function (value, row, index) { return  index + 1; } 
+			},
+			{
+				field : 'inspectionDate',
+				title : '日期'
+			}, {
+				field : 'microDataId',
+				title : '类型'
+			}, {
+				field : 'microDataIdName',
+				title : '涂片/培养结果'
+			}, {
+				field : 'microDataIdResult',
+				title : '结果说明'
+			}, {
+				field : 'esbl',
+				title : 'ESBL'
+			}],
+			onDblClickRow : function (row, element){
+				var queryParams = {inspectionId : $("#inspectionId").val(), microDataId : row.microDataId};
+				var options = {url: '../lis/microbeSurveyList.do', silent: false, query: queryParams};
+				$('#detailSurveyResult').bootstrapTable('refresh', options); 
+			}
+		});
+		
+		// -10000表示预加载一个空的表格
+		loadDetailList('-10000', '-10000');
+	});
+	function loadDetailList(inspectionId, microDataId) {
+		$('#detailSurveyResult').bootstrapTable({
+			url : "../lis/microbeSurveyList.do?inspectionId=" + inspectionId + "&microDataId=" + microDataId,
+			mobileResponsive : true,
+			pagination : true,
+			pageNumber : true,
+			cache : false,
+			//method : "get",
+			pageSize : "10",
+			pageNumber : "1",
+			height : "330",
+			columns : [
+			{
+				field : 'indexNo',
+				title : '序号',
+				width : "50px",
+				formatter: function (value, row, index) { return  index + 1; } 
+			},
+			{
+				field : 'inspectionDate',
+				title : '日期'
+			}, {
+				field : 'microDataIdtName',
+				title : '抗生素'
+			}, {
+				field : 'microDtaIdtResulto',
+				title : '定量结果'
+			}, {
+				field : 'microDataIdtResultt',
+				title : '定性结果'
+			}, {
+				field : 'inspectionPosition',
+				title : '检查位置'
+			}, {
+				field : 'resultType',
+				title : '类型'
+			}, {
+				field : 'microDataIdtRange',
+				title : '范围'
+			}, {
+				field : 'inspectionInstrument',
+				title : '检验仪器'
+			}, {
+				field : 'resultMethod',
+				title : '方法'
+			}, {
+				field : 'microDataIdName',
+				title : '标本结果'
+			}, {
+				field : 'remark',
+				title : '耐药类型'
+			}]
+		});
+	}
+</script>

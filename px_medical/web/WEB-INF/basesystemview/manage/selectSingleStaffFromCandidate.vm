@@ -1,0 +1,145 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=gbk" />
+    <title>选择人员</title>
+    <link rel="stylesheet" type="text/css" href="../app/right/right.css">
+    <script language="javascript" Charset="gbk"  type="text/javascript" src="../script/common.js"></script>
+    <script language="javascript" Charset="gbk"  type="text/javascript" src="../app/script/appcommon.js"></script>
+    <script Charset="gbk"  language="JavaScript" type="text/javascript" src="../script/validator.js"></script>
+    <script language="JavaScript">
+function receiveSelectFromLeft(node) {
+  if (node == null || node.id == undefined) return;
+  var e = document.queryForm;
+  e["orgId"].value = node.id;
+  e["orgName"].value = node.name;
+  e.submit();
+}
+
+function returnSelected(){
+  var userInfos ;
+  var theForm = document.selectForm;
+  var selectObject = theForm["id"];
+  if (!selectObject) {
+	  alert("没有选择人员");
+      return false;
+  }
+  
+  if (isArrayObject(selectObject)) {
+	  
+    for (i=0; i < selectObject.length; i++) {
+        if (selectObject[i].checked == true) {
+           eval("var data = "+selectObject[i].getAttribute("data"));
+          userInfos = data;
+          break;
+         }
+    }
+  } else {
+       if (selectObject.checked == true) {
+    	   eval("var data = "+selectObject.getAttribute("data"));
+    	   userInfos = data;
+       }
+   }
+   return userInfos;
+ }
+
+    </script>
+  </head>
+<body scroll="no">
+  <table cellpadding="0" cellspacing="0" class="over_tab">
+    <tr>
+      <td>
+        <table cellpadding="3" cellspacing="0" border="0" height="100%" width="100%">
+        <!--查询 begin-->
+          <tr valign="top">
+            <td>
+              <fieldset class="search_border">
+              <legend class="search_title"><img src="../app/right/images/search_ico.gif" border="0" align="absmiddle"> 查询</legend>
+              <table cellpadding="0" cellspacing="8" border="0" width="100%"  >
+                <form name="queryForm" method="post" action="../manage/selectSingleStaffFromCandidate.do" >
+                <tbody id="queryBody" >
+                   <input type="hidden" name="userIds" value="$!info.userIds" />
+                    <input type="hidden" name="orgId" value="" />
+                   <tr>
+                    <td>
+                                       姓名<input type="text" name="name" value="$!{info.name}"  class='text_input'   maxlength=10 />&nbsp;&nbsp;&nbsp;&nbsp;
+                                       部门<input type="text" name="orgName" value="$!{info.orgName}"  class='text_input'   maxlength=10 />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="right">
+                      #qbutton('search.png' '查询' "javascript:this.form.submit();")  
+                       #qbutton('clean.png' '清空' "javascript:clearQueryCondition(document.queryForm)") 
+                      ##<input type="button" class="input_style" value="查 询" onclick="javascript:this.form.submit();"/>
+                      ##<input type="button" class="input_style" value="清空" onclick="javascript:clearQueryCondition(document.queryForm)" />
+                    </td>
+                  </tr>
+                </tbody>
+                </form>
+              </table>
+              </fieldset>
+            </td>
+          </tr>
+                <!--查询 end-->
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+       <table cellpadding="0" cellspacing="0" width="100%">
+        <tr align="right">
+            <td align="right">&nbsp;</td>
+        </tr>
+       </table>
+       </td>
+    </tr>
+
+    <tr valign="top" >
+      <td width="100%"  style="height:345px;" >
+        <table cellpadding="0" cellspacing="0" border="0" class="roll_tab" >
+          <tr>
+            <td>
+              <div class="tableContainer">
+              <table cellpadding="0" cellspacing="0" class="list_tab">
+                <form name='selectForm' action='post'>
+                <thead class="fixedHeader">
+                <tr>
+                <th nowrap width="25%">部门</th>
+                <th nowrap width="20%">姓名</th>
+                <th nowrap width="20%">职务</th>
+                <th nowrap width="25%">电话</th>
+                <th nowrap width="10%">选择</th>
+                </tr>
+                </thead>
+                <tbody class="scrollContent">
+                  #foreach($data in $staffList)
+                  #set($userInfo=$data[0])
+                  #set($sysOrg=$data[1])
+                  <tr #tableRowBgcolor($velocityCount) onclick="if( this.getElementsByTagName('input')[0]){var sel = this.getElementsByTagName('input')[0];sel.click();}">
+                  <td align="left">$!{sysOrg.name}</td>
+                  <td align="left">$!{userInfo.name}</td>
+                  <td align="left">#lookUpDict(${dicData.dicSysDuty} $!{userInfo.sysDuty.dutyId})</td>
+                  <td align="left">$!{userInfo.phone}</td>
+                  <td align="center">
+                    <input name="id" onclick="javascript:parent.sendSelectFromRight();" type="radio" data="{userId:'$!{userInfo.userId}',userInfoId:'$!{userInfo.userInfoId}', userName:'$!{userInfo.name}',account:'$!{userInfo.account}',orgId:'$!{sysOrg.orgId}',orgName:'$!{sysOrg.name}',__end:0}" value="on"/>
+                  </td>
+                  </tr>
+                  #end
+                </tbody>
+                </form>
+              </table>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+    <tr valign="top" height="100%">
+            <td>##changePage($page "#getRequestUri()")</td>
+    </tr>
+
+  </table>
+</body>
+</html>

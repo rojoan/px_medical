@@ -1,0 +1,75 @@
+#if(!$__page_page && $page)
+#set($__page_page=$page)
+#end
+#if(!$__page_action)
+#set($__page_action="#getRequestUri()")
+#end
+#if(!$__page_chekcboxname)
+#set($__page_chekcboxname="keyid")
+#end
+#if(!$__page_align)
+#set($__page_align="right")
+#end
+
+<div class="table_color_border">
+  <table cellpadding="0" cellspacing="0" class="table_pagecolor">
+<form name="changePageFrom" method="post" action="$!__page_action" onsubmit="javascript:pageSubmit(); return false;">
+<input type="hidden" name="token" value="$!{page.token}" />
+<script>
+function pageSubmit() {
+    var e = document.changePageFrom;
+    if(e.pageSize.value == '' || Number(e.pageSize.value) <= 0 || !isFloat(e.pageSize.value)) {
+        alert("请输入每页的行数!");
+        e.pageSize.focus();
+        return;
+    }
+
+    if (Number(e.pageSize.value) <= 0 || !isFloat(e.pageSize.value)) {
+        alert("请输入正确的页号！");
+        return;
+    }
+    if (Number(e.pageNumber.value) <= 0 || !isFloat(e.pageNumber.value)) {
+        alert("请输入正确的行数！");
+        e.pageNumber.focus();
+        return;
+    }
+    if (Number(e.pageNumber.value) > 100000) {
+        alert("页号不能超过100000，请输入正确的页号！");
+        return;
+    }
+    e.pageNumber.value = Number(e.pageNumber.value);
+    e.submit();
+}
+</script>
+    <tr>
+#if($__page_chekcboxname != "false")
+        <td height="1" align="left" valign="middle">#checkboxSelectFunc($__page_chekcboxname)</td>
+#end
+        <td height="1" align="$__page_align" valign="middle">
+                  第 $!{__page_page.pageNumber} / $!{__page_page.totalPage} 页#if($!{__page_page.totalCount})(共$!{__page_page.totalCount}行)#end
+                  #if($__page_page.hasPreviousPage())
+                  | <a href="#" onclick="return gotoPage(1);" class="table_page_bottom_alink">首页</a>
+                  | <a href="#" onclick="return gotoPage($__page_page.pageNumber - 1);" class="table_page_bottom_alink">上一页</a>
+                  #else
+                  | 首页 | 上一页
+                  #end
+                  #if($__page_page.hasNextPage())
+                  | <a href="#" onclick="return gotoPage($__page_page.pageNumber + 1);" class="table_page_bottom_alink">下一页</a>
+                  | <a href="#" onclick="return gotoPage($__page_page.totalPage);" class="table_page_bottom_alink">尾页</a>
+                  #else
+                  | 下一页 | 尾页
+                  #end
+                  | 转到 <input name="pageNumber" value="$!{__page_page.pageNumber}" type="text" size="3" class="table_page_text_jump" maxlength=4
+                    onkeyup="value=value.replace(/[^\d]/g,'');if(event.keyCode==13){pageSubmit();}"
+                    onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))" /> 页
+
+                    #if(${__page_page.pageSize})，每页<input name="pageSize" value="$!{__page_page.pageSize}" type="text" size="3" class="table_page_text_jump" maxlength=3
+                    onkeyup="value=value.replace(/[^\d]/g,'');if(event.keyCode==13){pageSubmit();};if(document.queryForm && document.queryForm.pageSize){document.queryForm.pageSize.value=this.value;}"
+                    onchange="if(document.queryForm && document.queryForm.pageSize){document.queryForm.pageSize.value=this.value;}"
+                    onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))" />行#end&nbsp;
+        </td>
+        <td width="1%"></td>
+    </tr>
+</form>
+  </table>
+</div>

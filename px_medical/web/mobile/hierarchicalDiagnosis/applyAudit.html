@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>客户端</title>
+	<link rel="stylesheet" type="text/css" href="../style/css/css.css?v=17.11.24" />
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+</head>
+<body>
+    <!--top start-->
+    <header>
+        <div class="top form_add">
+            <div class="fl">
+                <a href="javascript: history.back();"><i class="iconfont back">&#xe89b;</i></a>
+            </div>
+            <div class="txt form_add">
+				转诊审核
+            </div>
+            <div class="fr">
+            	<a href="../index.html"><i class="iconfont back">&#xe60b;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end  article start-->
+    <article class="top-min">
+    	<form id="editForm" action="">
+    		<input type="hidden" id="submitFlag" name="submitFlag" value="0" />
+    		<input type="hidden" id="hdDiagnosisApplyId" name="hdDiagnosisApplyId" />
+	        <div class="head_clear"></div>
+	        <div class="con_tit">患者基本信息</div>
+	        <div class="form_list bg_round_white">
+	            <dl>
+	                <dt>
+	                    <label>就诊卡号</label><input id="patientCardNo" type="text" class="input-txt" readonly >
+	                </dt>
+	                <dt>
+	                    <label>医/农保证号</label><input id="insuranceNo" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>患者姓名</label><input id="patientName" name="patientName" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>患者性别</label><input id="patientSex" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>身份证号</label><input id="patientIdCard" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>出生日期</label><input id="patientBirth" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>联系电话</label><input id="patientPhone" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>患者年龄</label><input id="currentAge" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt class="input-row">
+	                    <label>现住地址</label>
+	                    <input id="patientNowAddr" type="text" class="input-txt" readonly>
+	                </dt>
+	            </dl>
+	        </div>
+	
+	        <div class="con_tit">转入医院信息</div>
+	        <div class="form_list bg_round_white">
+	            <dl>
+	                <dt>
+	                    <label>转入科室</label>
+		                <input id="officeUpName" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>转入医生</label>
+		                <input id="doctorUpName" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>医生电话</label>
+	                    <input type="text" id="institutionPhoneUp" name="institutionPhoneUp" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>转诊目的</label>
+	                    <select id="transAim" name="transAim" class="form-select" disabled>
+	                    	<option value=""></option>
+	                    	<option value="1">诊断</option>
+	                    	<option value="2">检查</option>
+	                    	<option value="3">治疗</option>
+	                    	<option value="4">康复</option>
+	                    </select>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>转诊原因</label><textarea id="transReason" name="transReason" class="text" readonly></textarea>
+	                </dt>           
+	            </dl>
+	        </div>
+	   
+	        <div class="con_tit">转出单位信息</div>
+	        <div class="form_list bg_round_white">
+	            <dl>
+	            	<dt class="input-row">
+	                    <label>转出医院</label>
+	                    <input id="institutionDownName" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>转出科室</label>
+		                <input id="officeDownName" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>转出医生</label>
+		                <input id="doctorDownName" type="text" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>医生电话</label>
+	                    <input type="text" id="doctorMobileDown" name="doctorMobileDown" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                	<label>自动审核</label>
+		                <select id="autoCheckFlag" name="autoCheckFlag" class="form-select" disabled>
+		                	<option value="0">否</option>
+		                    <option value ="1">是</option>
+		                </select>
+	                </dt>
+	                <dt>
+	                    <label>开始有效期</label>
+	                    <input type="text" id="validStartTime" name="validStartTime" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                	<label>截止有效期</label>
+	                    <input type="text" id="validEndTime" name="validEndTime" class="input-txt" readonly>
+	                </dt>
+	            </dl>
+	        </div>
+	        
+	        <div class="con_tit" id="showTitle1" style="display: none">上转信息</div>
+	        <div class="form_list bg_round_white" id="show1" style="display: none">
+	            <dl>
+	                <dt class="textarea">
+	                    <label>初步印象（主诉）</label>
+	                    <textarea id="firstImpressUp" name="firstImpressUp" class="text" readonly></textarea>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>初步诊断</label>
+	                    <textarea id="firstDiagnosisUp" name="firstDiagnosisUp" class="text" readonly></textarea>
+	                </dt>
+	                   <dt class="textarea">
+	                    <label>主要现病史</label>
+	                    <textarea id="mainSickUp" name="mainSickUp" class="text" readonly></textarea>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>主要既往史</label>
+	                    <textarea id="historySickUp" name="historySickUp" class="text" readonly></textarea>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>治疗经过</label>
+	                    <textarea id="cureUp" name="cureUp" class="text" readonly></textarea>
+	                </dt>
+	            </dl>
+	        </div>
+	        
+	        <div class="con_tit" id="showTitle2" style="display: none">下转信息</div>
+	        <div class="form_list bg_round_white" id="show2" style="display: none">
+	            <dl>
+	                <dt class="textarea">
+	                    <label>转诊诊断</label>
+	                    <textarea id="diagnosisDown" name="diagnosisDown" class="text" readonly></textarea>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>转诊检查结果</label>
+	                    <textarea id="diagnosisResultDown" name="diagnosisResultDown" class="text" readonly></textarea>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>转诊治疗经过</label>
+	                    <textarea id="diagnosisCureDown" name="diagnosisCureDown" class="text" readonly></textarea>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>转诊康复建议</label>
+	                    <textarea id="recoverySuggestDown" name="recoverySuggestDown" class="text" readonly></textarea>
+	                </dt>
+	                <dt>
+	                    <label>手术名称</label>
+	                    <input type="text" id="operationDown" name="operationDown" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>手术日期</label>
+	                    <input type="text" id="operationTimeDown" name="operationTimeDown" class="input-txt"readonly >
+	                </dt>
+	            </dl>
+	        </div>
+	        
+	        <div class="con_tit">审核信息</div>
+	        <div class="form_list bg_round_white">
+	            <dl>
+	                <dt>
+	                    <label>审核医生</label>
+	                    <input type="hidden" id="checkDoctorId" name="checkDoctorId" value="" />
+	                    <input type="text" id="checkDoctorName" name="checkDoctorName" class="input-txt" readonly>
+	                </dt>
+	                <dt>
+	                    <label>审核状态</label>
+	                    <select id="auditStatus" name="auditStatus" class="form-select">
+	                    	<option value=""></option>
+		                	<option value="1">通过</option>
+		                    <option value ="2">拒绝</option>
+		                </select>
+	                </dt>
+	                <dt class="textarea">
+	                    <label>审核意见</label>
+	                    <textarea id="checkOpinion" name="checkOpinion" class="text"></textarea>
+	                </dt>
+	            </dl>
+	        </div>
+	
+	        <div class="form-clear"></div>   
+	        <div class="form_btn w">
+	            <dl>	            	
+            		<dt><a href="javascript:void(0);" onclick="applyAudit.save(1)">审 核</a></dt>	            	
+	            </dl>
+	        </div>
+		</form>
+    </article>
+
+    <!--article end-->
+</body>
+<script type="text/javascript">
+	var applyAudit = {
+		loadData: function () {
+			common.loading();
+			$.post(
+				rootPath + '/mobile.diagnosi/applyDetail.do', 
+				{hdDiagnosisApplyId: common.getCache(common.rowId)},
+				function(result){
+					var patient = result.data.patient;
+					var diagnosisApply = result.data.hdDiagnosisApply;
+					
+					if (patient != undefined) {
+		                $('#patientCardNo').val(patient.patientCardNo);
+		                $('#insuranceNo').val(patient.insuranceNo);
+						$('#patientName').val(patient.patientName);
+						$('#patientSex').val(common.getSex(patient.patientSex));
+						$('#patientIdCard').val(patient.patientIdCard);
+						$('#patientBirth').val(patient.patientBirth);
+						$('#patientPhone').val(patient.patientPhone);
+						$('#currentAge').val(patient.currentAge);
+						$('#patientNowAddr').val(patient.patientNowAddr);
+					}
+					if (diagnosisApply != undefined) {
+						$('#hdDiagnosisApplyId').val(diagnosisApply.hdDiagnosisApplyId);
+						
+						$('#transAim').val(diagnosisApply.transAim);
+						$('#transReason').val(diagnosisApply.transReason);
+		                $('#officeUpName').val(diagnosisApply.officeUpName);
+		                $('#doctorUpName').val(diagnosisApply.doctorUpName);
+		                $('#institutionPhoneUp').val(diagnosisApply.institutionPhoneUp);
+
+		                $('#institutionDownName').val(diagnosisApply.institutionDownName);
+						$('#officeDownName').val(diagnosisApply.officeDownName);
+		                $('#doctorDownName').val(diagnosisApply.doctorDownName);
+		                $('#doctorMobileDown').val(diagnosisApply.doctorMobileDown);
+		                $('#autoCheckFlag').val(diagnosisApply.autoCheckFlag);
+		                $('#validStartTime').val(diagnosisApply.validStartTime);
+		                $('#validEndTime').val(diagnosisApply.validEndTime);
+		                
+		                $('#firstImpressUp').val(diagnosisApply.firstImpressUp);
+						$('#firstDiagnosisUp').val(diagnosisApply.firstDiagnosisUp);
+		                $('#mainSickUp').val(diagnosisApply.mainSickUp);
+		                $('#historySickUp').val(diagnosisApply.historySickUp);
+		                $('#cureUp').val(diagnosisApply.cureUp);
+		                
+		                $('#diagnosisDown').val(diagnosisApply.diagnosisDown);
+						$('#diagnosisResultDown').val(diagnosisApply.diagnosisResultDown);
+		                $('#diagnosisCureDown').val(diagnosisApply.diagnosisCureDown);
+		                $('#recoverySuggestDown').val(diagnosisApply.recoverySuggestDown);
+		                $('#operationDown').val(diagnosisApply.operationDown);
+		                $('#operationTimeDown').val(diagnosisApply.operationTimeDown);
+		                
+		                // 取出用户信息
+		                var json = JSON.parse(common.getLocalCache(common.currentUserInfo));
+		    			$('#checkDoctorId').val(json.userInfoId);
+		    			$('#checkDoctorName').val(json.userName);
+		    			
+		    			// 根据转诊类型（hdType 1：上转；2：下转）显示上转或下转的信息
+		    			$('#show' + diagnosisApply.hdType).show();
+		    			$('#showTitle' + diagnosisApply.hdType).show();
+		    			
+		    			common.loaded();
+					}
+			}, 'json');	
+		},
+		save: function (){
+			var params = $('#editForm').serializeObject();
+			if ($('#submitFlag').val() == "1") {
+				alert("不能重复审核");
+				return false;
+			}
+			if (params.checkDoctorId == undefined || params.checkDoctorId == "") {
+				alert("未知的审核医生");
+				return false;
+			}
+			if (params.auditStatus == undefined || params.auditStatus == "") {
+				alert("请选择审核状态");
+				return false;
+			}
+			
+			common.loading();
+			$.post(rootPath + "/mobile.diagnosi/saveDiagnosisAudit.jo", params, 
+				function(result){
+					if (result.code == "0") {
+						$('#submitFlag').val("1");
+						alert("审核成功");
+					} else {
+						alert("审核失败");
+						$('#submitFlag').val("");
+					}
+					common.loaded();
+			}, "json");
+		}
+	}
+	$(function (){
+		applyAudit.loadData();
+		common.loadUnit('institutionUpId');
+		
+		var json = JSON.parse(common.getLocalCache(common.currentUserInfo));
+		common.loadDep(json.unitOrgId, 'offficeDownId');
+	});
+</script>
+</html>

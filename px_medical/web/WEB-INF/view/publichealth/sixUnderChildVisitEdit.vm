@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1岁以内儿童访视编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="registerForm" method="get" class="form-horizontal" style="height: calc(100% - 44px)">
+		#formHiddenInput("hospitalId" "$!childVisit.hospitalId" "id='hospitalId'")
+		#formHiddenInput("hospitalNo" "$!childVisit.hospitalNo" "id='hospitalNo'")
+		#formHiddenInput("childVisitId" "$!childVisit.childVisitId" "id='childVisitId'")
+		#formHiddenInput("childDetailId" "$!childVisit.childDetailId" "id='childDetailId'")
+		<div class="modal-body full-height-scroll" >
+			<!--如果弹窗没有底部菜单栏则 -44px -->
+			<!-- 表单 开始 -->
+			<div class="table-content">
+				<div class="text-box">
+					<h5>基本情况</h5>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none  must-red">新生儿姓名</label>
+					<div class="col-sm-3">
+						#formTextInput("childName" "#htmlEscape($!childVisit.childName)" " id='childName' maxlength='10' class='form-control'")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none ">性别</label>
+					<div class="col-sm-3" style="padding-top:6px;">
+						#formRadioButtons("gender" "$!childVisit.gender" $!dicData.dicSex "" "class='checkbox-inline i-checks'")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none ">出生日期</label>
+					<div class="col-sm-3">
+						#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#set($nowTimeFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!childVisit.birthDate)" " id='birthDate' class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!nowTimeFormat), format: $!dateFormat})' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">随访医生</label>
+					<div class="col-sm-3">
+						#if("$!childVisit.visitDoctor" != "")
+							#formTextInput("visitDoctor" "$!childVisit.visitDoctor" " id='visitDoctor' class='form-control' readOnly")
+						#else
+							#formTextInput("visitDoctor" "$!{currentUser.name}" " id='visitDoctor' class='form-control' readOnly")
+						#end
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none ">医生联系电话</label>
+					<div class="col-sm-3">
+						#formTextInput("visitDoctorPhone" "#htmlEscape($!childVisit.visitDoctorPhone)" " id='visitDoctorPhone' class='form-control'")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none  must-red">随访日期</label>
+					<div class="col-sm-3">
+						#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("visitDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!childVisit.birthDate)" " id='visitDate' class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!nowTimeFormat), format: $!dateFormat})' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">助产机构</label>
+					<div class="col-sm-3">
+						#formTextInput("hospitalName" "#htmlEscape($!childVisit.hospitalName)" " id='hospitalName' class='form-control' readOnly")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">下次随访地址</label>
+					<div class="col-sm-3">
+						#formTextInput("nextVisitAddr" "#htmlEscape($!childVisit.nextVisitAddr)" " id='nextVisitAddr' maxlength='50' class='form-control'")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">下次随访日期</label>
+					<div class="col-sm-3">
+						#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("nextVisitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!childVisit.nextVisitTime)" " id='nextVisitTime' class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!nowTimeFormat), format: $!dateFormat})' readOnly")
+					</div>
+				</div>
+				<div class="text-box">
+					<h5>检查结果</h5>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">目前体重(kg)</label>
+					<div class="col-md-3">
+						#formFloLenInput("childCurWeight" "$!childVisit.childCurWeight" 3 "maxlength='5' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-n">出生身长(cm)</label>
+					<div class="col-md-3">
+						#formFloLenInput("childCurHeight" "$!childVisit.childCurHeight" 3 "maxlength='5' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">体格发育评价</label>
+					<div class="col-md-3">
+						#formSingleSelectFirstNone("growthAssess" "$!childVisit.growthAssess" $!{dicData.dicGrowthAssess} "class='form-control'" "")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">左眼视力</label>
+					<div class="col-md-3">
+						#formFloLenInput("leftEyesight" "$!childVisit.leftEyesight" 3 "maxlength='5' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-n">右眼视力</label>
+					<div class="col-md-3">
+						#formFloLenInput("rightEyesight" "$!childVisit.rightEyesight" 3 "maxlength='5' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">听力</label>
+					<div class="col-md-3">
+						#formSingleSelectFirstNone("hearingExam" "$!childVisit.hearingExam" $!{dicData.dicBodyAssessFlag} "class='form-control'" "")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">出牙数（颗）</label>
+					<div class="col-md-3">
+						#formIntZeroInput("toothNum" "$!childVisit.toothNum" "maxlength='2' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-n">龋齿数（颗）</label>
+					<div class="col-md-3">
+						#formIntZeroInput("decayedToothNum" "$!childVisit.decayedToothNum" "maxlength='2' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">血红蛋白(g/L)</label>
+					<div class="col-md-3">
+						#formIntZeroInput("coxyphorase" "$!childVisit.coxyphorase" "maxlength='5' class='form-control'")
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">心肺听诊</label>
+					<div class="col-md-2">
+						#formSingleSelectFirstNone("heartLungExam" "$!childVisit.heartLungExam" $!{dicData.dicExceptional} "class='form-control'" "")
+					</div>
+					<div class="col-md-3">
+						#formTextInput("heartLungDescribe" "#htmlEscape($!childVisit.heartLungDescribe)" " maxlength='50' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">腹部触诊</label>
+					<div class="col-md-2">
+						#formSingleSelectFirstNone("abdominalExam" "$!childVisit.abdominalExam" $!{dicData.dicExceptional} "class='form-control'" "")
+					</div>
+					<div class="col-md-3">
+						#formTextInput("abdominalDescribe" "#htmlEscape($!childVisit.abdominalDescribe)" " maxlength='50' class='form-control'")
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">患病情况&nbsp;&nbsp;</label>
+					#foreach($item in $!dicData.dicVisitSicken.keySet())
+						<label class="col-md-1 control-label text-right p-r-none" style="width:auto">$!dicData.dicVisitSicken.get($!item)(次)</label>
+						<div class="col-md-1" style="padding-right: 30px;">
+							#set($childVisitSicken = "")
+							#set($childVisitSicken = $!sickenMap.get($!item))
+							#formHiddenInput("childVisitSickenId$!item" "$!childVisitSicken.childVisitSickenId" "")
+							#formIntZeroInput("sickenContent$!item" "$!childVisitSicken.sickenContent" " maxlength='3' class='form-control'")
+						</div>
+					#end
+					<label class="col-md-1 control-label text-right p-r-none" style="width:auto">其他患病情况</label>
+					<div class="col-md-4">
+						#formTextInput("otherSicken" "#htmlEscape($!childVisit.otherSicken)" " maxlength='50' class='form-control'")
+					</div>
+				</div>
+			    
+
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">随访指导</label>
+					<div class="col-md-11">
+						#formCheckboxesLable("visitAdivseIds" $!adviseIdList $!dicData.dicThereVisitAdvise "&nbsp;" "" "class='m-t-xs m-r-xs i-checks'")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">其他指导</label>
+					<div class="col-md-11">
+						#formTextInput("otherAdvise" "#htmlEscape($!childVisit.otherAdvise)" " maxlength='50' class='form-control'")
+					</div>
+				</div>
+			</div>
+			<!-- 表单 结束 -->
+		</div>
+		<div class="modal-footer tool-table-fixed" style="text-align: center; width: calc(100% - 15px)">
+			<button type="button" id="btn_register_save" class="btn btn-success">
+				<i class="fa fa-paste"></i> 保 存
+			</button>
+		</div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+#parse("./publichealth/sixUnderChildVisitEdit.js.vm")
+</html>

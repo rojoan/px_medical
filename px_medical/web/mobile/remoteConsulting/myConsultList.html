@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>我的申请</title>
+    <link href="../style/css/css.css" type="text/css" rel="stylesheet" />
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+</head>
+<body>
+    <!--top start-->
+    <header class="list">
+        <div class="top">
+            <div class="fl">
+                <a href="../index.html">
+                	<i class="iconfont back">&#xe89b;</i>
+                </a>
+            </div>
+            <div class="txt">
+				我的会诊
+            </div>
+            <div class="fr top-sch-box">
+                <a href="javascript:void(0);"><i class="iconfont back">&#xe683;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end article start-->
+    <article>
+        <div class="head_clear"></div>
+        <div class="list-head">
+            <button class="fl btn" onclick="myConsult.query(false, 'all', '')">全部</button>
+            <div class="fl">
+                <select id="consultingStatus" class="yzlx-select" onchange="myConsult.query(false, 'status', this.value)">
+                    <option value ="">会诊状态</option>
+                    <option value="2">诊断中</option>
+                    <option value="3">已完成</option>
+                </select>
+            </div>
+            <div class="fl">
+                <select id="consultationType" class="yzlx-select"  onchange="myConsult.query(false, 'type', this.value)">
+                    <option value ="">会诊类型</option>
+                    <option value ="1">非交互式</option>
+                    <option value="2">交互式</option>
+                </select>
+            </div>
+        </div>
+        <div id="dataList" class="con_list hzjl" style="margin-top: .4rem"></div>
+        <div id="drop_div"></div>
+    </article>
+
+    <!-- 搜索层 start-->
+    <div class="pop-schwrap">
+        <div class="ui-scrollview">
+            <div class="poo-mui">		        
+	            <div class="fl">
+
+	            </div>
+	            <div class="txt">
+					会诊查询
+	            </div>
+	            <a href="javascript: void(0);" id="btn-closeQuery" class="btn-back top-sch-box" >关闭</a>
+
+            </div>
+            <div class="scroll-wrap">            
+               <div class="form_search">
+                   <form id="queryForm" action="">
+	                    <dl>
+	                        <dt>
+	                            <label>患者姓名</label>
+	                            <input type="text" name="patientName" value="" class="input-txt" >
+	                        </dt>
+	                        <dt>
+	                            <label>开始申请时间</label>
+	                            <input type="text" id="beginQueryDate" name="beginQueryDate" value="" class="input-txt" >
+	                        </dt>
+	                        <dt>
+	                            <label>截止申请时间</label>
+	                            <input type="text" id="endQueryDate" name="endQueryDate" value="" class="input-txt" >
+	                        </dt>
+	                        <dt class="search-btn">
+		                    	<button type="button" class="btn" onClick="myConsult.query(true, '', '');"> 查 询 </button>
+		                    	<button type="button" class="btn" onclick="myConsult.cleanQueryForm()"> 重 置 </button>                        
+	                        </dt>
+	                    </dl>  
+                   	</form>             
+               </div>
+            </div>
+        </div>
+    </div>
+    <!-- 搜索层 end-->
+
+    <!--article end-->
+    
+</body>
+<script type="text/javascript">
+	//初始化日期控件
+	;!function(){
+		//laydate.skin('molv');
+		laydate({
+		   elem: '#beginQueryDate',
+		   format: 'YYYY-MM-DD',
+		   start: laydate.now(0, 'YYYY-MM-DD'),
+		   festival: true,
+		   istime: false
+		});
+	}();
+	//初始化日期控件
+	;!function(){
+		//laydate.skin('molv');
+		laydate({
+		   elem: '#endQueryDate',
+		   format: 'YYYY-MM-DD',
+		   start: laydate.now(0, 'YYYY-MM-DD'),
+		   festival: true,
+		   istime: false
+		});
+	}();
+	var myConsult = {
+		loadData: function (me, data){
+			var params = {
+				consultingStatus: $('#consultingStatus').val(),
+				consultationType: $('#consultationType').val()
+			}
+			var html = [];
+			$.each(data, function(){
+				var o = this.consulting;
+				params = o.reConsultingId + ',\''+ o.inspectionId+'\','+ o.lisInspectionSampleId + ',' + o.patientId + ',' + o.patientExamId;
+				html.push('<dl>');
+				html.push('<dt><label>患者：</label>' + (null != o.patientName ? o.patientName : "") + '<span class="fr">申请时间：' + (null != o.reApplyTime ? o.reApplyTime : "") + '</span></dt>');
+				html.push('<dd><p>' + (null != o.clinicalDiagnosis ? o.clinicalDiagnosis : "") + '</p></dd>');
+				html.push('<dd><label>发起人：</label>' + (null != o.proposerName ? o.proposerName : "") + '</dd>');
+				html.push('<dd><span class="fl state">');
+				html.push(common.getConsultStatus(o.consultingStatus));
+				html.push('</span><span class="fl tip">[');
+				html.push(common.getConsultType(o.consultationType));
+				html.push(']</span><span class="fr">');
+				html.push('<button type="button" class="btn bg_browse" onClick="myConsult.showDetail(' + params + ')">查 看</button>');
+				html.push('<button type="button" class="btn bg_write" onClick="myConsult.wirteReport('+ o.reConsultingId +')">填写报告</button>');
+				html.push('<button type="button" class="btn bg_into" onClick="myConsult.enterConsult('+ o.reConsultingId +')">进入会诊</button>');
+				html.push('</span></dd></dl>');
+			});
+			$('#dataList').html(html.join(''));
+		},
+		enterConsult: function (consultId){
+			common.setCache(common.rowId, consultId);
+			window.location.href = "consultBaseInfo.html";
+		},
+		showDetail: function (reConsultingId, inspectionId, lisInspectionSampleId, patientId, patientExamId){
+			common.setCache(common.rowId, reConsultingId);
+			common.setCache(common.patientId, patientId);
+			common.setCache(common.patientExamId, patientExamId);
+			common.setCache(common.inspectionId, inspectionId);
+			common.setCache(common.lisInspectionSampleId, lisInspectionSampleId);
+			window.location.href = "consultDetail.html";
+		},
+		wirteReport: function (consultId){
+			common.setCache(common.rowId, consultId);
+			window.location.href = "../pacs/writeReport.html";
+		},
+		query: function (isCloseQuery, queryType, typeValue) {
+			if (isCloseQuery) {
+				$('#dataList').html('');
+				$('#btn-closeQuery').click();
+				common.queryParams.pageNumber = 0;
+			}
+
+			var queryParam = $.extend(common.queryParams, $('#queryForm').serializeObject());
+			if (queryType == "status") {
+				$('#dataList').html('');
+				queryParam.consultingStatus = typeValue;
+				common.queryParams.pageNumber = 0;
+			}
+			if (queryType == "type") {
+				$('#dataList').html('');
+				queryParam.consultationType = typeValue;
+				common.queryParams.pageNumber = 0;
+			}
+			if (queryType == "all") {
+				$('#dataList').html('');
+				queryParam.consultingStatus = '';
+				queryParam.consultationType = '';
+				$('#consultingStatus').val('');
+				$('#consultationType').val('');
+				common.queryParams.pageNumber = 0;
+			}
+			common.initDropload(rootPath + '/mobile.reconsult/consultingProfessorList.do', queryParam, '#drop_div', myConsult.loadData);
+		},
+		cleanQueryForm: function (){
+			$('#queryForm').find("input[name='patientName']").val('');
+			$('#queryForm').find("input[name='beginQueryDate']").val('');
+			$('#queryForm').find("input[name='endQueryDate']").val('');
+		}
+	}
+	$(function() {
+		myConsult.query(false, '', '');
+	})
+</script>
+</html>

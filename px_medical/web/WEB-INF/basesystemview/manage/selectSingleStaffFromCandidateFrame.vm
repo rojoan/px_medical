@@ -1,0 +1,26 @@
+#set($_layout = {
+    "title" : "选择人员",
+    "jslib" : {
+        "validator" : "1"
+    },
+    "notshowreturnButton" : true,
+    "buttonList" : [
+        {
+            "type" : "imgButton",
+            "title" : "关闭",
+            "src":"../app/right/images/cancel16.png",
+            "onclick" : "javascript:window.close()"
+        }
+    ],
+    "notshowreturnButton" : true,
+    "queryForm" : {
+        "name":"queryForm"
+    },
+    "leftUrl" : {
+      "onclick" : "../manage/selectDepTreeWithCandidate.do?rootId=$!{request.getParameter('rootId')}&orgIds=$!{request.getParameter('orgIds')}&userIds=$!{request.getParameter('userIds')}"
+   },
+    "rightUrl" : {
+        "onclick" : "../manage/selectSingleStaffFromCandidate.do"
+    }
+})
+#parse("/manage/SelectMainFrameTemplate.tpl.vm")

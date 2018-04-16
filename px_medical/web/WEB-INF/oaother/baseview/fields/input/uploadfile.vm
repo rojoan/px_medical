@@ -1,0 +1,1 @@
+<input type="file" name="#if(${cell.field})$!{cell.field}#{else}uploadFile#end" class="inputobject" size=#singleQuotes()$!{cell.width}#singleQuotes() onkeypress="return false;" onpaste="return false;" onmousedown="return false;" onkeydown="return false;" onfocus="return false;">

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>客户端</title>
+    <link rel="stylesheet" type="text/css" href="../style/css/css.css" />
+    <link rel="stylesheet" type="text/css" href="../style/lib/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../style/lib/jsTree/style.min.css" />
+    <link rel="stylesheet" type="text/css" href="../style/css/main.css" />
+	<script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+    <!-- jsTree plugin javascript -->
+    <script src="../style/lib/jsTree/jstree.min.js"></script>
+</head>
+<body>
+<!--top start-->
+<header>
+    <div class="top form_add">
+        <div class="fl">
+            <a href="javascript:history.back()"><i class="iconfont back">&#xe89b;</i></a>
+        </div>
+        <div class="txt form_add">填写报告</div>
+        <div class="fr top-sch-box" style="width: 18%">
+            <a href="javascript:void(0);">选择</a>
+        </div>
+    </div>
+</header>
+<!--top end    article start-->
+<article>
+    <div class="head_clear"></div>
+    <div class="main">
+        <div class="main_left" id="frmTitle" >
+            <div class="picBox" onclick="switchSysBar()" id="switchPoint" ><i class="iconfont">&#xec56;</i></div>
+            <ul class="side-menu">
+                <li onclick="report.changeTab(1)"><i class="iconfont">&#xe673;</i> <span>填写报告</span></li>
+                <li onclick="report.changeTab(2)"><i class="iconfont">&#xe603;</i> <span>患者信息</span></li>
+                <li onclick="report.changeTab(3)"><i class="iconfont">&#xe63d;</i> <span>影像信息</span></li>
+            </ul>
+        </div>
+        <div class="main_right" id="frmMain">
+        	<div class="full-height" id="tab1" >
+        		<form id="reportForm" action="" class="full-height">
+        			<input type="hidden" id="submitFlag" name="submitFlag" value="" />
+        			<input type="hidden" id="patientId" name="patientId" value="" />
+        			<input type="hidden" id="patientExamId" name="patientExamId" value="" />
+        			<input type="hidden" id="reConsultingId" name="reConsultingId" value="" /> 
+		            <div class="zzk_form_input p-t-n" style="height: 34%">
+		                <label>检查所见</label>
+		                <textarea id="examFinding" name="examFinding" onfocus="report.setMousePosition(this.id)" class="text" rows="9"></textarea>
+		            </div>
+		          	<div class="zzk_form_input" style="height: 30%">
+		               <label>检查提示</label>
+		               <textarea id="examHint" name="examHint" onfocus="report.setMousePosition(this.id)" class="text" rows="9"></textarea>
+		            </div>
+		            <div class="zzk_form_input" style="height: 30%">
+		               <label>诊断意见</label>
+		               <textarea id="diagnosticOpinion" name="diagnosticOpinion" onfocus="report.setMousePosition(this.id)" class="text" rows="9"></textarea>
+	                </div>
+ 	             
+	                <div id="_form_btn" class="form_btn">
+			            <dl>
+			                <dt><a href="javascript:void(0)" onclick="report.saveReport();"> 保 存 </a></dt>
+			            </dl>
+			        </div>
+                </form>
+            </div>
+            <div class="form_list full-height" id="tab2" style="display: none">
+                <dl>
+                    <dt>
+                        <label>患者姓名</label>
+                        <input id="patientName" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt>
+                        <label>患者编号</label>
+                        <input id="patientNo" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt>
+                        <label>性 别</label>
+                        <input id="patientSex" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt>
+                        <label>年 龄</label>
+                        <input id="age" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt>
+                        <label>出生日期</label>
+                        <input id="patientBirth" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt>
+                        <label>是否已婚</label>
+                        <input id="marryFlag" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt class="input-row">
+                        <label>现住地址</label>
+                        <input id="patientNowAddr" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt class="input-row">
+                        <label>家庭地址</label>
+                        <input id="homeAddr" type="text" class="input-txt" readonly />
+                    </dt>
+                    <dt class="textarea">
+                        <label>备注</label>
+                        <textarea id="remark" class="text" readonly></textarea>
+                    </dt>
+                </dl>
+            </div>
+            <div class="form_list full-height" id="tab3" style="display: none"></div>
+		</div>
+    </div>
+</article>
+
+<!--article end-->
+
+
+<!-- 知识节点选择层 start-->
+<div class="pop-schwrap">
+    <div class="ui-scrollview zzk">
+        <div class="poo-mui">
+            <div class="fl">
+            </div>
+            <div class="txt">选择知识</div>
+            <div class="fr">
+                <a id="close_select" href="javascript: void(0);" class="btn-back top-sch-box" >取消</a>
+            </div>
+        </div>
+        <div class="scroll-wrap">
+            <div class="main">
+                <div class="main_left zzk_left" id="zzk_left" >
+                    <div class="picBox" onclick="switchSysBarZzk()" id="zzkTable" ><i class="iconfont">&#xec56;</i></div>
+                    <!-- 知识树 -->
+                    <div id="emrKbTypeTree" style="overflow-y: scroll; height: calc(100% - 1.1rem)"></div>
+                </div>
+                <div class="main_right zzk_right" id="zzk_right">
+                    <form style="height: 100%">
+                        <div class="zzk_form_input" style="height: 60%;">
+                            <div class="zzk_table_list">
+                            	<!-- 点击知识分类后显示的知识内容 -->
+                            	<iframe class="J_iframe" id="kbListIframe" name="kbListIframe" width="100%" height="100%" src="" frameborder="0" seamless></iframe>
+                            </div>
+                        </div>
+                        <div class="zzk_form_input" style="height: calc(40% - .5rem)">
+                            <label>已选用</label>
+                            <textarea id="selectedContent" class="text" rows="8"></textarea>
+                        </div>
+                        <div class="form_btn w2 ">
+                            <dl>
+                                <dt><a href="javascript:void(0)" onclick="report.makeSureSelected()">确定 </a></dt>                                                           
+                               	<dt><a href="javascript:void(0)" onclick="$('#selectedContent').val('')">清空 </a></dt>
+                            </dl>                        
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 搜索层 end-->
+
+<script type="text/javascript">
+var report = {
+	mousePosition: 'examFinding',
+	setMousePosition: function (divId){
+		report.mousePosition = divId;
+		$('#selectedContent').val($('#' + divId).val());
+	},
+	makeSureSelected: function (){
+		var SelectedContent = $('#selectedContent').val();
+		$('#' + report.mousePosition).val(SelectedContent);
+		$('#selectedContent').val('');
+		$('#close_select').click();
+	},
+	saveReport: function () {
+		var params = $('#reportForm').serializeObject();
+		if (params.examFinding == undefined || params.examFinding == "") {
+			alert("请填写检查所见");
+			return false;
+		}
+		if (params.examHint == undefined || params.examHint == "") {
+			alert("请填写检查提示");
+			return false;
+		}
+		if (params.diagnosticOpinion == undefined || params.diagnosticOpinion == "") {
+			alert("请填写诊断意见");
+			return false;
+		}
+		$.post(rootPath + "/report/saveExamResult.do", params, function(result){
+			if (result == "0") {
+				$('#submitFlag').val("1");
+				alert("保存成功");
+			} else {
+				alert("保存失败");
+				$('#submitFlag').val("");
+			}
+		}, "json");
+		
+	},
+	changeTab: function (index){
+		var array = ['tab', index];
+		var targetDiv = array.join('');
+		$('#frmMain').find("div").each(function (){
+			if (this.id == targetDiv) {
+				$(this).show();
+				report.loadData(index, targetDiv);
+				common.historyTab[targetDiv] = targetDiv;
+			} else if (this.id == "_form_btn" || this.id == ""){
+			} else {
+				$(this).hide();
+			}
+		});
+	},
+	loadData: function (index, tabId) {
+		if (common.historyTab[tabId] != undefined && common.historyTab[tabId] != "") {
+			return ;
+		}
+		
+		switch(index) {
+		case 1:
+			common.loading();
+			$.post(
+				rootPath + '/mobile.reconsult/examReportEdit.do', 
+				{reConsultingId: common.getCache(common.rowId)}, 
+				function(data){
+					var consulting = data.consulting;
+					var patientExam = data.patientExam;
+					var patientExamJpgList = data.patientExamJpgList;
+					
+					if (consulting != undefined) {
+						$('#patientId').val(consulting.patientId);
+						$('#patientExamId').val(consulting.patientExamId);
+						$('#reConsultingId').val(consulting.reConsultingId);
+						$('#examFinding').val(consulting.examFinding);
+						$('#examHint').val(consulting.examHint);
+						$('#diagnosticOpinion').val(consulting.diagnosticOpinion);
+					}
+					
+					if (patientExam != undefined && patientExam.imageType != undefined && patientExam.imageType == "1") {
+						var height = $('#frmMain').height() - 40;
+						$('#tab3').html('<iframe src=' + rootPath + '"/pacsView/index.html?patientid="' + patientExam.patientId + ' width="100%" height="' + height + '" style="border:none"></iframe>');
+					
+					} else if (patientExamJpgList != undefined && patientExamJpgList.length != undefined && patientExamJpgList.length > 0){
+						var html = [];
+						for (var i = 0; i < patientExamJpgList.length; i++) {
+							html.push('<img src="data:image/jpg;base64,' + patientExamJpgList[i] + '" /><br /><br />');
+						}
+						$('#tab3').html(html.join(''));
+					
+					} else {
+						$('#tab3').html('<div style="width:100%; padding: 10px; 0px; text-align:center"><dd>无影像数据</dd></div>');
+					}
+					common.loaded();
+			}, 'json');
+			break;
+		case 2:
+			common.loading();
+			$.post(
+				rootPath + '/mobile.patient/showPatientInfo.do', 
+				{patientId: $('#patientId').val()}, 
+				function(data){
+					var patient = data.patient;
+					if (patient != undefined) {
+						$('#patientName').val(patient.patientName);
+						$('#patientNo').val(patient.patientNo);
+						$('#age').val(patient.age);
+						$('#patientBirth').val(patient.patientBirth);
+						$('#patientNowAddr').val(patient.patientNowAddr);
+						$('#homeAddr').val(patient.homeAddr);
+						$('#remark').val(patient.remark);
+						$('#patientSex').val(common.getSex(patient.patientSex));
+			
+						if (patient.marryFlag == "0") {
+							$('#marryFlag').val("未婚");
+						} else if (patient.marryFlag == "1") {
+							$('#marryFlag').val("已婚");
+						}
+					}
+					common.loaded();
+			}, 'json');
+			break;
+		case 3:
+			break;
+		default:
+		  return ;
+		}
+	}
+
+}
+$(document).ready(function(){
+    $(".list-3 table:odd").addClass("table-bg");
+  	//知识库-请求后台数据，初始化知识库的jsTree
+    $.post(rootPath + "/report/emrKbTypeTree.do", {topEmrKbTypeCode:'002'}, function(result){
+    	if (null != result && result.length > 0) {
+			result.splice(0,1, $.extend(result[0], {state: {opened : true }}));
+		}
+    	var dataArray =  result;
+    	$('#emrKbTypeTree').jstree({ 
+    		'core' : { "force_text": true, "cache": false, 'check_callback':true, 'data' : dataArray },
+    	    'plugins': ['types', 'dnd']
+    	}); 
+	}, "json");
+
+    //知识库-绑定选中事件
+    $('#emrKbTypeTree').bind("select_node.jstree", function(event, data) {  
+        var inst = data.instance;  
+        var selectedNode = inst.get_node(data.selected);
+        if (selectedNode.children == undefined || selectedNode.children.length == undefined || selectedNode.children.length > 0) {
+        	return ;
+        }
+      	//知识库-绑定选中事件
+        $('#emrKbTypeTree').bind("select_node.jstree", function(event, data) {  
+            var inst = data.instance;  
+            var selectedNode = inst.get_node(data.selected);
+            $('#kbListIframe').attr('src', rootPath + '/emrKb/emrKbDetailListByTypeId.do?emrKbTypeId=' + selectedNode.id);
+            switchSysBarZzk();
+        });
+    });
+    
+    //初始化报告数据
+    report.loadData(1);
+});
+
+// 左侧知识节点收缩展开
+var status = 1;
+function switchSysBarZzk(){
+    var switchPoint=document.getElementById("zzkTable");
+    var zzk_left=document.getElementById("zzk_left");
+    var zzk_right=document.getElementById("zzk_right");
+    if (1 == window.status){
+        window.status = 0;
+        //alert(switchPoint);
+
+        zzk_left.classList.add("show");
+        zzk_right.classList.add("show");
+        $('#emrKbTypeTree').hide();
+    }
+    else{
+        window.status = 1;
+        zzk_left.classList.remove("show");
+        zzk_right.classList.remove("show")
+        $('#emrKbTypeTree').show();
+    }
+}
+//拷贝知识内容
+function setEditor(obj) {
+	var text = $('#selectedContent').val();
+	var content = $(obj, window.frames["kbListIframe"].document).next().text();
+	// 过滤掉中括号
+	var leftExp = new RegExp("\\[","g");
+	var rightExp = new RegExp("\\]","g");
+	content = content.replace(leftExp, "").replace(rightExp, "");
+	$('#selectedContent').val(text + content);
+}
+</script>
+</body>
+</html>

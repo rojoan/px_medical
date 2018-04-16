@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/style/iconfont/iconfont.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/plugins/jsTree/style.min.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/jsTree/style.min.css" rel="stylesheet">
+<link href="../resource/style/css/page.css" rel="stylesheet">
+<style>
+.lightBoxGallery img {
+	margin: 5px;
+	width: 90px;
+}
+
+.hzzb-tool {
+	height: 46px;
+	background: #fff;
+	width: 100%;
+	line-height: 46px;
+	padding: 0 15px;
+}
+
+.hzzb-yxzl-left {
+	width: 20%
+}
+
+.hzzb-yxzl-right {
+	width: 77.5%
+}
+
+.jstree-open>.jstree-anchor>.fa-folder:before {
+	content: "\f07c";
+}
+
+.jstree-default .jstree-icon.none {
+	width: 0;
+}
+
+.form-control.full-height {
+	height: 100%
+}
+</style>
+</head>
+
+<body class="gray-bg top-navigation full-height">
+	<div id="wrapper" class="full-height">
+		<div id="page-wrapper" class="gray-bg full-height">
+			<div class="wrapper wrapper-content full-height" style="padding: 0; height: calc(100% - 13px);">
+				<div class="row full-height">
+					<!--左 start-->
+					<div class="col-xs-12 full-height">
+						<div class="ibox full-height m-b-none">
+							<div class="ibox-content full-height">
+								<div class="full-height hzs-tabs-left" style="margin-top: 0">
+									<ul class="nav nav-tabs">
+										<li class="active"><a data-toggle="tab" href="#tab-1">患者资料</a></li>
+										#if("$!consult.risInspectionId" != "")
+											<li class=""><a data-toggle="tab" href="#tab-2" onclick="openIframe('medicalRecord')">病历文书</a></li>
+										#end
+										#if("$!consult.patientExamId" != "")
+											<li class="">
+												<a id="tab_fillReport" data-toggle="tab" href="#tab-3" onclick="openIframe('imageInfo', '../report/examResultEdit.do?patientExamId=$!consult.patientExamId&reConsultingId=$!consult.reConsultingId')">影像资料</a>
+											</li>
+										#end
+										#if("$!consult.lisInspectionSampleId" != "")
+											<li class=""><a data-toggle="tab" href="#tab-4" onclick="openIframe('inspectionReport')">检验报告</a></li>
+										#end
+									</ul>
+									<div class="tab-content" style="height: calc(100% - 20px)">
+										<div id="tab-1" class="tab-pane full-height active">
+											<div class="full-height-scroll full-height">
+												<div class="table-responsive">
+	                                                <table class="table table-bordered table-jcdj">
+	                                                    <tbody>
+	                                                    <tr>
+	                                                        <th class="text-nowrap">患者姓名</th>
+	                                                        <td >#htmlEscape("$!patient.patientName")</td>
+	                                                        <th class="text-nowrap">患者性别</th>
+	                                                        <td>#lookUpDict($dicData.dicSex $!patient.patientSex)</td>
+	                                                    </tr>
+	                                                    <tr>
+	                                                        <th class="text-nowrap"> 民 族</th>
+	                                                        <td>#lookUpDict($dicData.dicNation $!patient.patientNation)</td>
+	                                                        <th class="text-nowrap">婚姻状态</th>
+	                                                        <td>#lookUpDict($dicData.dicYesNo $!patient.marryFlag)</td>
+	                                                    </tr>
+	                                                    <tr>
+	                                                        <th class="text-nowrap">身份证号</th>
+	                                                        <td>#htmlEscape("$!patient.patientIdCard")</td>
+	                                                        <th class="text-nowrap">联系电话</th>
+	                                                        <td>#htmlEscape("$!patient.contactPhone")</td>
+	                                                    </tr>
+	                                                    <tr>
+	                                                        <th class="text-nowrap">现住地址</th>
+	                                                        <td>#htmlEscape("$!patient.patientNowAddr")</td>
+	                                                        <th class="text-nowrap">患者编号</th>
+	                                                        <td>#htmlEscape("$!patient.patientNo")</td>
+	                                                    </tr>
+	                                                    <tr>
+	                                                        <th class="text-nowrap">患者类型</th>
+	                                                        <td>#htmlEscape("$!examInfo.examType")</td>
+	                                                        <th class="text-nowrap">就诊卡号</th>
+	                                                        <td>#htmlEscape("$!examInfo.visitVardNum")</td>
+	                                                    </tr>
+	                                                    
+	                                                    <tr>
+	                                                        <th class="text-nowrap">临床诊断</th>
+	                                                        <td colspan="3">#htmlEscape("$!consult.clinicalDiagnosis")</td>
+	                                                    </tr>
+	                                                    
+	                                                    <tr>
+	                                                        <th class="text-nowrap">病史</th>
+	                                                        <td colspan="3">#htmlEscape("$!consult.diseaseDescribe")</td>
+	                                                    </tr>
+	                                                    </tbody>
+	                                                </table>
+                                                </div>
+                                            </div>
+										</div>
+										#if("$!consult.risInspectionId" != "")
+											<div id="tab-2" class="tab-pane">
+												<!-- 病例文书 -->
+												<iframe id="medicalRecord" src="" width="100%" height="100%" style="border:none"></iframe>
+											</div>
+										#end
+										#if("$!consult.patientExamId" != "")
+											<div id="tab-3" class="tab-pane">
+												<!-- 映像资料 -->
+												<iframe id="imageInfo" src="" width="100%" height="100%" style="border:none"></iframe>
+											</div>
+										#end
+										#if("$!consult.lisInspectionSampleId" != "")
+											<div id="tab-4" class="tab-pane">
+												<!-- 体检报告 -->
+												<iframe id="inspectionReport" src="../lis/surveyDetail.do?lisInspectionSampleId=$!consult.lisInspectionSampleId" width="100%" height="100%" style="border:none"></iframe>
+											</div>
+										#end
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 全局js -->
+	<script src="../resource/js/jquery.min.js"></script>
+	<script src="../resource/js/bootstrap.min.js"></script>
+	<script src="../resource/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+	<!-- jsTree plugin javascript -->
+	<script src="../resource/js/plugins/jsTree/jstree.min.js"></script>
+
+	<script>
+        $(document).ready(function () {
+        	/**  begin知识库的js脚本  */
+        	//知识库-请求后台数据，初始化知识库的jsTree
+            $.post("../report/emrKbTypeTree.do", {topEmrKbTypeCode:'002'}, function(result){
+            	var dataArray =  result;
+            	$('#jstree1').jstree({ 
+            		'core' : { "force_text": true, "cache": false, 'check_callback':true, 'data' : dataArray},
+            	     'plugins': ['types', 'dnd']
+            	}); 
+    		}, "json");
+
+            //知识库-绑定选中事件
+            $('#jstree1').bind("select_node.jstree", function(event, data) {  
+                var inst = data.instance;  
+                var selectedNode = inst.get_node(data.selected);
+                // 显示 选中节点的知识库内容的 div,节点类型不为 知识库类型时，从节点的自定义属性中获取emrKbContent
+                if (selectedNode.li_attr.nodeType != 'emrKbType') {
+                	$("#emrKbContent").html(selectedNode.li_attr.emrKbContent);
+    			}else{
+    				$("#emrKbContent").html("");
+    			}
+                loadEmrKbDetailNode(inst, selectedNode);  
+            });
+            
+            //知识库-增加知识库信息节点
+            function loadEmrKbDetailNode(inst, selectedNode){  
+              // ajax请求后台获取知识库信息，增加信息节点 主要是 顶级节点加载
+              $.post("../report/findEmrKbDetail.do", {emrKbTypeId:selectedNode.id}, function(result){
+            	//emrKbContent
+            	var emrKbContent = "";
+            	var emrKbDetailArr = result;
+            	$(emrKbDetailArr).each(function(i){
+            		emrKbContent =  this.emrKbContent + emrKbContent;
+            		$("#emrKbContent").html(emrKbContent);
+            	});
+    		  }, "json");
+              
+              //展开节点
+              inst.open_node(selectedNode);  
+            }  
+            /**  end知识库的js脚本  */
+            
+            /**  begin其他专家意见的js脚本  */
+            $('#reProfessor').jstree({
+                'core': {'check_callback': true},
+                'plugins': ['types', 'dnd'],
+                'types': {
+                    'default': {'icon': 'fa fa-folder'},
+                    'html': {'icon': 'fa fa-file-code-o'},
+                    'svg': {'icon': 'fa fa-file-picture-o'},
+                    'css': {'icon': 'fa fa-file-code-o'},
+                    'img': {'icon': 'fa fa-file-image-o'},
+                    'js': {'icon': 'fa fa-file-text-o'}
+                }
+            });
+            /**  end其他专家意见的js脚本  */
+            
+            // 保存意见
+            $('#savepinion').click(function (){
+            	$.post("../reConsult/savePersonOpinion.do", 
+            	{reConsultingId: "$!consult.reConsultingId", opinion : $("#opinion").val()}, 
+            	function (result){
+            		if(result.code == "0"){
+            			$("#msg").html("保存成功");
+            			setTimeout(cleanMsg, 3000);
+            		} else {
+            			common.alert(result.msg, 2)
+            		}
+            	}, 
+            	"json");
+            });
+			$('#goBack').click(function (){
+            	window.location.href = "../consult/applyWorkSpace.do";
+            });
+			// 移除保存提示信息
+			function cleanMsg() {
+				$('#msg').html('')
+			}
+
+			if("$!consult.patientExamId" != "") {
+				$('#tab_fillReport').click();
+			}
+
+        });
+         
+        // 点击专家触发事件
+        function otherOpinion(consultingProfessorId) {
+        	$.post("../reConsult/getPersonOpinion.do", {consultingProfessorId: consultingProfessorId}, function (data){
+        		$("#emrKbContent").html((null == data.personOpinion ? "" : data.personOpinion));
+        	}, "json");
+        }
+        function openIframe(iframeId, url) {
+        	if (url == undefined || url == "") {
+        		return ;
+        	}
+        	$('#' + iframeId).attr('src', url);
+        }
+    </script>
+
+
+</body>
+
+</html>
+
+
+
+
+

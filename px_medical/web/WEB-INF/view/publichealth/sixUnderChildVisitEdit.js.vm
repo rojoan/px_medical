@@ -1,0 +1,86 @@
+<script type="text/javascript">
+$(function (){
+	// 选择儿童信息
+	$('#childName').click(function(){
+		var title = '儿童/新生儿信息';
+    	common.open(contextPath + '/childDetail/selectCommonChildDetail.do', title, {area: ['85%', '85%']});
+	});
+	
+	// 保存
+	$('#btn_register_save').click(function(){
+		var params = common.serializeObject($('#registerForm'));
+
+		if ($('#submitFlag').val() == "1") {
+			common.alert("不能重复提交", 0);
+    		return ;
+		}
+		if (params.childName == "" || params.childName == undefined) {
+    		common.alert("请选择儿童姓名", 0);
+    		return ;
+    	}
+		if (params.nextVisitAddr == "" || params.nextVisitAddr == undefined) {
+    		common.alert("请填写下次随访地址", 0);
+    		return ;
+    	}
+		if (params.visitDate == "" || params.visitDate == undefined) {
+    		common.alert("请选择随访时间", 0);
+    		return ;
+    	}
+		//1=新生儿随访；2=1岁内检查；3=1~2岁检查；4=3~6岁检查
+		params.ageStageFlag = "4";
+		$.post("../childVisit/saveRegister.jo", params, function (result){
+			if (result.isSuccess == "0") {
+				$('#submitFlag').val('1');
+				common.alertCall("保存成功。", 1, function (){
+					if (parent.savedVisitShow && typeof(parent.savedVisitShow) == "function") {
+						parent.savedVisitShow(params.childVisitId, '4');
+					} else {
+						// 刷新父页面
+						$('#btn_query', window.parent.document).click();
+						// 关闭窗口
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index); 
+					}
+				});
+			} else {
+				common.alert(result.msg, 2);
+			}
+		},"json").error(function (e){jqueryPostError(e)});
+	});
+	
+	
+	// 页面初始化时加载助产医院
+	/**
+	$.post('../sys/queryUnit.do', {}, function (data){
+		if (null == data || data.length == undefined || data.length <= 0) {
+			return ;
+		}
+		
+		var html = [];
+		var selected = "";
+		html.push('<option value=""></option>');
+		$.each(data, function (){
+			if (this.orgId == "$!childDetail.hospitalId") {
+				selected = "selected='selected'"
+			}
+			html.push('<option orgNo=' + this.orgNo + ' value="' + this.orgId + '" ' + selected + '>' + this.name + '</option>');
+		});
+		$('#hospitalId').html(html.join(''));
+	}, 'json');
+	*/
+	
+});
+
+// 选择家庭信息回调函数
+function selectChildCallBack(obj) {
+	var genderEle = "#gender_" + obj.gender;
+	$('#hospitalId').val(obj.hospitalId);
+	$('#hospitalNo').val(obj.hospitalNo);
+	$('#childName').val(obj.childName);
+	$('#childDetailId').val(obj.childDetailId);
+	$('#birthDate').val(obj.birthDate);
+	$('#fetationAge').val(obj.fetationAge);
+	$('#hospitalName').val(obj.hospitalName);
+	$(genderEle).iCheck('check');
+}
+</script>

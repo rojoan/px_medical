@@ -1,0 +1,54 @@
+<div id="noteContent" style="display:none">
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr align="center"><td class="table_print_top1">${_layout.title}</td></tr>
+    <tr><td>&nbsp;</td></tr>
+  </table>
+<table cellpadding="0" cellspacing="0" class="table_form">
+#set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+#set($cellcount=0)
+#set($cur_colspan=0)
+#foreach($cell in $_layout.editFieldList)
+#if("hidden" != ${cell.type})
+    #set($leftCss = "table_print")
+    #set($rightCss = "table_print_right")
+#if(${cell.colspan} && ${cell.colspan} > 2)
+#if($cellcount!=0)##留空本行剩下的单元，准备新开一行
+                <td width="10%" class="$leftCss">&nbsp;</td>
+                <td width="40%" class="$rightCss">&nbsp;</td>
+              </tr>
+#end
+#set($cellcount=0)##新开一行
+#set($cur_colspan=3)
+#end
+#if($cellcount==0)##行开始
+              <tr>
+#end
+
+#set($cellcount=$cellcount+1)
+                <td width="10%" class="$leftCss">#inputTitle($!{cell.title} $!{cell.required})</td>
+                <td width="40%" class="$rightCss" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+#if(${cell.view})
+#viewInputField(${cell} $editBeanMap)
+#else
+#inputField(${cell} $editBeanMap)##if(${cell.required})#requiredTag()#end
+#end
+                 </td>
+#if($cur_colspan > 2)##新开一行
+#set($cellcount=2)
+#set($cur_colspan=0)
+#end
+#if($cellcount>=2)##行结束
+#set($cellcount=0)
+              </tr>
+#end
+#else
+<input type="hidden" name="${cell.field}" value="$!{editBeanMap.get(${cell.field})}" />
+#end
+#end
+#if($cellcount!=0)
+                <td width="10%" class="$leftCss">&nbsp;</td>
+                <td width="40%" class="$rightCss">&nbsp;</td>
+              </tr>
+#end
+</table>
+</div>

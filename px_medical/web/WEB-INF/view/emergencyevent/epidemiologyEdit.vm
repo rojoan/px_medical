@@ -1,0 +1,410 @@
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/style/iconfont/iconfont.css" rel="stylesheet">
+<link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="../resource/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/popover/bootstrap-popover-x.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/style/css/page.css?v=1" rel="stylesheet">
+<!--当前位置弹框插件-->
+<script src="../resource/js/plugins/popover/bootstrap-popover-x.js"></script>
+<style>
+.jk-popover {width: 460px; max-width: 500px;}
+</style>
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span aria-hidden="true"><i class="fa fa-close"></i></span> <span class="sr-only"><i class="fa fa-close"></i></span>
+	</button>
+	<h7 class="modal-title">新增流行病学记录 <span class="must-red font-14">( 红字为必填 )</span></h7>
+</div>
+<div class="modal-body full-height-scroll" style="height: calc(100% - 93px)">
+	<!--如果弹窗没有底部菜单栏则 -44px -->
+	<form id="epidemiologyForm" class="form-horizontal">
+		<input type="hidden" id="submitFlag" >
+		<input type="hidden" id="epidemiologyId" name="epidemiologyId" value="$!epidemiology.epidemiologyId" >
+		
+		<div class="row">
+	 
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">患者姓名</label>
+				<div class="col-md-8">
+					<input type="text" id="patientName" name="patientName" onkeyup="queryPatient();" 
+					    value="$!epidemiology.patientName" data-toggle="popover-x" data-target="#patientPopover" data-placement="bottom" maxlength="18"  class="form-control">
+					<input type="hidden" id="patientId" name="patientId" value="$!epidemiology.patientId" >
+				</div>
+
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">患者家长姓名</label>
+				<div class="col-md-8">
+					<input type="text"  name="patientParentName" value="$!epidemiology.patientParentName" maxlength="25"  class="form-control">
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">患者档案编号</label><!-- 患者卡号 -->
+				<div class="col-md-8">
+					<input type="text"  name="patientArchive"  value="$!epidemiology.patientArchive"  maxlength="25" class="form-control">
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">身份证号</label>
+				<div class="col-md-8">
+					<input type="text"  id="patientIdCard" name="patientIdCard" value="$!epidemiology.patientIdCard" maxlength="25"  class="form-control">
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">性别</label>
+				<div class="col-md-8">
+					#formRadioButtonsLabel("patientSex" "$!epidemiology.patientSex" $dicData.dicSex "&nbsp;" "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">出生日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange input-group date ">
+						<input id="birthDate" name="birthDate" type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" value="$!date.format('yyyy-MM-dd', $!{epidemiology.birthDate})" />
+					</div>
+				</div>
+			</div>
+		 
+			 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">工作单位</label>
+				<div class="col-md-8">
+					<input id="worksOrg" name="worksOrg" type="text" value="$!epidemiology.worksOrg" maxlength="20" class="form-control">
+				</div>
+			</div>
+			 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">患者联系电话</label>
+				<div class="col-md-8">
+					<input id="patientPhone" name="patientPhone" type="text" value="$!epidemiology.patientPhone" maxlength="20" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label must-red">病人属于</label>
+				<div class="col-md-10">
+					#formRadioButtonsLabel("patientBelong" "$!epidemiology.patientBelong" $dicData.dicEpiPatientBelong "" "" "class='checkbox-inline i-checks'")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label must-red">现住址</label>
+				<div class="col-md-10">
+					<input id="patientAddr" name="patientAddr" value="$!epidemiology.patientAddr" maxlength="100"  type="text" class="form-control" style="width: 94.8%">
+				</div>
+
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label ">患者职业</label>
+				<div class="col-md-10">
+					#formRadioButtonsLabel("eventTypeId" "$!epidemiology.eventTypeId" $dicData.dicEventType "" "" "class='checkbox-inline i-checks'")
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-md-2 control-label must-red">病历分类</label>
+				<div class="col-md-10">
+					#formRadioButtonsLabel("medicalClassify" "$!epidemiology.medicalClassify" $dicData.dicEpiMedicalClassify "" "" "class='checkbox-inline i-checks'")
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">发病日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange input-group date ">
+						<input id="illTime" name="illTime" type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" value="$!date.format('yyyy-MM-dd', $!{epidemiology.illTime})" />
+						病原携带者填写初检日期或就诊日期
+					</div>
+				</div>
+			</div>
+		 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">诊断时间</label>
+				<div class="col-md-8">
+					<div class="input-daterange input-group date ">
+						<input name="diagnosisTime" type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" value="$!date.format('yyyy-MM-dd', $!{epidemiology.diagnosisTime})"/>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">死亡时间</label>
+				<div class="col-md-8">
+					<div class="input-daterange input-group date ">
+						<input name="dieTime" type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" value="$!date.format('yyyy-MM-dd', $!{epidemiology.dieTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label ">其他法定管理及重点监测传染病</label>
+				<div class="col-md-10">
+					<input id="keyMonitor" name="keyMonitor" value="$!epidemiology.keyMonitor" maxlength="100"  type="text" class="form-control" style="width: 94.8%">
+				</div>
+
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label ">订正病名</label>
+				<div class="col-md-10">
+					<input id="modifyIllName" name="modifyIllName" value="$!epidemiology.modifyIllName" maxlength="100"  type="text" class="form-control" style="width: 94.8%">
+				</div>
+
+			</div> 
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">填报单位</label>
+				<div class="col-md-8">
+					<input type="text"  value="$!epidemiology.fillOrgName" readonly="readonly"  class="form-control">
+					#formHiddenInput("fillOrgId" "$!epidemiology.fillOrgId" " id='fillOrgId' ")
+					#formHiddenInput("fillOrgName" "$!epidemiology.fillOrgName" "id='fillOrgName'")
+				</div>
+
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">单位联系电话</label>
+				<div class="col-md-8">
+					<input id="fillOrgPhone" name="fillOrgPhone" type="text" value="$!epidemiology.fillOrgPhone" maxlength="20" class="form-control">
+				</div>
+
+			</div>
+			
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">填报医生</label>
+				<div class="col-md-8">
+					<!-- <input type="text" class="form-control"> -->
+					 <div class="input-group">
+					 	<!-- fillDoctorName -->
+                          <input  type="text" value="$!epidemiology.fillDoctorName"  readonly="readonly" class="form-control">
+                          #formHiddenInput("fillDoctorId" "$!epidemiology.fillDoctorId" " id='fillDoctorId' ")
+                          #formHiddenInput("fillDoctorName" "$!epidemiology.fillDoctorName" " id='fillDoctorName' ")
+				     </div>
+				</div>
+
+			</div>
+			
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">填写日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange input-group date ">
+						<input type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" name="fillTime" value="$!date.format('yyyy-MM-dd', $!{epidemiology.fillTime})" />
+					</div>
+				</div>
+
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label ">备注</label>
+				<div class="col-md-10">
+					<input id="remark" name="remark" value="$!epidemiology.remark" maxlength="100"  type="text" class="form-control" style="width: 94.8%">
+				</div>
+
+			</div>
+			 
+
+		</div>
+	</form>
+</div>
+
+<!-- PopoverX content -->
+<div id="patientPopover" class="popover popover-x popover-default jk-popover" >
+	<div class="arrow"></div>
+	<h3 class="popover-header popover-title">
+		<span class="close pull-right" data-dismiss="popover-x">&times;</span>
+	</h3>
+	<div class="popover-body popover-content">
+		<div class="ibox float-e-margins m-b-none">
+			<div class="ibox-content pacs-register-left">
+				<div class="example">
+					<table id="patientGrid" data-mobile-responsive="true">
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+    
+    
+<div class="modal-footer" style="text-align: center">
+	<button onclick="saveEpidemiology();" type="button" class="btn btn-success">
+		<i class="fa fa-save"></i> 保存
+	</button>
+	<button type="button" class="btn btn-warning" data-dismiss="modal">
+		<i class="fa fa-close"></i> 关闭
+	</button>
+</div>
+
+#parse("./common/common.js.vm")
+
+
+<script>
+
+        // 提交上转申请表单
+        function saveEpidemiology() {
+        	 var epidemiologyParams = common.serializeObject($('#epidemiologyForm'));
+            
+            //
+            if (epidemiologyParams.patientId == undefined || epidemiologyParams.patientId == "") {
+                common.alert("请填写患者姓名",0);
+                return false;
+            }
+            if (epidemiologyParams.patientSex == undefined || epidemiologyParams.patientSex == "") {
+                common.alert("请勾选患者性别",0);
+                return false;
+            }
+            if (epidemiologyParams.birthDate == undefined || epidemiologyParams.birthDate == "") {
+                common.alert("请填写出生日期",0);
+                return false;
+            }
+            if (epidemiologyParams.patientIdCard) {
+       			if (!checkIDcard(epidemiologyParams.patientIdCard)) {
+       				common.alert("身份证格式错误！",0);
+   	    			$("#patientIdCard").focus();
+       				return false;
+       			}
+            }
+            if (epidemiologyParams.patientPhone) {
+       			if (!checkMobile(epidemiologyParams.patientPhone) && !checkPhone(epidemiologyParams.patientPhone)) {
+       				common.alert("患者联系电话格式错误！",0);
+   	    			$("#patientPhone").focus();
+       				return false;
+       			}
+            }
+            if (epidemiologyParams.patientBelong == undefined || epidemiologyParams.patientBelong == "") {
+                common.alert("请勾选病人属于",0);
+                return false;
+            }
+            if (epidemiologyParams.patientAddr == undefined || epidemiologyParams.patientAddr == "") {
+                common.alert("请填写现住址",0);
+                return false;
+            }
+            if (epidemiologyParams.medicalClassify == undefined || epidemiologyParams.medicalClassify == "") {
+                common.alert("请勾选病历分类",0);
+                return false;
+            }
+            if (epidemiologyParams.illTime == undefined || epidemiologyParams.illTime == "") {
+                common.alert("请填写发病日期",0);
+                return false;
+            }
+            if (epidemiologyParams.diagnosisTime == undefined || epidemiologyParams.diagnosisTime == "") {
+                common.alert("请填写诊断时间",0);
+                return false;
+            }
+            if (epidemiologyParams.dieTime == undefined || epidemiologyParams.dieTime == "") {
+                common.alert("请填写死亡时间",0);
+                return false;
+            }
+           
+            if (epidemiologyParams.fillOrgPhone == undefined || epidemiologyParams.fillOrgPhone == "") {
+                common.alert("请填写单位联系电话",0);
+                return false;
+            }else{
+       			if (!checkMobile(epidemiologyParams.fillOrgPhone) && !checkPhone(epidemiologyParams.fillOrgPhone)) {
+       				common.alert("单位联系电话格式错误！",0);
+   	    			$("#linkmanPhone").focus();
+       				return false;
+       			}
+            }
+            if (epidemiologyParams.fillDoctorId == undefined || epidemiologyParams.fillDoctorId == "") {
+                common.alert("请选择填报医生",0);
+                return false;
+            }
+            if (epidemiologyParams.fillTime == undefined || epidemiologyParams.fillTime == "") {
+                common.alert("请输入填写日期",0);
+                return false;
+            }
+
+            $.post("../epidemiology/saveEpidemiology.do", epidemiologyParams, function (result) {
+                if (result.code == "0") {
+                    $('#submitFlag').val("1");
+                    $("#epidemiologyId").val( result.data.epidemiologyId);
+                    common.alert("保存成功",0);
+                    query();//重新查询
+                } else {
+                    common.alert("保存失败",0);
+                    $('#submitFlag').val("");
+                }
+            }, "json");
+        }
+        
+        // 患者查询
+    	function queryPatient(){
+    		var options = {url: '../patient/listData.do', silent: false, query: {name:$("#patientName").val()}};
+    		$('#patientGrid').bootstrapTable('refresh', options); 
+    	}
+        
+        $(function() {
+    		//查询患者列表
+    		$('#patientGrid').bootstrapTable({
+    			url : "../patient/listData.do",
+    			mobileResponsive: true,
+    			pagination : true,
+    			pageNumber : true,
+    			cache : false,
+    			striped: true,
+    			clickToSelect: true,
+    			singleSelect: true,
+    			//method : "get",
+    			pageSize : "10",
+    			pageNumber : "1",
+    			height : "330",
+    			queryParams : {},
+    			//queryParamsType : "limit",
+    			queryParamsType : "",
+				sidePagination : 'server',
+    			halign : "center",
+    			columns : [
+    			{
+    				checkbox : true,
+    			},         
+    			{
+    				field : 'patientName',
+    				title : '患者姓名'
+    			}, 
+    			{
+    				field : 'patientIdCard',
+    				title : '身份证号'
+    			}
+    			]
+    		});
+    		
+
+    		//患者列表行注册单击事件
+    		$('#patientGrid').on('click-row.bs.table', function (e, row, element) {  
+    			console.log(JSON.stringify(row));
+    	        //给患者信息赋上内容 
+    	        $("#patientId").val(row.patientId);//隐藏域赋值
+    	        $("#patientName").val(row.patientName);//隐藏域赋值
+    	        $("#patientIdCard").val(row.patientIdCard);
+    	        $("#birthDate").val(getSmpFormatDateByLong(row.patientBirth,false));
+    	        $("#patientArchive").val(row.patientCardNo);
+    	        $("#patientPhone").val(row.patientPhone);
+    	        $("#patientAddr").val(row.patientNowAddr);
+    	        //性别
+    	         
+    	        if (row.patientSex == 1) {
+    	        	$("#patientSex_1").iCheck('check'); //— 将输入框的状态设置为checked
+    	        	$("#patientSex_1").iCheck('check'); //— 将输入框的状态设置为checked
+    	        	$("#patientSex_2").iCheck('uncheck'); //— 移除 checked 状态
+    	        	$("#patientSex_1").iCheck('update'); 
+    	        	$("#patientSex_2").iCheck('update'); //— toggle checked state
+                }else if(row.patientSex == 2) {
+    	        	$("#patientSex_1").iCheck('uncheck'); //— 移除 checked 状态
+                	$("#patientSex_2").iCheck('check'); //— 将输入框的状态设置为checked
+    	        	$("#patientSex_1").iCheck('update'); 
+    	        	$("#patientSex_2").iCheck('update'); //— toggle checked state
+                } 
+    	       // $("#patientPopover").popover("hide");  
+    	        
+    	        $('#patientPopover').popover('destroy');
+    	       
+    	       
+    	    }); 
+    		
+    		
+    	});//$(function() {} end 
+     
+</script>
+

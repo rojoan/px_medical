@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<job id="ExecuteConf5App">
+<script language="JavaScript">
+  var v2conf = new ActiveXObject( "vconf.ConfMeeting");
+  v2conf.Server = "121.40.185.188";
+  v2conf.Host = "121.40.185.188";
+  v2conf.Account = "$!meetingUser.userName@121.40.185.188";
+  v2conf.Key = "$!meetingUser.userPassword";
+  v2conf.DisplayName = "$!VideoMeeting.topic";
+  v2conf.ConfID = "$!VideoMeeting.confId@slavemcu_1.machine1.v2c";
+  v2conf.ConfKey = "$!VideoMeeting.confkey";
+  v2conf.RoomType = 0;
+  v2conf.Connect();
+</script>
+</job>
+</head>
+<!-- <body onload="h('guest', 1, 80,'39.108.161.58', 102618)"> -->
+<body>
+$!errorMsg
+
+##$!meetingUser.userName<br/>
+##$!meetingUser.userPassword<br/>
+##$!VideoMeeting.topic<br/>
+##$!VideoMeeting.confId<br/>
+##$!VideoMeeting.confkey
+
+</body>
+</html>

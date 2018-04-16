@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTDHTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head> 
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+<title>法律法规库管理</title>
+<link rel="stylesheet" type="text/css" href="../ext/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../ext/resources/css/xtheme-gray.css" />
+<link rel="stylesheet" type="text/css" href="../base/css/ext-patch.css"   />
+<link rel="stylesheet" type="text/css" href="../app/right/right.css">
+<link rel="stylesheet" type="text/css" href="../app/right/form.css">
+<link href="../base/js/swfupload/swfupload.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../base/js/autoform.js"></script>
+
+<script type="text/javascript" src="../ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+<script type="text/javascript" src="../base/js/grid/CC.ux.PagingGrid.js"></script>
+<script language="JavaScript" src="../script/common.js"></script>
+<script type="text/javascript" src="../base/js/picker/CC.ux.UserOrg.js"></script>
+<script type="text/javascript" src="../base/js/picker/CC.ux.TreePicker.js"></script>
+<script type="text/javascript" src="../base/js/window/CC.ux.ContentElWindow.js"></script>
+
+<script language="JavaScript" src="../script/validator.js"></script>
+
+<script type="text/javascript" src="../base/js/swfupload/swfupload.js"></script>
+<script type="text/javascript" src="../base/js/swfupload/swfupload_handlers.js"></script>
+<script type="text/javascript">
+function faqDetail(faqInfoId) {
+	document.location.href="../faq/faqShow.do?faqInfoId="+faqInfoId+"&sysPortal=1";
+}
+ 
+</script>
+
+</head>
+<body onload="showCloseBtn('closeBtn');">
+<div>
+<button id="closeBtn" class="i-button" style="display:none;float:right;margin:10px;"><img src="../app/right/images/cancel16.png">&nbsp;关闭</button>
+</div>
+<div class="faq_detail_box">
+<div class="title" style="width:100%;overflow:auto;">#requiredContent("${faqDetail.faqTitle}" 50 "")</div>
+
+<div class="addday">
+<div style="float:left;">所属类别：[&nbsp;$!{faqDetail.faqType.faqTypeName}&nbsp;]</div> 
+<div style="float:right;">创建日期：#displayOnlyTime(${faqDetail.createTime}) &nbsp;&nbsp;</div>
+</div>
+<div class="content" style="overflow:auto;width:98%;">$!{faqDetail.faqContent}</div>
+</div>
+<div style="width:100%;overflow:auto;height:60px;" class="faq_detail_affix">
+#foreach($affixItem in $!{faqDetail.affix.items})
+<span style="white-space: nowrap">#requiredContent("${affixItem.trueName}" 50 "") <A href="../affix/download.do?area=faq&fileId=${affixItem.fileId}" target=_blank><IMG title="另存为..." border=0 src="../app/right/images/download.png"></a></span>
+#end
+</div>
+
+<div class="faq_detail_nav">
+<div style="float:left;">
+#if($faqBefore)
+<a onclick="faqDetail(${faqBefore.faqInfoId})" style="cursor:pointer;">上一篇&nbsp;#requiredContent("${faqBefore.faqTitle}" 50 "")&nbsp;</a>
+#end
+#if($faqNext)
+<a onclick="faqDetail(${faqNext.faqInfoId})" style="cursor:pointer;">下一篇&nbsp;#requiredContent("${faqNext.faqTitle}"  50 "")&nbsp;</a>
+#end
+</div>
+<div style="margin-left:10px;float:right;">
+    
+</div>
+</div>
+ 
+</body> 
+</html>

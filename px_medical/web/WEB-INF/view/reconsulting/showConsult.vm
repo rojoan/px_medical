@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${SessionSysPortal.appTitle}</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<style>
+html, body {
+	height: 100%
+}
+</style>
+</head>
+<body class="top-navigation" style="background: #F8FAFB">
+	<ul class="nav nav-tabs">
+		<li class=''><a data-toggle="tab" href="#tab-1">患者信息</a></li>
+		<li class='#if("$!show" == "0")active#end'><a data-toggle="tab" href="#tab-2">申请信息</a></li>
+		#if("$!mode" == "1")
+			<li class='#if("$!show" == "1")active#end'><a data-toggle="tab" href="#tab-3">会议信息</a></li> 
+		#end
+	</ul>
+	<!-- begin患者信息 -->
+	<div class="tab-content" style="height: calc(100% - 20px)">
+		<div id="tab-1" class="tab-pane full-height">
+			<div class="full-height-scroll full-height">
+				<div class="table-responsive">
+					<table class="table table-bordered table-jcdj">
+						<tbody>
+							<tr>
+								<th class="text-nowrap">患者姓名</th>
+								<td>$!patient.patientName</td>
+								<th class="text-nowrap">患者性别</th>
+								<td>#lookUpDict($dicData.dicSex $!patient.patientSex)</td>
+							</tr>
+							<tr>
+								<th class="text-nowrap">患者年龄</th>
+								<td>$!patient.getAge()</td>
+								<th class="text-nowrap">联系电话</th>
+								<td>$!patient.contactPhone</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<!-- end患者信息 -->
+		
+		<!-- begin申请信息 -->
+		<div id="tab-2" class='tab-pane #if("$!show" == "0")active#end'>
+			<div class='full-height-scroll full-height'>
+				<div class="table-responsive">
+					<form id="applyEditForm" class="form-horizontal">
+						#formHiddenInput("patientId" "$!consult.patientId" "id='patientId'")
+						#formHiddenInput("patientName" "$!consult.patientName" "id='patientName'")
+						#formHiddenInput("reConsultingId" "$!consult.reConsultingId" "id='reConsultingId'")
+						#formHiddenInput("patientExamId" "$!patientExam.patientExamId" "id='patientExamId'")
+						<table class="table table-bordered table-jcdj">
+							<tbody>
+								<tr>
+									<th class="text-nowrap">检查类型</th>
+									<td>#htmlEscape("$!examInfo.examCategory")</td>
+									<th class="text-nowrap">检查部位</th>
+									<td>#htmlEscape("$!examInfo.examPart")</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">申请科室</th>
+									<td>
+										#if("$!mode" == "0") 
+											<select id="officeId" name="officeId" data-placeholder="选择科室" class="form-control" style="min-width: 150px; width: 100%" tabindex="1"></select>
+										#else 
+											#htmlEscape("$!consult.officeName") 
+										#end
+									</td>
+									<th class="text-nowrap">申请医生</th>
+									<td>
+										#if("$!mode" == "0") 
+											<select id="doctorId" name="doctorId" data-placeholder="选择科室" class="form-control" style="min-width: 150px; width: 100%" tabindex="2">
+												<option value="">请选择医生</option>
+											</select>
+										#else 
+											#htmlEscape("$!consult.doctorName") 
+										#end
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">会诊医院</th>
+									<td>
+										#if("$!mode" == "0") 
+											<select id="medicalInstitutionId" name="medicalInstitutionId" data-placeholder="选择科室" class="form-control" style="min-width: 150px; width: 100%" tabindex="3">
+												<option value="">请选择医院</option>
+											</select>
+			
+										#else
+											#htmlEscape("$!consult.medicalInstitutionName") 
+										#end
+									</td>
+									<th class="text-nowrap"></th>
+									<td></td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">临床诊断</th>
+									<td colspan="3">
+										#if("$!mode" == "0") 
+											#formTextarea("clinicalDiagnosis" "$!consult.clinicalDiagnosis" "id='clinicalDiagnosis' maxlength='500' class='form-control' placeholder='填写临床诊断...'")
+										#else 
+											#htmlEscape("$!consult.clinicalDiagnosis") 
+										#end
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">会诊要求</th>
+									<td colspan="3">
+										#if("$!mode" == "0") 
+											#formTextarea("consultationAsk" "$!consult.consultationAsk" "id='consultationAsk' maxlength='500' class='form-control' placeholder='填写临床诊断...'")
+										#else 
+											#htmlEscape("$!consult.clinicalDiagnosis") 
+										#end
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">病史描述</th>
+									<td colspan="3">
+										#if("$!mode" == "0") 
+											#formTextarea("diseaseDescribe" "$!consult.diseaseDescribe" "id='diseaseDescribe' maxlength='500' class='form-control' placeholder='填写临床诊断...'")
+										#else 
+											#htmlEscape("$!consult.diseaseDescribe") 
+										#end
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap"></th>
+									<td colspan="3">
+										<div class="radio i-checks">
+											<label> 
+												#set($isCheck = "")
+												#if("$!consult.consultationType" == "1") 
+													#set($isCheck = "checked='checked'") 
+												#end 
+												#if("$!mode" == "0")
+													#formSimpleRadio("consultationType" "1" "false" "id='consultationType1' $!isCheck" "") 
+												#else
+													#formSimpleRadio("consultationType" "1" "false" "id='consultationType1' $!isCheck disabled" "") 
+												#end 
+												<i></i>非交互式会诊(不支持音视频通信、文字聊天功能，仅根据发起方提交的病历资料进行会诊)
+											</label>
+										</div>
+										<div class="radio i-checks">
+											<label> 
+												#set($isCheck = "")
+												#if("$!consult.consultationType" == "2") 
+													#set($isCheck = "checked='checked'") 
+												#end 
+												#if("$!mode" == "0")
+													#formSimpleRadio("consultationType" "2" "false" "id='consultationType2' $!isCheck" "") 
+												#else
+													#formSimpleRadio("consultationType" "2" "false" "id='consultationType2' $!isCheck disabled" "") 
+												#end 
+												<i></i>交互式会诊（协同模式:支持音视频通信、文字聊天、文档共享、桌面/程序共享、白板注释、数据交互、影音播放和协同浏览等功能）
+											</label>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4" style="text-align: center;">
+										#if("$!consult.consultingStatus" == "0") 
+											<button type="button" id="submitApply" class="btn btn-w-m btn-primary"><i class="fa fa-check-square-o"></i> 提交申请</button>
+						                	<button type="button" id="saveApply" class="btn btn-w-m btn-success"><i class="fa fa-save"></i> 暂 存 </button>
+										#end
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- end申请信息 -->
+
+		<!-- begin会议信息 -->
+		#if("$!mode" == "1")
+		<div id="tab-3" class='tab-pane #if("$!show" == "1")active#end'>
+			<div class='full-height-scroll full-height'>
+				<div class="table-responsive">
+					<form id="auditEditForm" class="form-horizontal">
+						<input type="hidden" id="submitFlag" name="submitFlag" value="" />
+						<input type="hidden" id="reConsultingId" name="reConsultingId" value="$!consult.reConsultingId" />
+						<input type="hidden" id="videoMeetingId" name="videoMeetingId" value="$!meeting.videoMeetingId" />
+						<table class="table table-bordered table-jcdj">
+							<tbody>
+								<tr>
+									<th class="text-nowrap">#requiredTag&nbsp;会议名称</th>
+									<td colspan="3">
+										#formTextInput("topic" "$!meeting.topic" "id='topic' maxlength='64' class='form-control'")
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">#requiredTag&nbsp;参会人员</th>
+									<td colspan="3">
+										<select id="ponsultingProfessor" data-placeholder="选择会议参与人" class="chosen-select" multiple style="min-width: 150px; width: 100%" tabindex="2">
+											#foreach($item in $!professorList)
+											<option value="$!item.professorId" select="selected" hassubinfo="true">$!item.doctorName</option>
+											#end
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">#requiredTag&nbsp;会议时间</th>
+									<td colspan="3">
+										<div class="input-group date">
+											<input type="text" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginTime" name="beginTime" value="$!date.format('yyyy-MM-dd HH:mm', $!meeting.beginTime)" />
+											<span class="input-group-addon">到</span> 
+											<input type="text" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endTime" name="endTime" value="$!date.format('yyyy-MM-dd HH:mm', $!meeting.endTime)" />
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">会议内容</th>
+									<td colspan="3">
+										#formTextarea("content" "$!meeting.content" "id='content' maxlength='500' class='form-control' rows='5' placeholder='填写会议内容...'")
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4" style="text-align: center;">
+										#if("$!consult.consultingStatus" == "1") 
+											<button type="button" id="btn_audit_pass" class="btn btn-w-m btn-primary"><i class="fa fa-paste"></i> 审核通过</button>
+											<button type="button" id="btn_audit_save" class="btn btn-w-m btn-success"><i class="fa fa-save"></i> 暂 存 </button>
+										#end
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- end会议信息 -->
+		#end
+	</div>
+
+	<!-- 全局js -->
+	<script src="../resource/js/jquery.min.js"></script>
+	<script src="../resource/js/bootstrap.min.js"></script>
+	<!-- Chosen -->
+	<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+	<!-- iCheck -->
+	<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+	<!-- Data time picker -->
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	#parse("./common/common.js.vm")
+	#if("$!mode" == "0")
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// 加载科室
+			$.post("../sys/queryDepByUnitId.do",{},function(data){
+				var targetEle = $('#officeId');
+				$(targetEle).empty();
+				$(targetEle).append("<option value=''>请选择科室</option>");
+				if (data == null || targetEle == "" || targetEle == undefined) {
+					return false;
+				}
+				var selected = "";
+				$.each(data, function (){
+					if (this.orgId == "$!consult.officeId") {
+						selected = "selected";
+					}
+					$(targetEle).append("<option value='" + this.orgId + "' " + selected + ">" + this.name + "</option>");
+				});
+				$(targetEle).trigger("chosen:updated");
+			},"json");
+			
+			
+			
+			// 默认加载用户当前医院的所有科室
+			$.post("../sys/queryUserByOrgId.do",{orgId: "$!consult.officeId"},function(data){
+				var targetEle = $('#doctorId');
+				$(targetEle).empty();
+				$(targetEle).append("<option value=''>请选择医生</option>");
+				if (data == null || targetEle == "" || targetEle == undefined) {
+					return false;
+				}
+				var selected = "";
+				$.each(data, function (){
+					if (this.userInfoId == "$!consult.doctorId") {
+						selected = "selected";
+					}
+					$(targetEle).append("<option value='" + this.userInfoId + "' " + selected + ">" + this.name + "</option>");
+				});
+				$(targetEle).trigger("chosen:updated");
+			},"json");
+		
+			
+			
+			// 医院
+			$.post("../sys/queryUnit.do",{},function(data){
+				var targetEle = $('#medicalInstitutionId');
+				$(targetEle).empty();
+				$(targetEle).append("<option value=''>请选择科室</option>");
+				if (data == null || targetEle == "" || targetEle == undefined) {
+					return false;
+				}
+				var selected = "";
+				$.each(data, function (){
+					if (this.orgId == "$!consult.medicalInstitutionId") {
+						selected = "selected";
+					}
+					$(targetEle).append("<option value='" + this.orgId + "'" + selected + ">" + this.name + "</option>");
+				});
+				$(targetEle).trigger("chosen:updated");
+			},"json");
+			
+			
+			// 科室与医生的联动，当选择科室时，加载科室下的医生
+			$('#officeId').change(function (){
+				if ($(this).val() == "") {return false;}
+				var targetEle = $('#doctorId');
+				$.post("../sys/queryUserByOrgId.do",{orgId: $(this).val()},function(data){
+					$(targetEle).empty();
+					$(targetEle).append("<option value=''>请选择医生</option>");
+					if (data == null || targetEle == "" || targetEle == undefined) {
+						return false;
+					}
+					$.each(data, function (){
+						$(targetEle).append("<option value='" + this.userInfoId + "'>" + this.name + "</option>");
+					});
+					$(targetEle).trigger("chosen:updated");
+				},"json");
+			});
+			
+			// 修改提交申请
+			$('#submitApply').click(function (){
+				applySave('1');
+			});
+			// 修改提交暂存
+			$('#saveApply').click(function (){
+				applySave('0');
+			});
+			// 审核提交申请
+			$('#btn_audit_pass').click(function (){
+				reqeustSave('1');
+			});
+			// 审核提交暂存
+			$('#btn_audit_save').click(function (){
+				reqeustSave('0');
+			});
+
+			//提交申请表单
+			function applySave(status) {
+				var applyParams = common.serializeObject($('#applyEditForm'));
+				applyParams.consultingStatus = status;
+				if (applyParams.submitFlag == "1") {
+					common.alert("不能重复提交！", 0);
+					return false;
+				}
+				if (applyParams.officeId == undefined || applyParams.officeId == "") {
+					common.alert("请选择申请科室", 0);
+					return false;
+				} else {
+					applyParams.officeName = $('#officeId').find("option:selected").text();
+				}
+				if (applyParams.doctorId == undefined || applyParams.doctorId == "") {
+					common.alert("请选择申请医生", 0);
+					return false;
+				} else {
+					applyParams.doctorName = $('#doctorId').find("option:selected").text();
+				}
+				if (applyParams.medicalInstitutionId == undefined || applyParams.medicalInstitutionId == "") {
+					common.alert("请选择会诊医院", 0);
+					return false;
+				} else {
+					applyParams.medicalInstitutionName = $('#medicalInstitutionId').find("option:selected").text();
+				}
+				if (applyParams.consultationType == undefined || applyParams.consultationType == "") {
+					common.alert("请选择会诊类型", 0);
+					return false;
+				}
+				$.post("../reConsult/applySave.jo", applyParams, function(result) {
+					if (result.code >= 0) {
+						common.alert("保存成功", 1);
+						if (status == "0") {
+							return false;
+						}
+						
+						$('#submitFlag').val("1");
+						$('#registerQueryBtn', window.parent.document).click();
+						$('#applyQueryBtn', window.parent.document).click();
+						
+						// 关闭窗口
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index); 
+					} else {
+						common.alert(result.msg, 2);
+						$('#submitFlag').val("");
+					}
+				}, "json").error(function (e){jqueryPostError(e)});
+			}
+			
+			// 审核提交与暂存
+			function reqeustSave(operateType) {
+				var params = common.serializeObject($('#auditEditForm'));
+				params.submitType = operateType;
+
+				// 获取参会人ID及参会人
+				var professors = [];
+				var selectOptions = $("#ponsultingProfessor").find("option");
+				var selectEle = $("#ponsultingProfessor_chosen").find(".chosen-choices").find("a");
+				$.each(selectEle, function() {
+					var index = $(this).attr('data-option-array-index');
+					var option = selectOptions[index];
+					professors.push($(option).val() + "|" + $(option).text());
+
+				});
+				params.ponsultingProfessor = professors.join(",");
+				if (params.submitFlag == "1") {
+					common.alert("不能重复提交！", 0);
+					return false;
+				}
+				if (params.topic == undefined || params.topic == "") {
+					common.alert("请填写会议名称", 0);
+					return false;
+				}
+				if (params.ponsultingProfessor == undefined || params.ponsultingProfessor == "") {
+					common.alert("请选择会议参与人", 0);
+					return false;
+				}
+				if (params.beginTime == undefined || params.beginTime == "") {
+					common.alert("请选择会议开始时间", 0);
+					return false;
+				}
+				if (params.endTime == undefined || params.endTime == "") {
+					common.alert("请选择会议结束时间", 0);
+					return false;
+				}
+
+				var cur = new Date();
+				var endTime = new Date(params.endTime.replace("-", "/").replace("-", "/"));
+				if (cur > endTime) {
+					common.alert("会议结束时间必须大于当前时间", 0);
+					return false;
+				}
+				$.post("../reConsult/saveAudit.jo", params, function(result) {
+					if (result.code == "0") {
+						common.alert("保存成功", 1);
+						if (operateType == "0") {
+							return false;
+						}
+						$('#submitFlag').val("1");
+						$('#btn_search', window.parent.document).click();
+						// 关闭窗口
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index); 
+					} else {
+						common.alert(result.msg, 2);
+						$('#submitFlag').val("");
+					}
+				}, "json").error(function (e){jqueryPostError(e)});
+			}
+		});
+	</script>
+	#end
+	#if("$!mode" == "1")
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// 审核提交申请
+			$('#btn_audit_pass').click(function (){
+				reqeustSave('1');
+			});
+			// 审核提交暂存
+			$('#btn_audit_save').click(function (){
+				reqeustSave('0');
+			});
+	
+			// 审核提交与暂存
+			function reqeustSave(operateType) {
+				var params = common.serializeObject($('#auditEditForm'));
+				params.submitType = operateType;
+	
+				// 获取参会人ID及参会人
+				var professors = [];
+				var selectOptions = $("#ponsultingProfessor").find("option");
+				var selectEle = $("#ponsultingProfessor_chosen").find(".chosen-choices").find("a");
+				$.each(selectEle, function() {
+					var index = $(this).attr('data-option-array-index');
+					var option = selectOptions[index];
+					professors.push($(option).val() + "|" + $(option).text());
+	
+				});
+				params.ponsultingProfessor = professors.join(",");
+				if (params.submitFlag == "1") {
+					common.alert("不能重复提交！", 0);
+					return false;
+				}
+				if (params.topic == undefined || params.topic == "") {
+					common.alert("请填写会议名称", 0);
+					return false;
+				}
+				if (params.ponsultingProfessor == undefined || params.ponsultingProfessor == "") {
+					common.alert("请选择会议参与人", 0);
+					return false;
+				}
+				if (params.beginTime == undefined || params.beginTime == "") {
+					common.alert("请选择会议开始时间", 0);
+					return false;
+				}
+				if (params.endTime == undefined || params.endTime == "") {
+					common.alert("请选择会议结束时间", 0);
+					return false;
+				}
+	
+				var cur = new Date();
+				var endTime = new Date(params.endTime.replace("-", "/").replace("-", "/"));
+				if (cur > endTime) {
+					common.alert("会议结束时间必须大于当前时间", 0);
+					return false;
+				}
+				$.post("../reConsult/saveAudit.jo", params, function(result) {
+					if (result.code == "0") {
+						common.alert("保存成功", 1);
+						if (operateType == "0") {
+							return false;
+						}
+						$('#submitFlag').val("1");
+						$('#btn_search', window.parent.document).click();
+						// 关闭窗口
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index); 
+					} else {
+						common.alert(result.msg, 2);
+						$('#submitFlag').val("");
+					}
+				}, "json").error(function (e){jqueryPostError(e)});
+			}
+			
+			if ("$!consultUserIds" != "") {
+				// 设置已默认选择的参会专家
+				$('#ponsultingProfessor').val($!consultUserIds);  
+			}
+		});
+	</script>
+	#end
+</body>
+
+</html>

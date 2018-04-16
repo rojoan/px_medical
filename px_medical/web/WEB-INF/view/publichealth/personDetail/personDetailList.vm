@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人基本档案管理</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+#parse("./common/modalTemplate.vm")
+<style>
+        html,body { height: 100%}
+        button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px;}
+</style>
+</head>
+
+<body class="gray-bg top-navigation">
+	<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins full-height">
+				<div class="ibox-content">
+					<div class="row">
+						<form id="personDetail_queryForm" method="get" class="form-horizontal">
+							
+							<div class="col-sm-3 m-b-sm ">
+								<label class="control-label col-sm-4">居民姓名</label>
+								<div class="input-daterange input-group date col-sm-8 ">
+									<input type="text" id="q_personalName" name="personalName" class="form-control "  />
+								</div>
+							</div>
+							 
+							<div class="col-sm-3 m-b-sm ">
+								<label class="control-label p-r-n col-sm-3">性别</label>
+								<div class="col-sm-8">
+									#formSingleSelectDictionary("gender" "" $dicData.dicSex "id='q_gender' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+								</div>
+							</div>
+							
+							<div class="col-sm-3 m-b-sm ">
+								<label class="control-label p-r-n col-sm-4">户籍类型</label>
+								<div class="col-sm-8">
+									#formSingleSelectDictionary("censusType" "" $dicData.dicPersonDetailCensusType "id='q_censusType' data-placeholder='选择户籍类型'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "选择户籍类型" "")
+								</div>
+							</div>
+							
+							<div class="col-sm-3 text-center">
+								<button type="button" id="btn_query" onclick="query();" class="btn btn-sm btn-primary">
+									<i class="fa fa-search"></i> <span>查 询</span>
+								</button>
+								&nbsp;&nbsp;&nbsp;
+								<button type="button" onclick="clearQuery();" class="btn btn-sm btn-info">
+									<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+								</button>
+							</div>
+							
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<div class="ibox float-e-margins full-height m-b-none">
+				<div class="ibox-content p-b-n">
+					<div class="table-responsive">
+						<!-- 列表表格 工具栏-->
+						<div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+							<button onclick="add();" type="button" class="btn btn-sm btn-primary">
+								<i class="glyphicon glyphicon-plus" aria-hidden="true"></i> <span>新 增</span>
+							</button> 
+							&nbsp;
+						</div>
+						
+						<!-- 列表表格 -->
+						<div class="example">
+							<table id="personDetailGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+	</div>
+ 
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/personDetail/personDetailList.js.vm")
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+
+
+<form id="editForm" action="">
+	<label>部门名称</label><br />
+	<input id="depName" name="depName" value="" /><br />
+	
+	<label>第三方部门ID</label><br />
+	<input id="thirdDeptId" name="thirdDeptId" value="" /><br />
+	
+	<label>第三方父部门ID</label><br />
+	<input id="thirdParentId" name="thirdParentId" value="" /><br />
+	
+	<label>参与会议人数</label><br />
+	<input id="userNum" name="userNum" value="" /><br />
+	
+	<label>是否接入企业通讯录  1：加入；0：不加入</label><br />
+	<input id="inAddress" name="inAddress" value="" /><br />
+	
+	<label>部门排序</label><br />
+	<input id="depOrder" name="depOrder" value="" /><br />
+	
+	<input type="button" value=" 提 交 " onclick="addDep()" />
+</form>
+<!-- 全局js -->
+<script src="../resource/js/jquery.min.js"></script>
+#parse("./common/common.js.vm")
+<script type="text/javascript">
+	function addDep() {
+		var queryParams = common.serializeObject($('#editForm'));
+		$.post("../video/addDep.do", queryParams, function (result){
+			if (result == "0") {
+				alert("创建成功");
+			} else {
+				alert(result);
+			}
+		}, "json");
+	}
+</script>
+</body>
+</html>

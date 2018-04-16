@@ -1,0 +1,116 @@
+<script>
+	var dicCensusType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCensusType)'); 
+	var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+	var dicCertificateType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCertificateType)'); 
+
+	//查询按钮时间
+	function query(){
+		var queryParams = common.serializeObject($('#personDetail_queryForm'));
+		var options = {url: '../personDetail/personDetailListData.jo?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		$('#personDetailGrid').bootstrapTable('refresh', options); 
+	}
+	//清空查询框
+	function clearQuery(){
+		var $form = $("#personDetail_queryForm");
+		$form.find("#q_personalName").val("");
+		$form.find("#q_gender").val("");//选择框
+		$form.find("#q_gender").trigger("chosen:updated");
+		$form.find("#q_censusType").val("");//选择框
+		$form.find("#q_censusType").trigger("chosen:updated"); 
+	}
+	
+	$(function() {
+		$('#personDetailGrid').bootstrapTable(
+			$.extend(baseTable, {
+				url : "../personDetail/personDetailListData.jo",
+				queryParams : function (params){
+					var requestParams = common.serializeObject($('#personDetail_queryForm'));
+			        requestParams.pageSize = params.pageSize;
+			        requestParams.pageNumber = params.pageNumber;
+			        return requestParams;
+				},
+				columns : [
+					{checkbox:true},
+					{
+						field : 'personalName',
+						title : '居民姓名'
+					},{
+						field : 'gender',
+						title : '性别',
+						formatter :function (value, row, index) {
+							if (value)  return dicSex[value];
+						}
+					},{
+						field : 'certificateType',
+						title : '证件类型',
+						formatter :function (value, row, index) {
+							if (value) return dicCertificateType[value];
+						}
+					}, {
+						field : 'certificateNumber',
+						title : '证件编号'
+					},{
+						field : 'censusType',
+						title : '户籍类型',
+						formatter :function (value, row, index) {
+							if (value)  return dicCensusType[value];
+						}
+					}, {
+						field : 'birthDate',
+						title : '出生日期'
+					}, {
+						field : 'myselfPhone',
+						title : '本人电话'
+					},{
+						field : 'creatorName',
+						title : '建档人'
+					},{
+						field : 'createTime',
+						title : '建档时间' 
+					},{
+                        field : 'operate',
+                        title : '操作',
+                        events : operateEvents,
+                        formatter : operateFormatter
+                    } ],
+					onDblClickRow : function (row, element){
+						 var title = '居民个人档案 -  ' + row.personalName;
+		                 var url = '../personDetail/editPersonDetail.do?mode=show&personDetailId=' + row.personDetailId ;
+		                 common.open(url, title, {area: ['99%', '99%']});
+			   		},
+					onLoadSuccess : function(){
+						var height = ($('#personDetailGrid').parents("body").height() - $('#personDetail_queryForm').parents(".ibox").first().height() - 74);
+						$('#personDetailGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				})
+		);
+	});
+	
+	$(window).resize(function() { 
+		var height = ($('#personDetailGrid').parents("body").height() - $('#personDetail_queryForm').parents(".ibox").first().height() - 74);
+		$('#personDetailGrid').bootstrapTable('resetView', {height: height});
+	})
+	
+	window.operateEvents = {
+		"click #btn_show_personDetail": function(e, value, row, index) {
+            var title = '居民个人档案 -  ' + row.personalName;
+            var url = '../personDetail/editPersonDetail.do?mode=show&personDetailId=' + row.personDetailId ;
+            common.open(url, title, {area: ['99%', '99%']});
+        },
+       
+		"click #btn_changeFamily": function(e, value, row, index) {
+		     var title = '居民档案 迁移 -  ' + row.personalName;
+		     var url = '../personDetail/changeFamily.do?personDetailId=' + row.personDetailId;
+		     common.open(url, title, {area: ['99%', '99%']});
+		}
+     };
+    
+    function operateFormatter(value, row, index) {
+        var html = [
+                    '<a id="btn_show_personDetail" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+                    '<a id="btn_changeFamily" href="javascript:void(0)" title="人员变动"><i class="fa fa-pencil-square-o"></i></a>'
+                   ];
+        return html.join('');
+    }
+ 
+	</script>

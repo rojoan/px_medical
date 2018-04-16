@@ -1,0 +1,187 @@
+<script>
+	
+	//验证单选
+	function singleCheck(rows){
+		if (rows.length != 1 || !rows[0].personDetailId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行");
+			return false;
+		}
+		return true;
+	}
+	
+	// 添加  [老人]按钮
+	function addElder(){
+		var title = '添加居民个人档案 - 老人   '+common.mustHit;
+	    var url = '../personDetail/editPersonDetail.do?personType=$!{CONST.Contstants.PERSONALTYPE_ELDER}' ;
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	// 添加 一般健康评估
+	function addElderHealthAssess(){
+		var rows = common.getTableSelectRow('personDetailGrid', false);
+	    if (!singleCheck(rows) )   return ;
+		var title = '添加一般健康评估   '+common.mustHit;
+	    var url = '../elder/editElderHealthAssess.do?personDetailId=' + rows[0].personDetailId ;
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	// 修改 一般健康评估
+	function editElderHealthAssess(){
+		var rows = common.getTableSelectRow('personDetailGrid', false);
+	    if (!singleCheck(rows) )   return ;
+		var title = '修改一般健康评估   '+common.mustHit;
+	    var url = '../elder/editElderHealthAssess.do?personDetailId=' + rows[0].personDetailId + "&elderHealthAssessId=9";
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	// 添加 自理能力评估
+	function addElderSelfCareAbility(){
+		var rows = common.getTableSelectRow('personDetailGrid', false);
+	    if (!singleCheck(rows) )   return ;
+		var title = '添加自理能力评估   '+common.mustHit;
+	    var url = '../elder/editElderSelfCareAbility.do?personDetailId=' + rows[0].personDetailId ;
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	// 修改 自理能力评估
+	function editElderSelfCareAbility(){
+		var rows = common.getTableSelectRow('personDetailGrid', false);
+	    if (!singleCheck(rows) )   return ;
+		var title = '修改自理能力评估   '+common.mustHit;
+	    var url = '../elder/editElderSelfCareAbility.do?personDetailId=' + rows[0].personDetailId + "&elderSelfCareAbilityId=2";
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	// 添加 中医药评估
+	function addElderHealthTcmedicine(){
+		var rows = common.getTableSelectRow('personDetailGrid', false);
+	    if (!singleCheck(rows) )   return ;
+		var title = '添加中医药评估   '+common.mustHit;
+	    var url = '../elder/editElderHealthTcmedicine.do?personDetailId=' + rows[0].personDetailId ;
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	// 修改 中医药评估
+	function editElderHealthTcmedicine(){
+		var rows = common.getTableSelectRow('personDetailGrid', false);
+	    if (!singleCheck(rows) )   return ;
+		var title = '修改中医药评估   '+common.mustHit;
+	    var url = '../elder/editElderHealthTcmedicine.do?personDetailId=' + rows[0].personDetailId + "&elderHealthTcmedicineId=2";
+	    common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+ 
+	
+	//查询按钮时间
+	  function query(){
+		  var $formObj = $("#personDetail_queryForm");
+		  var queryParams = common.serializeObject($('#personDetail_queryForm'));
+		  var options = {url: '../personDetail/personDetailListData.jo?tiem=' + new Date().getTime(), silent: false, query: queryParams};
+		  $('#personDetailGrid').bootstrapTable('refresh', options); 
+	  }
+	  //清空查询框
+	  function clearQuery(){
+			var $formObj = $("#personDetail_queryForm");
+			$formObj.find("#q_personalName").val("");
+			$formObj.find("#q_gender").val("");//选择框
+			$formObj.find("#q_gender").trigger("chosen:updated");
+			$formObj.find("#q_censusType").val("");//选择框
+			$formObj.find("#q_censusType").trigger("chosen:updated"); 
+	  }
+	
+	$(function() {
+		$('#personDetailGrid').bootstrapTable(
+			$.extend(baseTable, {
+				url : "../personDetail/personDetailListData.jo",
+				queryParams : function (params){
+					var requestParams = common.serializeObject($('#personDetail_queryForm'));
+			        requestParams.pageSize = params.pageSize;
+			        requestParams.pageNumber = params.pageNumber;
+			        return requestParams;
+				},
+				columns : [
+					{checkbox:true},
+					{
+						field : 'personalName',
+						title : '居民姓名'
+					},{
+						field : 'gender',
+						title : '性别',
+						formatter :function (value, row, index) {
+							var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+							if (value) return dicSex[value];
+						}
+					},{
+						field : 'certificateType',
+						title : '证件类型',
+						formatter :function (value, row, index) {
+							var dicCertificateType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCertificateType)'); 
+							if (value) return dicCertificateType[value];
+						}
+					}, {
+						field : 'certificateNumber',
+						title : '证件编号'
+					},{
+						field : 'censusType',
+						title : '户籍类型',
+						formatter :function (value, row, index) {
+							var dicCensusType = JSON.parse('$dicTools.changeMapToJson($dicData.dicCensusType)'); 
+							if (value) return dicCensusType[value];
+						}
+					}, {
+						field : 'birthDate',
+						title : '出生日期'
+					}, {
+						field : 'myselfPhone',
+						title : '本人电话'
+					},{
+						field : 'creatorName',
+						title : '建档人'
+					},{
+						field : 'createTime',
+						title : '建档时间',
+						formatter :function (value) {
+							if (value) {
+								return getSmpFormatDateByLong(value,false);
+							}
+						}
+					},{
+                        field : 'operate',
+                        title : '操作',
+                        width : '150px',
+                        events : operateEvents,
+                        formatter : operateFormatter
+                    }  ],
+					onDblClickRow : function (row, element){
+						$('#personDetailGrid').bootstrapTable('check',element.attr('data-index'));
+						//show();
+			   		},
+					onLoadSuccess : function(){
+						var height = ($('#personDetailGrid').parents("body").height() - $('#personDetail_queryForm').parents(".ibox").first().height() - 72);
+						$('#personDetailGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				})
+		);
+	});
+	
+	$(window).resize(function() { 
+		var height = ($('#personDetailGrid').parents("body").height() - $('#personDetail_queryForm').parents(".ibox").first().height() - 72);
+		$('#personDetailGrid').bootstrapTable('resetView', {height: height});
+	})
+	
+	window.operateEvents = {
+        "click #btn_elderSelfCareAbility": function(e, value, row, index) {
+            var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+            var title = '老年人生活自理能力评估 ： '+ row.personalName + ' ' +  dicSex[row.gender] ;
+            common.open(contextPath + '/elder/elderSelfCareAbilityDetail.do?personDetailId=' + row.personDetailId, title, {area: ['99%', '99%']});
+        }
+    };
+    
+    function operateFormatter(value, row, index) {
+        var html = [
+                    '<a id="btn_elderSelfCareAbility" href="javascript:void(0)" title="详情"><i class="fa fa-pencil-square-o"></i></a>',
+                    ];
+        return html.join('');
+    }
+	
+	</script>

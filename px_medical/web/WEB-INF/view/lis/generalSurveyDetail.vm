@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H+ 后台主题UI框架 - 首页示例四</title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+    <link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../resource/css/animate.css" rel="stylesheet">
+    <link href="../resource/css/font-awesome.css" rel="stylesheet">
+    <link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+    <link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="../resource/css/plugins/datatimepicker/datetimepicker.css" rel="stylesheet" >
+    <link href="../resource/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    
+    <link href="../resource/css/style.css" rel="stylesheet">
+    <link href="../resource/style/css/page.css" rel="stylesheet">
+    <style>
+        html,body { height: 100%}
+        .top-navigation .nav > li > a { padding: 5px 10px;}
+        #dowebok { width: 100%; margin: 0 auto; font-size: 0; padding: 0}
+        #dowebok li { display: inline-block; width: auto; margin-left: 1%; padding-top: 1%;}
+        #dowebok li img { width: 100%; }
+        .pic-viewer { position: relative; width: 100%; height: 100%; top: 0; left: 0;}
+    </style>
+</head>
+
+<body class="top-navigation">
+    <div class="wrapper wrapper-content" style="height: calc(100%);">
+        <div class="row full-height">
+        
+            <div class="col-sm-3 lis-left-table full-height-scroll gray-bg" style="padding: 0 10px">
+                <!-- 基本信息 开始 -->
+                #formHiddenInput("inspectionId" "$!inspectionSample.inspectionId" "id='inspectionId'")
+                <dl>
+                    <dt>申请单ID</dt>
+                    <dd>#htmlEscape("$!inspectionSample.requisitionId")</dd>
+                </dl>
+                <dl>
+                    <dt>类别</dt>
+                    <dd>#lookUpDict($dicData.lisInspectionSamplePatientType "$!inspectionSample.patientType")</dd>
+                </dl>
+                <dl>
+                    <dt>病人ID</dt>
+                    <dd>#htmlEscape("$!inspectionSample.patientId")</dd>
+                </dl>
+                <dl>
+                    <dt>患者姓名</dt>
+                    <dd>#htmlEscape("$!inspectionSample.patientName")</dd>
+                </dl>
+                <dl>
+                    <dt>患者性别</dt>
+                    <dd>#lookUpDict($dicData.dicSex "$!inspectionSample.patientSex")</dd>
+                </dl>
+                <dl>
+                    <dt>输入年龄</dt>
+                    <dd>#htmlEscape("$!inspectionSample.ageInput")</dd>
+                </dl>
+                <dl>
+                    <dt>科别</dt>
+                    <dd>#htmlEscape("$!inspectionSample.patientDeptName")</dd>
+                </dl>
+                <dl>
+                    <dt>床号</dt>
+                    <dd>#htmlEscape("$!inspectionSample.patientBed")</dd>
+                </dl>
+                <dl>
+                    <dt>检验项目</dt>
+                    <dd>#htmlEscape("$!inspectionSample.testOrder")</dd>
+                </dl>
+                <dl>
+                    <dt>申请医生</dt>
+                    <dd>#htmlEscape("$!requisitionInfo.requisitionPerson")</dd>
+                </dl>
+                <dl>
+                <dt>临床诊断</dt>
+                    <dd>#htmlEscape("$!requisitionInfo.clinicalDiagnoses")</dd>
+                </dl>
+                <dl>
+                    <dt>标本种类</dt>
+                    <dd>#htmlEscape("$!inspectionSample.sampleClassName")</dd>
+                </dl>
+                <dl>
+                    <dt>标本性状</dt>
+                    <dd>#htmlEscape("$!inspectionSample.sampleStatusName")</dd>
+                </dl>
+                <dl>
+                    <dt>备注</dt>
+                    <dd>#htmlEscape("$!requisitionInfo.remark")</dd>
+                </dl>
+                <dl>
+                    <dt>录入人员</dt>
+                    <dd>#htmlEscape("$!inspectionSample.inputPerson")</dd>
+                </dl>
+                <dl>
+                <dt>录入时间</dt>
+                    <dd>#htmlEscape("$!inspectionSample.inputTime")</dd>
+                </dl>
+                <dl>
+                    <dt>检验时间</dt>
+                    <dd>#htmlEscape("$!inspectionSample.inspectionDate")</dd>
+                </dl>
+                <dl>
+                    <dt>检验人员</dt>
+                    <dd>#htmlEscape("$!inspectionSample.inspectionPerson")</dd>
+                </dl>
+                <dl>
+                    <dt>审核人员</dt>
+                    <dd>#htmlEscape("$!inspectionSample.checkPerson")</dd>
+                </dl>
+                <dl>
+                    <dt>审核时间</dt>
+                    <dd>#htmlEscape("$!inspectionSample.checkTime")</dd>
+                </dl>
+                <dl>
+                	<dt>收费状态</dt>
+                	<dd>#htmlEscape("$!inspectionSample.chargeState")</dd>
+                </dl>
+				<dl>
+                    <dt>检验状态</dt>
+                    <dd>#lookUpDict($dicData.lisInspectionSampleInspectionState "$!inspectionSample.inspectionState")</dd>
+                </dl>
+                <dl>
+                    <dt>复查状态</dt>
+                    <dd>#htmlEscape("$!inspectionSample.policeState")</dd>
+                </dl>
+                <dl>
+                    <dt>阅读状态</dt>
+                    <dd>#htmlEscape("$!inspectionSample.readedState")</dd>
+                </dl>
+                <dl>
+                    <dt>病人唯一号</dt>
+                    <dd>#htmlEscape("$!inspectionSample.inpatientId")</dd>
+                </dl>
+                <dl>
+                <dt>项目数</dt>
+                	<dd>#htmlEscape("$!inspectionSample.itemCount")</dd>
+                </dl>
+                <dl>
+                    <dt>打印次数</dt>
+                    <dd>#htmlEscape("$!inspectionSample.printCount")</dd>
+                </dl>
+                <dl>
+                    <dt>工作量</dt>
+                    <dd>#htmlEscape("$!inspectionSample.workload")</dd>
+                </dl>
+                <dl>
+                    <dt>检验名称</dt>
+                    <dd>#htmlEscape("$!inspectionSample.testOrderName")</dd>
+                </dl>
+                <dl>
+                	<dt>样本收费</dt>
+                	<dd>#htmlEscape("$!inspectionSample.sampleCharge")</dd>
+                </dl>
+                <!-- 基本信息 结束 -->
+            </div>
+            
+            <!-- begin结果列表 -->
+            <div class="col-sm-9">
+                <div class="ibox float-e-margins m-b-none full-height" style="height: calc(100% - 13%)">
+                    <div class="ibox-content full-height">                       
+                       <!-- 检测开始  开始 -->                      
+                           
+                          <table id="generalSurveyResult"></table>                              
+
+                          <div class="table-responsive" style="height: calc(25%); border-top: #61B1F5 2px solid">
+                              <div class="lis-images">
+                              	<ul id="dowebok">
+                              	#foreach($item in $!resultImg)
+                              		<li><img  src="../lis/downloadImg.do?fileUid=$!item.bdbKey&path=$!item.savePath"></li>
+                              	#end
+                              	</ul>
+                              </div>
+                          </div>
+                    
+                                
+                    </div>
+                </div>
+            </div>
+            <!-- end结果列表 -->
+        </div>
+    </div>
+
+
+
+    <!-- 全局js -->
+    <script src="../resource/js/jquery.min.js"></script>
+    <script src="../resource/js/bootstrap.min.js"></script>
+    <!-- Chosen -->
+    <script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+    <!-- iCheck -->
+    <script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+    <!-- Bootstrap table -->
+    <script src="../resource/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="../resource/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="../resource/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <!-- Data time picker -->
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	<script src="../resource/style/js/img-viewer.min.js"></script>
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	#parse("./lis/generalSurveyDetail.js.vm")
+</body>
+
+</html>

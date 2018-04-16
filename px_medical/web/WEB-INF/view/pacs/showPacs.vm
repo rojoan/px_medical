@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>病人检查信息页</title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+    <link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+    <link href="../resource/css/style.css" rel="stylesheet">    
+    <link href="../resource/style/css/page.css" rel="stylesheet">
+
+    <style>
+        .lightBoxGallery img {margin: 5px; width: 90px; }
+        .hzzb-tool {height: 48px; background: #ccc; width: 100%; line-height: 48px; padding: 0 15px;}
+        .hzzb-yxzl-left { width: 20%}
+        .hzzb-yxzl-right { width: 77.5%}
+        .form-control.full-height { height: 100%}
+        table.table-jcdj > tbody > tr > th, table.table-jcdj > tbody > tr > td { padding: 9px 15px}
+        table.table-jcdj > tbody > tr > td:hover {border-bottom: #00b7ee 1px solid}
+        .top-navigation .nav > li > a { padding: 5px 10px;}
+        #dowebok { width: 100%; margin: 0 auto; font-size: 0; padding: 0}
+        #dowebok li { display: inline-block; width: auto; margin-left: 1%; padding-top: 1%;}
+        #dowebok li img { width: 100%; }
+        .pic-viewer { position: relative; width: 100%; height: 100%; top: 0; left: 0;}
+		dl#dowebok dd img {	width: 20%;	max-height: 120px;	margin: 2%;	float: left;}
+    </style>
+
+</head>
+
+<body class="gray-bg top-navigation full-height">
+<div class="wrapper wrapper-content full-height" style="height: calc(100%);">
+    <div class="row full-height" >
+       <div class="row">
+           <div class="col-xs-12 " style="min-height:90%;">
+           		#if($!patientExam.imageType == '1')
+					<!--iframe start-->
+					<iframe src="../pacsView/index.html?patientid=$!patientExam.patientExamId&pacsaccessnumber=" width="100%" height="520px" style="border:none"></iframe>
+					<dl id="dowebok" style="display: none;"></dl>
+				#else
+					<!-- pic start-->
+					<dl id="dowebok">
+						#foreach($item in $!patientExamJpgList)
+						<dd>
+							<img src="data:image/jpg;base64,$!item" />
+						</dd>
+						#end
+					</dl>
+				#end
+           </div>
+           <div class="col-xs-12">
+               <div class="table-responsive">
+                   <table class="table table-bordered table-jcdj">
+                      <tr>
+                          <td style="text-align:center;">
+							<button type="button" id="downloadImg" class="btn btn-w-m btn-primary">
+								<i class="fa fa-arrow-circle-down"></i>下载图片
+							</button>
+							<br>
+							<div id="downloadMsg"></div>
+							<iframe id="downloadIfrmae" src="" style="border: none; height: 0px; width: 100%"></iframe>
+                          </td>
+                      </tr>
+                   </table>
+               </div>
+           </div>
+       </div>
+    </div>
+</div>
+</div>
+<!-- 全局js -->
+<script src="../resource/js/jquery.min.js"></script>
+<script src="../resource/js/bootstrap.min.js"></script>
+<script src="../resource/style/js/img-viewer.min.js"></script>
+<script type="text/javascript">
+$(function (){
+    // 打包下载图片
+    $('#downloadImg').click(function (){
+    	$('#downloadMsg').html('正在打包压缩要下载的图片...');
+    	$.post("../pacs/compressImg.do", {patientExamId : "$!patientExam.patientExamId"}, function(result){
+    		if (result == "0") {
+    			$('#downloadMsg').html('正在下载图片');
+    			$('#downloadIfrmae').attr('src','../pacs/downloadImg.do?patientExamId=$!patientExam.patientExamId');
+    			$('#downloadMsg').html('');
+    		} else {
+    			$('#downloadMsg').html('压缩图片失败, 请检查是否有可压缩的图片数据');
+    		}
+    		
+    	},"json");
+    });
+    
+    var viewer = new Viewer(document.getElementById('dowebok'), {
+        url: 'data-original'
+    });
+
+    $('.viewer-in').css({position: "relative", width: "100%", height: "100%", top: "0", left: "0"});
+    
+});
+</script>
+</body>
+</html>

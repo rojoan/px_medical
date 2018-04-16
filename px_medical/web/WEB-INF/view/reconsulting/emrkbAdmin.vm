@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>法律法规库管理</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+<script type="text/javascript" charset="utf-8" src="../resource/editor/ueditor.config.js?id=adsf"></script>
+<script type="text/javascript" charset="utf-8" src="../resource/editor/editor_api.js"></script>
+<link href="../resource/editor/EMR/css/icon.css" rel="stylesheet" />
+<link href="../resource/editor/EMR/css/design.css" rel="stylesheet" />
+<style>
+  .zzk-list dl {margin:0 10px 0 10px}
+  .zzk-list dl dd { display: inline-block; width: 90%; padding: 0 0 9px 0}
+  .zzk-list a{ margin-right: 15px; width: 85%; }
+  #content{width:800px;padding:0 60px;margin:0 auto;box-shadow: 0 0 0 1px #d1d1d1,0 0 3px 1px #ccc; border: 1px solid #d4d4d4;}
+</style>
+<link href="../resource/editor/EMR/css/default.css" rel="stylesheet" >
+</head>
+<body class="gray-bg full-height">
+	<div class="wrapper wrapper-content full-height animated fadeInRight">
+		<div class="col-sm-3 p-l-none full-height">
+			<div class="ibox float-e-margins m-b-none full-height">
+				<div class="ibox-content" style="height: calc(100% - 125px)">
+				    <div class="full-height-scroll" style="padding:0 ">
+					    <div id="emrKbTree"></div>
+				    </div>
+				</div>
+				<div class="ibox-content" style="height: 127px; padding: 10px 0">
+				  <form id="editTypeForm" class="form-horizontal table-content">
+				  	#formHiddenInput("emrKbTypeId" "" "id='editEmrKbTypeId'")
+	            	#formHiddenInput("emrKbTypeCode" "" "id='editEmrKbTypeCode'")
+	                 <div class="form-group">
+	                       <label class="col-md-3 control-label p-l-none p-r-none">父级分类</label>
+	                       <div class="col-md-8">
+	                           #formTextInput("parentTypeName" "" "id='parentTypeName' class='form-control'")
+	                       </div>
+	                   </div>
+	                   <div class="form-group">
+	                       <label class="col-md-3 control-label p-l-none p-r-none">分类名称</label>
+	                       <div class="col-md-8 ">
+								#formTextInput("emrKbTypeName" "" "id='editEmrKbTypeName' maxlength='20' class='form-control'")
+	                       </div>
+	                   </div>
+	                   <div class="text-center">
+							<button type="button" id="btn_kb_add" class="btn btn-sm btn-primary">
+								<i class="glyphicon glyphicon-plus"></i> <span>新增保存</span>
+							</button>
+							&nbsp;
+							<button type="button" id="btn_kb_edit" class="btn btn-sm btn-success">
+								<i class="fa fa-paste"></i> <span>修改保存</span>
+							</button> 
+							&nbsp;
+							<button type="button" id="btn_kb_delete" class="btn btn-sm btn-danger">
+								<i class="fa fa-warning"></i></i> <span>删 除</span>
+							</button>            
+	                   </div>
+				  </form>
+				</div>				
+			</div>
+		 </div>
+		
+		<div class="col-sm-9 p-l-none p-r-none full-height">
+			<!-- 知识内容列表 -->
+			<div class="ibox float-e-margins">
+				<div class="ibox-content" style="height: 137px;">
+					<iframe class="J_iframe" id="kbListIframe" name="kbListIframe" width="100%" height="100%" src="" frameborder="0" seamless></iframe>
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins m-b-n" style="height: calc(100% - 144px)">
+			    <div class="ibox-title" style="padding: 0 0 3px 0">
+			    	<h1 style="background: #4799b7; height: 36px; font: normal 100 12px/36px arial;  margin: 0 auto; color:#fff; padding-left: 9px" id="editor_title">电子病历编辑器</h1>
+			    </div>
+			    <div class="ibox-title" style=" padding-top: 7px">
+			        <div class="col-md-1 m-t-xs text-right p-r-none">标题：</div>
+			        <div class="col-md-11">#formTextInput("emrKbTitle" "" "id='emrKbTitle' class='form-control'")</div>			    	
+			    </div>    
+			    
+				<div class="ibox-content" style="height: calc(100% - 78px);">
+				
+					<!-- 在线编辑器 -->
+					<div class="example">
+						<script id="myEditor" type="text/plain" style="width:100%; height:180px"></script>
+					</div>
+				</div>
+				<!-- 知识内容操作按钮  -->		
+				<div class=" tool-table-fixed">
+					#formHiddenInput("emrKbDetailId" "" "id='emrKbDetailId'")
+					#formHiddenInput("emrKbTypeId" "" "id='emrKbTypeId'")
+					<button type="button" id="btn_clean" class="btn btn-sm btn-info">
+						<i class="fa fa-eye"></i> <span>清 空</span>
+					</button>
+					&nbsp;&nbsp;&nbsp;
+					<button type="button" id="btn_add" class="btn btn-sm btn-primary">
+						<i class="glyphicon glyphicon-plus"></i> <span>新增保存</span>
+					</button>
+					&nbsp;&nbsp;&nbsp;
+					<button type="button" id="btn_save" class="btn btn-sm btn-success">
+						<i class="fa fa-paste"></i> <span>修改保存</span>
+					</button>
+					&nbsp;&nbsp;&nbsp;
+					<button type="button" id="btn_delete" class="btn btn-sm btn-danger">
+						<i class="fa fa-warning"></i> <span>删 除</span>
+					</button>		
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	#parse("./common/pageJs.vm")
+	<!-- 页面js -->
+	#parse("./common/common.js.vm")
+	#parse("./reconsulting/emrKbAdmin.js.vm")
+	
+	<script src="../resource/editor/EMR/EMR.toolbar.js?_=ea3"></script>
+    <script src="../resource/editor/EMR/EMR.PageInit.js?_=aad4dad"></script>
+    <script src="../resource/editor/EMR/ueditor.EMR.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+    	//edui18_iframeholder
+    	//edui18
+        //$("div.slimScrollDiv").css('height','calc(100% - 40px)');
+    });
+        EMR.Init({
+            id: 'myEditor',
+            title: '电子病历编辑器',
+            isdesign:true,
+            editor: {
+                toolbars: [],
+                wordCount: false,//关闭字数统计
+                allowDivTransToP: false,
+                elementPathEnabled: false,//关闭elementPath
+                autoClearinitialContent: false
+            }
+        });
+        
+    </script>
+</body>
+</html>

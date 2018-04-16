@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<style>
+.yxlx-label-f-none label {
+	font-weight: 100
+}
+button.close { position: relative; z-index: 5555; right:9px; top:5px;}
+</style>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<div class="row">
+					<form id="lis_queryForm" class="form-horizontal">
+						<div class="col-sm-12">
+							<div class="col-sm-2 form-group">
+								<label class="control-label p-r-n col-sm-3">类别</label>
+								<div class="col-sm-8">
+									#formSingleSelectFirstNone("patientType" "" $dicData.lisInspectionSamplePatientType "class='form-control' id='patientType'" "全部")
+								</div>
+							</div>
+							<div class="col-sm-2 form-group">
+								<label class="control-label p-r-n col-sm-4">患者姓名</label>
+								<div class="col-sm-8">
+									<input type="text" id="patientName" name="patientName" class="form-control ">
+								</div>
+							</div>
+							<div class="col-sm-2 form-group">
+								<label class="control-label p-r-n col-sm-4">标本种类</label>
+								<div class="col-sm-8">
+									<input type="text" id="sampleClassName" name="sampleClassName" class="form-control">
+								</div>
+							</div>
+							<div class="col-sm-3 form-group">
+								<label class="control-label col-sm-4">检验日期</label>
+								<div class="input-daterange input-group date col-sm-7">
+									<input type="text" id="inspectionDate" name="inspectionDate" class="form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" value="" />
+								</div>
+							</div>
+							<div class="col-sm-1 form-group">
+							</div>
+							<div class="col-sm-2 form-group">
+								<button type="button" id="search_generalSurveyList" class="btn btn-primary btn-sm">
+									<i class="fa fa-search"></i> 查 询
+								</button>
+								<button type="button" id="clean_generalSurveyList" class="btn btn-sm btn-info">
+									<i class="iconfont fa icon-qingchu"></i> 清 空
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="ibox float-e-margins m-b-none">
+			<div class="ibox-content" style="padding-bottom: 4px;">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="table-responsive">
+							#formSingleSelect("patientSex" "" $dicData.dicSex "class='form-control' id='patientSex' style='display:none'" "全部")
+							#formSingleSelectFirstNone("" "" $!{dicData.dicDiagnosisFlag} "id='diagnosisFlag' style='display:none'" "")
+							<table id="generalSurveyList" class="table table-bordered table-hover"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	#parse("./lis/generalSurveyList.js.vm")
+</body>
+
+</html>

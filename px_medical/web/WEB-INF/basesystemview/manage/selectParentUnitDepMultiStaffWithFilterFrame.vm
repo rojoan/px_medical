@@ -1,0 +1,31 @@
+#set($_layout = {
+    "title" : "选择人员",
+    "jslib" : {
+        "validator" : "1"
+    },
+    "notshowreturnButton" : true,
+    "buttonList" : [
+        {
+            "type" : "imgButton",
+            "src":"../app/right/images/ok16.png",
+            "title" : "确定",
+            "onclick" : "sendSelectFromRight();"
+        },
+        {
+            "type" : "imgButton",
+             "src":"../app/right/images/cancel16.png",
+            "title" : "关闭",
+            "onclick" : "javascript:parent.window.close();"
+        }
+    ],
+    "queryForm" : {
+        "name":"queryForm"
+    },
+    "leftUrl" : {
+         "onclick" : "../manage/selectParentUnitDepTreeWithCandidate.do?rootId=$!{request.getParameter('rootId')}"
+    },
+    "rightUrl" : {
+        "onclick" : "../manage/selectMultiStaffWithFilter.do"
+    }
+})
+#parse("/manage/SelectMainFrameTemplate.tpl.vm")

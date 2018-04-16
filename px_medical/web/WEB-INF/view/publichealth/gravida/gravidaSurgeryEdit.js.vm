@@ -1,0 +1,53 @@
+<script type="text/javascript">
+     
+    // 提交表单
+    function saveGravidaSurgery() {
+         var gravidaSurgeryParams = common.serializeObject($('#gravidaSurgeryForm'));
+         if (isBlank(gravidaSurgeryParams.gravidaName)) {
+             common.alert("请选择人员姓名",0);
+             $("#vaccinatedName").focus();
+             return false;
+         }
+         if (isBlank(gravidaSurgeryParams.regionId)) {
+             common.alert("人员的所在街道信息不存在，请先完善街道信息",0);
+             return false;
+         }
+         if (isBlank(gravidaSurgeryParams.pregnancyWeek)) {
+             common.alert("请填写孕周",0);
+             $("#pregnancyWeek").focus(); 
+             return false;
+         }
+         if (isBlank(gravidaSurgeryParams.chiefAction)) {
+             common.alert("请填写手术过程",0);
+             $("#chiefAction").focus();
+             return false;
+         }
+         if (isBlank(gravidaSurgeryParams.curSurgeryTime)) {
+             common.alert("请填写手术日期",0);
+             $("#curSurgeryTime").focus();
+             return false;
+         }
+         
+         $.post("../gravidaHeathCare/saveGravidaSurgery.jo", gravidaSurgeryParams,  function (result) {
+             if (result.code == "0") {
+                 common.alert("保存成功",0);
+              // 关闭窗口
+                 var index = parent.layer.getFrameIndex(window.name);
+                 parent.layer.close(index); 
+             } else {
+                 common.alert(result.msg,2);
+             }
+         }, "json");
+     }
+    
+    //查看 设置 readonly、disabled
+    $(document).ready(function() {
+        var jqForm = $('#gravidaSurgeryForm'); 
+        if('show' == '$!mode'){
+            jqForm.find('input').attr('readonly',true);
+            jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+            jqForm.find('select').attr('disabled',true);
+            jqForm.find('textarea').attr('readonly',true);
+        }
+    });
+</script>

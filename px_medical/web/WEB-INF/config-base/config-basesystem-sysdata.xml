@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- Dictionary -->
+    <bean id="commonDictionaryDataLoader" class="com.bofan.basesystem.dictionary.service.impl.SimpleDictionaryLoader"/>
+
+<!--DefaultValue-->
+    <bean id="currentUserObjectDefaultValue" class="com.bofan.basesystem.common.defaultvalue.support.CurrentUserObjectDefaultValue" />
+    <bean id="currentUserIdDefaultValue" class="com.bofan.basesystem.common.defaultvalue.support.CurrentUserIdDefaultValue" />
+    <bean id="currentUserNameDefaultValue" class="com.bofan.basesystem.common.defaultvalue.support.CurrentUserNameDefaultValue" />
+    <bean id="currentBuildUnitDefaultValue" class="com.bofan.basesystem.common.defaultvalue.support.CurrentBuildUnitDefaultValue" />
+    <bean id="currentYearDefaultValue" class="com.bofan.basesystem.common.defaultvalue.support.CurrentYearDefaultValue" />
+    <bean id="currentDateTimeDefaultValue" class="com.bofan.basesystem.common.defaultvalue.support.CurrentDateTimeDefaultValue" />
+
+<!--     <bean id="autoBinderMultiActionController" class="com.bofan.basesystem.common.controller.AutoBinderMultiActionController"> -->
+<!--         <property name="alertMsgView"><value>/common/alertwithreload</value></property> -->
+<!--     </bean> -->
+
+</beans>

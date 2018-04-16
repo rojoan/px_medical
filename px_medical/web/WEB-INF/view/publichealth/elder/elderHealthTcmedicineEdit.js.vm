@@ -1,0 +1,103 @@
+ <script type="text/javascript">
+       // 提交表单
+       function saveElderHealthTcmedicine() {
+            var elderHealthTcmedicineParams = common.serializeObject($('#elderHealthTcmedicineForm'));
+            var elderHealthTcmedicineRetionData = {};
+            elderHealthTcmedicineRetionData.elderHealthTcmedicineEditInfo = elderHealthTcmedicineParams;
+            elderHealthTcmedicineRetionData.elderHealthTcmItemEditInfoList = buildElderHealthTcmItemParam();
+            console.log(JSON.stringify(elderHealthTcmedicineParams));
+            if (isBlank(elderHealthTcmedicineParams.assessTime)) {
+                common.alert("请填写评估日期",0);
+                return false;
+            } 
+             
+           	var indexArr = [];
+            $('input[name^="index_"]').each( function(index) {
+				if (isBlank($(this).val())) {
+					indexArr.push($(this).attr('index'));
+				}
+			   }
+            );
+            
+            if (indexArr.length > 0 ) {
+				var msg = '请勾选全部评估选项, 以下选项未勾选  :   ' + indexArr.join(',  ') ;
+				common.alert(msg,0);
+                return false;
+			}
+  
+            $.post("../elder/saveElderHealthTcmedicine.jo", 
+                   {elderHealthTcmedicineRetionData : JSON.stringify(elderHealthTcmedicineRetionData)},  
+                   function (result) {
+                        if (result.code == "0") {
+                            common.alert("保存成功",1);
+                        	resultShow(result.data);
+                        } else {
+                            common.alert(result.msg,2);
+                        }
+                   },
+             "json");
+        }
+       
+       function resultShow(obj) {
+           var corporeityList = obj.corporeityList;
+           //中医体质辨识结果	  
+           $('#tcmResult .score').each(
+              function(i){
+                  $(this).html(corporeityList[i].score);
+                  $($('#tcmResult .belong').get(i)).html( corporeityList[i].belong );
+              }
+           );
+           //主要体质
+           $('#mainCorporeity').html('');
+           $(obj.mainCorporeityList).each(
+        	  function (i) {
+        		  var dicHealthTcmItemGoup = JSON.parse('$dicTools.changeMapToJson($dicData.dicHealthTcmItemGoup)')
+        		var content = $('#mainCorporeity').html() + dicHealthTcmItemGoup[this.corporeityType] + '&nbsp;&nbsp;&nbsp;&nbsp;';
+				$('#mainCorporeity').html(content);
+			  }
+           );
+           //偏向体质
+           $('#inclinationCorporeity').html('');
+           $(obj.inclinationCorporeityList).each(
+        	  function (i) {
+        		var dicHealthTcmItemGoup = JSON.parse('$dicTools.changeMapToJson($dicData.dicHealthTcmItemGoup)')
+        		var content = $('#inclinationCorporeity').html() + dicHealthTcmItemGoup[this.corporeityType] + '&nbsp;&nbsp;&nbsp;&nbsp;';
+				$('#inclinationCorporeity').html(content);
+			  }
+           );
+       }
+      
+       //获取 自理能力评估明细 的参数
+       function buildElderHealthTcmItemParam() {
+           var jqElderHealthTcmItemTrRow =  $('#elderHealthTcmedicineItemForm').find('.trRow');
+           var elderHealthTcmItemArr = [];
+           jqElderHealthTcmItemTrRow.find('input[type=radio]:checked').each(function(i) {
+                 var elderHealthTcmItem = {};
+                 elderHealthTcmItem.healthTcmedicineId = $(this).attr('name');
+                 elderHealthTcmItem.tcmScore = $(this).val();
+                 elderHealthTcmItemArr.push(elderHealthTcmItem);
+           });
+           return elderHealthTcmItemArr;
+       }
+       
+       //查看 设置 readonly、disabled
+       $(document).ready(function() {
+           var jqForm = $('#elderHealthTcmedicineForm');
+           if('show' == '$!mode'){
+               jqForm.find('input').attr('readonly',true);
+               jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+           }
+           //选择事件
+           selectTcmItemEvent();
+       });
+       
+       //评估项-选择事件
+       function selectTcmItemEvent(){
+           $('input[type=radio]').on('ifClicked', function(event){
+                var score = $(this).val();
+                var $scoreResult = $(this).parent().parent().parent().parent().find('.index');
+                $scoreResult.val(score);
+           });
+       }
+                         
+</script>

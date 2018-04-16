@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${SessionSysPortal.appTitle}</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+<style>
+html, body {
+	height: 100%
+}
+button.close.tabs {
+	position: relative;
+	z-index: 5555;
+	right: 9px;
+	top: 5px;
+}
+</style>
+</head>
+
+<body class="gray-bg top-navigation">
+	<div class="wrapper wrapper-content">
+		<div class="ibox float-e-margins full-height">
+			<div class="ibox-content">
+				<div class="row">
+					<form id="queryForm" class="form-horizontal">
+						<div class="form-group">
+				            <label class="col-sm-1 control-label text-right p-r-none">体检编号</label>
+				            <div class="col-sm-2">
+				            	#formTextInput("examBillNo" "" "id='examBillNo' maxlength='50' class='form-control'")
+				            </div>
+				            <label class="col-sm-1 control-label text-right p-r-none">参检人姓名</label>
+				            <div class="col-sm-2">
+				            	#formTextInput("examedPersonPame" "" "id='examedPersonPame' maxlength='50' class='form-control'")
+				            </div>
+				            <label class="col-sm-1 control-label text-right p-r-none">体检日期</label>
+				            <div class="col-sm-3">
+					            <div class="input-group" data-date="" data-date-format="yyyy-MM-dd - HH:ii " data-link-field="dtp_input1">
+	                               <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginExamTime" name="beginExamTime" placeholder="开始体检日期" type="text" value="" >
+	                               <span class="input-group-addon">到</span>
+	                               <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endExamTime" name="endExamTime" placeholder="截止体检日期" type="text" value="" >
+	                           </div>
+                           </div>
+                           <div class="col-sm-1 text-center">
+	                          	<button type="button" id="btn_query" class="btn btn-sm btn-primary">
+									<i class="fa fa-search"></i> <span>查 询</span>
+								</button>                         
+                           </div>
+				        </div>
+				        <div class="form-group">
+				            <label class="col-sm-1 control-label text-right p-r-none">机构名称</label>
+				            <div class="col-sm-2">
+				            	#formTextInput("hospitalName" "" "id='hospitalName' maxlength='50' class='form-control'")
+				            </div>
+				            <label class="col-sm-1 control-label text-right p-r-none">责任医生</label>
+				            <div class="col-sm-2">
+				            	#formTextInput("dutyDoctor" "" "id='dutyDoctor' maxlength='50' class='form-control'")
+				            </div>
+                           <label class="col-sm-1 control-label text-right p-r-none">建档日期</label>
+				            <div class="col-sm-3">
+					            <div class="input-group date" data-date="" data-date-format="yyyy-MM-dd - HH:ii " data-link-field="dtp_input1">
+	                               <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginCreateTime" name="beginCreateTime" placeholder="开始建档日期" type="text" value="" >
+	                               <span class="input-group-addon">到</span>
+	                               <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endCreateTime" name="endCreateTime" placeholder="截止建档日期" type="text" value="" >
+	                           </div>
+                           </div>
+                           <div class="col-sm-1 text-center">
+								<button type="button" id="btn_clean" class="btn btn-sm btn-info">
+									<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+								</button>                           
+                           </div>
+				        </div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="ibox float-e-margins full-height m-b-none">
+			<div class="ibox-content p-b-n">
+				<div class="table-responsive">
+					<div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+						<button type="button" id="btn_add" class="btn btn-sm btn-primary" data-toggle="modal">
+							<i class="glyphicon glyphicon-plus" aria-hidden="true"></i> <span>新 增</span>
+						</button>
+						&nbsp;
+						<button type="button" id="btn-delete" class="btn btn-sm btn-danger">
+							<i class="fa fa-warning" aria-hidden="true"></i> <span>删 除</span>
+						</button>
+					</div>
+
+					<div class="example">
+						<table id="examPersonData" class="table table-bordered" data-mobile-responsive="true"></table>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm")
+	
+	#parse("./common/common.js.vm")
+	<!-- 页面js -->
+	#parse("./publichealth/examPersonList.js.vm")
+</body>
+
+</html>

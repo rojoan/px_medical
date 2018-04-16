@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+  default-lazy-init="true">
+
+
+    <!-- 以下是新基本系统的配置  -->
+    <import resource="classpath:com/bofan/sso/client/sso-spring-client.xml" />
+    <import resource="config-newbase/config-autobind.xml" />
+    <import resource="config-newbase/config-common.xml" />
+    <import resource="config-newbase/contextManageUtil.xml" />
+    <import resource="config-newbase/singleDataSourceContext.xml" />
+<!--     <import resource="config-newbase/multiDataSourceContext.xml" /> -->
+    <import resource="config-newbase/velocityContext.xml" />
+    <import resource="config-newbase/daoContext.xml" />
+    <import resource="config-newbase/config-login.xml" />
+    <!-- cxf  webservice 配置  -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	
+    <!-- 以下是应用系统的配置  -->
+    <import resource="config-base/config-basesystem-constants.xml" />
+    <import resource="config-base/config-basesystem-hibernate.xml" />
+    <import resource="config-base/config-basesystem-service.xml" />
+    <import resource="config-base/config-basesystem-sysdata.xml" />
+    <import resource="config-base/config-basesystem-propertyeditor.xml" />
+    <import resource="config-base/config-basesystem-conditionfilter.xml" />
+    <import resource="config-base/uploadFileContext.xml" />
+    <import resource="config-base/config-scheduled.xml" />
+    <import resource="config-manage/config-manage.xml" />
+    <import resource="config-manage/config-manage-dictionary.xml" />
+    <import resource="config-base/config-springdata-mongo.xml" />
+    
+
+    <!-- 附件处理配置  -->
+    <import resource="config-affix/config-affix-upload.xml" />
+
+    <!-- annotation mode -->
+    <import resource="config-base/config-annotation.xml" />
+    <!-- 所有系统字典（除公卫、疫情系统外） -->
+    <import resource="config-dictionary/config-common-dictionary.xml" />
+    <!-- webservice 服务配置 -->
+    <import resource="config-webservice/config-webservice.xml" />
+
+</beans>

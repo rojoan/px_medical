@@ -1,0 +1,49 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>${SessionSysPortal.appTitle}</title>
+  <base target='_self'/>
+  <link href="../css/style.css" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+/**
+ * 选择指定部门的员工.
+ * @param id 部门编号
+ * @param name 部门名称
+ */
+function selectDepartmentStaff(id, name) {
+    if (typeof(top.dialogArguments.CustomValue) == 'function') {
+        top.dialogArguments.CustomValue(id, name);
+    } else {
+        top.dialogArguments.CustomValue.callback(id, name, dialogArguments.CustomValue.custom);
+    }
+    top.close();
+}
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<form name="editForm"  method="post">
+    <input type="hidden" name="nodeType" value=$!{nodeType}>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="border:#d0d0d0 1px solid;">
+  <tr height="1">
+    <td>&nbsp;
+	</td>
+  </tr>
+
+  <tr>
+    <td>
+      <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0" class="mainTable">
+        <tr>
+          <td valign="top" width="60%" class="inputArea">
+<div style="overflow:auto; width:100%; height:100%; border-width:0px; border-color:#696969; border-style:dotted; scrollbar-base-color: ; scrollbar-face-color: ; scrollbar-track-color: ; scrollbar-arrow-color: ; scrollbar-3dlight-color: ; scrollbar-darkshadow-color: ; scrollbar-highlight-color: ; scrollbar-shadow-color: ">
+    #showTree($departmentTree "部门列表" 1 "allNode" "selectDepartmentStaff")
+</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

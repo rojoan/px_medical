@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>客户端</title>
+    <link href="../style/css/css.css" type="text/css" rel="stylesheet" />
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+    <style type="text/css">.list-3 table tr th:nth-child(1) { width: 12%}</style>
+</head>
+<body>
+    <!--top start-->
+    <header>
+        <div class="top">
+            <div class="fl">
+                <a href="../index.html"><i class="iconfont back">&#xe89b;</i></a>
+            </div>
+            <div class="txt">云lis</div>
+            <div class="fr top-sch-box">
+                <a href="javascript:void(0);"><i class="iconfont back">&#xe683;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end    article start-->
+    <article>
+        <div class="head_clear"></div>
+        <div id="dataList" class="con_list yxyp"></div>
+        <div id="drop_div"></div>
+    </article>
+
+    <!-- 搜索层 start-->
+    <div class="pop-schwrap">
+        <div class="ui-scrollview">
+            <div class="poo-mui">		        
+	            <div class="fl">
+
+	            </div>
+	            <div class="txt">
+					lis信息查询
+	            </div>
+                <a href="javascript: void(0);" id="btn-closeQuery" class="btn-back top-sch-box" >关闭</a>
+            </div>
+            <div class="scroll-wrap">            
+               <div class="form_search">
+                    <form id="queryForm" action="">
+	                    <dl>
+	                        <dt>
+	                            <label>患者姓名</label>
+	                            <input type="text" name="patientName" value="" class="input-txt" >
+	                        </dt>
+	                        <dt>
+	                            <label>开始检验时间</label>
+	                            <input type="text" id="beginInspectionDate" name="beginInspectionDate" value="" class="input-txt" >
+	                        </dt>
+	                        <dt>
+	                            <label>截止检验时间</label>
+	                            <input type="text" id="endInspectionDate" name="endInspectionDate" value="" class="input-txt" >
+	                        </dt>
+	                        <dt class="search-btn">
+		                    	<button type="button" class="btn" onClick="surveyList.query(true);"> 查 询 </button>
+		                    	<button type="button" class="btn" onclick="surveyList.cleanQueryForm()"> 重 置 </button>                        
+	                        </dt>
+	                    </dl>  
+                   	</form>                
+               </div>
+            </div>
+        </div>
+    </div>
+    <!-- 搜索层 end-->
+    <!--article end-->
+
+</body>
+<script type="text/javascript">
+	//初始化日期控件
+	;!function(){
+		//laydate.skin('molv');
+		laydate({
+		   elem: '#beginInspectionDate',
+		   format: 'YYYY-MM-DD',
+		   start: laydate.now(0, 'YYYY-MM-DD'),
+		   festival: true,
+		   istime: false
+		});
+	}();
+	//初始化日期控件
+	;!function(){
+		//laydate.skin('molv');
+		laydate({
+		   elem: '#endInspectionDate',
+		   format: 'YYYY-MM-DD',
+		   start: laydate.now(0, 'YYYY-MM-DD'),
+		   festival: true,
+		   istime: false
+		});
+	}();
+	var surveyList = {
+		loadData: function (me, data){
+			var html = [];
+			
+			$.each(data, function(i, o){
+				
+				html.push('<dl class="table">');				
+				html.push('<dd><label>姓名：</label>' + (null != o.patientName ? o.patientName : "&nbsp;") + '</dd>');
+				html.push('<dd><label>检验名称：</label>' + (null != o.testOrderName ? o.testOrderName : " ") + '</dd>');
+				html.push('<dd><label>性别：</label>' + common.getSex(o.patientSex) + '</dd>');
+				html.push('<dd><label>标本种类：</label>' + (null != o.sampleClassName ? o.sampleClassName : " ") + '</dd>');
+				html.push('<dd><label>年龄：</label>' + (null != o.ageInput ? o.ageInput : " ") + '</dd>');
+				html.push('<dd><label>检验日期：</label>' + (null != o.inspectionDate ? o.inspectionDate : " ") + '</dd>');
+				html.push('<dd><label>类别：</label>' + common.getPatientType(o.patientType));
+				html.push('<span class="fr">');
+				html.push('<button type="button" class="btn bg_browse" onclick="surveyList.showDetail(' +  o.patientId + ',\'' + o.inspectionId + '\',' + o.lisInspectionSampleId + ')">查 看</button>');			
+				html.push('</span></dd></dl>');				
+				
+			});
+			$('#dataList').html(html.join(''));
+			// 每次数据插入，必须重置
+			me.resetload();
+		},
+		showDetail: function (patientId, inspectionId, lisInspectionSampleId){
+			common.setCache(common.patientId, patientId);
+			common.setCache(common.inspectionId, inspectionId);
+			common.setCache(common.rowId, lisInspectionSampleId);
+			window.location.href = "lisDetail.html";
+		},
+		query: function (isCloseQuery) {
+			if (isCloseQuery) {
+				$('#dataList').html('');
+				$('#btn-closeQuery').click();
+				common.queryParams.pageNumber = 0;
+			}
+			var queryParam = $.extend(common.queryParams, $('#queryForm').serializeObject());
+			common.initDropload(rootPath + '/mobile.lis/surveyList.do', queryParam, '#dataList', surveyList.loadData);
+		},
+		cleanQueryForm: function (){
+			$('#queryForm').find("input[name='patientName']").val('');
+			$('#queryForm').find("input[name='beginInspectionDate']").val('');
+			$('#queryForm').find("input[name='endInspectionDate']").val('');
+		}
+	}
+	$(function (){
+		surveyList.query(false);
+	})
+</script>
+</html>

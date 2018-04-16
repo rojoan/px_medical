@@ -1,0 +1,71 @@
+<script type="text/javascript">
+$(function (){
+	// 选择患者信息
+	$('#inportPerson').click(function(){
+		layer.open({
+            type: 2,
+            title: '选择患者信息',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false,
+            area: ['85%', '95%'],
+            content: contextPath + '/personDetail/selectCommonPersonDetail.do'
+        });
+	});
+
+	// 保存
+	$('#btn_save').click(function(){
+		var params = common.serializeObject($('#editForm'));
+		
+		if ($('#submitFlag').val() == "1") {
+			common.alert("不能重复提交", 0);
+    		return ;
+		}
+		if (params.patientName == "" || params.patientName == undefined) {
+    		common.alert("请选择患者", 0);
+    		return ;
+    	}
+		if (params.familyRelId == "" || params.familyRelId == undefined) {
+    		common.alert("请选择患者与家庭关系", 0);
+    		return ;
+    	}
+		if ($('#chronicLevel').val() == "") {
+    		common.alert("请选择诊断分级", 0);
+    		return ;
+    	}
+		if ($('#confirmDate').val() == "") {
+    		common.alert("请选择确诊时间", 0);
+    		return ;
+    	}
+
+		$.post("../personChronic/savePersonRecord.jo", params, function (result){
+			if (result.code == "0") {
+				$('#submitFlag').val('1');
+				common.alertCall("保存成功。", 1, function (){
+					// 刷新父页面
+					$('#btn_query', window.parent.document).click();
+					// 关闭窗口
+					var index = parent.layer.getFrameIndex(window.name);
+			        parent.layer.close(index); 
+				});
+			} else {
+				common.alert(result.msg, 2);
+			}
+		},"json").error(function (e){jqueryPostError(e)});
+	});
+});
+
+// 选择患者信息回调函数
+function selectPersonCallBack(obj) {
+	var genderEle = "#gender_" + obj.gender;
+	$('#idCard').val(obj.certificateNumber);
+	$('#regionId').val(obj.regionId);
+	$('#linkmanPhone').val(obj.myselfPhone);
+	$('#patientName').val(obj.personalName);
+	$('#birthDate').val(obj.birthDate);
+	$('#familyRelId').val(obj.familyRelId);
+	$('#contactAddr').val(obj.familyAddr);
+	$('#personDetailId').val(obj.personDetailId);
+	$(genderEle).iCheck('check');
+}
+</script>

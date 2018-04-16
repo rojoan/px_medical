@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans  xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+         default-lazy-init="true"
+         >
+
+    <bean id="dictionaryManager" lazy-init="false" class="com.bofan.dictionary.support.DictionaryManager">
+        <property name="updateDictionarys"><ref bean="dictionarys"/></property>
+    </bean>
+<!--
+    <bean id="jsonDictionaryManager" lazy-init="false" class="com.bofan.dictionary.support.JSONDictionaryManager">
+        <property name="updateDictionarys"><ref bean="dictionarys"/></property>
+    </bean>
+-->
+    <!-- 字典数据cache -->
+    <bean id="dictionarys" class="com.bofan.dictionary.support.DictionarysCache" />
+
+    <!-- 字典数据cache刷新 -->
+	<bean id="dictionarysRefresh" class="com.bofan.dictionary.support.SimpleDictionarysRefresh">
+	    <property name="dictionarys"><ref bean="dictionarys"/></property>
+	    <property name="updateDictionarys"><ref bean="dictionarys"/></property>
+	</bean>
+    <!-- 用于VelocityToolbox的字典代理 -->
+    <bean id="dictionarysInVelocityToolbox" lazy-init="false" class="com.bofan.dictionary.support.DictionarysInVelocityToolbox" />
+
+    <bean id="databaseDictionaryChange" class="com.bofan.database.dao.support.DatabaseDictionaryChange">
+        <property name="updateDictionarys"><ref bean="dictionarys"/></property>
+    </bean>
+
+</beans>

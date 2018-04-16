@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>法律法规库管理</title>
+	<link rel="shortcut icon" href="../resource/favicon.ico">
+	#parse("./common/pageCss.vm")
+	#parse("./common/pageJs.vm")
+	<!-- 页面js -->
+	#parse("./common/common.js.vm")
+<script type="text/javascript" >
+$(function (){
+	// 新增保存知识分类
+	$('#btn_type_add').click(function (){
+		saveTypeFaq("0");
+	});
+	// 修改保存知识分类
+	$('#btn_type_edit').click(function (){
+		saveTypeFaq("1");
+	});
+	// 删除知识分类
+	$('#btn_type_delete').click(function (){
+		if ($('#editFaqTypeId').val() == "") { common.alert("没有可删除的数据！", 0); return ; }
+		common.confirm("您确定要删除吗？", function (){
+			$.post('../faq/faqTypeDelete.do', {faqTypeId: $('#editFaqTypeId').val()}, function (result){
+				common.alert(result.msg, 1);
+				if (result.isSuccess == "0") {
+					$('#editFaqTypeId').val('');
+					$('#editFaqTypeCode').val('');
+					$('#editFaqTypeName').val('');
+					$("#faqTypeTree").jstree().refresh(true);
+				}
+			}, "json");
+		});
+	});
+
+	// 新增知识信息按钮
+	$('#btn_add_faqDetail').click(function (){
+		$('#faqDetailIframe').attr('src','../faq/faqEdit.do');
+		$('#editFaqDetailType').modal({ keyboard: true });
+	});
+	
+	// 按主题查询
+	$('#btn_title_query ').click(function (){
+		$("#faqContent", window.frames["faqListIframe"].document).val("");
+		$("#faqTitle", window.frames["faqListIframe"].document).val($('#search').val());
+		
+		$("#queryForm", window.frames["faqListIframe"].document).submit();
+	});
+	// 按内容查询
+	$('#btn_content_query').click(function (){
+		$("#faqTitle", window.frames["faqListIframe"].document).val("");
+		$("#faqContent", window.frames["faqListIframe"].document).val($('#search').val());
+		
+		$("#queryForm", window.frames["faqListIframe"].document).submit();
+	});
+	// 清空查询条件
+	$('#btn_clean').click(function (){
+		$('#search').val("");
+	});
+
+	// 初始化树形分类
+	$("#faqTypeTree").jstree({  
+        "core" : { "themes" : { "responsive": false },   
+            //"check_callback" : false,  
+            'data' : function (obj, callback) {  
+                var jsonarray = [];  
+                var root = {typeId: "0", expanded: true, faqTypeName: "根目录", children: [], faqTypeCode: "0", id: "0", text: "根目录", cls: "file", leaf: false};
+                $.ajax({ type: "GET", url:"../faq/getAllFaqTypeStore.jo", dataType:"json", async: false,  success:function(result) { root.children = result; } });  
+                jsonarray.push(root);
+                callback.call(this, jsonarray);  
+            }  
+        },  
+        //"types" : { "default" : {"icon" : "glyphicon glyphicon-flash"}, "file" : {"icon" : "glyphicon glyphicon-ok"}  },  
+        //"state" : { "key" : "demo2" },  
+        //"plugins" : [ "dnd", "state", "types", "checkbox", "wholerow" ]  
+        "plugins" : [ "dnd", "state", "types", "wholerow" ]  
+    }).bind("activate_node.jstree", function(event, data) {
+    	var parentNode = $('#faqTypeTree').jstree("get_node", data.node.parent);
+    	var navArray = [];
+		navArray.push(data.node.text);
+		getParentNode(navArray, data.node.parent);
+		$('#editor_title').html(navArray.reverse().join(" 》"));
+    	
+        $('#editFaqTypeId').val(data.node.original.typeId);
+		$('#editFaqTypeCode').val(data.node.original.faqTypeCode);
+		$('#editFaqTypeName').val(data.node.original.faqTypeName);
+		if (data.node.id == "0") {
+			$('#editFaqTypeName').val("");
+		}
+		if (parentNode.parent == "#") {
+			$('#parentTypeName').val(parentNode.text);
+		} else if (parentNode.id == "#") {
+			$('#parentTypeName').val(data.node.text);
+		} else {
+			$('#parentTypeName').val(parentNode.original.faqTypeName);
+		}
+
+   		$('#search').val("");
+    	$('#faqListIframe').attr('src', '../faq/faqList.jo?faqTypeId=' + data.node.original.typeId);
+	});
+	
+	// 保存知识分类
+	function saveTypeFaq(flag) {
+		var params = common.serializeObject($('#editTypeForm'));
+		if (params.parentTypeName == "" || params.parentTypeName == undefined) {
+			common.alert("请选择父级分类", 0);
+			return ;
+		}
+		if (params.faqTypeName == "" || params.faqTypeName == undefined) {
+			common.alert("请填写分类名称", 0);
+			return ;
+		}
+		if (flag == "0") {
+			params.parentCode = $('#editFaqTypeCode').val();
+			params.faqTypeId = "";
+		}
+		$.post("../faq/faqTypeSave.do", params, function (result){
+			common.alert(result.msg, 1);
+			if (result.isSuccess == "0") {
+				$("#faqTypeTree").jstree().refresh(true);
+			}
+		}, "json");
+	}
+	
+	// 获取属性父节点
+	function getParentNode(navArray, parent) {
+		var parentNode = $('#faqTypeTree').jstree("get_node", parent);
+		if (parentNode.parent != "#") {
+			navArray.push(parentNode.text);
+			getParentNode(navArray, parentNode.parent);
+		}
+	}
+});
+
+// 查看知识内容
+function showFaqDetail(faqDetailId) {
+	if (faqDetailId == "" || faqDetailId == undefined) {
+		return ;
+	}
+	var time = new Date().getTime();
+	$('#faqDetailIframe').attr('src','../faq/faqShow.do?faqDetailId=' + faqDetailId + '&t=' + time);
+	$('#editFaqDetailType').modal({ keyboard: true });
+}
+// 删除知识内容
+function deleteDetail(faqDetailId) {
+	common.confirm("您确定要删除吗？", function (){
+		$.post("../faq/faqDelete.do", {faqDetailId: faqDetailId}, function (result){
+			common.alert(result.msg, 1);
+			if (result.isSuccess == "0") {
+				// 关闭窗口
+				$('#editFaqDetailType').find("button").click();
+				
+				// 刷新内容列表
+				var array = [];
+				array.push('#');
+				array.push($('#editFaqTypeCode').val());
+				array.push('_anchor');
+				$(array.join('')).click();
+			}
+		}, "json");
+	});
+}
+</script>
+
+
+</head>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content full-height" >
+	   <div class="col-sm-4 p-l-none full-height">
+	       <div class="ibox float-e-margins m-b-none full-height">
+	           <div class="ibox-content" style="height: calc(100% - 127px)">
+	                  <div id="faqTypeTree"></div>
+				</div>
+				<div class="ibox-content" style="height: 127px">
+				  <form id="editTypeForm" class="form-horizontal table-content">
+				  	#formHiddenInput("faqTypeId" "" "id='editFaqTypeId'")
+	            	#formHiddenInput("faqTypeCode" "" "id='editFaqTypeCode'")
+	                 <div class="form-group">
+	                       <label class="col-md-3 control-label p-l-none p-r-none">父级分类</label>
+	                       <div class="col-md-8">
+	                           #formTextInput("parentTypeName" "" "id='parentTypeName' class='form-control'")
+	                       </div>
+	                   </div>
+	                   <div class="form-group">
+	                       <label class="col-md-3 control-label p-l-none p-r-none">分类名称</label>
+	                       <div class="col-md-8 ">
+								#formTextInput("faqTypeName" "" "id='editFaqTypeName' maxlength='20' class='form-control'")
+	                       </div>
+	                   </div>
+	                   <div class="text-center">
+							<button type="button" id="btn_type_add" class="btn btn-sm btn-primary">
+								<i class="glyphicon glyphicon-plus"></i> <span>新增保存</span>
+							</button>
+							&nbsp;
+							<button type="button" id="btn_type_edit" class="btn btn-sm btn-success">
+								<i class="fa fa-paste"></i> <span>修改保存</span>
+							</button> 
+							&nbsp;
+							<button type="button" id="btn_type_delete" class="btn btn-sm btn-danger">
+								<i class="fa fa-warning"></i></i> <span>删 除</span>
+							</button>            
+	                   </div>
+				  </form>
+				</div>	
+			</div>
+		</div>
+	      <div class="col-sm-8 p-l-none p-r-none full-height">
+			<div class="ibox float-e-margins m-b-n">
+	        <div class="ibox-content">	  
+				<form id="queryForm" class="form-horizontal">
+					<div class="form-group m-b-none">
+			           <div class="col-sm-5">
+			           	##formHiddenInput("faqTypeId" "" "id='faqTypeId'")
+			           	#formTextInput("search" "" "id='search' class='form-control'")
+			           </div>
+			           <div class="col-sm-7">
+						<button type="button" id="btn_title_query" class="btn btn-sm btn-primary">
+							<i class="fa fa-search"></i> <span>主题搜索</span>
+						</button>
+						&nbsp;&nbsp;&nbsp;
+						<button type="button" id="btn_content_query" class="btn btn-sm btn-primary">
+							<i class="fa fa-search"></i> <span>内容搜索</span>
+						</button>
+						&nbsp;&nbsp;&nbsp;
+						<button type="button" id="btn_clean" class="btn btn-sm btn-info">
+							<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+						</button>
+			           </div>
+					</div>
+				</form>	 
+	        </div>
+	       </div>         
+	       <div class="ibox float-e-margins full-height white-bg" style="height: calc(100% - 48px); margin-bottom:0">
+	       	<div class="ibox-title" style="padding: 3px 0">
+				<h1 style="background: #4799b7; height: 36px; font: normal 100 12px/36px arial;  margin: 0 auto; color:#fff; padding-left: 9px">
+					<span>知识分类：</span>
+					<span id="editor_title"></span>
+				</h1>
+			</div>
+			<div class="ibox-title" style="border-bottom: #ededed 1px solid;">
+				<button type="button" id="btn_add_faqDetail" class="btn btn-sm btn-primary" data-toggle="modal">
+					<i class="glyphicon glyphicon-plus" aria-hidden="true"></i> <span>新 增</span>
+				</button>
+				&nbsp;       
+			</div>
+			<div class="ibos-content">
+				<iframe class="J_iframe" id="faqListIframe" name="faqListIframe" width="100%" height="90%" src="../faq/faqList.jo" frameborder="0" seamless></iframe>
+			</div>		            
+	    </div>       
+	   </div>
+    </div>
+
+	<!-- 弹出知识信息修改层 -->
+	<div class="modal inmodal" id="editFaqDetailType" tabindex="-1" data-backdrop="static">
+		<div class="modal-dialog" style="margin: 10px auto; width: calc(100% - 10px); max-width: 1060px; height: calc(100% - 20px);">
+			<div class="modal-content" style="height: calc(100%);">             
+                <div class="modal-header">
+                    <button type="button" class="close " data-dismiss="modal">
+						<span class="fa fa-close"></span>
+                    </button>
+                    <h7 class="modal-title">知识库</h7>
+                </div>               
+                                           
+               	<iframe class="J_iframe" id="faqDetailIframe" name="faqDetailIframe" scrolling="no" style="width: 99.99%; height: calc(100% - 45px);" src="" frameborder="0" seamless></iframe>
+               
+            </div>
+        </div>
+    </div>
+</body>
+</html>

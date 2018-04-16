@@ -1,0 +1,690 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTDHTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+<meta http-equiv="Content-Type" content="text/html; charset=GBK">
+<link rel="stylesheet" type="text/css" href="../ext/resources/css/ext-all.css" />
+<!-- GC -->
+<!-- LIBS -->
+<script type="text/javascript" src="../ext/adapter/ext/ext-base.js"></script>
+<!-- ENDLIBS -->
+<script type="text/javascript" src="../ext/ext-all.js"></script>
+<script type="text/javascript" src="../base/js/portal/Portal.js"></script>
+<script type="text/javascript" src="../base/js/portal/PortalColumn.js"></script>
+<script type="text/javascript" src="../base/js/portal/Portlet.js"></script>
+<script language="JavaScript" src="../script/common.js"></script>
+<link rel="stylesheet" type="text/css" href="../base/js/portal/portal.css" />
+<link href="../app/right/right.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="../app/right/form.css">
+ #parse("common/tableRulerJS.vm")
+<script type="text/javascript">
+
+Ext.onReady(function(){
+    Ext.BLANK_IMAGE_URL = '../ext/resources/images/default/s.gif';
+    Ext.QuickTips.init();
+    var cookieProvider =   new Ext.state.CookieProvider();
+    Ext.state.Manager.setProvider(cookieProvider);
+    var items = [{
+        columnWidth:.49,
+        //autoHeight: true,
+        style:'padding:10px 0 10px 10px',
+        items:[
+
+			{
+				title: '<img src="../app/right/images/portal_pending_handle.gif" style="height:15px" title="行政审批"></img> 行政审批待办事宜',
+				contentEl: "pendinghandle"
+				#if(!$!{pendingPage} || $!{pendingPage.data.size()}==0)
+				,
+    				collapsed: true,
+       				collapsible: true
+				#end
+			},
+
+			{
+			    title: '<img src="../app/right/images/portal_app_entp.gif" style="height:15px" title="企业注册审核"></img> 企业注册审核待办事宜',
+			    contentEl: "entpRegisterPending"
+				#if(!$!{entpRegisterPage} || $!{entpRegisterPage.data.size()}==0)
+					,
+    				collapsed: true,
+       				collapsible: true
+				#end
+
+			},
+            {
+			    title: '<img src="../app/right/images/portal_aip_pending.gif" style="height:15px"  title="行政办案"></img> 行政办案待办事宜',
+			    contentEl: "aipPending"
+				#if(!$!{aipPendingPage} || $!{aipPendingPage.data.size()}==0)
+					,
+    				collapsed: true,
+       				collapsible: true
+				#end
+			},
+			{
+                title: '<img src="../app/right/images/portal_app_inpect.gif" style="height:15px" title="获取企业申请抽验事宜列表"></img> 企业申请抽验待办事宜',
+                contentEl: "appInspectProdApply"
+				#if(!$!{findAppInspectProdApplyPage} || $!{findAppInspectProdApplyPage.data.size()}==0)
+					,
+					collapsed: true,
+       				collapsible: true
+				#end
+            }
+        ]
+    },
+	{
+        columnWidth:.49,
+        //autoHeight: true,
+        style:'padding:10px 0 10px 10px',
+        items:[
+			{
+			    title: '<img src="../app/right/images/portal_audit_pending.gif" style="height:15px"  title="评审中心"></img> 审评中心待办事宜',
+			    contentEl: "auditpendinghandle"
+				#if(!$!{auditTaskPage} || $!{auditTaskPage.data.size()}==0)
+					,
+					collapsed: true,
+       				collapsible: true
+				#end
+			},
+			{
+			    title: '<img src="../app/right/images/portal_app_pharm.gif" style="height:15px" title="执业药师注册审核"></img> 执业药师注册审核待办事宜',
+			    contentEl: "pharmRegisterPending"
+				#if(!$!{pharmRegisterPage} || $!{pharmRegisterPage.data.size()}==0)
+					,
+					collapsed: true,
+       				collapsible: true
+				#end
+			},
+			{
+                title: '<img src="../app/right/images/portal_app_watcher.gif" style="height:15px" title="观察员选派待办事宜"></img> 观察员选派待办事宜',
+                contentEl: "watchTask"
+				#if(!$!{watchTaskPage} || $!{watchTaskPage.data.size()}==0)
+					,
+					collapsed: true,
+       				collapsible: true
+				#end
+            }
+        ]
+    }
+    ];
+
+     try{
+      //var cookieItems = cookieProvider.decodeValue(cookieProvider.get("desktopItems"));
+      var cookieItems = cookieProvider.get("desktopItems");
+     //var cookieItems;
+      var oldItems =items;
+      if(cookieItems) {
+          items = [];
+          items  = cookieItems;
+      }
+     }catch(e){
+         alert('init error:'+e);
+         items = oldItems;
+     }
+     var viewport = new Ext.Viewport({
+       layout: 'fit',
+         autoScroll: true,
+         autoHeight: true,
+         items:[{
+             xtype:'portal',
+         //    bodyStyle: 'background:url(../app/right/images/dback.jpg) no-repeat left top;',
+            bodyStyle: 'background:#EEEEEE',
+             //margins:'10 5 5 0',
+             items:items,
+             listeners: {
+                 'drop': function(e){
+                     var curItems = [];
+                     try{
+                      var columns = this.dd.portal.items.items;
+                      for(var col=0; col < columns.length; col++) {
+                          var columnWidth = columns[col].columnWidth;
+                          //var style = columns[col].initialConfig.style;
+                          curItems.push({columnWidth:columnWidth,style:'padding:10px 5px 10px 5px'});
+                          if(columns[col].items && columns[col].items.items && columns[col].items.items.length > 0){
+                            var rowItems = columns[col].items.items;
+                            if(rowItems) {
+                                if(!curItems[col].items) {
+                                    curItems[col].items = [];
+                                    curItems[col].items.length = 0;
+                                }
+
+                                for(var row=0; row < rowItems.length; row++) {
+                                    curItems[col].items.push({title: rowItems[row].title,contentEl:rowItems[row].contentEl,collapsed:rowItems[row].collapsed,collapsible:rowItems[row].collapsible});
+                                  }
+                            }
+                          }
+                      }
+                     }catch(e) {
+                         alert(e);
+                         var curItems = [];
+                     }
+                    //将变化后的格局保存到 cookie
+                    if(curItems != null &&  curItems.length>0){
+                        cookieProvider.clear("desktopItems");
+                        cookieProvider.set("desktopItems",curItems);
+                        //cookieProvider.set("desktopItems",cookieProvider.encodeValue(curItems));
+                    }
+                 }
+             }
+         }]
+     });
+     viewport.doLayout();
+ });
+
+//显示
+function openDetailWindow(url,size,title,sysType,menuId) {
+  var windowName = "sysPortal_"+(new Date()).getTime(); //同时打开多个窗口
+  if(size==0){
+    //FCKDialog.OpenDialog("", title, url, 1200, 572, null, window);
+    var x = screen.width/2 - 1200/2;
+    var y = screen.height/2 - 572/2;
+    //window.open(url, windowName, 'width=1200,height=572,scrollbars=yes,resizable=yes,left='+x+',top='+y);
+  }else{
+    //FCKDialog.OpenDialog("", title, url, 1200, 750, null, window);
+    var x = screen.width/2 - 1200/2;
+    var y = screen.height/2 - 750/2;
+    //window.open(url, windowName, 'width=1200,height=750,scrollbars=yes,resizable=yes,left='+x+',top='+y);
+  }
+  if(url.substring(0,2) == "..") {
+	url = url.substring(3);//去掉url前面的 ../
+  }
+  window.parent.switchSysType(sysType, menuId, url);
+}
+
+/*
+ *app和audit显示
+ *sysType 判断目录
+ *flag 标示app或audit
+ */
+function openDetailPending(url,size,sysType,flag,prjSortId) {
+  var menuId;
+  var windowName = "sysPortal_"+(new Date()).getTime(); //同时打开多个窗口
+  if(size==0){
+    var x = screen.width/2 - 1200/2;
+    var y = screen.height/2 - 572/2;
+  }else{
+    var x = screen.width/2 - 1200/2;
+    var y = screen.height/2 - 750/2;
+  }
+  if(url.substring(0,2) == "..") {
+	url = url.substring(3);//去掉url前面的 ../
+  }
+  if(flag=='app'){//则是app
+	prjSortId = prjSortId.substring(0,3);
+	menuId = buildAppMenuId(prjSortId);
+  }
+  else if(flag=='audit'){
+	prjSortId = prjSortId.substring(0,3);
+	menuId = buildAuditMenuId(prjSortId);
+  }
+  window.parent.switchSysType(sysType, menuId, url);
+}
+
+//行政审批中根据URL匹配menuId
+function buildAppMenuId(prjSortId){
+	var menuId = 40;
+    switch(prjSortId) {
+        case '001':
+          menuId = 40;//食品餐饮待办
+          break;
+        case '002':
+     	  menuId = 39;//医疗器械待办
+          break;
+        case '003':
+     	  menuId = 35;//执业药师待办
+          break;
+        case '004':
+     	  menuId = 43;//药品流通待办
+          break;
+        case '005':
+     	  menuId = 41;//药品生产待办
+          break;
+        case '006':
+     	  menuId = 42;//药品注册待办
+          break;
+        case '007':
+     	  menuId = 62;//食品生产待办
+          break;
+        case '008':
+     	  menuId = 90;//保健食品待办
+          break;
+        case '009':
+     	  menuId = 95;//化妆品待办
+          break;
+        case '010':
+     	  menuId = 86;//食品流通待办
+          break;
+        default:
+          menuId = 40;
+    }
+	return menuId;
+}
+//审评中心待办中根据URL匹配menuId
+function buildAuditMenuId(prjSortId){
+	var menuId = 824;
+    switch(prjSortId) {
+        case '002':
+     	  menuId = 838;//医疗器械待办
+          break;
+        case '004':
+     	  menuId = 836;//药品流通待办
+          break;
+        case '005':
+     	  menuId = 837;//药品生产待办
+          break;
+        case '006':
+     	  menuId = 832;//药品注册待办
+          break;
+        case '007':
+     	  menuId = 824;//食品生产待办
+          break;
+        case '008':
+     	  menuId = 834;//保健食品待办
+          break;
+        case '009':
+     	  menuId = 835;//化妆品待办
+          break;
+        default:
+          menuId = 824;
+    }
+	return menuId;
+}
+//[显示更多]
+function moreContent(sysType, menuId){
+  	window.parent.switchSysType(sysType, menuId, '');
+}
+
+function moreAppContent(sysType, prjSortId){
+	var menuId;
+    if(prjSortId && prjSortId.length > 2){
+    	prjSortId = prjSortId.substring(0,3);
+    	menuId = buildAppMenuId(prjSortId);
+    }
+	window.parent.switchSysType(sysType, menuId, '');
+}
+
+function moreAuditContent(sysType, prjSortId){
+	var menuId;
+    if(prjSortId && prjSortId.length > 2){
+    	prjSortId = prjSortId.substring(0,3);
+    	menuId = buildAuditMenuId(prjSortId);
+    }
+	window.parent.switchSysType(sysType, menuId, '');
+}
+
+ </script>
+
+ <style type="text/css">
+ .portletContentBox {
+    position: relative;
+    padding:2% 2% 2% 1%;
+    height:210px;
+    font-family: "Microsoft YaHe", "宋体";
+ }
+ .x-panel-body-noheader{
+ border:none;
+ }
+ .right_bottom_move{
+  vertical-align:bottom;
+  float:right;
+ /*
+  bottom:1%;
+  right:2%;
+  */
+  margin:10px;
+  /*position:absolute;*/
+  font-size:14px;
+ }
+ .listTag{
+  height:25px;
+  width:15px;font-size:5px;
+  color:red;
+ }
+ .x-panel-header {
+    overflow:hidden;
+    zoom:1;
+    color:#15428b;
+  /*  font-family: "Microsoft YaHe", '宋体'; */
+    padding:5px 3px 4px 5px;
+    border:1px solid #99bbe8;
+    line-height: 15px;
+    background: transparent url(../images/default/panel/white-top-bottom.gif) repeat-x 0 -1px;
+}
+ .x-panel-tl .x-panel-header {
+    color:#15428b;
+  /*  font: "Microsoft YaHe", '宋体';
+    font-family: "Microsoft YaHe", '宋体';
+    */
+    padding:5px 0 4px 0;
+    border:0 none;
+    background:transparent;
+}
+.x-panel-header-text {
+    font-size:14px;
+}
+.itemFont {
+	color:#000000;
+	font-size:14px;
+	 font: "Microsoft YaHe",'宋体';
+    font-family: "Microsoft YaHe",'宋体';
+	/*
+	opacity: 0.90 !important;
+	filter: alpha(opacity=90) !important;
+	*/
+}
+.list_tab TH {
+text-align:center;
+}
+ </style>
+</head>
+<body   scroll="no">
+
+#macro(moreContentLink $sysType $menuId)
+  #if($rowCount==1)
+    <div class="right_bottom_move"><a href="#" onclick="moreContent('$!{sysType}','$!{menuId}')">[更多内容]</a></div>
+  #end
+   #set($rowCount=0)
+#end
+
+<div id="pendinghandle" class="portletContentBox"><!-- 行政审批 -->
+  <table  width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+      <thead>
+      <tr>
+        <th nowrap width="4%">序号</th>
+        <th nowrap width="15%" align="center">数据核对码</th>
+        <th nowrap width="23%">事项名称</th>
+        <th nowrap width="14%">申请信息</th>
+        <th nowrap width="11%" align="center">事项类型</th>
+        <th nowrap width="11%" align="center">状态</th>
+        <th nowrap width="14%" align="center">发送时间</th>
+
+      </tr>
+      </thead>
+      <tbody>
+	#foreach($pending in ${pendingPage.data})
+       #set($item = $!{pending[0]})
+       #set($pendingHandle=$!{pending[1]})
+       #if($item.appItemLicences)
+           #set($licences=$!{item.appItemLicences})
+       #end
+       #if($velocityCount == 1)
+           #set($prjSortId=${item.prj.prjSortId})
+       #end
+      <tr #tableRowBgcolor($velocityCount)>
+      <td align="center" >$velocityCount</td>
+      <td>
+        <a href="#" onclick="openDetailPending('${pendingHandle.url}',1,'22','app','${item.prj.prjSortId}')">#requiredContent($!{item.checkNum} 20 "")</a>
+        #if($!{auditPendingHandle.isImportant()})
+         <img src="../app/right/images/ji.gif"  border="0">
+        #end
+      </td>
+      <td>
+		<div class="itemFont">#requiredContent($!{pendingHandle.title} 30 "")</div>
+      #if($!{pendingHandle.isImportant()})
+          <img src="../app/right/images/ji.gif"  border="0">
+      #end
+      </td>
+      <td  class="itemFont">#requiredContent($!{item.applyInfo} 12 "")</td>
+      <td>#lookUpDict($!{dicData.dicItemFlowFlag} $!{item.flowFlag})</td>
+      <td align="center" id="op_${item.itemApplyId}">
+        #if($item.applyStatus=='10')
+          #if($licences && $licences.size() > 0)
+            #foreach($itemLicence in $licences)
+            #formDefImg("../app/right/images/cert_mark.png" "style='cursor:pointer' width='24' height='24' alt='发证'" "handleLicence($!{item.itemApplyId}, '$!{itemLicence.licenceNo}','$!{item.applyInfo}', '$!{itemLicence.entpName}')")
+            #break
+            #end
+          #else
+              <span style="color:darkOrange">办理中..</span>
+          #end
+        #else
+              <span>#lookUpDict($!{dicData.dicApplyStatus} $!{item.applyStatus})</span>
+        #end
+      </td>
+      <td>#displayOnlyTime($!{pendingHandle.sendTime})</td>
+      </tr>
+ #if($velocityCount==5)
+ #set($rowCount=1)
+    #break
+ #end
+ </tbody>
+#end
+    </table>
+##moreContentLink("22" 62)
+  #if($rowCount==1)
+    <div class="right_bottom_move"><a href="#" onclick="moreAppContent('22','$prjSortId')">[更多内容]</a></div>
+  #end
+   #set($rowCount=0)
+</div>
+
+<div id="auditpendinghandle" class="portletContentBox"><!-- 评审中心待办 -->
+  <table  width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+      <thead>
+      <tr>
+        <th nowrap width="4%" align="center">序号</th>
+        <th nowrap width="15%" align="center">数据核对码</th>
+        <th nowrap width="21%" align="center">申请信息</th>
+        <th nowrap width="10%" align="center">产品名称</th>
+        <th nowrap width="25%" align="center">生产场所(注册)地址</th>
+        <th nowrap width="10%" align="center">状态</th>
+        <th nowrap width="15%" align="center">发送时间</th>
+      </tr>
+      </thead>
+      <tbody>
+#foreach($pending in ${auditTaskPage.data})
+        #set($auditTask = $!{pending[0]})
+        #set($auditPendingHandle=$!{pending[1]})
+        #if($velocityCount == 1)
+        #set($auditPrjSortId=${auditTask.prjSortId.substring(0,3)})
+        #end
+		   <tr #tableRowBgcolor($velocityCount)>
+              <td align="center">$velocityCount</td>
+              <td>
+                <a href="#" onclick="openDetailPending('${auditPendingHandle.url}',1,'29','audit','${auditTask.prjSortId}')" >#requiredContent($!{auditTask.checkNum} 20 "")</a>
+                #if($!{auditPendingHandle.isImportant()})
+                 <img src="../app/right/images/ji.gif"  border="0">
+                #end
+              </td>
+              <td>#requiredContent($!{auditTask.applyInfo} 16 "")</td>
+              <td>#requiredContent("#lookUpDict($!{dicData.dicAppFoodProdTypeAll} $!{auditTask.foodProdTypeId})" 7 "")</td>
+              <td>#requiredContent($!{auditTask.auditAddr} 20 "")</td>
+              <td id="applyStatus_${auditTask.itemApplyId}">#requiredContent($!{auditPendingHandle.status} 7 "")</td>
+              <td>#displayOnlyTime($!{auditPendingHandle.sendTime})</td>
+            </tr>
+ #if($velocityCount==5)
+ #set($rowCount=1)
+  #break
+ #end
+ </tbody>
+#end
+    </table>
+##moreContentLink("29" 824)
+  #if($rowCount==1)
+    <div class="right_bottom_move"><a href="#" onclick="moreAuditContent('29','$auditPrjSortId')">[更多内容]</a></div>
+  #end
+   #set($rowCount=0)
+</div>
+
+
+<div id="aipPending" class="portletContentBox"><!-- 行政办案 -->
+  <table width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+      <thead>
+      <tr>
+        <th nowrap width="4%">序号</th>
+        <th nowrap width="13%" align="center">案件受理码</th>
+        <th nowrap width="18%" align="center">案由</th>
+        <th nowrap width="20%" align="center">当事人(企业)名称</th>
+        <th nowrap width="10%" align="center">案件来源</th>
+        <th nowrap width="10%" align="center">是否立案</th>
+        <th nowrap width="10%" align="center">案件状态</th>
+        <th nowrap width="15%" align="center">填写日期</th>
+      </tr>
+      </thead>
+      <tbody>
+#foreach($aipPending in ${aipPendingPage.data})
+    #set($caseApply = $aipPending.caseApply)
+    #set($aipPendingHandle = $aipPending.pendingHandle)
+      <tr #tableRowBgcolor($velocityCount)>
+      <td align="center">$velocityCount</td>
+      <td>
+      <a href="#" onclick="openDetailWindow('${aipPendingHandle.url}',1,'$!{caseApply.caseBrief}','23',604)"><div class="itemFont">#requiredContent($!{caseApply.caseCode} 8 "")</div></a>
+      ##<a href="${aipPendingHandle.url}" >$!{caseApply.caseCode}</a>
+      </td>
+      <td>#requiredContent($!{caseApply.caseBrief} 13 "")</td>
+      <td>#requiredContent($!{caseApply.fillEntpName} 14 "")</td>
+      <td align="center">#requiredContent("#lookUpDict($!{dicData.dicAipCaseType} $!{caseApply.caseTypeId})" 7 "")</td>
+      <td align="center">#requiredContent("#lookUpDict($dicData.dicAipCaseFlag, ${caseApply.caseFlag})" 7 "")</td>
+      <td align="center">#requiredContent("#lookUpDict($dicData.dicAipCaseStatus, ${caseApply.caseStatus})" 7 "")</td>
+      <td align="center">#displayOnlyDate(${caseApply.createDate})</td>
+      </tr>
+    #if($velocityCount==5)
+    #set($rowCount=1)
+        #break
+    #end
+    </tbody>
+#end
+    </table>
+#moreContentLink("23" 604)
+</div>
+
+<div id="entpRegisterPending" class="portletContentBox"><!-- 企业注册审批 -->
+  <table width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+      <thead>
+        <tr>
+          <th nowrap width="4%">序号</th>
+          <th nowrap width="21%">企业名称 </th>
+          <th nowrap width="15%">企业性质 </th>
+          <th nowrap width="15%">联系人 </th>
+          <th nowrap width="15%">联系人手机 </th>
+          <th nowrap width="15%">所在地域 </th>
+          <th nowrap width="15%">状态 </th>
+          </tr>
+      </thead>
+      <tbody>
+#foreach($entpData in ${entpRegisterPage.data})
+    <tr #tableRowBgcolor($velocityCount)>
+      <td nowrap align="center">$velocityCount</td>
+      <td><a href="#" onclick="openDetailWindow('../manage/entpRegApprovedEdit.do?entpId=' + $!{entpData.entpId}, 1, '', '22',29)">#requiredContent("#htmlEscape($!{entpData.entpName})" 16 "")</a></td>
+      <td>#requiredContent($!{entpData.appProperty.propertyName} 12 "")</td>
+      <td>#requiredContent($!{entpData.contact} 11 "")</td>
+      <td>$!{entpData.cellPhone}</td>
+      <td>#requiredContent("#lookUpDict(${dicData.dicAppCityIdName} $!{entpData.cityId})" 12 "")</td>
+      <td><span #if("$!{entpData.entpValid}" == "$!{CONST.AppEntp.ENTP_VALID_DISAPPROVE}") style="color:red;" #end>#requiredContent("#lookUpDict(${dicData.dicEntpValid} $!{entpData.entpValid})" 12 "")</span></td>
+      </tr>
+    #if($velocityCount==5)
+    #set($rowCount=1)
+        #break
+    #end
+    </tbody>
+#end
+    </table>
+#moreContentLink("22" 29)
+</div>
+
+<div id="pharmRegisterPending" class="portletContentBox"><!-- 执业药师注册审批 -->
+  <table width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+      <thead>
+        <tr>
+            <th nowrap width="4%">序号</th>
+            <th nowrap width="12%">姓名 </th>
+            <th nowrap width="5%">性别 </th>
+            <th nowrap width="19%">身份证号码 </th>
+            <th nowrap width="20%">证书号码</th>
+            <th nowrap width="15%">联系手机 </th>
+            <th nowrap width="15%">考试或认定年份 </th>
+            <th nowrap width="10%">状态 </th>
+          </tr>
+      </thead>
+      <tbody>
+		#foreach($data in ${pharmRegisterPage.data})
+          <tr #tableRowBgcolor($velocityCount)>
+            <td nowrap align="center">$velocityCount</td>
+			<td><a href="#" onclick="openDetailWindow('../pharm/pharmLoginApprovedEdit.do?pharmId=$!{data.pharmId}', 1, '','22', 28)">#requiredContent("#htmlEscape($!{data.pharmName})" 7 "")</a></td>
+            <td>#lookUpDict(${dicData.dicSexName} $!{data.pharmGender})</td>
+            <td>#requiredContent($!{data.pharmIdCard} 20 "")</td>
+            <td>#requiredContent($!{data.pharmCertNo} 14 "")</td>
+            <td>$!{data.pharmMobile}</td>
+            <td>#requiredContent($!{data.pharmAffirmYear} 13 "")</td>
+            <td><span #if("$!{data.pharmValid}" == "$!{CONST.AppPharmacist.PHARM_VALID_DISAPPROVE}") style="color:red;" #end>#requiredContent("#lookUpDict($!{dicData.dicPharmValid} $!{data.pharmValid})" 6 "")</span></td>
+          </tr>
+		#end
+    #if($velocityCount==5)
+    #set($rowCount=1)
+        #break
+    #end
+    </tbody>
+    </table>
+#moreContentLink("22" 28)
+</div>
+
+<div id="appInspectProdApply" class="portletContentBox"><!-- 企业申请抽验 -->
+  <table width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+      <thead>
+      <tr>
+          <th width="4%">序号</th>
+          <th width="8%">数据核对码</th>
+          <th width="9%">事项名称</th>
+          <th width="9%">企业名称</th>
+          <th width="5%">事项类型</th>
+          <th width="6%">检验执行状态</th>
+          <th width="5%">发送时间</th>
+   	  </tr>
+      </thead>
+      <tbody>
+      #foreach($data in $!{findAppInspectProdApplyPage.getData()})
+      #set($appInspectCheckPerform = ${data[0]})
+	  #set($pending = ${data[1]})
+      <tr #tableRowBgcolor($velocityCount)>
+      <td align="center">$velocityCount</td>
+      <td>
+      <a href="#" onclick="openDetailWindow('${pending.url}', 1, '', '29',807)">#requiredContent($!{appInspectCheckPerform.checkNum} 20 "")</a></td>
+	  </td>
+      <td align="left">#requiredContent($!{appInspectCheckPerform.appItemApply.prj.prjName} 18 "")</td>
+      <td align="left">$!{appInspectCheckPerform.entpName}</td>
+	  <td align="left">#lookUpDict($!{dicData.dicItemFlowFlag} $!{appInspectCheckPerform.appItemApply.flowFlag})</td>
+      <td align="left">#lookUpDict($dicData.dicAppInspectCheckPerformState $!appInspectCheckPerform.checkPerformStatus)</td>
+	  <td align="left">#displayOnlyDate($!{pending.sendTime})</td>
+      </tr>
+      #if($velocityCount==5)
+      #set($rowCount=1)
+        #break
+      #end
+    </tbody>
+	#end
+    </table>
+#moreContentLink("29" 807)
+</div>
+
+<div id="watchTask" class="portletContentBox"><!-- 观察员选派 -->
+  <table width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+      <thead>
+      <tr>
+           <th nowrap width="4%">序号</th>
+           <th nowrap width="16%">数据核对码</th>
+           <th nowrap width="20%">申请信息</th>
+           <th nowrap width="20%">产品名称</th>
+           <th nowrap width="20%">生产场所(注册)地址</th>
+           <th nowrap width="20%">承办单位</th>
+   	  </tr>
+      </thead>
+      <tbody>
+      #foreach($auditOrg in ${watchTaskPage.data})
+      <tr #tableRowBgcolor($velocityCount)>
+      <td align="center">$velocityCount</td>
+      <td><a href="#" onclick="openDetailWindow('../audittask/watchTaskEdit.do?auditTaskId='+$!{auditOrg.auditTask.auditTaskId}, 1, '', '22',100)">#requiredContent($!{auditOrg.auditTask.checkNum} 20 "")</a></td>
+      <td>#requiredContent(${auditOrg.auditTask.applyInfo}, 14)</td>
+      <td>
+          #requiredContent("#lookUpDict($dicData.dicAppFoodProdTypeAll $!auditOrg.auditTask.foodProdTypeId)", 14)
+      </td>
+      <td>#requiredContent($!{auditOrg.auditTask.auditAddr}, 14)</td>
+      <td>#requiredContent("#lookUpDict(${dicData.dicSysOrg} $!{auditOrg.auditTask.handleUnitId})", 14)</td>
+      </tr>
+      #if($velocityCount==5)
+      #set($rowCount=1)
+        #break
+      #end
+    </tbody>
+	#end
+    </table>
+#moreContentLink("22" 100)
+</div>
+</body>
+</html>

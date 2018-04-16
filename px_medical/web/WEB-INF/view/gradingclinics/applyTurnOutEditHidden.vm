@@ -1,0 +1,40 @@
+<!-- 隐藏字段 -->
+	#formHiddenInput("orgId" "$!institutionDownUnit.orgId" "")<!-- 申请医院Id--> 
+    #formHiddenInput("hdDiagnosisApplyId" "$!hdDiagnosisApply.hdDiagnosisApplyId" " id='hdDiagnosisApplyId' ")
+    #formHiddenInput("hdDiagnosisNum" "$!hdDiagnosisApply.hdDiagnosisNum" " id='hdDiagnosisNum' ")
+    #formHiddenInput("patientId" "$!hdDiagnosisApply.patientId" " id='patientId' ")
+    #formHiddenInput("patientNo" "$!hdDiagnosisApply.patientNo" " id='patientNo' ")
+    #formHiddenInput("patientName" "$!hdDiagnosisApply.patientName" " id='patientName' ")
+    #formHiddenInput("hospitalno" "$!hdDiagnosisApply.hospitalno" "")
+    #formHiddenInput("hdType" "$!hdDiagnosisApply.hdType" "")
+    #formHiddenInput("otherDiagnosisUp" "$!hdDiagnosisApply.otherDiagnosisUp" "")<!--  其他（上转）-->
+    #formHiddenInput("applyTime" "$!hdDiagnosisApply.applyTime" " id='applyTime' ")<!--  其他（上转）-->
+    #formHiddenInput("transStatus" "$!hdDiagnosisApply.transStatus" " id='transStatus' ")
+    
+    <!-- 患者来源类型 -->
+    #formHiddenInput("patientType" "$!hdDiagnosisApply.patientType" "")
+    #formHiddenInput("inpatientId" "$!hdDiagnosisApply.inpatientId" "")
+    
+    <!-- 转入医院信息-->
+    #formHiddenInput("institutionUpName" "$!hdDiagnosisApply.institutionUpName" " id='institutionUpName' ")<!-- 转入医院名称-->
+    #formHiddenInput("officeUpName" "$!hdDiagnosisApply.officeUpName" " id='officeUpName' ")<!-- 转入科室名称-->
+    #formHiddenInput("doctorUpName" "$!hdDiagnosisApply.doctorUpName" " id='doctorUpName' ")<!-- 转入医生-->
+    #formHiddenInput("doctorMobileUp" "$!hdDiagnosisApply.doctorMobileUp" "")<!-- 转入医生电话-->
+    <!-- 转出医院信息-->
+    #formHiddenInput("institutionDownId" "$!hdDiagnosisApply.institutionDownId" "") <!-- 转出医院ID -->
+    #formHiddenInput("institutionDownName" "$!hdDiagnosisApply.institutionDownName" "") <!-- 转出医院名称 -->
+    #formHiddenInput("officeDownName" "$!hdDiagnosisApply.officeDownName" " id='officeDownName' ") <!-- 转出科室-->
+    #formHiddenInput("doctorDownName" "$!hdDiagnosisApply.doctorDownName" " id='doctorDownName' ") <!-- 转出医生-->
+    #formHiddenInput("institutionPhoneDow" "$!hdDiagnosisApply.institutionPhoneDow" " id='institutionPhoneDow' ") <!-- 转出医院联系电话-->
+    <!-- 审核-->
+    #formHiddenInput("checkDoctorId" "$!hdDiagnosisApply.checkDoctorId" "") <!-- 审核医生ID-->
+    #formHiddenInput("checkDoctorName" "$!hdDiagnosisApply.checkDoctorName" "") <!-- 审核医生 -->
+    #formHiddenInput("checkOpinion" "$!hdDiagnosisApply.checkOpinion" "") <!-- 审核意见 -->
+    #formHiddenInput("checkTime" "$!hdDiagnosisApply.checkTime" "") <!-- 审核日期 -->
+    <!-- 接诊-->
+    #formHiddenInput("clinicalOfficeId" "$!hdDiagnosisApply.clinicalOfficeId" "") <!-- 接诊科室ID -->
+    #formHiddenInput("clinicalOfficeName" "$!hdDiagnosisApply.clinicalOfficeName" "") <!-- 接诊科室名称 -->
+    #formHiddenInput("clinicalDoctorId" "$!hdDiagnosisApply.clinicalDoctorId" "") <!-- 接诊医生ID -->
+    #formHiddenInput("clinicalDoctorName" "$!hdDiagnosisApply.clinicalDoctorName" "") <!-- 接诊医生 -->
+    #formHiddenInput("clinicalTime" "$!hdDiagnosisApply.clinicalTime" "") <!-- 接诊时间 -->
+					

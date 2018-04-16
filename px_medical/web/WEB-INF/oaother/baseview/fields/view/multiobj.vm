@@ -1,0 +1,1 @@
+#foreach($childCell in ${cell.objectList})#viewField($childCell $datamap)#end

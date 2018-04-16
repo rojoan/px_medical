@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${SessionSysPortal.appTitle}</title>
+#parse("./common/pageCss.vm")
+<style>
+html, body { height: 100% }
+</style>
+</head>
+<body class="top-navigation" style="background: #F8FAFB">
+	<ul class="nav nav-tabs">
+		<li class='active'><a data-toggle="tab" href="#tab-1">患者登记信息</a></li>
+		<li><a data-toggle="tab" href="#tab-2">患者随访信息</a></li>
+	</ul>
+	<!-- begin患者登记信息 -->
+	<div class="tab-content" style="height: calc(100% - 42px)">
+		<div id="tab-1" class="tab-pane active" style="height: calc(100% - 2px)">
+			#set($showPage = "")
+			#if("$!chronicType" == "1")
+				#set($showPage = "personHypRecordShow")
+			#elseif("$!chronicType" == "2")
+				#set($showPage = "personDMRecordShow")
+			#elseif("$!chronicType" == "3")
+				#set($showPage = "personCopdRecordShow")
+			#elseif("$!chronicType" == "4")
+				#set($showPage = "personChdRecordShow")
+			#elseif("$!chronicType" == "5")
+				#set($showPage = "personCSRecordShow")
+			#elseif("$!chronicType" == "6")
+				#set($showPage = "personPtbRecordShow")
+			#elseif("$!chronicType" == "7")
+				#set($showPage = "personTumRecordShow")
+			#end
+			<iframe src="../personChronic/personRecordEdit.do?view=$!showPage&chronicTypeId=$!chronicTypeId" style="width:100%; height: 100%; border: none;" scrolling = "no"></iframe>
+		</div>
+		<!-- end患者登记信息 -->
+		
+		<!-- begin患者随访信息 -->
+		<div id="tab-2" class="tab-pane full-height">
+			<div class="col-md-2 full-height-scroll white-bg" style="padding: 0; border-right: #ccc 1px solid">
+	            <div class="sub-nav">
+	                <ul>
+	                    <li class="sub-nav-item">
+	                        <a href="javascript:;"><span>随访时间列表</span><i class="my-icon nav-more"></i></a>
+	                        <ul id="visitDateList"></ul>
+	                        <ul>
+	                            <li class="page"><button type="button" id='btn_more'>更多...</button></li>
+	                        </ul>
+	                    </li>
+	                </ul>
+	            </div>
+	        </div>
+	        <div class="col-md-10" style="height: calc(100% - 2px)">
+				<iframe id="visitIframe" src="" style="width:100%; height: 100%; border: none;" scrolling = "no"></iframe>
+	        </div>
+		</div>
+		<!-- end患者随访信息 -->
+	</div>
+</body>
+#parse("./common/pageJs.vm")
+#parse("./common/common.js.vm")
+<script type="text/javascript">
+	var visitJs = {
+		pageSize: 10,
+		pageNumber: 1,
+		// 查看访视详情
+		showVist: function (chronicVisitId){
+			var params = ['view=$!showView', 'chronicVisitId=' + chronicVisitId];
+			$('#visitIframe').attr('src', '../personChronicVisit/personVisitEdit.do?' + params.join('&'));
+		},
+		// 编辑访视详情
+		editVisit: function (chronicVisitId){
+			var params = ['view=$!editView', 'chronicVisitId=' + chronicVisitId];
+			$('#visitIframe').attr('src', '../personChronicVisit/personVisitEdit.do?' + params.join('&'));
+		},
+		// 删除访视详情
+		delVisit: function (obj, chronicVisitId){
+			if (chronicVisitId == "" || chronicVisitId == undefined) {
+				common.alert("删除失败，请检查参数是否有效", 0);
+	    		return ;
+			}
+			common.confirm("确定要删除吗？", function (){
+				$.post('../personChronicVisit/deletePersonChronicVisit.jo',{ids: chronicVisitId}, 
+						function (result){
+							if (result.code == "0") {
+								$(obj).parent().remove();
+							} else {
+								common.alert(result.msg, 2);
+							}
+					}, 'json');
+			});
+		},
+		// 加载访视列表
+		loadVisitList: function() {
+			if ("$!personChronicId" == "" || "$!chronicType" == "") {
+				return false;
+			}
+			$.post('../personChronicVisit/personVisitDataList.jo', {
+				personChronicId: "$!personChronicId",
+				chronicType: "$!chronicType",
+				pageSize: visitJs.pageSize, 
+				pageNumber: visitJs.pageNumber
+			}, function(data) {
+				var rows = data.rows;
+				var total = data.total;
+				if (rows == undefined || total == undefined || total <= 0 || rows.length < visitJs.pageSize) {
+					$('#btn_more').hide();
+				}
+				if (rows != undefined && total != undefined && total > 0) {
+					var html = [];
+					$.each(rows, function() {
+						var item = this.visitTime.split(" ");
+						html.push('<li>');
+						html.push('<span>' + item[0] + '</span>');
+						html.push('<a href="javascript: void(0); " onclick="visitJs.delVisit(this, ' + this.chronicVisitId + ')" title="删除"><i class="fa fa-times"></i></a>');
+						html.push('<a href="javascript: void(0);" onclick="visitJs.editVisit(' + this.chronicVisitId + ')" title="修改"><i class="fa fa-pencil-square-o"></i></a>');
+						html.push('<a href="javascript: void(0);" onclick="visitJs.showVist(' + this.chronicVisitId + ')" title="查看"><i class="fa fa-eye"></i></a>');
+						html.push('</li>');
+					});
+					$('#visitDateList').append(html.join(''));
+					visitJs.pageNumber = visitJs.pageNumber + 1;
+				}
+			}, 'json');
+		}
+	}
+	function savedShow(chronicVisitId) {
+		visitJs.showVist(chronicVisitId);
+	}
+	$(function() {
+		$('#btn_more').click(function(){
+			visitJs.loadVisitList();
+		});
+		$('#btn_more').click();
+	});
+</script>
+</html>

@@ -1,0 +1,2 @@
+#formTextInput($!{cell.field} "$!{datamap.get($!{cell.field})}" " #if(${cell.readonly})readonly#end class='inputobject' #if(${cell.style})style=#singleQuotes()${cell.style}#singleQuotes()#end#if(${cell.maxlen}) maxlength=${cell.maxlen}#end")
+#formTextInput($!{cell.dictName} "#lookUpDict(${cell.dictionary} ${datamap.get(${cell.field})})" " readonly class='inputobject' #if(${cell.style})style=#singleQuotes()${cell.style}#singleQuotes()#end#if(${cell.maxlen}) maxlength=${cell.maxlen}#end")$!{cell.button}

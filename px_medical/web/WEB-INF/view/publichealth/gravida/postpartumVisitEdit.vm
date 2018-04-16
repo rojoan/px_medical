@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孕妇分娩信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { animalHeat: 100% }
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+     <!-- form start -->
+     <form id="postpartumVisitForm" class="form-horizontal table-content full-height">
+          #formHiddenInput("postpartumVisitId" "$!postpartumVisit.postpartumVisitId" " id='postpartumVisitId' ")
+          #formHiddenInput("gravidaDetailId" "$!postpartumVisit.gravidaDetailId" " id='gravidaDetailId' ")
+          #formHiddenInput("personDetailId" "$!postpartumVisit.personDetailId" " id='personDetailId' ")
+          #formHiddenInput("regionId" "$!postpartumVisit.regionId" " id='regionId' ")
+          #formHiddenInput("hospitalId" "$!{postpartumVisit.hospitalId}" " id='hospitalId' ")
+          #formHiddenInput("visitDoctorId" "$!{postpartumVisit.visitDoctorId}" " id='visitDoctorId' ")
+          #formHiddenInput("fortyTwoExamFlag" "$!{postpartumVisit.fortyTwoExamFlag}" " id='fortyTwoExamFlag' ")
+          <div class="modal-body  full-height-scroll" style=" padding: 0 15px 40px">
+          <div class="row">
+              <div class="text-box"><h5>基础信息</h5></div>
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">姓名</label>
+                  <div class="col-md-8">
+                      #formTextInput("gravidaName" "#htmlEscape($!postpartumVisit.gravidaName)" " id='gravidaName' maxlength='10' class='form-control'")
+                  </div>
+              </div>
+          
+               <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">保健卡号</label>
+                  <div class="col-md-8">
+                      #formTextInput("gravidaCard" "#htmlEscape($!gravidaDetail.gravidaCard)" " id='gravidaCard' maxlength='20' class='form-control' readonly ")
+                  </div>
+              </div>
+          
+             <div class="col-md-12 form-group">
+                  <label class="col-md-3 control-label red">情绪低落、容易掉泪、精神懒散等现象</label>
+                  <div class="col-md-4">
+                        #formRadioButtonsLabel("mentalityFlag" "$!postpartumVisit.mentalityFlag" $dicData.dicHaveNo "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                  </div>
+              </div>
+              
+              <div class="col-md-12 form-group">
+                  <label class="col-md-2 control-label red">一般健康情况</label>
+                  <div class="col-md-8">
+                      #formTextarea("commonHealth" "#htmlEscape($!postpartumVisit.commonHealth)" " id='commonHealth' maxlength='200' class='form-control'")
+                  </div>
+              </div>
+              <div class="col-md-12 form-group">
+                  <label class="col-md-2 control-label red">一般心理状况</label>
+                  <div class="col-md-8">
+                      #formTextarea("mentalityState" "#htmlEscape($!postpartumVisit.mentalityState)" " id='mentalityState' maxlength='200' class='form-control'")
+                  </div>
+              </div>
+          
+            <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">体温</label>
+                  <div class="col-md-4">
+                      #formFloInput("animalHeat" "$!postpartumVisit.animalHeat" " id='animalHeat' maxlength='4' class='form-control'")
+                  </div>
+                  <label class="col-md-1 control-label p-r-n" style="text-align: left">℃</label>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="col-md-4 control-label">血压</label>
+                <div class=" input-group col-md-4" style="padding-left: 9px; display: inline-table; float: left">
+                    #formIntInput("minBloodPressure" "$!postpartumVisit.minBloodPressure" " id='minBloodPressure' maxlength='3' class='form-control'") 
+   
+                    <span class="input-group-addon">/</span>
+                    #formIntInput("maxBloodPressure" "$!postpartumVisit.maxBloodPressure" " id='maxBloodPressure' maxlength='3' class='form-control'") 
+
+                </div>
+                <label class="col-md-1 control-label p-r-n" style="text-align: left">mmHg</label>
+            </div>
+
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label">乳房</label>
+                <div class="col-md-2">
+                    #formSingleSelectFirstNone("breastCaseFlag" "$!postpartumVisit.breastCaseFlag" $!{dicData.dicExceptional} "class='form-control'" "")
+                </div>
+                <div class="col-md-6">
+                    #formTextInput("breastCase" "#htmlEscape($!postpartumVisit.breastCase)" " id='breastCase' maxlength='50' class='form-control'  ")
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label">恶露</label>
+                <div class="col-md-2">
+                    #formSingleSelectFirstNone("lochiaFlag" "$!postpartumVisit.lochiaFlag" $!{dicData.dicExceptional} "class='form-control'" "")
+                </div>
+                <div class="col-md-6">
+                   #formTextInput("lochiaContent" "#htmlEscape($!postpartumVisit.lochiaContent)" " id='lochiaContent' maxlength='50' class='form-control'  ")
+                </div>
+            </div>
+
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label">子宫</label>
+                <div class="col-md-2">
+                   #formSingleSelectFirstNone("wombFlag" "$!postpartumVisit.wombFlag" $!{dicData.dicExceptional} "class='form-control'" "")
+                </div>
+                <div class="col-md-6">
+                    #formTextInput("wombContent" "#htmlEscape($!postpartumVisit.wombContent)" " id='wombContent' maxlength='50' class='form-control'  ")
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label">伤口</label>
+                <div class="col-md-2">
+                   #formSingleSelectFirstNone("woundFlag" "$!postpartumVisit.woundFlag" $!{dicData.dicExceptional} "class='form-control'" "")
+                </div>
+                <div class="col-md-6">
+                    #formTextInput("woundContent" "#htmlEscape($!postpartumVisit.woundContent)" " id='woundContent' maxlength='50' class='form-control'  ")
+                </div>
+            </div>  
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label">分类情况</label>
+                <div class="col-md-2">
+                   #formSingleSelectFirstNone("classifyFlag" "$!postpartumVisit.classifyFlag" $!{dicData.dicExceptional} "class='form-control'" "")
+                </div>
+                <div class="col-md-6">
+                    #formTextInput("classifyContent" "#htmlEscape($!postpartumVisit.classifyContent)" " id='classifyContent' maxlength='50' class='form-control'  ")
+                </div>
+            </div> 
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label">其他</label>
+                <div class="col-md-8">
+                    #formTextInput("otherCntent" "#htmlEscape($!postpartumVisit.otherCntent)" " id='otherCntent' maxlength='50' class='form-control'  ")
+                </div>
+            </div>
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label red">母乳喂养情况</label>
+                <div class="col-md-8">
+                    #formTextInput("breastFeeding" "#htmlEscape($!postpartumVisit.breastFeeding)" " id='breastFeeding' maxlength='100' class='form-control'  ")
+                </div>
+            </div>
+  
+            <div class="col-md-12 form-group">
+                <label class="col-md-2 control-label red">指导</label>
+                <div class="col-md-10">
+                     #foreach($option in $dicData.dicHealthGuide.keySet())
+                               <label  class="checkbox-inline i-checks" style="float:left;">
+                               <input type="checkbox" name="healthGuide" value="${option}" id="healthGuide_${option}"
+                               #foreach($item in  $!postpartumVisit.healthGuideList)
+                                   #if($item == $option)
+                                       checked="checked"
+                                       #if($dicData.dicHealthGuide.get($option) == '其他')
+                                            #set($otherHealthGuideFlag = $item )
+                                       #end
+                                   #end
+                               #end
+                                 />${dicData.dicHealthGuide.get($option)}  &nbsp;
+                               </label>
+                    #end <!-- foreach end -->
+                           
+                    #if($otherHealthGuideFlag)
+                        #formTextInput("otherHealthGuide" "#htmlEscape($!postpartumVisit.otherHealthGuide)" " id='otherHealthGuide' maxlength='100' class='form-control' style='width: 30%;  float: left;' ")
+                    #else
+                      #formTextInput("otherHealthGuide" "#htmlEscape($!postpartumVisit.otherHealthGuide)" " id='otherHealthGuide' maxlength='100' class='form-control' style='width: 30%;  float: left;' readonly ")
+               
+                    #end
+                </div>
+          
+            </div>
+          
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label red">随访日期</label>
+                  <div class="col-md-8">
+                      #formTextInput("visitTime" "$!date.format('yyyy-MM-dd', $!postpartumVisit.visitTime)" " onclick='$layerDate' id='visitTime' class='form-control  layer-date' ")
+                  </div>
+              </div>
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label red">下次随访日期</label>
+                  <div class="col-md-8">
+                      #formTextInput("nextVisitTime" "$!date.format('yyyy-MM-dd', $!postpartumVisit.nextVisitTime)" " onclick='$layerDate' id='nextVisitTime' class='form-control  layer-date' ")
+                  </div>
+              </div>
+              
+              <div class="col-md-6 form-group">
+                    <label class="col-md-4 control-label">检查医院名称</label>
+                    <div class="col-md-8">
+                            #formTextInput("hospitalName" "#htmlEscape($!postpartumVisit.hospitalName)" " id='hospitalName' maxlength='100' class='form-control' readonly")
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label class="col-md-4 control-label">科室</label>
+                    <div class="col-md-8">
+                           #formTextInput("transDiagnosisOfficeName" "#htmlEscape($!postpartumVisit.transDiagnosisOfficeName)" " id='transDiagnosisOfficeName' maxlength='20' class='form-control' readonly ")
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label class="col-md-4 control-label">随访医生 </label>
+                    <div class="col-md-8">
+                            #formTextInput("visitDoctorName" "#htmlEscape($!postpartumVisit.visitDoctorName)" " id='visitDoctorName' maxlength='10' class='form-control' readonly ")
+                    </div>
+                </div>
+                
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">备注</label>
+                  <div class="col-md-8">
+                      #formTextInput("remark" "#htmlEscape($!postpartumVisit.remark)" " id='remark' maxlength='100' class='form-control'  ")
+                  </div>
+              </div>
+               <div class="col-md-12 form-group">&nbsp;</div>
+               <div class="col-md-12 form-group">&nbsp;</div>
+          </div>
+          </div>
+      </form>
+     <!-- form end -->
+    <!-- 底部 start -->      
+	<div class="tool-table-fixed" style="width: calc(100%)">
+		#if('show' != $!mode)
+		    <button onclick="savePostpartumVisit();" type="button" class="btn btn-success">
+                      <i class="fa fa-save"></i> 保 存
+                  </button>
+	    #end
+	</div>
+    <!-- 底部 end -->      
+				
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm") 
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/gravida/postpartumVisitEdit.js.vm")
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预防接种卡基本信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+
+#parse("./common/pageCss.vm")
+
+<style>
+html, body { height: 100% }
+</style>
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+</head>
+
+<body class="gray-bg top-navigation">
+
+    <!--新增 预防接种卡基本信息-->
+    <form id="vaccinationCardForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+        <input type="hidden" id="submitFlag" >
+        #formHiddenInput("vaccinationCardId" "$!{vaccinationCard.vaccinationCardId}" " id='vaccinationCardId' ")
+        #formHiddenInput("creatorId" "$!{vaccinationCard.creatorId}" " id='creatorId' ")
+        #formHiddenInput("childDetailId" "$!{vaccinationCard.childDetailId}" " id='childDetailId' ")
+        #formHiddenInput("personDetailId" "$!{vaccinationCard.personDetailId}" " id='personDetailId' ")
+        #formHiddenInput("hospitalId" "$!{vaccinationCard.hospitalId}" " id='hospitalId' ")
+
+
+        <div class="modal-body full-height-scroll" style="height: calc(100% - 49px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+            <div class="table-content"><!-- 表单可视域 内容 开始 -->
+
+                <div class="text-box"><h5>预防接种卡基本信息</h5></div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>被接种人姓名</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccinatedName" "#htmlEscape($!{vaccinationCard.vaccinatedName})" " id='vaccinatedName' maxlength='50' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">监护人姓名</label>
+                             <div class="col-sm-3">
+                                #formTextInput("guardiansName" "#htmlEscape($!{vaccinationCard.guardiansName})" " id='guardiansName' maxlength='50' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">监护人与儿童的关系</label>
+                             <div class="col-sm-3">
+                                #formTextInput("guardiansRelation" "#htmlEscape($!{vaccinationCard.guardiansRelation})" " id='guardiansRelation' maxlength='20' class='form-control'")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">建卡日期</label>
+                             <div class="col-sm-3">
+                                #formTextInput("createTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationCard.createTime})" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>建卡人</label>
+                             <div class="col-sm-3">
+                                #formTextInput("creatorName" "#htmlEscape($!{vaccinationCard.creatorName})" " id='creatorName' maxlength='20' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>填写时间</label>
+                             <div class="col-sm-3">
+                                #formTextInput("fillTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationCard.fillTime})" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">联系电话</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccinatedPhone" "#htmlEscape($!{vaccinationCard.vaccinatedPhone})" " id='vaccinatedPhone' maxlength='20' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">传染病史</label>
+                             <div class="col-sm-3">
+                                #formTextInput("contagionHistory" "#htmlEscape($!{vaccinationCard.contagionHistory})" " id='contagionHistory' maxlength='200' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">疫苗异常反应史</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccineUnReaction" "#htmlEscape($!{vaccinationCard.vaccineUnReaction})" " id='vaccineUnReaction' maxlength='200' class='form-control'")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>预防接种卡编号</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccinationCardNo" "#htmlEscape($!{vaccinationCard.vaccinationCardNo})" " id='vaccinationCardNo' maxlength='20' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>医疗机构编号</label>
+                             <div class="col-sm-3">
+                                #formIntInput("hospitalNo" $!{vaccinationCard.hospitalNo} " id='hospitalNo' maxlength='255' class='form-control' readonly ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>医疗机构名称</label>
+                             <div class="col-sm-3">
+                                #formTextInput("hospitalName" "#htmlEscape($!{vaccinationCard.hospitalName})" " id='hospitalName' maxlength='80' class='form-control' readonly")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">迁入时间</label>
+                             <div class="col-sm-3">
+                                #formTextInput("moveInTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationCard.moveInTime})" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">迁出时间</label>
+                             <div class="col-sm-3">
+                                #formTextInput("moveOutTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationCard.moveOutTime})" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">迁出原因</label>
+                             <div class="col-sm-3">
+                                #formTextInput("moveReason" "#htmlEscape($!{vaccinationCard.moveReason})" " id='moveReason' maxlength='100' class='form-control'")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>行政区域</label>
+                             <div class="col-sm-3">
+                                #formTextInput("regionId" "#htmlEscape($!{vaccinationCard.regionId})" " id='regionId' maxlength='18' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>是否有效</label>
+                             <div class="col-sm-7">
+                                #formRadioButtonsLabel("validFlag" "$!{vaccinationCard.validFlag}" ${dicData.dicYesNo} "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                             </div>
+                        </div>
+             </div><!--表单可视域内容 结束 -->
+        </div>
+    </form>
+
+    <div class="tool-table-fixed" style="width: calc(100%)">
+        <button onclick="saveVaccinationCard();" type="button" class="btn btn-success"><i class="fa fa-save"></i> 保 存</button>
+        &nbsp;
+    </div>
+<!--编 预防接种卡基本信息 表单及控件结束-->
+
+#parse("./common/pageJs.vm")
+#parse("./common/common.js.vm")
+#parse("./publichealth/vaccine/vaccinationCardEdit.js.vm")
+ </body>
+
+</html>

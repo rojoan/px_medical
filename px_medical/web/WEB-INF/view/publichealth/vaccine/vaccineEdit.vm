@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>疫苗程序编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+
+#parse("./common/pageCss.vm")
+
+<style>
+html, body { height: 100% }
+</style>
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+</head>
+
+<body class="gray-bg top-navigation">
+
+    <!--新增 疫苗程序-->
+    <form id="vaccineForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+        <input type="hidden" id="submitFlag" >
+        #formHiddenInput("vaccineId" "$!{vaccine.vaccineId}" " id='vaccineId' ")
+        #formHiddenInput("creatorId" "$!{vaccine.creatorId}" " id='creatorId' ")
+        <div class="modal-body full-height-scroll" style="height: calc(100% - 49px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+            <div class="table-content"><!-- 表单可视域 内容 开始 -->
+
+                <div class="text-box"><h5>疫苗程序基本信息</h5></div>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>疫苗名称</label>
+                    <div class="col-sm-3">
+                         #formTextInput("vaccineName" "#htmlEscape($!{vaccine.vaccineName})" " id='vaccineName' maxlength='50' class='form-control'")
+                    </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>疫苗简称</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccineCode" "#htmlEscape($!{vaccine.vaccineCode})" " id='vaccineCode' maxlength='50' class='form-control'")
+                     </div>
+                    <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>疫苗编号</label>
+                    <div class="col-sm-3">
+                         #formTextInput("vaccineNo" "#htmlEscape($!{vaccine.vaccineNo})" " id='vaccineNo' maxlength='20' class='form-control'")
+                    </div>
+                </div>
+
+                <div class="form-group">
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>接种对象</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccineObject" "#htmlEscape($!{vaccine.vaccineObject})" " id='vaccineObject' maxlength='100' class='form-control'")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>接种部位</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccinePart" "#htmlEscape($!{vaccine.vaccinePart})" " id='vaccinePart' maxlength='100' class='form-control'")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>接种途径</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccineUse" "#htmlEscape($!{vaccine.vaccineUse})" " id='vaccineUse' maxlength='200' class='form-control'")
+                     </div>
+                </div>
+
+
+                <div class="form-group">
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>接种剂次</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccineDose" "#htmlEscape($!{vaccine.vaccineDose})" " id='vaccineDose' maxlength='100' class='form-control'")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>接种剂量/剂次</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccineDoseNum" "#htmlEscape($!{vaccine.vaccineDoseNum})" " id='vaccineDoseNum' maxlength='200' class='form-control'")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">是否加强</label>
+                     <div class="col-sm-3">
+                         #formSingleSelectDictionary("reinforceFlag" $!{vaccine.reinforceFlag} $dicData.dicYesNo "id='reinforceFlag' data-placeholder='选择是否加强'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "选择是否加强")
+                     </div>
+                </div>
+
+                <div class="form-group">
+
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>是否使用</label>
+                     <div class="col-sm-3">
+                        ##macro(formRadioButtonsLabel $fieldName $fieldValue $options $separator $attributes $labelAttributes)
+                            #formRadioButtonsLabel("useFlag" "$!{vaccine.useFlag}" ${dicData.dicYesNo} "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">是否计划内</label>
+                      <div class="col-sm-3">
+                             #formRadioButtonsLabel("planFlag" "$!{vaccine.planFlag}" ${dicData.dicYesNo} "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                      </div>
+                    <label class="col-sm-2 control-label text-right p-r-none p-l-none "><font color="red">*</font>疫苗单位(支/粒)</label>
+                     <div class="col-sm-2">
+                         #formRadioButtonsLabel("vaccineUnit" "$!{vaccine.vaccineUnit}" ${dicData.dicVaccineUnit} "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                     </div>
+                </div>
+
+                <div class="form-group">
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>可预防疾病</label>
+                     <div class="col-sm-3">
+                         #formTextInput("preventDisease" "#htmlEscape($!{vaccine.preventDisease})" " id='preventDisease' maxlength='200' class='form-control'")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none "> 禁忌症</label>
+                     <div class="col-sm-3">
+                         #formTextInput("contraindication" "#htmlEscape($!{vaccine.contraindication})" " id='contraindication' maxlength='200' class='form-control'")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none ">可能出现的副反应</label>
+                     <div class="col-sm-3">
+                         #formTextInput("sideEffect" "#htmlEscape($!{vaccine.sideEffect})" " id='sideEffect' maxlength='200' class='form-control'")
+                     </div>
+                </div>
+                <div class="form-group">
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">疫苗价格</label>
+                     <div class="col-sm-3">
+                         #formFloInput("vaccinePrice" $!{vaccine.vaccinePrice} " id='vaccinePrice' maxlength='18' class='form-control'")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">疫苗产地</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccineProductArea" "#htmlEscape($!{vaccine.vaccineProductArea})" " id='vaccineProductArea' maxlength='100' class='form-control'")
+                     </div>
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">生产企业</label>
+                     <div class="col-sm-3">
+                         #formTextInput("productEntp" "#htmlEscape($!{vaccine.productEntp})" " id='productEntp' maxlength='100' class='form-control'")
+                     </div>
+                </div>
+
+                <div class="form-group">
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">接种时间</label>
+                     <div class="col-sm-3">
+                         #formTextInput("vaccineTime" "#htmlEscape($!{vaccine.vaccineTime})" " id='vaccineTime' maxlength='100' class='form-control'")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none ">排序号</label>
+                     <div class="col-sm-3">
+                         #formTextInput("sort" "#htmlEscape($!{vaccine.sort})" " id='sort' maxlength='255' class='form-control'")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none ">录入时间</label>
+                     <div class="col-sm-3">
+                         #formTextInput("createTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccine.createTime})" " id='createTime' maxlength='10' class='form-control' readonly")
+                     </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label text-right p-r-none p-l-none ">疫苗简介</label>
+                   <div class="col-sm-10">
+                        #formDefArea("vaccineContent" "$!{vaccine.vaccineContent}" "200" " class='form-control' rows='5' label='填写logicName' validator='maxLength:200'")
+                   </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label text-right p-r-none p-l-none ">备注</label>
+                    <div class="col-sm-10">
+                         #formDefArea("vaccineRemark" "$!{vaccine.vaccineRemark}" "200" " class='form-control' rows='5' label='填写logicName' validator='maxLength:200'")
+                    </div>
+                </div>
+
+             </div><!--表单可视域内容 结束 -->
+        </div>
+    </form>
+
+    <div class="tool-table-fixed" style="width: calc(100%)">
+        <button onclick="saveVaccine();" type="button" class="btn btn-success"><i class="fa fa-save"></i> 保 存</button>
+        &nbsp;
+    </div>
+<!--新增 疫苗结束-->
+
+#parse("./common/pageJs.vm")
+#parse("./common/common.js.vm")
+#parse("./publichealth/vaccine/vaccineEdit.js.vm")
+ </body>
+
+</html>
+ 

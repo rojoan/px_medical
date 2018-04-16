@@ -1,0 +1,86 @@
+<script>
+
+        // 提交表单
+        function saveVaccine() {
+            var vaccineParams = common.serializeObject($('#vaccineForm'));
+            if (vaccineParams.planFlag == undefined || vaccineParams.planFlag  == "") {
+                common.alert("请填写是否计划内",0);
+                return false;
+            }
+
+            if (vaccineParams.preventDisease == undefined || vaccineParams.preventDisease  == "") {
+                common.alert("请填写可预防疾病",0);
+               $("#preventDisease").focus();
+                return false;
+            }
+
+            if (vaccineParams.useFlag == undefined || vaccineParams.useFlag  == "") {
+                common.alert("请填写是否使用",0);
+               $("#useFlag").focus();
+                return false;
+            }
+
+            if (vaccineParams.vaccineDose == undefined || vaccineParams.vaccineDose  == "") {
+                common.alert("请填写接种剂次",0);
+               $("#vaccineDose").focus();
+                return false;
+            }
+
+            if (vaccineParams.vaccineDoseNum == undefined || vaccineParams.vaccineDoseNum  == "") {
+                common.alert("请填写接种剂量/剂次",0);
+               $("#vaccineDoseNum").focus();
+                return false;
+            }
+
+            if (vaccineParams.vaccineName == undefined || vaccineParams.vaccineName  == "") {
+                common.alert("请填写疫苗名称",0);
+               $("#vaccineName").focus();
+                return false;
+            }
+
+            if (vaccineParams.vaccineNo == undefined || vaccineParams.vaccineNo  == "") {
+                common.alert("请填写疫苗编号",0);
+               $("#vaccineNo").focus();
+                return false;
+            }
+
+            if (vaccineParams.vaccineObject == undefined || vaccineParams.vaccineObject  == "") {
+                common.alert("请填写接种对象",0);
+               $("#vaccineObject").focus();
+                return false;
+            }
+
+            if (vaccineParams.vaccinePart == undefined || vaccineParams.vaccinePart  == "") {
+                common.alert("请填写接种部位",0);
+               $("#vaccinePart").focus();
+                return false;
+            }
+
+            if (vaccineParams.vaccineUnit == undefined || vaccineParams.vaccineUnit  == "") {
+                common.alert("请填写疫苗单位（支/粒）",0);
+                return false;
+            }
+
+            if (vaccineParams.vaccineUse == undefined || vaccineParams.vaccineUse  == "") {
+                common.alert("请填写接种途径",0);
+               $("#vaccineUse").focus();
+                return false;
+            }
+
+                $.post("../vaccine/saveVaccine.jo", vaccineParams,  function (result) {
+                if (result.code == "0") {
+                  common.alert("保存成功",0);
+                  parent.queryRecord();//重新查询
+                  // 关闭窗口
+                  var index = parent.layer.getFrameIndex(window.name);
+                  parent.layer.close(index); 
+               } else {
+                  common.alert("保存操作发生一个错误：" + result.msg, 2);
+               }
+            }
+            , "json").error(function(jqXHR) {
+                                        jqueryPostError(jqXHR);
+                           }
+                       );//post
+           }//save function
+</script>

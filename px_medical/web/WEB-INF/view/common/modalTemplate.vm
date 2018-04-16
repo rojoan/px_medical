@@ -1,0 +1,27 @@
+#**
+ * modalElement
+ * 产生一个通用的modal div元素。
+ * @param modalId  modal 的 id属性
+*#
+#macro(modalElement $modalId)
+<div class="modal inmodal full-height" id="$modalId" tabindex="-1" role="dialog" aria-hidden="true" backdrop="false" data-backdrop="static">
+	<div class="modal-dialog" style="margin: 5px auto; width: calc(100% - 10px); max-width:1346px; height: calc(100% - 10px);">
+		<div class="modal-content animated bounceInRight full-height"> 
+		</div>
+	</div>
+</div>
+#end
+
+#**
+ * modalElement
+ * 产生一个通用的modal div元素。
+ * @param modalId  modal 的 id属性
+*#
+#macro(modalElementAttr $modalId $modalDialogAttr)
+<div class="modal inmodal full-height" id="$modalId" tabindex="-1" role="dialog" aria-hidden="true" backdrop="false" data-backdrop="static">
+	<div class="modal-dialog" $modalDialogAttr >
+		<div class="modal-content animated bounceInRight full-height"> 
+		</div>
+	</div>
+</div>
+#end

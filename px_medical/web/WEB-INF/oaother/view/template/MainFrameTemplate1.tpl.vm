@@ -1,0 +1,81 @@
+##<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../app/right/right.css" rel="stylesheet" type="text/css" />
+  <link href="../css/table.css" rel="stylesheet" type="text/css">
+#set($dataMap = ${HELPER_BEAN.getBeanNameMap(${command})})
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script language="JavaScript">
+#if($message)
+alert("$esc.javascript($message)");
+#end
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+
+function showLeft(){
+     var switchPoint = document.getElementById("myimg");
+     var leftTree = document.getElementById("leftTree");
+     var rightTree = document.getElementById("rightTree");
+    if (leftTree.style.display == "") {
+        switchPoint.src = "../base/images/default/layout/mini-right.gif";
+        leftTree.style.display = "none";
+        rightTree.style.width = "100%";
+    } else {
+        switchPoint.src = "../base/images/default/layout/mini-left.gif";
+        leftTree.style.display = "";
+        rightTree.style.width = "80%";
+    }
+  }
+
+function sendSelectFromLeft(node) {
+    //document.frames["rightFrame"].receiveSelectFromLeft(node);
+    window.frames["rightFrame"].receiveSelectFromLeft(node);
+}
+function loadFrame() {
+   if (location.search) {
+      var url = location.search.substring(1);
+      if (url) {
+          url = decodeURIComponent(url);
+          var f = document.getElementById('blank_frame');
+          if (f) {
+              f.src=url;
+          }
+      }
+   }
+}
+
+function javaReloadFrame() {
+    dyniframesize('rightFrame');
+}
+
+window.onload = loadFrame;
+</script>
+<body scroll="no">
+<table width="100%" height="100%" cellpadding="0">
+    <tr  >
+      <td id="leftTree" valign="top" width="20%">
+
+##�����ǲ�ѯ����Ĺ�����
+##parse("/template/EditToolBar.tpl.vm")
+##���ҷָ�iframe, һ����������οؼ� �ұ������ն���ѡ��
+		<iframe width="100%" height="100%" src="#buttonUrl(${_layout.leftUrl} $datamap)" scrolling="no" frameborder="no"   framespacing="0" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  id="leftFrame" name="leftFrame" >
+        </iframe>
+      </td>
+      <td background="../base/images/default/layout/ss_back.gif">
+    <img src="../base/images/default/layout/mini-left.gif" width="10" height="41" style="cursor:hand" id="myimg" onclick="showLeft();">
+    </td>
+
+    <td id="rightTree" valign="top" width="80%">
+		<iframe height="100%" width="100%"  src="#buttonUrl(${_layout.rightUrl} $datamap)" scrolling="auto" frameborder="no"   framespacing="0" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="rightFrame" name="rightFrame" >
+        </iframe>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

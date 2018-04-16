@@ -1,0 +1,279 @@
+<html>
+  <head>
+    <meta http-equiv=Content-Type content="text/html; charset=gbk">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link href="../app/print/designer.css" rel="stylesheet" type="text/css" />
+    <script language="javascript" type="text/javascript" src="../app/print/jatoolsPrinter.js"></script>
+    #loadDefaultScript("")
+##　　<style media="print">　　
+##　　  .noprint{display:none;height:3} 　　
+##   </style>
+<style>　
+.jbqk_title{
+    font-weight:bold;
+    font-size:24px;
+}
+.jbqk_check {
+    font-size:16px;
+}
+.jbqk_tab{
+    border-collapse:collapse;
+    width:660px;
+    font-size:16px;
+    font-family:"仿宋_GB2312";
+}
+
+.jbqk_tab th{
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+    border-left:1px solid #000;
+    border-right:1px solid #000;
+    padding:0 4px;
+    line-height:24px;
+}
+
+.jbqk_tab tr{
+    height:40px;
+}
+
+.jbqk_tab td{
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+    border-left:1px solid #000;
+    border-right:1px solid #000;
+    padding:0 4px;
+    line-height:24px;
+    font-size:16px;
+}
+</style>
+
+<style type="text/css" rel="stylesheet">
+.print {
+  Z-INDEX: 1; CURSOR: move; POSITION: absolute; border:0 none;
+}
+
+.noprint {
+  PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+
+.undrageobject {}
+
+.showdiv {display:block}
+.hidediv {display:none}
+.backobj .mouseoveronobj {position:absolute;z-index:100;margin:0px;padding:0px;overflow:hidden;list-style:none;-moz-opacity:.45;filter:Alpha(opacity=45);}
+.selectedobj {position:absolute;z-index:100;margin:0px;padding:0px;overflow:hidden;list-style:none;-moz-opacity:.65;filter:Alpha(opacity=65);background:#C4CAAE;}
+.selectedchildobj {background:#ffffe0;}
+
+@media Print
+{
+  .noprint {
+    DISPLAY: none
+  }
+  .print {
+    Z-INDEX: 1; CURSOR: move; POSITION: absolute
+  }
+  .pageNext{page-break-after: always;}
+  .backobj .mouseoveronobj, .undrageobject, .showdiv, .hidediv {}
+}
+<!--
+#pageInfoTable tr.ruled {
+  background:#C3C3C3;
+}
+
+.ruler a {
+    color:#000;
+    text-decoration:none;
+}
+
+.ruler a:hover {
+    color:#000;
+    font-style:italic;
+    text-decoration:none;
+}
+-->
+BODY {
+  BACKGROUND: #808080;
+}
+</style>
+  </meta>
+<script language="javascript">
+//初始化打印窗体
+function initPrintForm() {
+    if (dialogArguments != null) {
+        //getObjectById("printContentPanel").innerHTML = dialogArguments.CustomValue.printContent;
+        //getObjectById("printDocName").innerText = dialogArguments.CustomValue.printDocName;
+        //addPageInfo();
+        //initPrintTitle();
+        loadPrintSettings();
+    }
+}
+
+
+//打印
+#*
+function print() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    factory.printing.Print(true);
+}
+*#
+function print() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        alert("打印机未正确连接!");
+        return;
+    }
+    WebBrowser1.ExecWB(6,1);
+    //webPrn.OpenDocumentHTML(getObjectById("printContentPanel").innerHTML);
+}
+//打印预览
+function preview() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    alert(WebBrowser1);
+    WebBrowser1.ExecWB(7, 1);
+}
+//打印页设置
+function pageSetup() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+WebBrowser1.ExecWB(8,1);
+}
+//检查打印插件是否安装，打印机链接是否正常
+function checkPrinting() {
+    return true;
+    if (!factory.object) {
+        alert("安装打印ActiveX插件失败，可能浏览器的安全设置过高！");
+        return false;
+    }
+    //检查打印设备是否正确连接
+    try {
+        factory.printing.header;
+    } catch(ex) {
+       if(ex.number == -2147220485) {
+           alert("查找打印设备失败，请确认是否正确设置默认打印机？");
+       } else {
+           alert("初始化打印插件失败:" + ex.description);
+       }
+       return false;
+    }
+    return true;
+}
+//装载打印机的设置
+function loadPrintSettingsOld() {
+    //清除页眉页脚
+    factory.printing.header = "";
+    factory.printing.footer = "";
+    //横向
+    factory.printing.portrait = true;
+    factory.printing.leftMargin = 7;
+    factory.printing.topMargin = 7;
+}
+//装载打印机的设置
+function loadPrintSettings() {
+    return true;
+    window.onresize = function(){
+        webPrn.ResizeWindow(document.body.clientWidth,document.body.clientHeight);
+    }
+        if(webPrn){
+
+    try
+        {
+        //webPrn.LoadUrl = "C:\\TablePrint\\TablePrint.htm";
+        //webPrn.OpenUrl();
+        ##var cssStr = '<head><link href="../app/print/designer.css" rel="stylesheet" type="text/css" /></head>';
+//alert(window.location.host)
+var cssStr =
+'   <html>aa\n'
++'    <head>\n'
++     '<meta http-equiv=Content-Type content="text/html; charset=gbk">\n'
++'    <title>${SessionSysPortal.appTitle}</title>\n'
++'    <link href="http://'+ window.location.host + '#getContextPath()/app/print/designer.css" rel="stylesheet" type="text/css" />\n'
+
++' <style type="text/css" rel="stylesheet">\n'
++' @media Print\n'
++'{\n'
++'  .noprint {\n'
++'    DISPLAY: none\n'
++'  }\n'
++'  .print {\n'
++'    Z-INDEX: 1; CURSOR: move; POSITION: absolute\n'
++'  }\n'
++'  .pageNext{page-break-after: always;}\n'
++'  .backobj .mouseoveronobj, .undrageobject, .showdiv, .hidediv {}\n'
++'}\n'
++'</style>\n'
+
++'    </head>\n'
++'    <body >\n'
+
+<div style="Z-INDEX: 100000; LEFT: 410px; WIDTH: 450px; POSITION: absolute; TOP: -10px;list-style:none;-moz-opacity:.75;filter:Alpha(opacity=75)">
+  <fieldset class="search_border">
+     <img style="CURSOR: hand" onclick="javascript:print();" alt="打印" src="../app/print/images/icon_print.gif" border="0">
+  </fieldset>
+</div>
+
+;
+//scroll="no"
+//alert(cssStr);
+        webPrn.OpenDocumentHTML(cssStr + getObjectById("printContentPanel").innerHTML + '</body></html>');
+        ##webPrn.OpenDocumentHTML(getObjectById("printContentPanel").innerHTML, '', '');
+        webPrn.SetTopMargin("0.275");
+        webPrn.SetLeftMargin("0.275");
+        webPrn.SetRightMargin("0.275");
+        webPrn.SetBottomMargin("0.275")
+
+        ##webPrn.SetTopMargin("1.0");
+        ##webPrn.SetOrientation(2);
+        ##webPrn.SetPaperSize(11);
+        //webPrn.SetPaperSize(256,110,180,3);
+        //webPrn.SetHeader("");
+        webPrn.SetFooter("&b 第 &p 页 共 &P 页");
+
+        webPrn.SetPaperInfo();
+        webPrn.ResizeWindow(document.body.clientWidth,document.body.clientHeight);
+        webPrn.PrintView();
+
+    }catch(e){
+                alert('请按提示安装cab控件,再刷新本页面!');
+
+    }
+
+    }
+        //webPrn.PrintView();
+        //param 声明参数不要少, 具体看说明文档
+
+}
+</script>
+</head>
+<body onload="javascript:initPrintForm();">
+<OBJECT classid=CLSID:8856F961-340A-11D0-A96B-00C04FD705A2 height=0 id=WebBrowser width=0></OBJECT>
+
+<center class="noprint" >
+<div style="Z-INDEX: 100000; LEFT: 410px; WIDTH: 450px; POSITION: absolute; TOP: -10px;list-style:none;-moz-opacity:.75;filter:Alpha(opacity=75)">
+  <fieldset class="search_border">
+    <legend class="search_title"><font style="color:red;font-weight:bold">打印控制</font></legend>
+    <center>
+    <input name=Button onClick=document.all.WebBrowser.ExecWB(1,1) type=button value=打开>
+    <input onclick="javascript:document.all.WebBrowser.ExecWB(7, 1);" type="button" value="页面设置" class="btn"/>
+      <img style="CURSOR: hand" onclick="javascript:print();" alt="打印" src="../app/print/images/icon_print.gif" border="0">
+      <img style="CURSOR: hand" onclick="javascript:preview();" alt="打印预览" src="../app/print/images/icon_preview.gif" border="0">
+      <img style="CURSOR: hand" onclick="javascript:pageSetup();" alt="页面设置" src="../app/print/images/icon_set.gif" border="0">
+      <br>
+    </center>
+  </fieldset>
+</div>
+</center>
+<div id="printContentPanel" name="printElement" moveable="true" class="backobj print" style="Z-INDEX: 10000; width:760;LEFT:10px;TOP:50px;background:white;">
+</div>
+
+</table>
+</form>
+</body>
+</html>

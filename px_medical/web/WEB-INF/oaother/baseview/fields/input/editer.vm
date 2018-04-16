@@ -1,0 +1,2 @@
+#if(${cell.field})<textArea id="editercontent" name="$!{cell.field}" style="display:none">$!{datamap.get($!{cell.field})}</textArea>#end
+<iframe id='NewsContent' src='../scm/go.do?action=/editer/editer_display' frameborder=0 scrolling=no width='100%' height='380'></iframe>

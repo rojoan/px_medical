@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+    default-lazy-init="true">
+
+    <bean id="adminMenuTreeQueryUtil" class="com.bofan.basesystem.common.utils.FullQueryMethod">
+        <property name="selectClause"><value>functionId as id, parentId as parentid, name as text, functionOperate as href, sort as sorted, sysType as sysType</value></property>
+        <property name="fromClause"><value>com.bofan.manage.valueobject.SysFunction function</value></property>
+        <property name="defaultWhereClause"><value></value></property>
+        <property name="groupByClause"><value></value></property>
+        <property name="orderByClause"><value>parentid, sorted</value></property>
+        <property name="queryParam">
+            <list>
+                <value>functionId,functionId, EQU</value>
+                <value>sysType,sysType, EQU</value>
+                <value>name,name, LIKE</value>
+                <value>code,code,LIKE</value>
+                <value>functionOperate,functionOperate, LIKE</value>
+                <value>parentId,parentId, EQU</value>
+                <value>sort,sort, EQU</value>
+                <value>other,other, EQU</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="userMenuTreeQueryUtil" class="com.bofan.basesystem.common.utils.FullQueryMethod">
+        <property name="selectClause"><value>sysfunc.functionId as id, sysfunc.parentId as parentid, sysfunc.name as text, sysfunc.functionOperate as href, sysfunc.sort as sorted, sysfunc.sysType as sysType</value></property>
+        <property name="fromClause"><value>com.bofan.manage.valueobject.SysFunction sysfunc, com.bofan.manage.valueobject.SysUserInfo userInfo, com.bofan.manage.valueobject.SysRoleFunctionMapping rfp</value></property>
+        <property name="defaultWhereClause"><value>sysfunc.other='0' and sysfunc.functionId=rfp.compId.functionId</value></property>
+        <property name="groupByClause"><value></value></property>
+        <property name="orderByClause"><value>parentid, sorted</value></property>
+        <property name="queryParam">
+            <list>
+                <value>sysfunc.sysType,sysType, EQU</value>
+                <value>userInfo.sysUser.userId,userId, EQU</value>
+                <value>rfp.compId.roleId,roleIds, IN</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SimpleLoginService" class="com.login.service.spring.SimpleLoginService">
+        <property name="loginNameKey"><value>account</value></property>
+        <property name="passwordKey"><value>password</value></property>
+        <property name="passwordField"><value>password</value></property>
+    </bean>
+
+    <bean name="/login.action" class="com.login.controller.support.LoginController">
+        <property name="loginService"><ref bean="SimpleLoginService" /></property>
+        <property name="systemEntryUrl"><value>desktop.do</value></property>
+        <property name="outerIpAddress"><value>10.10.10.10</value></property>
+        <property name="outerNameAddress"><value>bofan.eicp.net</value></property>
+        <property name="loginUrl"><value>index.html</value></property>
+        <property name="alertRedirectPage"><ref bean="alertRedirectPage" /></property>
+    </bean>
+    <bean name="/logout.action" class="com.login.controller.support.LogoutController">
+        <property name="logoutPage"><value>index.html</value></property>
+    </bean>
+    <bean name="/desktop.do" class="com.login.controller.support.DesktopController">
+        <property name="desktopView"><value>desktop</value></property>
+    </bean>
+    <bean name="/main.do" class="com.login.controller.support.MainController">
+        <property name="menuTreeRootId"><value>1</value></property>
+        <property name="mainView"><value>main</value></property>
+        <property name="sysTypes"><value>${loginmenu.sys_type}</value></property>
+        <property name="defaultSysType"><value>${loginmenu.default_sys_type}</value></property>
+        <property name="alertRedirectPage"><ref bean="alertRedirectPage" /></property>
+        <property name="messageVerifyLoginUrl"><value>messageVerifyLogin.vm</value></property>
+        <property name="loginUrl"><value>index.html</value></property>
+        <property name="localSessionRefreshUrl"><value>${localSessionRefreshUrl}</value></property>
+        <property name="ssoSessionRefreshUrl"><value>${ssoSessionRefreshUrl}</value></property>
+        
+    </bean>
+
+</beans>

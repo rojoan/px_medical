@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>患者信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<script src="../resource/style/js/ui.js"></script>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+	<form id="patientForm" class="form-horizontal ">
+		<!-- 主体  -->
+		<div class="modal-body full-height" style="height: calc(100% - 49px); padding: 0; "><!--如果弹窗没有底部菜单栏则 -44px 没有标题减去49 -->
+		    <!-- tab-content -->
+		    <div class="tab-content table-content full-height-scroll" style="height: calc(100% - 40px); padding: 9px 8px 9px 12px;">
+		             	<input type="hidden" id="submitFlag" >
+		             	#formHiddenInput("patientId" "$!patient.patientId" " id='patientId' ")
+		             	#formHiddenInput("patientHospitalId" "$!patientHospital.patientHospitalId" " id='patientHospitalId' ")
+		             	#formHiddenInput("creatorId" "$!patient.creatorId" " id='creatorId' ")<!-- 建档人Id -->
+		             	#formHiddenInput("orgId" "$!patient.orgId" " id='orgId' ")
+		             	#formHiddenInput("hospitalNo" "$!patient.hospitalNo" " id='hospitalNo' ")
+		                 <!--基本信息-->
+		                 <div class="row m-l-xs m-r-xs">
+		                     <div class="text-box"><h5>患者基本信息</h5><span class="red">红字为必填</span></div>
+		                     <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none p-l-none red">患者姓名</label>
+		                         <div class="col-sm-3">
+		                             #formTextInput("patientName" "#htmlEscape($!patient.patientName)" " id='patientName' maxlength='10' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none red" >性别</label>
+		                         <div class="col-xs-3"> 
+		                             #formRadioButtonsLabel("patientSex" "$!patient.patientSex" $dicData.dicSex "&nbsp;" "" "class='checkbox-inline i-checks' ")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none ">出生年月</label>
+		                         <div class="col-sm-3">
+		                       		 #formTextInput("patientBirth" "$!date.format('yyyy-MM-dd', $!patient.patientBirth)" " id='patientBirth' maxlength='10' class='form-control layer-date' onclick='$layerDate'")
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+				                 
+		                         <label class="col-sm-1 control-label text-right p-r-none">证件类型</label>
+		                         <div class="col-sm-3">
+		                            #if($patient.certificateType)
+			                            #formSingleSelectDictionary("certificateType" "$!patient.certificateType" $dicData.dicCertificateType "id='certificateType' data-placeholder='选择证件类型'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "选择证件类型" "")
+		                            #else
+			                            #formSingleSelectDictionary("certificateType" "1" $dicData.dicCertificateType "id='certificateType' data-placeholder='选择证件类型'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "选择证件类型" "")
+		                            #end
+		                         </div>
+		                       <label class="col-sm-1 control-label text-right p-r-none">证件号码</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("patientIdCard" "#htmlEscape($!patient.patientIdCard)" " id='patientIdCard' onkeyup='matchPatientIdCard();' maxlength='20' class='form-control'")
+		                         </div>
+		                        <label class="col-sm-1 control-label text-right p-r-none">患者电话</label>
+		                        <div class="col-sm-3">
+		                         	 #formTextInput("patientPhone" "$!patient.patientPhone" " id='patientPhone'    maxlength='15' class='form-control'")
+		                        </div>
+							</div>
+		                     <div class="form-group">
+		                     	  <label class="col-sm-1 control-label text-right p-r-none">参保类型</label>
+		                         <div class="col-sm-3">
+		                         	#formSingleSelectDictionary("insuredType" $!patient.insuredType $dicData.dicInsuredType "id='insuredType' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none">医/农保证号</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("insuranceNo" "$!patient.insuranceNo" " id='insuranceNo' onkeyup='matchInsuranceNo();'  maxlength='20' class='form-control'")
+		                         </div>
+		                        
+		                         <label class="col-sm-1 control-label text-right p-r-none">患者院内ID</label>
+		                         <div class="col-sm-3">
+		                         	#formIntInput("patientNo" "$!patientHospital.patientNo" " id='patientNo' maxlength='25' class='form-control'")
+		                         </div>
+		                        
+		                     </div>
+		                     
+							   <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none red">就诊卡号</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("patientCardNo" "$!patientHospital.patientCardNo" " id='patientCardNo' maxlength='25' class='form-control'")
+		                         </div>
+		                          <label class="col-sm-1 control-label text-right p-r-none">住院号码</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("patientHospitalNo" "$!patientHospital.patientHospitalNo" " id='patientHospitalNo' maxlength='15' class='form-control'")
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         
+		                       	<label class="col-sm-1 control-label text-right p-r-none">婚否</label>
+		                         <div class="col-sm-3">
+		                         	#formSingleSelectDictionary("marryFlag" $!patient.marryFlag $dicData.dicYesNo "id='marryFlag' data-placeholder='请选择婚否'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+		                         </div>      
+								
+		                         <label class="col-sm-1 control-label text-right p-r-none">民族</label>
+		                         <div class="col-xs-3">
+		                            #formTextInput("patientNation" "$!patient.patientNation" " id='patientNation' maxlength='10' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none">籍贯</label>
+		                         <div class="col-xs-3">
+		                            #formTextInput("nativePlace" "$!patient.nativePlace" " id='nativePlace' maxlength='10' class='form-control'")
+		                         </div>
+		                     </div>
+							
+		                     <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none">联系人</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("contactName" "$!patient.contactName" " id='contactName' maxlength='10' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none">关系</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("contactRelation" "$!patient.contactRelation" " id='contactRelation' maxlength='10' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none">联系电话</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("contactPhone" "$!patient.contactPhone" " id='contactPhone' maxlength='15' class='form-control'")
+		                         </div>
+		                     </div>
+							
+		                     <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none">家庭电话</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("homePhone" "$!patient.homePhone" " id='homePhone' maxlength='15' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none">家庭地址</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("homeAddr" "$!patient.homeAddr" " id='homeAddr' maxlength='15' class='form-control'")
+		                         </div>
+		                           <label class="col-sm-1 control-label text-right p-r-none">现居地址</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("patientNowAddr" "$!patient.patientNowAddr" " id='patientNowAddr' maxlength='15' class='form-control'")
+		                         </div>
+		                     </div>
+							
+		                     <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none">工作单位电话</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("companyPhone" "$!patient.companyPhone" " id='companyPhone' maxlength='15' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none">工作单位地址</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("companyAddr" "$!patient.companyAddr" " id='companyAddr' maxlength='15' class='form-control'")
+		                         </div>
+		                         <label class="col-sm-1 control-label text-right p-r-none">职业</label>
+		                         <div class="col-sm-3">
+		                         	#formTextInput("patientCreer" "$!patient.patientCreer" " id='patientCreer' maxlength='15' class='form-control'")
+		                         </div>
+		                     </div>
+		                  
+		                     <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none">过敏史 </label>
+		                         <div class="col-sm-7">
+		                         	#formTextInput("patientAllergy" "$!patient.patientAllergy" " id='patientAllergy' maxlength='10' class='form-control'")
+		                         </div>
+		                     </div>
+		                     <div class="form-group">
+		                         <label class="col-sm-1 control-label text-right p-r-none">备注</label>
+		                         <div class="col-sm-7">
+		                         	#formTextInput("remark" "$!patient.remark" " id='remark' maxlength='15' class='form-control'")
+		                         </div>
+		                     </div>
+		                 </div>
+		         
+		         <!--患者档案 end -->
+			</div>
+			<!-- tab-content end -->
+	
+		</div>
+		<!-- 主体 end  -->
+	</form> 
+
+    <div class="tool-table-fixed" style="width: calc(100%)">
+      <button onclick="savePatient();" type="button" class="btn btn-success"><i class="fa fa-save"></i> 保存</button>
+    </div>
+                
+    <!-- 全局js -->
+    #parse("./common/common.js.vm")
+    #parse("./his/patientEdit.js.vm")
+</body>
+</html>
+ 

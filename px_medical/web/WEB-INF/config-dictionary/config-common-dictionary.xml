@@ -1,0 +1,2463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!--org_id = org_no  -->
+    <bean id="dicSysOrgCode" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="单位机构字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY,  org_no AS DICTVALUE FROM public_sys.sys_org where org_id = unit_org_id
+            </value>
+        </property>
+    </bean>
+    
+      <!-- 所有单位OrgId Name字典-->
+    <bean id="dicSysOrgUnitIdName" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="所有单位OrgId Name字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, name AS DICTVALUE  FROM public_sys.sys_org where del_flag = 1 and org_id = unit_org_id order by sort asc
+            </value>
+        </property>
+    </bean>
+    
+    <!-- 除顶级单位外的所有医院OrgId=Name字典 -->
+    <bean id="dicSysOrgDownUnitIdName" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="双向转诊下转单位字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, name AS DICTVALUE  FROM public_sys.sys_org where del_flag = 1 and  org_id = unit_org_id and org_rank &lt;&gt;  2  order by org_rank asc, sort asc
+            </value>
+        </property>
+    </bean>
+    
+    <!-- 除底层单位外的所有医院OrgId=Name字典 -->
+    <bean id="dicSysOrgUpUnitIdName" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="双向转诊上转单位字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT org_id AS DICTKEY, name AS DICTVALUE  FROM PUBLIC_SYS.SYS_ORG where del_flag = 1 and org_id = unit_org_id and org_rank &lt;&gt; 6  order by org_rank asc, sort asc
+            </value>
+        </property>
+    </bean>
+    <bean id="dicMedicalinstitution" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="医疗机构字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT medicalInstitutionId AS DICTKEY, name AS DICTVALUE FROM cloud_his.medicalinstitution
+            </value>
+        </property>
+    </bean>
+    <bean id="dicOffice" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="科室字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT officeId AS DICTKEY, name AS DICTVALUE FROM cloud_his.office
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDoctor" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="医生字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT doctorId AS DICTKEY, name AS DICTVALUE FROM cloud_his.doctor
+            </value>
+        </property>
+    </bean>
+    <bean id="dicCreateMeetingUser" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="可创建会议用户字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT userName AS DICTKEY, userPassword AS DICTVALUE FROM remote_consulting.video_meeting_user WHERE ROLE_FLAG = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDietaryHabit" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="饮食习惯字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT dietary_habit_id AS DICTKEY, dietary_habit AS DICTVALUE FROM PUBLIC_HEALTH.DIETARY_HABIT WHERE VALID_FLAG = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicExamSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="居民体检有效症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '01'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicAllExamSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="居民体检有效症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE symptom_type = '01'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDMSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="糖尿病症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '03'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicHYPSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="高血压症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '10'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicInsanitySymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="重性精神病状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '09'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicCopdSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="慢阻肺疾病症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '04'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicChdSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="冠心病症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '06'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicCSSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="脑卒中症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '07'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicPTBSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="肺结核症状字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT symptom_id AS DICTKEY, symptom_name AS DICTVALUE FROM PUBLIC_HEALTH.SYMPTOM WHERE valid_flag = '1' and symptom_type = '08'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDrinkType" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="饮酒类型字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT drink_type_id AS DICTKEY, drink_type AS DICTVALUE FROM PUBLIC_HEALTH.DRINK_TYPE WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDrinkUnit" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="饮酒单位字典"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT drink_type_id AS DICTKEY, alcohol_unit AS DICTVALUE FROM PUBLIC_HEALTH.DRINK_TYPE WHERE valid_flag = '1' AND alcohol_unit is not null
+            </value>
+        </property>
+    </bean>
+    <bean id="dicNation" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="民族"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT nation_id AS DICTKEY, nation_name AS DICTVALUE FROM PUBLIC_HEALTH.nation WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicFamilyRel" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="家庭关系"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT family_rel_id AS DICTKEY, family_rel AS DICTVALUE FROM PUBLIC_HEALTH.family_rel WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDisability" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="残疾字典表"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disability_id AS DICTKEY, disability_name AS DICTVALUE FROM PUBLIC_HEALTH.disability WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicExpose" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="暴露源字典表"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT expose_id AS DICTKEY, expose_name AS DICTVALUE FROM PUBLIC_HEALTH.expose WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDrugAllergy" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="药物过敏"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT drug_allergy_id AS DICTKEY, drug_allergy_name AS DICTVALUE FROM PUBLIC_HEALTH.drug_allergy WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+    <bean id="dicDisease" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="疾病名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disease_id AS DICTKEY, disease_name AS DICTVALUE FROM PUBLIC_HEALTH.disease WHERE  valid_flag = '1' ORDER BY disease_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicCerebrovascularDisease" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="脑血管疾病名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disease_id AS DICTKEY, disease_name AS DICTVALUE FROM PUBLIC_HEALTH.disease WHERE disease_type = '1' AND valid_flag = '1' ORDER BY disease_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicKidneyAndLiveDisease" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="肾肝疾病名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disease_id AS DICTKEY, disease_name AS DICTVALUE FROM PUBLIC_HEALTH.disease WHERE disease_type = '2' AND valid_flag = '1' ORDER BY disease_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicHeartDisease" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="心脏疾病名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disease_id AS DICTKEY, disease_name AS DICTVALUE FROM PUBLIC_HEALTH.disease WHERE disease_type = '3' AND valid_flag = '1' ORDER BY disease_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicBloodDisease" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="血管疾病名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disease_id AS DICTKEY, disease_name AS DICTVALUE FROM PUBLIC_HEALTH.disease WHERE disease_type = '4' AND valid_flag = '1' ORDER BY disease_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicBellowsDisease" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="肺部疾病名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disease_id AS DICTKEY, disease_name AS DICTVALUE FROM PUBLIC_HEALTH.disease WHERE disease_type = '5' AND valid_flag = '1' ORDER BY disease_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicOcularRegionDisease" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="眼部疾病名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT disease_id AS DICTKEY, disease_name AS DICTVALUE FROM PUBLIC_HEALTH.disease WHERE disease_type = '6' AND valid_flag = '1' ORDER BY disease_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicRiskControlFactors" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="危险控制因素"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT health_danger_type_id AS DICTKEY, health_danger_type AS DICTVALUE FROM PUBLIC_HEALTH.health_danger_type WHERE valid_flag = '1' ORDER BY health_danger_type_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicHealthGuideType" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="健康指导类型"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT health_guide_type_id AS DICTKEY, health_guide_type AS DICTVALUE FROM PUBLIC_HEALTH.health_guide_type WHERE valid_flag = '1' ORDER BY health_guide_type_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicCareer" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="个人职业"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT career_id AS DICTKEY, career_name AS DICTVALUE FROM PUBLIC_HEALTH.career WHERE valid_flag = '1' ORDER BY career_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicCommittee" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="居委会"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT committee_id AS DICTKEY, committee_name AS DICTVALUE FROM PUBLIC_HEALTH.committee WHERE valid_flag = '1' ORDER BY committee_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicNewVisitAdvise" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="新生儿随访指导"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT visit_adivse_id AS DICTKEY, visit_advise_name AS DICTVALUE FROM PUBLIC_HEALTH.visit_advise WHERE valid_flag = '1' AND visit_advise_type = '0' ORDER BY visit_advise_type, visit_adivse_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicOneVisitAdvise" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="1岁以内随访指导"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT visit_adivse_id AS DICTKEY, visit_advise_name AS DICTVALUE FROM PUBLIC_HEALTH.visit_advise WHERE valid_flag = '1' AND visit_advise_type = '1' ORDER BY visit_advise_type, visit_adivse_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicTwoVisitAdvise" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="1-2岁以内随访指导"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT visit_adivse_id AS DICTKEY, visit_advise_name AS DICTVALUE FROM PUBLIC_HEALTH.visit_advise WHERE valid_flag = '1' AND visit_advise_type = '2' ORDER BY visit_advise_type, visit_adivse_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicThereVisitAdvise" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="3-6岁以内随访指导"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT visit_adivse_id AS DICTKEY, visit_advise_name AS DICTVALUE FROM PUBLIC_HEALTH.visit_advise WHERE valid_flag = '1' AND visit_advise_type = '3' ORDER BY visit_advise_type, visit_adivse_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicVisitSicken" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="随访患病情况"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT visit_sicken_id AS DICTKEY, visit_sicken_name AS DICTVALUE FROM PUBLIC_HEALTH.visit_sicken WHERE valid_flag = '1' ORDER BY visit_sicken_id
+            </value>
+        </property>
+    </bean>
+    
+    <bean id="dicHighRiskFactor" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="高危因素"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT pregnancy_high_risk_id AS DICTKEY, high_risk_name AS DICTVALUE FROM PUBLIC_HEALTH.pregnancy_high_risk WHERE valid_flag = '1' ORDER BY pregnancy_high_risk_id
+            </value>
+        </property>
+    </bean>
+    
+    <bean id="dicPregnancyCase" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="孕早期情况"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT pregnancy_case_id AS DICTKEY, pregnancy_case AS DICTVALUE FROM PUBLIC_HEALTH.pregnancy_case WHERE valid_flag = '1' ORDER BY pregnancy_case_id
+            </value>
+        </property>
+    </bean>
+    
+    <bean id="dicPregnancyExamItemName" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="孕妇辅助检查项目表-类型_名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT pregnancy_exam_item_id AS DICTKEY, exam_item_name AS DICTVALUE FROM PUBLIC_HEALTH.pregnancy_exam_item WHERE valid_flag = '1' ORDER BY pregnancy_exam_item_id
+            </value>
+        </property>
+    </bean>
+    
+    <bean id="dicPregnancyExamItemUnit" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="孕妇辅助检查项目表-名称"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT pregnancy_exam_item_id AS DICTKEY, exam_item_unit AS DICTVALUE FROM PUBLIC_HEALTH.pregnancy_exam_item WHERE valid_flag = '1' ORDER BY pregnancy_exam_item_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicSurgeryWay" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="孕妇手术方式"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT surgery_way_id AS DICTKEY, surgery_way AS DICTVALUE FROM PUBLIC_HEALTH.pregnancy_surgery_way WHERE valid_flag = '1' ORDER BY surgery_way_id
+            </value>
+        </property>
+    </bean>
+    <bean id="dicEduThemeName" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="健康教育活动主题"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT edu_theme_id AS DICTKEY, edu_theme_name AS DICTVALUE FROM PUBLIC_HEALTH.health_edu_theme WHERE valid_flag = '1' ORDER BY edu_theme_id
+            </value>
+        </property>
+    </bean>
+    
+    <bean id="dicPregnancyExamItemType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="孕检项目类型名称"/>
+       <property name="dictionaryDatas">
+              <value>
+                01=血常规
+                02=尿常规
+                03=血型
+                04=血糖
+                05=肝功能
+                06=肾功能
+                07=阴道分泌物
+                08=乙型肝炎五项
+                09=梅毒血清学实验
+                10=HIV抗体检测
+                11=B超
+                12=其他
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicAuscultationExamItemType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="孕检项目类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                  11=心脏
+                  12=肺部 
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicWomenExamItemType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="孕检项目类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                  21=外阴 
+                  22=阴道 
+                  23=宫颈
+                  24=子宫 
+                  25=附件
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicGravidaHealthGuideType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="保健指导类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                01=生活方式  
+                02=避免畸型和疾病对胚胎的不良影响 
+                03=心理  
+                04=产前筛查宣传告知  
+                05=营养  
+                99=其他
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicFetusPosition" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="胎位"/>
+       <property name="dictionaryDatas">
+              <value>
+                   1=正常
+                   2=颜面
+                   3=高置
+                   4=臀位
+                   5=枕前
+                   6=枕后
+              </value>
+       </property>
+    </bean>
+    <bean id="dicParturitionWay" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="分娩方式"/>
+       <property name="dictionaryDatas">
+              <value>
+                   1=自然
+                   2=臀位产
+                   3=臀牵引
+                   4=吸引产
+                   5=钳产
+                   6=剖腹产
+                   7=其他
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicPerinealLaceration" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="会阴裂伤情况"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=无裂伤
+                  2=切开
+                  3=3度
+                  4=2度
+                  5=1度
+                  6=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicParturitionAddrType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="分娩地点分类"/>
+       <property name="dictionaryDatas">
+              <value>
+                   1=医院
+                   2=妇幼保健院
+                   3=家庭
+                   4=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicPuerperaBodyFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="分娩地点分类"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=良好
+                  2=一般
+                  3=较差
+              </value>
+       </property>
+    </bean>
+    <bean id="dicHealthGuide" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="产后访视指导"/>
+       <property name="dictionaryDatas">
+              <value>
+                1=个人卫生
+                2=心理
+                3=营养 
+                4=母乳喂养
+                5=新生儿护理与喂养
+                6=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicYesNo" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="是否"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=是
+                  0=否
+              </value>
+       </property>
+    </bean>
+    <bean id="dicHaveNo" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="有无"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=有
+                  0=无
+              </value>
+       </property>
+    </bean>
+    <bean id="dicSex" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="性别"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=男
+                  2=女
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicPacsImageType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="影像检查科室"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=dicom格式 
+                  2=图片
+              </value>
+       </property>
+    </bean>
+    <bean id="dicExamCategory" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="影像检查科室"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=超声
+                  2=放射
+                  3=内镜
+                  4=病理
+              </value>
+       </property>
+    </bean>
+    <!-- hd_diagnosis_apply 表 -->
+    <bean id="dicTransAim" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="转诊目的"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=诊断
+                  2=检查
+                  3=治疗
+                  4=康复
+              </value>
+       </property>
+    </bean>
+    <!-- hd_diagnosis_apply 表 -->
+    <bean id="dicHdType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="转诊类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=上转
+                  2=下转 
+              </value>
+       </property>
+    </bean>
+    <!-- hd_diagnosis_apply 表 -->
+    <bean id="dicTransStatus" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="转诊状态"/>
+       <property name="dictionaryDatas">
+              <value>
+                  0=暂存
+                  1=待审核
+                  2=待接诊
+                  3=待就诊
+                  4=已就诊
+                  5=已拒绝
+              </value>
+       </property>
+    </bean>
+    <!-- hd_diagnosis_apply 表 -->
+    <bean id="dicTurnInTransStatus" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="转入记录转诊状态"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=待审核
+                  2=待接诊
+                  3=待就诊
+                  4=已就诊
+                  5=已拒绝
+              </value>
+       </property>
+    </bean>
+    <!-- hd_diagnosis_apply 审核 -->
+    <bean id="dicHdDiaApplyAuditStatus" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="审核状态"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=通过
+                  2=拒绝
+              </value>
+       </property>
+    </bean>
+    <!-- LIS_INSPECTION_SAMPLE 病人类别 -->
+    <bean id="lisInspectionSamplePatientType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="病人类别"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=住院
+                  2=门诊
+                  3=住院急诊
+                  4=门诊急诊
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicOutInhosPatientType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="病人类别"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=住院
+                  2=门诊
+              </value>
+       </property>
+    </bean>
+    
+    <!-- LIS_INSPECTION_SAMPLE 检验状态 -->
+    <bean id="lisInspectionSampleInspectionState" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="检验状态"/>
+       <property name="dictionaryDatas">
+              <value>
+                  audited=已审核
+                  inspecting=正在检验
+                  reported=已报告
+              </value>
+       </property>
+    </bean>
+    <!-- LIS_INSPECTION_SAMPLE 检验状态 -->
+    <bean id="consultingConsultationType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="会议类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=非交互式会诊
+                  2=交互式会诊
+              </value>
+       </property>
+    </bean>
+     <!-- 突发事件  主要症状 -->
+     <bean id="dicCheifSymptom" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="主要症状"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT cheif_symptom_id AS DICTKEY, cheif_symptom AS DICTVALUE FROM emergency_event.cheif_symptom WHERE valid_Flag = '1'
+            </value>
+        </property>
+    </bean>
+    <!-- 突发事件  信息类别 -->
+     <bean id="dicEventType" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="信息类别"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT event_type_id AS DICTKEY, event_name AS DICTVALUE FROM emergency_event.event_type WHERE valid_Flag = '1'
+            </value>
+        </property>
+    </bean>
+     <!-- 突发事件  主要信息类别 -->
+     <bean id="dicEventTypeMain" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="主要信息类别"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT event_type_id AS DICTKEY, event_name AS DICTVALUE FROM emergency_event.event_type WHERE valid_Flag = '1' and LENGTH(event_type_code)=3
+            </value>
+        </property>
+    </bean>
+     <!-- 突发事件  事件发生场所 -->
+     <bean id="dicEventArea" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="事件发生场所"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT event_area_id AS DICTKEY, event_area AS DICTVALUE FROM emergency_event.event_area WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+     <!-- 突发事件  事件信息来源 -->
+     <bean id="dicEventSource" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="事件信息来源"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT event_source_id AS DICTKEY, info_source AS DICTVALUE FROM emergency_event.event_source WHERE valid_flag = '1'
+            </value>
+        </property>
+    </bean>
+     <!-- 突发事件  事件等级 -->
+     <bean id="dicEventLevel" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="事件等级"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT event_level_id AS DICTKEY, level_name AS DICTVALUE FROM emergency_event.event_level WHERE valid_Flag = '1'
+            </value>
+        </property>
+    </bean>
+    <!-- 流行病学记录  病历分类 -->
+    <bean id="dicEpiMedicalClassify" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="病历分类"/>
+        <property name="dictionaryDatas">
+              <value>
+                  01=疑似病例
+                  02=临床诊断病例
+                  03=实验室确诊病例
+                  04=病原携带者
+                  05=阳性检测病例
+                  06=急性乙型肝炎
+                  07=慢性乙型肝炎
+                  08=急性丙肝
+                  09=慢性丙肝
+                  10=急性吸血虫病
+                  11=慢性吸血虫病
+              </value>
+       </property>
+    </bean>
+    <!-- 流行病学记录  病人属于 -->
+    <bean id="dicEpiPatientBelong" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="病人属于"/>
+        <property name="dictionaryDatas">
+              <value>
+                  1=本县区
+                  2=本市其他县区
+                  3=本省其他地市
+                  4=外省
+                  5=港澳台
+                  6=外籍
+              </value>
+       </property>
+    </bean>
+    <!-- 凭祥地区 -->
+    <bean id="dicRegion" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+        <property name="displayName" value="凭祥地区"/>
+        <property name="dictionarySql">
+            <value>
+                SELECT region_id AS DICTKEY, region_name AS DICTVALUE FROM public_health.region WHERE valid_Flag = '1'
+            </value>
+        </property>
+    </bean>
+     <bean id="dicConsultStatus" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="远程会诊状态"/>
+       <property name="dictionaryDatas">
+			<value>
+               	0=检查登记
+				1=已申请
+				2=诊断中
+				3=诊断完成
+			</value>
+       </property>
+    </bean>
+    <bean id="dicFamilyType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="家庭类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=核心家庭
+                  2=单亲家庭
+                  3=主干家庭
+                  4=联合家庭
+                  5=其他家庭
+              </value>
+       </property>
+    </bean>
+    <bean id="dicPersonDetailCensusType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="个人信息户籍类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=城镇
+                  2=农村
+              </value>
+       </property>
+    </bean>
+    <bean id="dicCensusAttribute" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="户属性"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=一般农户
+                  2=烈军属
+                  3=五保户
+                  4=贫困户
+                  5=特困户
+              </value>
+       </property>
+    </bean>
+    <bean id="dicHouseType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="住房类型"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=电梯
+                  2=非电梯
+                  3=平房
+                  4=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicWarmCondition" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="保暖情况"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=保暖
+                  2=寒冷
+              </value>
+       </property>
+    </bean>
+    <bean id="dicKitchenUse" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="厨房使用方式"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=独用
+                  2=合用
+                  3=无
+              </value>
+       </property>
+    </bean>
+    <bean id="dicKitchenAir" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="厨房排风设施"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=油烟机
+                  2=换气扇
+                  3=烟囱
+                  4=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicKitchenWater" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="厨房饮水"/>
+       <property name="dictionaryDatas">
+              <value>
+                  1=纯水或桶装水
+                  2=经净化过滤的水
+                  3=自来水
+                  4=塘水
+                  5=河湖水
+                  6=井水
+                  7=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicKitchenFuel" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="厨房燃料类型"/>
+       <property name="dictionaryDatas">
+              <value>
+              	 1=天然气
+              	 2=液化气
+              	 3=沼气
+              	 4=煤
+              	 5=柴火
+              	 6=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicKitchenHumidity" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="厨房湿度情况"/>
+       <property name="dictionaryDatas">
+              <value>
+              	 1=正常
+              	 2=干燥
+              	 3=潮湿
+              </value>
+       </property>
+    </bean>
+    <bean id="dicKitchenRay" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="厨房采光情况"/>
+       <property name="dictionaryDatas">
+              <value>
+              	 1=阳光充足
+              	 2=昏暗
+              </value>
+       </property>
+    </bean>
+    <bean id="dicKitchenClean" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="厨房卫生情况"/>
+       <property name="dictionaryDatas">
+              <value>
+              	 1=整洁
+              	 2=一般
+              	 3=较差
+              </value>
+       </property>
+    </bean>
+    <bean id="dicToiletClean" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="卫生厕所"/>
+       <property name="dictionaryDatas">
+              <value>
+              	 1=完整下水道式
+				 2=双瓮漏斗式
+				 3=粪尿分集式
+				 4=水冲式
+				 5=双坑交替式
+				 6=三联沼气池式
+				 7=三格化粪池式
+				 8=其他
+              </value>
+       </property>
+    </bean>
+    <bean id="dicLivestockBar" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="禽畜栏"/>
+       <property name="dictionaryDatas">
+              <value>
+              	 1=无
+				 2=单设
+				 3=室内
+				 4=室外
+              </value>
+       </property>
+    </bean>
+    <bean id="dicHealthAssess" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="健康状态自我评估"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=满意
+				2=基本满意
+				3=说不清楚
+				4=不太满意
+				5=不满意
+              </value>
+       </property>
+    </bean>
+    <bean id="dicLiveSelfAssess" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="生活自理能力自我评估"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=可自理（0~3分）
+				2=轻度依赖（4~8分）
+				3=中度依赖（9~18分）
+				4=不能自理（》19分）
+              </value>
+       </property>
+    </bean>
+    <bean id="dicExeFrequency" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="锻炼频率"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=每天
+				2=每周以上
+				3=偶尔
+				4=不锻炼
+              </value>
+       </property>
+    </bean>
+    <bean id="dicPersonalType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="个人类别"/>
+       <property name="dictionaryDatas">
+              <value>
+                1=婴儿期：0～2岁
+                2=幼儿期：3～6岁
+                3=儿童期：7～11岁
+                4=少年期：12～17岁
+                5=青年期：18～25岁
+                6=成年期：25～65岁
+                7=老年：65岁以上为老年
+              </value>
+       </property>
+    </bean>
+    <bean id="dicCertificateType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="证件类型"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=身份证
+				2=居住证
+				3=签证
+				4=护照
+				5=户口本
+				6=军人证
+				7=港澳通行证
+              </value>
+       </property>
+    </bean>
+    <bean id="dicLiveType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="常住类型"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=户籍
+				2=非户籍
+				3=流动
+              </value>
+       </property>
+    </bean>
+    <bean id="dicBloodType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="血型"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=A型
+				2=B型
+				3=AB型
+				4=O型
+              </value>
+       </property>
+    </bean>
+    <bean id="dicCensusType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="户籍类型"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=农业户口
+				2=非农业户口
+              </value>
+       </property>
+    </bean>
+      <bean id="dicEducationDegree" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="文化程度"/>
+       <property name="dictionaryDatas">
+              <value>
+				1=研究生
+				2=大学本科
+				3=大学专科和专科学校
+				4=中等专业学校或中等技术学校
+				5=技工学校
+				6=高中
+				7=初中
+				8=小学
+				9=文盲或半文盲
+              </value>
+       </property>
+    </bean>
+    
+    <bean id="dicHealthIns" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="医保类型"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=城镇职工基本医疗保险
+					2=城镇居民基本医疗保险
+					3=新型农民合作医疗
+					4=贫困救助
+					5=商业医疗保险
+					6=全公费
+					7=全自费
+					8=其他
+	           </value>
+	    </property>
+	 </bean>
+     <bean id="dicPayWay" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="医疗支付方式"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=自费
+					2=医保
+					3=门诊统筹
+					4=公费
+					5=农合
+	           </value>
+	    </property>
+	  </bean>
+     <bean id="dicInsuredType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="患者参保类型"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=商业医保
+					2=新农合医保
+					3=城镇职工医保
+					4=城镇居民医保
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicFamilyMemberFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="家族成员标识"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=父亲
+					2=母亲
+					3=兄弟姐妹
+					4=子女
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicEmotionCondition" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="情感状态/认知功能"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=粗筛阴性
+					2=粗筛阳性
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDrinkFrequency" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="饮酒频率"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=从不
+					2=偶尔
+					3=经常
+					4=每天
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicSmokeState" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="吸烟状况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=从不吸烟
+					2=已戒烟
+					3=吸烟
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicGiveUpDrink" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="是否戒酒"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=已戒酒
+					0=未戒酒
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyLips" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="口唇情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=红润
+					2=苍白
+					3=发绀
+					4=皲裂
+					5=疱疹
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyPharyngeal" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="咽部情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=无充血
+					2=充血
+					3=淋病滤泡增生
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyHearing" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="听力情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=听见
+					2=听不清或无法听见
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodySportsAbility" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="运动功能"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=可以顺利完成
+					2=无法独立完成其中任何一个动作
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicIsNormal" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="是否正常"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=正常
+					2=异常
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodySkin" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="皮肤"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=正常
+					2=潮红
+					3=苍白
+					4=发绀
+					5=黄染
+					6=色素沉着
+					7=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodySclera" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="巩膜情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=正常
+					2=黄染
+					3=充血
+					4=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyLymph" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="淋巴结"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=未触及
+					2=锁骨上
+					3=腋窝
+					4=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyRale" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="肺部罗音"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=无
+					2=干罗音
+					3=湿罗音
+					4=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyRhythmHeart" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="心律"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=齐
+					2=不齐
+					3=绝对不齐
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyLowerBodyEdema" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="下体水肿"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=无
+					1=单侧
+					2=双侧不对称
+					3=双侧对称
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyAnusDre" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="肝门指诊"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=未见异常
+					2=触痛
+					3=包块
+					4=前列腺异常
+					5=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyVulva" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="妇科外阴/阴道"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=未见异常
+					1=异常
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicNormalStatus" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="心电图"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=正常
+					1=异常
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyFobt" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="大便潜血"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=阴性
+					2=阳性
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDiseaseDrugType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="用药类型"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=高血压用药
+					2=糖尿病用药
+					3=精神病用药
+					4=冠心病用药
+					5=慢阻肺用药
+					6=脑卒中用药
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDorsalArteryBeats" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="足背动脉搏动"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=未触及
+					2=触及双侧对称
+					3=触及左侧弱或消失
+					4=触及右侧弱或消失
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyBreast" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="妇科乳腺情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=未见异常
+					2=乳房切除
+					3=异常泌乳
+					4=乳腺包块
+					5=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDiagnosisFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="申请会诊标识"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=-
+					1=已申请转诊
+					2=已申请远程诊断
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBirthLocType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="出生地点分类"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=医院
+					2=妇幼保健院
+					3=家庭
+					4=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicHealthFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="健康状况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=良好
+					2=差
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicFetationFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="母亲妊娠期患病情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=无
+					1=糖尿病
+					2=妊娠期高血压
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBirthCondition" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="出生情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=顺产
+					2=胎头吸引
+					3=产钳
+					4=剖腹
+					5=双多胎
+					6=臀位
+					7=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicWeakFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="体弱儿类型"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=无
+					1=早产
+					2=低出生体重
+					3=先天性心脏病
+					4=营养性缺铁性贫血
+					5=中、重度营养不良
+					6=反复感染
+					7=活动期佝偻病
+					8=儿童糖尿病
+					9=肥胖
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicFatherCretType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="父亲证件类型"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=身份证
+					2=护照
+					3=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDiseaseScreening" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="疾病筛选"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=未进行
+					1=检查均阴性
+					2=甲低
+					3=苯丙酮尿症
+					4=其他遗传代谢病
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicHearScreening" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="听力筛查"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=通过
+					0=未通过
+					2=未筛查
+					3=不详
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicFeedFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="喂养方式"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=纯母乳
+					2=混合
+					3=人工
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicShitExam" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="大便形状"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=糊状
+					2=稀
+					3=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicComplexion" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="面色"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=红润
+					2=黄染
+					3=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicJaundiceParts" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="黄疸部位"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=无
+					1=面部
+					2=躯干
+					3=四肢
+					4=手足
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicFontanelle" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="前囟"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					1=闭合
+					2=膨隆
+					3=凹陷
+					4=其他
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicExceptional" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="异常情况"/>
+	    <property name="dictionaryDatas">
+	           <value>
+					0=未见异常
+					1=异常
+	           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicfontanelleClosed" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="前囟闭合"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=未闭合
+				1=闭合
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicGrowthAssess" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="体格发育评价"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=正常
+				2=低体重
+				3=消瘦
+				4=发育迟缓
+				5=超重
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicAssistedFoodFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="体格发育评价"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=谷类
+				2=蛋肉类
+				3=水果蔬菜类
+				4=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyAssessFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="发育评估"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=通过
+				0=未通过
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicHypLevel" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="高血压级别"/>
+	    <property name="dictionaryDatas">
+           <value>
+				101= 1级高血压（轻度）
+				102=2级高血压（中度）  
+				103=3级高血压（重度）  
+				104=单纯收缩期高血压
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicHaveNoUnspecified" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="高血压级别"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=无
+				1=有
+				2=不详
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicUnineProtein" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="尿常规--尿蛋白"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=阴性
+				2=+
+				3=++
+				4=+++
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicRetinoPathy" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="视网膜病变"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=未作
+				1=阴性
+				2=普遍或灶性狭窄
+				3=出血、渗出、视乳头水肿
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicTaste" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="口味"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=咸
+				2=淡
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicHypCureFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="是否接受抗高血压治疗"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=否
+				1=药物治疗
+				2=非药物治疗
+				3=兼有药物、非药物二者
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicHypNonDrugType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="高血压非药物治疗"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=限盐
+				2=规律运动
+				3=控制体重
+				4=戒烟
+				5=限酒
+				6=心理指导
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDiabetesNonDrugType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="糖尿病非药物治疗"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=学习糖尿病预防知识
+				2=健康自己生活行为
+				3=接受糖尿病筛查
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicInspectionSituation" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="检查情况"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=正常
+				1=异常
+				2=未做
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDiagnosisHospitalType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="诊断医院类型"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=省级医院
+				2=市级医院
+				3=县级医院
+				4=乡镇级医院
+				5=不详
+				6=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDiabetesCureFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="糖尿病是否接受三级预防"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=否
+				1=一级预防
+				2=二级预防
+				3=三级预防
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicChronicDMType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="糖尿类型"/>
+	    <property name="dictionaryDatas">
+           <value>
+				201=Ⅰ 型
+				202=Ⅱ型
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDMNonDrugType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="糖尿类型"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=学习糖尿病预防知识
+				2=健康自己生活行为
+				3=接受糖尿病筛查
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicVisitWay" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="随访方式"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=门诊
+				2=家庭
+				3=电话
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicFootPulsation" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="糖尿病足背动脉搏动"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=触及正常
+				2=双侧减弱
+				3=左侧减弱
+				4=右侧减弱
+				5=双侧消失
+				6=左侧消失
+				7=右侧消失
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicTakenSaltThick" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="摄盐情况"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=轻
+				2=中
+				3=重
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBehaviorDoctor" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="遵医行为"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=良好
+				2=一般
+				3=差
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDrugCompliance" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="服药依从性"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=规律
+				2=间断
+				3=不服药
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicVisitType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="随访分类"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=控制满意
+				2=控制不满意
+				3=不良反应
+				4=并发症
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicLowBloodSugar" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="糖尿病低血糖反应"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=无
+				1=偶尔
+				2=频繁
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicAgreeManageFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="知情同意" />
+	    <property name="dictionaryDatas">
+           <value>
+				1=同意参加管理
+				0=不同意参加管理
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicLockingFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="重性经生病既往关锁情况" />
+	    <property name="dictionaryDatas">
+           <value>
+				0=无关锁
+				1=关锁
+				2=关锁已解除
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicOutpatientFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="重性经生病门诊治疗" />
+	    <property name="dictionaryDatas">
+           <value>
+				0=未治
+				1=间断门诊治疗
+				2=连续门诊治疗
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicEconomicFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="重性经生病患者经济状况" />
+	    <property name="dictionaryDatas">
+           <value>
+				0=非贫困
+				1=贫困，在当地贫困线标准之下
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicLossReasonFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="失访原因" />
+	    <property name="dictionaryDatas">
+           <value>
+				1=外出打工
+				2=迁居他处
+				3=走失
+				4=连续3次未到访
+				5=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicDeathReasonFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="死亡原因" />
+	    <property name="dictionaryDatas">
+           <value>
+				1=躯体疾病
+				2=他杀
+				3=精神疾病相关并发症
+				4=自杀
+				5=意外
+				6=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicBodyDiseaseFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="死亡原因" />
+	    <property name="dictionaryDatas">
+           <value>
+				1=传染病和寄生虫病
+				2=肿瘤
+				3=心脏病
+				4=脑血管病
+				5=呼吸系统疾病
+				6=消化系统疾病
+				7=其他疾病
+				8=不详
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicInsanityDangerFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="危险性评估" />
+	    <property name="dictionaryDatas">
+           <value>
+				0=0级
+				1=1级
+				2=2级
+				3=3级
+				4=4级
+				5=5级
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicInsightFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="自知力" />
+	    <property name="dictionaryDatas">
+           <value>
+				1=自知力完全
+				2=自知力不全
+				3=自知力缺乏
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicSituationFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="是否良好情况" />
+	    <property name="dictionaryDatas">
+           <value>
+				1=良好
+				2=一般
+				3=较差
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicSituationOtherFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="是否良好及其他情况" />
+	    <property name="dictionaryDatas">
+           <value>
+				1=良好
+				2=一般
+				3=较差
+				4=此项不适用
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicInsanityType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="危险行为" />
+	    <property name="dictionaryDatas">
+           <value>
+				01=轻度滋事
+				02=肇事
+				03=肇祸
+				04=其他危险行为
+				05=自伤
+				06=自杀未遂
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicInhospitalFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="两次随访期间住院情况" />
+	    <property name="dictionaryDatas">
+           <value>
+			0=从未住院
+			1=目前正在住院
+			2=既往住院，现未住院
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicVisitClassify" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="重性精神病随访分类"/>
+	    <property name="dictionaryDatas">
+           <value>
+				0=不稳定
+				1=基本稳定
+				2=稳定
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicCureEffect" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="治疗效果"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=临床痊愈
+				2=无变化
+				3=加重
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicRecoveryType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="重性精神病康复措施"/>
+	    <property name="dictionaryDatas">
+           <value>
+				01=生活劳动能力
+				02=职业训练
+				03=学习能力
+				04=社会交往
+				05=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicChronicCopdLevel" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="慢阻肺疾病级别"/>
+	    <property name="dictionaryDatas">
+           <value>
+				301=Ⅰ 级（轻度COPD）
+				302=Ⅱ 级（中度COPD）
+				303=Ⅲ 级（重度COPD）
+				304=Ⅳ 级（极重度COPD）
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicChronicNonDrugCopd" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="慢阻肺疾病非药物治疗"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=药物治疗
+				2=氧疗
+				3=康复治疗
+				4=外科手术治疗
+				5=机械通气（呼吸机）
+				6=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicCopdDangerType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="慢阻肺疾病危险因素"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=吸烟与被动吸烟
+				2=遗传因素
+				3=职业暴露
+				4=空气污染
+				5=感染
+				6=高气道反应
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicCopdVisitSign" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="慢阻肺疾病随访体征字典"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=无症状
+				2=口唇紫绀
+				3=哮鸣音/湿罗音
+				4=下肢水肿
+				5=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicSurgeryType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="首次手术性质"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=根治
+					2=姑息
+					3=探查
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumBackoutReason" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤撤销管理原因"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=误诊
+					2=拒访
+					3=寄居
+					4=外地
+					5=其他
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumDeathReason" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤患者死亡原因"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=肿瘤
+					2=非肿瘤
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumDeathAddrFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤患者死亡地点"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=医院（急症室、病房）
+					2=家中
+					3=外地
+					4=其他
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumContentType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤患者报导内容"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=督导随访
+					2=用药
+					3=饮食
+					4=康复
+					5=家床
+					6=住院
+					7=出诊
+					8=其他
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumDiagnoseBasis" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤患者诊断依据"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=临床
+					2=病理
+					3=X线
+					4=B超
+					6=内镜
+					7=生化、免疫
+					8=细胞（血骨髓片）
+					9=尸检（有病理）
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumNonDrugType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤患者治疗类型"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=手术
+					2=化疗
+					3=放疗
+					4=中药
+					5=免疫
+					6=介入
+					7=对症治疗
+					8=止痛治疗
+					9=其他
+               </value>
+        </property>
+      </bean>
+      <bean id="dicChronicTumLevel" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤患者级别"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=良性肿瘤
+					2=恶性肿瘤
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumCategory" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肿瘤类别"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=上皮组织
+					2=间叶组织
+					3=神经组织
+					4=淋巴及造血组织
+					5=其他肿瘤
+               </value>
+        </property>
+      </bean>
+      <bean id="dicTumCurrentCondition" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="目前肿瘤治疗情况"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=稳定
+					2=好转
+					3=恶化
+               </value>
+        </property>
+      </bean>
+      <bean id="dicChdChronicLevel" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="冠心病级别"/>
+        <property name="dictionaryDatas">
+               <value>
+					1=心绞痛
+					2=心肌梗死
+					3=缺血性心肌病
+					4=无症状性心肌缺血
+					5=猝死
+               </value>
+        </property>
+      </bean>
+      <bean id="dicMuscleForce" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="肌力"/>
+        <property name="dictionaryDatas">
+               <value>
+					0=0级
+					1=Ⅰ级
+					2=Ⅱ级
+					3=Ⅲ级
+					4=Ⅳ级
+					5=Ⅴ级
+               </value>
+        </property>
+      </bean>
+      <bean id="dicSickenCondition" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="两次体检之间患病情况"/>
+        <property name="dictionaryDatas">
+               <value>
+					0=无
+					1=肺炎
+					2=腹泻
+					3=外伤
+					4=其他
+               </value>
+        </property>
+      </bean>
+      <bean id="dicVaccineUnit" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="疫苗单位"/>
+        <property name="dictionaryDatas">
+               <value>
+                    1=支
+                    2=粒
+               </value>
+        </property>
+      </bean>
+      <bean id="dicHandleResult" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="处理结果"/>
+        <property name="dictionaryDatas">
+               <value>
+                    1=成功
+                    2=拒绝
+               </value>
+        </property>
+      </bean>
+      <bean id="dicSelfCareAssessResult" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+        <property name="displayName" value="疫苗单位"/>
+        <property name="dictionaryDatas">
+               <value>
+                    1 =可自理
+                    2=轻度依赖
+                    3=中度依赖
+                    4=不能自理
+               </value>
+        </property>
+      </bean>
+      
+     <bean id="dicHealthTcmItemGoup" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+       <property name="displayName" value="中医体质评估项分组"/>
+       <property name="dictionaryDatas">
+            <value>
+                1=气虚质
+                2=阳虚质
+                3=阴虚质
+                4=痰湿质
+                5=湿热质
+                6=血瘀质
+                7=气郁质
+                8=特禀质
+                9=平和质
+            </value>
+       </property>
+    </bean>
+    <bean id="dicChronicPTBType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="肺结核类型"/>
+	    <property name="dictionaryDatas">
+           <value>
+				601=Ⅰ原发性肺结核
+				602=Ⅱ行播散型肺结核
+				603=Ⅲ继发型肺结核
+				604=Ⅳ结核性胸膜炎
+				605=Ⅴ其他肺外结核
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBPatientFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="患者类型"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=初治
+				2=复治
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBManageWay" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="管理方式"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=全程督导
+				2=强化期督导
+				3=全程管理
+				4=自服药
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicSputumBacteriumFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="痰菌情况"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=阳性
+				2=阴性
+				3=未查痰
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBDrugFastFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="耐用药情况"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=耐药
+				2=非耐药
+				3=未检测
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBCureFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="肺结核治疗方案"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=2H3R3Z3E3/4H3R3
+				2=2HRZE/4HR
+				3=2H3R3Z3E3S3/6H3R3E3
+				4=2HRZES/6HRE
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBDrugUsage" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="用药用法"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=每日
+				2=间歇
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBDosageForm" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="药品剂型"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=固定剂量复合制剂
+				2=散装药
+				3=板式组合药
+				4=注射剂
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBSupervisorFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="督导人员"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=医生
+				2=家属
+				3=自服药
+				4=其他
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBVentilateFlag" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="通风情况"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=良好
+				2=一般
+				3=差
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicPTBTherapyStopReason" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="肺结核停止治疗原因"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=完成疗程
+				2=死亡
+				3=丢失
+				4=转入耐多药治疗
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicEduDatumType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="发放资料种类"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=宣传手册
+				2=宣传折页
+				3=健康教育处方
+				4=VCD
+				5=DVD
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicEduArchiveType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="存档类型"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=书面材料
+				2=图片材料
+				3=印刷材料
+				4=影像材料
+				5=签到表
+				9=其他材料
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicEduCrowdType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="接受教育对象"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=青少年
+				2=妇女
+				3=老年人
+				4=残疾人
+				5=0~6岁儿童家长
+				6=农民工
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicEduPutArea" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="播放/发放位置"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=候诊室
+				2=诊室
+				3=咨询台
+				4=观察室
+				5=健康教育室
+           </value>
+	    </property>
+	  </bean>
+	  <bean id="dicEduBulletinType" class="com.bofan.dictionary.support.SimpleDictionaryItem">
+	    <property name="displayName" value="宣传栏种类"/>
+	    <property name="dictionaryDatas">
+           <value>
+				1=墙报
+				2=版报
+           </value>
+	    </property>
+	  </bean>
+	  
+	  
+	  
+	  <!-- 职业中毒 -->
+	  <bean id="dicDiseaseFactor3" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="致病因素-职业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT disease_factor_id AS DICTKEY, disease_factor_name AS DICTVALUE FROM emergency_event.disease_factor WHERE valid_flag = '1' AND event_type_id=3
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicOccurReason3" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="事件发生原因-职业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT occur_reason_id AS DICTKEY, occur_reason AS DICTVALUE FROM emergency_event.occur_reason WHERE valid_flag = '1' AND event_type_id=3
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicPatientDeal3" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="病人处理过程-职业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT patient_deal_id AS DICTKEY, patient_deal AS DICTVALUE FROM emergency_event.patient_deal WHERE valid_flag = '1' AND event_type_id=3
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicControlMeasure3" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="事情控制措施-职业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT control_measure_id AS DICTKEY, control_measure AS DICTVALUE FROM emergency_event.control_measure WHERE valid_flag = '1' AND event_type_id=3
+	  		</value>
+	  	</property>
+	  </bean>
+	  <!-- 农业中毒 -->
+	  <bean id="dicDiseaseFactor4" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="致病因素-农业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT disease_factor_id AS DICTKEY, disease_factor_name AS DICTVALUE FROM emergency_event.disease_factor WHERE valid_flag = '1' AND event_type_id=4
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicOccurReason4" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="事件发生原因-农业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT occur_reason_id AS DICTKEY, occur_reason AS DICTVALUE FROM emergency_event.occur_reason WHERE valid_flag = '1' AND event_type_id=4
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicPatientDeal4" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="病人处理过程-农业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT patient_deal_id AS DICTKEY, patient_deal AS DICTVALUE FROM emergency_event.patient_deal WHERE valid_flag = '1' AND event_type_id=4
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicControlMeasure4" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="事情控制措施-农业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT control_measure_id AS DICTKEY, control_measure AS DICTVALUE FROM emergency_event.control_measure WHERE valid_flag = '1' AND event_type_id=4
+	  		</value>
+	  	</property>
+	  </bean>
+	  <!-- 农业中毒-中毒类型 -->
+	  <bean id="dicSubEventTypeId4" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="事件信息类别子类型-农业中毒"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT event_type_id AS DICTKEY, event_name AS DICTVALUE FROM emergency_event.event_type WHERE valid_flag = '1' AND LENGTH(event_type_code)=6 AND SUBSTR(event_type_code,0,3)='004'
+	  		</value>
+	  	</property>
+	  </bean>
+	  
+	  <!-- 免疫接种 -->
+	  <bean id="dicDiseaseFactor7" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="致病因素-免疫接种"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT disease_factor_id AS DICTKEY, disease_factor_name AS DICTVALUE FROM emergency_event.disease_factor WHERE valid_flag = '1' AND event_type_id=7
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicOccurReason7" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="事件发生原因-免疫接种"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT occur_reason_id AS DICTKEY, occur_reason AS DICTVALUE FROM emergency_event.occur_reason WHERE valid_flag = '1' AND event_type_id=7
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicPatientDeal7" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="病人处理过程-免疫接种"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT patient_deal_id AS DICTKEY, patient_deal AS DICTVALUE FROM emergency_event.patient_deal WHERE valid_flag = '1' AND event_type_id=7
+	  		</value>
+	  	</property>
+	  </bean>
+	  <bean id="dicControlMeasure7" class="com.bofan.dictionary.support.DatabaseDictionaryItem">
+	  	<property name="displayName" value="事情控制措施-免疫接种"></property>
+	  	<property name="dictionarySql">
+	  		<value>
+	  			SELECT control_measure_id AS DICTKEY, control_measure AS DICTVALUE FROM emergency_event.control_measure WHERE valid_flag = '1' AND event_type_id=7
+	  		</value>
+	  	</property>
+	  </bean>
+ </beans>

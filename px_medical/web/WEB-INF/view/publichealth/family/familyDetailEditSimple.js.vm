@@ -1,0 +1,51 @@
+<script>
+        // 提交表单
+        function saveFamilyDetail() {
+        	var familyDetailParams = common.serializeObject($('#familyDetailForm'));
+        	
+            if (familyDetailParams.familyOwnerName == undefined || familyDetailParams.familyOwnerName == "") {
+                common.alert("请填写户主姓名",0);
+                $("#familyOwnerName").focus();
+                return false;
+            }
+            if (familyDetailParams.mobile)  {
+            	if (!checkMobile(familyDetailParams.mobile) && !checkPhone(familyDetailParams.mobile)) {
+       				common.alert("联系电话格式错误！",0);
+   	    			$("#mobile").focus();
+       				return false;
+       			}
+            }
+            //街道
+            if ($('#familyDetailForm').find("#regionId").parent().find(".select-item").last().attr('data-code') == undefined) {
+	            familyDetailParams.regionId = '';
+	            common.alert("请选择城镇街道！",0);
+	            return false;
+			}else{
+				familyDetailParams.regionId = $('#familyDetailForm').find("#regionId").parent().find(".select-item").last().attr('data-code');
+			}
+            var familyDetailRetionData = {};
+            familyDetailRetionData.familyDetailOtherEditInfo = familyDetailParams;
+           
+            $.post("../familyDetail/saveFamilyDetail.jo", 
+            	   {familyDetailRetionData : JSON.stringify(familyDetailRetionData)},  
+            	   function (result) {
+		                if (result.code == "0") {
+		                    $('#submitFlag').val("1");
+		                    $("#familyDetailId").val( result.data.familyDetailId);
+		                    $("#familyNumber").val( result.data.familyNumber);
+		                    $("#houseConditionId").val( result.data.houseConditionId);
+		                    common.alertCall("保存成功!", 1, function (){
+		                        // 刷新父页面
+		                        var $btnQuery = $('#btn_query', window.parent.document);
+		                        if($btnQuery.length > 0 ) $btnQuery.click();
+		                 
+		                        // 关闭窗口
+		                        var index = parent.layer.getFrameIndex(window.name);
+		                        parent.layer.close(index); 
+		                    });
+		                } else {
+		                    common.alert(result.msg,2); 
+		                }
+		            }, "json");
+        }
+</script>

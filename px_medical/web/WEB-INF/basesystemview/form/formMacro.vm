@@ -1,0 +1,49 @@
+#*
+ * $info 表单对象
+ * $setting 设置参数
+ *     name: 表单名
+ *     layout: 布局方式,对应form${setting.layout}.vm布局文件
+ *     method: GET/POST
+ *     action: 表单提交的URL
+ *#
+#macro(renderForm $info $setting)
+#set($info = ${FormInfo.wrap($info, $setting)})
+#set($layoutvm = "form/${info.layout}.vm")
+#parse($layoutvm)
+#end
+
+#macro(ibutton $picture $title $onclick $for $display)
+<button type="button" class="i-button" onclick="$onclick" #if($for)for="$for" #if(!$display)style="display:none;"#end#end ><img src="../app/right/images/$picture"> $title</button>
+#end
+
+#macro(treeSimplePicker $inputName $initViewValue $dataUrl $title  $style)
+<input id="$inputName" type="hidden" name="$inputName" value="" >
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
+<td><div class="i-input-box">
+<input id="${inputName}_viewer" value="${initViewValue}" type="text" readonly="readonly" #if(${style}) style="${style}" #else class="i-input" #end >
+</div></div></td>
+<td width=21><img onclick="CC.ux.TreePicker.simplePick('$inputName', '$dataUrl', '$title')" src="../base/images/icons/expand-all.gif" width=21 height=21 align="absmiddle" style="cursor:pointer;padding-left: 2px;"/></td>
+</tr></table>
+#end
+
+#macro(cssAndJs)
+<link rel="stylesheet" type="text/css" href="../ext/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../ext/resources/css/xtheme-gray.css" />
+<link rel="stylesheet" type="text/css" href="../base/css/ext-patch.css" />
+<link rel="stylesheet" type="text/css" href="../app/right/right.css">
+<link rel="stylesheet" type="text/css" href="../app/right/form.css">
+<link href="../script/DHTML_calendar_style.css" rel="stylesheet" type="text/css" media="all"  title="calendar_style" />
+<link href="../base/js/swfupload/swfupload.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+<script type="text/javascript" src="../base/js/grid/CC.ux.PagingGrid.js"></script>
+<script language="JavaScript" src="../script/common.js"></script>
+<script language="JavaScript" type="text/javascript" src="../script/DHTML_calendar.js"></script>
+<script type="text/javascript" src="../base/js/picker/CC.ux.UserOrg.js"></script>
+<script type="text/javascript" src="../base/js/picker/CC.ux.TreePicker.js"></script>
+<script type="text/javascript" src="../base/js/window/CC.ux.ContentElWindow.js"></script>
+<script type="text/javascript" src="../base/js/swfupload/swfupload.js"></script>
+<script type="text/javascript" src="../base/js/swfupload/swfupload_handlers.js"></script>
+<script type="text/javascript" src="../base/js/autoform.js"></script>
+#end

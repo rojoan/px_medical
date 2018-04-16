@@ -1,0 +1,5 @@
+#if(${cell.showTime})
+    #displayOnlyTime($!{datamap.get($!{cell.field})})
+#else
+    #displayOnlyDate($!{datamap.get($!{cell.field})})
+#end

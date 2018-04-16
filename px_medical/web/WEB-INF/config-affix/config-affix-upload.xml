@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:aop="http://www.springframework.org/schema/aop"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+         default-lazy-init="true">
+
+    <bean id="affixUtility" class="com.affix.utils.AffixUtility">
+        <property name="saveMode"><value>1</value></property>
+        <property name="imageSuffix">
+            <list>
+                <value>.jpg</value>
+                <value>.png</value>
+                <value>.bmp</value>
+                <value>.gif</value>
+                <value>.jpeg</value>
+            </list>
+        </property>
+        <property name="uploadRootMap">
+        <!-- 不同类型附件存放的根路径，属于绝对路径 ,目前全部指定为 /upload  -->
+            <map>
+                 <entry key="faq"><value>${faqAffixService.rootFilePath}</value></entry>
+                 <entry key="healthEduAffix"><value>${healthEduAffixService.rootFilePath}</value></entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

@@ -1,0 +1,247 @@
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<!-- 个人的基本信息 修改 -->
+<div id="personBase" class="tab-pane active">
+	<form id="personDetailForm" class="form-horizontal ">
+		<input type="hidden" id="submitFlag"> 
+		#formHiddenInput("personDetailId" "$!personDetail.personDetailId" " id='personDetailId' ")
+		#formHiddenInput("hospitalId" "$!org.orgId" " id='hospitalId' ")
+		#formHiddenInput("hospitalNo" "$!org.orgNo" " id='hospitalNo' ")
+		#formHiddenInput("creatorId" "$!personDetail.creatorId" " id='creatorId' ")
+		<!-- 建档人Id -->
+		#formHiddenInput("houseConditionId" "$!personDetail.houseConditionId" " id='houseConditionId' ")
+		<!-- 家庭居住条件Id -->
+		<!--基本信息-->
+		<div class="row m-l-xs m-r-xs">
+			<!--基本信息-->
+			<div class="text-box">
+				<h5>基本信息</h5>
+				
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none">健康档案编号</label>
+				<div class="col-sm-3">
+					#formTextInput("archivePersonalNum" "#htmlEscape($!personDetail.archivePersonalNum)" " id='archivePersonalNum' maxlength='18' class='form-control' readonly ")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none p-l-none red">姓名</label>
+				<div class="col-sm-3">
+					#formTextInput("personalName" "#htmlEscape($!personDetail.personalName)" " id='personalName' maxlength='10' class='form-control'")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none ">性别</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("gender" $!personDetail.gender $dicData.dicSex "id='gender' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+				</div>
+			</div>
+			
+			<div class="form-group">
+                <label class="col-sm-1 control-label text-right p-r-none">医保类型</label>
+                <div class="col-sm-3">
+                    #formSingleSelectDictionary("healthIns" $!personDetail.healthIns $dicData.dicHealthIns "id='healthIns' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                </div>
+                <label class="col-sm-1 control-label text-right p-r-none">医保卡号</label>
+                <div class="col-sm-3">
+                    #formTextInput("healthCard" "#htmlEscape($!personDetail.healthCard)" " id='healthCard' maxlength='18' class='form-control'")
+                </div>
+                <label class="col-sm-1 control-label text-right p-r-none">就诊卡号</label>
+                <div class="col-sm-3">
+                    #formTextInput("clinicCard" "#htmlEscape($!personDetail.clinicCard)" " id='clinicCard' maxlength='20' class='form-control'")
+                </div>
+            </div>
+			
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none red">证件类型</label>
+				<div class="col-sm-3">
+				#formSingleSelectDictionary("certificateType" $!personDetail.certificateType $dicData.dicCertificateType "id='certificateType' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+				<label class="col-sm-1 control-label text-right p-r-none red">证件号码</label>
+				<div class="col-sm-3">
+					#formTextInput("certificateNumber" "#htmlEscape($!personDetail.certificateNumber)" " id='certificateNumber' maxlength='20' class='form-control'")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none ">出生日期</label>
+				<div class="col-xs-3">
+					<div class=" input-daterange date">
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd', $!personDetail.birthDate)" " onclick='$layerDate' id='birthDate' class='form-control  layer-date' ")
+					</div>
+				</div>
+
+			</div>
+
+			<div class="form-group">
+
+				<label class="col-sm-1 control-label text-right p-r-none red">个人类别</label>
+				<div class="col-md-3">
+				    <!-- 如果是添加老人的 页面：  personType =7 老人-->
+					#if($personType == $!{CONST.Contstants.PERSONALTYPE_ELDER} )
+						   <select name="personalType"  class="form-control" style="min-width: 178px; width: 100%" tabindex="1" style="border:#ccc 1px solid;height:20px;width:100%;">
+					            <option value="$!{CONST.Contstants.PERSONALTYPE_ELDER}">$dicData.dicPersonalType.get($!{CONST.Contstants.PERSONALTYPE_ELDER})</option>
+					      </select>
+					#else
+						#formSingleSelectDictionary("personalType" $!personDetail.personalType $dicData.dicPersonalType "id='personalType' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "") 
+					#end
+	           </div>
+    
+				<label class="col-sm-1 control-label text-right p-r-none ">民族</label>
+				<div class="col-sm-3"> #formSingleSelectDictionary("nationId" $!personDetail.nationId $dicData.dicNation "id='nationId' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+				<label class="col-sm-1 control-label text-right p-r-none">体重(KG)</label>
+				<div class="col-sm-3">
+					<input type="text" id="weight" name="weight" value="$!personDetail.weight" maxlength="5" onkeyup="value=value.replace(/[^\d\.]/g,'')" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none">血型</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("bloodType" $!personDetail.bloodType $dicData.dicBloodType "id='bloodType' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+				<label class="col-sm-1 control-label text-right p-r-none">Rt阴性</label>
+				<div class="col-sm-3">
+				    #formSingleSelectDictionary("rtBloodGroup" $!personDetail.rtBloodGroup $dicData.dicYesNo "id='rtBloodGroup' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+
+				<label class="col-sm-1 control-label text-right p-r-none">身高(CM)</label>
+				<div class="col-sm-3">
+					<input type="text" id="height" name="height" value="$!personDetail.height" maxlength="18" onkeyup="value=value.replace(/[^\d\.]/g,'')" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+
+				<label class="col-sm-1 control-label text-right p-r-none">文化程度</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("educationDegree" $!personDetail.educationDegree $dicData.dicEducationDegree "id='educationDegree' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+				<label class="col-sm-1 control-label text-right p-r-none">个人职业</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("careerId" $!personDetail.careerId $dicData.dicCareer "id='careerId' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+
+				<label class="col-sm-1 control-label text-right p-r-none ">医疗支付方式</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("payWay" $!personDetail.payWay $dicData.dicPayWay "id='payWay' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none red">本人电话</label>
+				<div class="col-sm-3">
+					<input type="text" id="myselfPhone" name="myselfPhone" value="$!personDetail.myselfPhone" maxlength="12" onkeyup="value=value.replace(/[^\d\.-]/g,'')" class="form-control">
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none">工作单位</label>
+				<div class="col-sm-7">
+					#formTextInput("workOrg" "#htmlEscape($!personDetail.workOrg)" " id='workOrg' maxlength='50' class='form-control'")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none">常住类型</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("liveType" $!personDetail.liveType $dicData.dicLiveType "id='liveType' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+				<label class="col-sm-1 control-label text-right p-r-none">家庭详细地址</label>
+				<div class="col-sm-7">
+					#formTextInput("familyAddr" "#htmlEscape($!personDetail.familyAddr)" " id='familyAddr' maxlength='100' class='form-control'")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none">户籍类型</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("censusType" $!personDetail.censusType $dicData.dicCensusType "id='censusType' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+				<label class="col-sm-1 control-label text-right p-r-none">户籍地址</label>
+				<div class="col-sm-7">
+					#formTextInput("censusAddr" "#htmlEscape($!personDetail.censusAddr)" " id='censusAddr' maxlength='18' class='form-control'")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none">居委会</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("committeeId" $!personDetail.committeeId $dicData.dicCommittee "id='committeeId' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")</div>
+				<label class="col-sm-1 control-label text-right p-r-none red">城镇街道</label>
+				<div class="col-sm-3">
+					<div style="position: relative;">
+						#formTextInput("regionId" "#htmlEscape($!regionAddress)" " id='regionId' data-toggle='city-picker'  readonly class='form-control'")
+					</div>
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none ">迁入时间</label>
+				<div class="col-xs-3">
+					<div class=" input-daterange date">
+						#formTextInput("moveInTime" "$!date.format('yyyy-MM-dd', $!personDetail.moveInTime)" " id='moveInTime' class='form-control form_datetime'")
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+
+				<label class="col-sm-1 control-label text-right p-r-none ">迁出时间</label>
+				<div class="col-xs-3">
+					<div class=" input-daterange date">
+						#formTextInput("moveOutTime" "$!date.format('yyyy-MM-dd', $!personDetail.moveOutTime)" " id='moveOutTime' class='form-control form_datetime'")
+					</div>
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none ">迁出原因</label>
+				<div class="col-sm-7">
+					#formTextInput("moveReason" "#htmlEscape($!personDetail.moveReason)" " id='moveReason' maxlength='50' class='form-control'")
+				</div>
+			</div>
+		</div>
+		<!--家庭关系-->
+		<div class="row m-l-xs m-r-xs">
+			<div class="text-box">
+				<h5>家庭关系</h5>
+			</div>
+			<div class="form-group" id="faminlyPersonRation">
+
+				<label class="col-sm-1 control-label text-right p-r-none red">家庭</label>
+				<div class="col-xs-3">
+
+					<input type="text" id="familyOwner"  
+						#if("$!mode" != "simple" && !$familyDetail)
+							onclick="selectPersonFamilyModal();"
+						#end 
+						#if($familyDetail) 
+							value="$!{familyDetail.familyOwnerName}" 
+						#end 
+						readonly="readonly"  class="form-control" placeholder="单击导入家庭">
+					<!-- 家庭主键Id  -->
+					 #formHiddenInput("familyDetailId" "$!familyDetail.familyDetailId" " id='familyDetailId' ")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none p-l-none red">与户主关系</label>
+				<div class="col-sm-3">
+					#formSingleSelectDictionary("familyRelId" $!personDetail.familyRelId $dicData.dicFamilyRel "id='familyRelId' data-placeholder='请选择' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none ">联系人姓名</label>
+				<div class="col-sm-3">
+					#formTextInput("workOrg" "#htmlEscape($!personDetail.contactName)" " id='contactName' maxlength='10' class='form-control'")
+				</div>
+
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none p-l-none ">父亲姓名</label>
+				<div class="col-sm-3">
+					#formTextInput("fatherName" "#htmlEscape($!personDetail.fatherName)" " id='fatherName' maxlength='10' class='form-control'")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none ">母亲姓名</label>
+				<div class="col-sm-3">
+					#formTextInput("motherName" "#htmlEscape($!personDetail.motherName)" " id='motherName' maxlength='10' class='form-control'")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none ">联系人电话</label>
+				<div class="col-sm-3">
+					<input type="text" id="contactPhone" name="contactPhone" value="$!personDetail.contactPhone" maxlength="12" onkeyup="value=value.replace(/[^\d\.-]/g,'')" class="form-control">
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row m-l-xs m-r-xs">
+			<!--建档信息-->
+			<div class="text-box">
+				<h5>建档信息</h5>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none">建档单位</label>
+				<div class="col-sm-3">
+					#formTextInput("" "#htmlEscape($!org.name)" "  class='form-control' readonly='readonly' ")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none">建档人</label>
+				<div class="col-sm-3">
+					#formTextInput("creatorName" "#htmlEscape($!personDetail.creatorName)" "  class='form-control' readonly='readonly' ")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none">建档日期</label>
+				<div class="col-sm-3">
+					#formTextInput("createTime" "$!date.format('yyyy-MM-dd HH:mm', $!personDetail.createTime)" " readonly='readonly' class='form-control'")
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+ 

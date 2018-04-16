@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流行病学记录管理</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<style>
+html, body { height: 100% }
+</style>
+
+</head>
+<body class="gray-bg top-navigation">
+	<div class="wrapper wrapper-content">			
+		<div class="ibox float-e-margins full-height">
+			<div class="ibox-content">
+				<div class="row">
+					<form id="epidem_queryForm" method="get" class="form-horizontal">
+						<div class="col-sm-2 m-b-sm ">
+							<label class="control-label col-sm-4">患者姓名</label>
+							<div class="col-sm-8 ">
+								<input type="text" id="q_patientName" name="patientName" class="form-control "  />
+							</div>
+						</div>
+						<div class="col-sm-2 m-b-sm ">								
+								#formSingleSelectDictionary("medicalClassify" "" $dicData.dicEpiMedicalClassify "id='q_medicalClassify' data-placeholder='选择病历分类'  class='form-control' style='min-width: 152px; width: 100%' tabindex='1'" "选择病历分类" "")
+						</div>
+						<div class="col-sm-2 m-b-sm ">									
+								#formSingleSelectDictionary("patientBelong" "" $dicData.dicEpiPatientBelong "id='q_patientBelong' data-placeholder='选择病人属地'  class='form-control' style='min-width: 152px; width: 100%' tabindex='1'" "选择病人属地" "")
+						</div>
+						<div class="col-sm-4 m-b-sm ">
+							<label class="control-label p-r-n col-sm-3">填写时间</label>
+							<div class="col-sm-9">
+								<div class="input-group">
+									<input type="text" class="form-control flayer-date" style="max-width: 100%" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" id="q_fillTimeStart" name="fillTimeStart" placeholder="开始时间" value="" /> <span class="input-group-addon">到</span> <input type="text"
+										class="form-control layer-date" style="max-width: 100%" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" id="q_fillTimeEnd" name="fillTimeEnd" placeholder="结束时间" value="" />
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-2 text-center">
+							<button type="button" onclick="query();" class="btn btn-sm btn-primary">
+								<i class="fa fa-search"></i> <span>查 询</span>
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" onclick="clearQuery();" class="btn btn-sm btn-info">
+								<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>		
+		<!-- 列表区 -->
+		<div class="ibox float-e-margins full-height m-b-none">
+			<div class="ibox-content p-b-n">
+				<div class="table-responsive">
+					<!-- 工具栏 -->
+					<div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+						<button onclick="show();" class="btn btn-sm btn-info">
+							<i class="fa fa-eye" aria-hidden="true"></i> <span>查 看</span>
+						</button>
+						<button onclick="add();" class="btn btn-sm btn-primary">
+							<i class="fa fa-eye" aria-hidden="true"></i> <span>新 增</span>
+						</button>
+						<button onclick="edit();" class="btn btn-sm btn-success">
+							<i class="fa fa-paste" aria-hidden="true"></i> <span>修 改</span>
+						</button>
+						<button onclick="audit();" class="btn btn-sm btn-success">
+							<i class="fa fa-file-powerpoint-o" aria-hidden="true"></i> <span>审 核</span>
+						</button>
+						<button onclick="del();" class="btn btn-sm btn-default">
+							<i class="glyphicon glyphicon-trash" aria-hidden="true"></i> <span>删 除</span>
+						</button>
+					</div>
+					
+					<!-- 列表内容 -->
+					<div class="example">
+						<table id="epidemiologyGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- 列表区 end-->
+			
+	</div>
+
+	#modalElement("modal")
+	
+	#parse("./common/common.js.vm")
+	#parse("./common/modalTemplate.vm")
+	#parse("./emergencyevent/epidemiologyList.js.vm")
+</body>
+</html>

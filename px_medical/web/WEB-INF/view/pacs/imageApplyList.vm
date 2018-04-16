@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统云盘</title>
+	#parse("./common/pageCss.vm")
+	#parse("./common/pageJs.vm")
+	<style>
+	    .yxlx-label-f-none label{ font-weight: 100}
+	    button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px; }
+	</style>
+</head>
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <form id="sc_queryForm" method="post" class="form-inline">
+                        <div class="col-sm-6 p-r-n">
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="font-noraml">检查编号</label>
+                                    <div class="">
+                                        <input type="text" id="patientExamNum" name="patientExamNum" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="font-noraml">患者ID</label>
+                                    <div class="">
+                                        <input type="text" id="patientInfoId" name="patientInfoId" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="font-noraml">开始检查日期</label>
+                                    <div class="input-daterange input-group date" >
+                                        <input type="text" class="form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="beginExamDate" name="beginExamDate" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="font-noraml">患者姓名</label>
+                                    <div class="">
+                                        <input type="text" id="patientName" name="patientName" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="font-noraml">影像描述</label>
+                                    <div class="">
+                                        <input type="text" id="_des" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="font-noraml">结束检查日期</label>
+                                    <div class="input-daterange input-group date">
+                                        <input type="text" class="form-control layer-date" onclick="laydate({istime: false, format: 'YYYY-MM-DD'})" id="endExamDate" name="endExamDate" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label>影像类型</label>
+                            <div class="yxlx-label-f-none">
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="病理">病理</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="B超">B超</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="彩超">彩超</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="心脏">心脏</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="DR">DR</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="MR">MR</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="CT">CT</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="电子胃镜">电子胃镜</label>
+                                <label class="col-sm-4 i-checks"><input type="checkbox" name="examCategory" value="电子肠镜">电子肠镜</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="text-right">
+                            	<br/>                            	
+                                <button type="button" id="_bnt_search" class="btn btn-primary btn-sm"><i class="fa fa-search"></i> 查 询  </button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <br/>
+                                <button type="button" id="_bnt_clean" class="btn btn-sm btn-info"><i class="iconfont fa icon-qingchu"></i> 清 空 </button>
+                            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins m-b-none">
+            <div class="ibox-content" style="padding-bottom: 4px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                        	<div class="example">
+                                <table id="exampleTableFromData" class="table table-bordered table-hover" data-mobile-responsive="true">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	#parse("./pacs/imageApplyList.js.vm")
+</body>
+</html>

@@ -1,0 +1,258 @@
+<script>
+	var currentDeptId = '$!currentDeptId';
+	var currentDoctorId = '$!currentDoctorId';
+	$(document).ready(
+		function() {
+			//转出科室加载
+			loadOffficeDown('$!institutionDownUnit.orgId',currentDeptId);
+			loadPacsImage();
+			loadOutInHospital();
+		}
+	);
+
+	// 提交表单
+	function saveDiagnosisApply(transStatus) {
+		var diagnosisApplyParams = common.serializeObject($('#diaApplayForm'));
+		
+		diagnosisApplyParams.transStatus = transStatus;
+		diagnosisApplyParams.institutionUpName =  $('#institutionUpId').find("option:selected").text();//医院名称
+		diagnosisApplyParams.officeUpName =  $('#officeUpId').find("option:selected").text();//科室
+		diagnosisApplyParams.doctorUpName =  $('#doctorUpId').find("option:selected").text();//医生
+		diagnosisApplyParams.officeDownName =  $('#offficeDownId').find("option:selected").text();//医生
+		diagnosisApplyParams.doctorDownName =  $('#doctorDownId').find("option:selected").text();//医生
+	 
+		//患者信息
+		if (diagnosisApplyParams.patientId == undefined || diagnosisApplyParams.patientId == "") {
+			common.alert('患者信息不存在', 0);
+			return false;
+		}
+		
+		//转入医院信息
+		if (diagnosisApplyParams.institutionUpId == undefined || diagnosisApplyParams.institutionUpId == "") {
+			common.alert('请选择转入医院', 0);
+			return false;
+		}
+		
+		if (diagnosisApplyParams.officeUpId == undefined || diagnosisApplyParams.officeUpId == "") {
+			common.alert('请选择转入科室', 0);
+			return false;
+		}
+		
+		if (diagnosisApplyParams.transAim == undefined || diagnosisApplyParams.transAim == "") {
+			common.alert('请选择转诊目的', 0);
+			return false;
+		}
+		 
+		//如果转入医院联系电话不为空则判断
+		if (diagnosisApplyParams.institutionPhoneUp) {
+			if (!checkMobile(diagnosisApplyParams.institutionPhoneUp) && !checkPhone(diagnosisApplyParams.institutionPhoneUp)) {
+				common.alert('转出医院联系电话格式错误！', 0);
+				return false;
+			}
+		}
+		 
+		if (diagnosisApplyParams.transReason == undefined || diagnosisApplyParams.transReason == "") {
+			common.alert('请选择转诊原因', 0);
+			$("#transReason").focus();
+			return false;
+		}
+		
+		//转出医院信息
+		if (diagnosisApplyParams.offficeDownId == undefined || diagnosisApplyParams.offficeDownId == "") {
+			common.alert('请选择转出科室', 0);
+			return false;
+		}
+		if (diagnosisApplyParams.doctorDownId == undefined || diagnosisApplyParams.doctorDownId == "") {
+			common.alert('请选择转出医生', 0);
+			return false;
+		}
+		if (diagnosisApplyParams.doctorMobileDown == undefined || diagnosisApplyParams.doctorMobileDown == "") {
+			common.alert('请填写转出医生联系电话', 0);
+			$("#doctorMobileDown").focus();
+			return false;
+		}else{
+			if (!checkMobile(diagnosisApplyParams.doctorMobileDown) && !checkPhone(diagnosisApplyParams.doctorMobileDown)) {
+				common.alert('转出医生联系电话格式错误！', 0);
+				return false;
+			}
+		}
+		 
+		// 下转的判断
+		if (diagnosisApplyParams.diagnosisDown == undefined || diagnosisApplyParams.diagnosisDown == "") {
+			common.alert('请填写转诊诊断', 0);
+			$("#diagnosisDown").focus();
+			return false;
+		}
+		if (diagnosisApplyParams.diagnosisResultDown == undefined || diagnosisApplyParams.diagnosisResultDown == "") {
+			common.alert('请填写转诊检查结果', 0);
+			$("#diagnosisResultDown").focus();
+			return false;
+		}
+		if (diagnosisApplyParams.diagnosisCureDown == undefined || diagnosisApplyParams.diagnosisCureDown == "") {
+			common.alert('请填写转诊治疗经过', 0);
+			$("#diagnosisCureDown").focus();
+			return false;
+		}
+		if (diagnosisApplyParams.recoverySuggestDown == undefined || diagnosisApplyParams.recoverySuggestDown == "") {
+			common.alert('请填写转诊康复建议', 0);
+			$("#recoverySuggestDown").focus();
+			return false;
+		}
+		
+		//提交后台保存转诊申请信息
+		$.post("../gradingclinics/saveDiagnosisApply.do", diagnosisApplyParams, function(result){
+			if (result.code == "0") {
+				 common.alertCall("保存成功!", 1, function (){
+					$('#submitFlag').val("1");
+	                $('#btn_query', window.parent.document).click();
+	                if (transStatus == "2") {
+	                      var index = parent.layer.getFrameIndex(window.name);
+	                      parent.layer.close(index);  
+	                } else {
+	                    //回显后台新增属性的值
+	                    $("#hdDiagnosisApplyId").val( result.data.hdDiagnosisApplyId);
+	                    $("#hdDiagnosisNum").val(result.data.hdDiagnosisNum);
+	                    $("#transStatus").val(result.data.transStatus);
+	                    $("#applyTime").val(getSmpFormatDateByLong(result.data.applyTime,true));
+	                    $("#officeDownName").val(result.data.officeDownName);
+	                    $("#doctorDownName").val(result.data.doctorDownName);
+	                    $("#institutionPhoneDow").val(result.data.institutionPhoneDow);
+	                }
+				 });
+			} else {
+				common.alert(result.msg,2); 
+			}
+		}, "json");
+	}
+	 
+
+	//转出科室
+	function loadOffficeDown(institutionDownId,currentDeptId){
+		if (institutionDownId == "") {
+		    //清空医生列表
+			var doctorDownIdEle = $('#doctorDownId');
+			$(doctorDownIdEle).empty();
+			$(doctorDownIdEle).trigger("chosen:updated");
+		    return false;
+		}
+		$.post("../sys/queryDepByUnitId.do",{unitId:institutionDownId},function(data){
+			//加载科室列表
+			var targetEle = $('#offficeDownId');
+			$(targetEle).empty();
+			$(targetEle).append("<option value=''>请选择科室</option>");
+			if (data == null || targetEle == "" || targetEle == undefined) {
+				return false;
+			}
+			$.each(data, function (){
+				var jqOption ;
+				if(currentDeptId == this.orgId){
+					jqOption = "<option value='" + this.orgId + " ' selected='selected' >" + this.name + "</option>";
+				}else{
+					jqOption = "<option value='" + this.orgId + "'>" + this.name + "</option>";
+				}
+				$(targetEle).append(jqOption);
+			});
+			loadDoctorDown(currentDeptId,currentDoctorId);
+			$(targetEle).trigger("chosen:updated");
+		},"json");
+	}
+	
+	//转出医生
+	function loadDoctorDown(officeDownId,currentDoctorId){
+		 if (officeDownId == "") {return false;}
+			var institutionDownId = '$!institutionDownId'; 
+			$.post("../sys/queryUserByOrgId.do",{orgId:officeDownId},function(data){
+				var targetEle = $('#doctorDownId');
+				$(targetEle).empty();
+				$(targetEle).append("<option value=''>请选择医生</option>");
+				if (data == null || targetEle == "" || targetEle == undefined) {
+					return false;
+				}
+				$.each(data, function (){
+					var jqOption ;
+					if(currentDoctorId == this.userInfoId){
+						jqOption = "<option value='" + this.userInfoId + "' selected='selected'>" + this.name + "</option>";
+					}else{
+						jqOption = "<option value='" + this.userInfoId + "'>" + this.name + "</option>";
+					}
+					$(targetEle).append(jqOption);
+				});
+				$(targetEle).trigger("chosen:updated");
+			},"json");
+	}
+
+	//转入科室
+	function loadOfficeUp(institutionUpId){
+	  if (institutionUpId == "") {return false;}
+		$.post("../sys/queryDepByUnitId.do",{unitId:institutionUpId},function(data){
+			//清空医生列表
+			var doctorUpIdEle = $('#doctorUpId');
+			$(doctorUpIdEle).empty();
+			$(doctorUpIdEle).trigger("chosen:updated");
+			//加载科室列表
+			var targetEle = $('#officeUpId');
+			$(targetEle).empty();
+			$(targetEle).append("<option value=''>请选择科室</option>");
+			if (data == null || targetEle == "" || targetEle == undefined) {
+				return false;
+			}
+			$.each(data, function (){
+				$(targetEle).append("<option value='" + this.orgId + "'>" + this.name + "</option>");
+			});
+			$(targetEle).trigger("chosen:updated");
+		},"json");
+	}
+
+	//转入医生
+	function loadDoctorUp(officeUpId){
+	  if (officeUpId == "") {return false;}
+	    var institutionUpId = $('#institutionUpId').val();
+		$.post("../sys/queryUserByOrgId.do",{orgId:officeUpId},function(data){
+			var targetEle = $('#doctorUpId');
+			$(targetEle).empty();
+			$(targetEle).append("<option value=''>请选择医生</option>");
+			if (data == null || targetEle == "" || targetEle == undefined) {
+				return false;
+			}
+			$.each(data, function (){
+				$(targetEle).append("<option value='" + this.userInfoId + "'>" + this.name + "</option>");
+			});
+			$(targetEle).trigger("chosen:updated");
+		},"json");
+	}
+	
+
+	//将门诊住院信息设置到隐藏域
+	function loadOutInHospital() {
+		//给患者信息赋上内容 
+        $("#patientId").val('$!outInHospital.patientId');//隐藏域赋值
+        $("#patientName").val('$!outInHospital.patientName');//隐藏域赋值
+        //门诊类别号、门诊-住院号
+        if($.trim('$!outInHospital.inhospitalId')){
+        	$('#patientType').val(1);// 病人类型 1住院 2门诊
+        	$('#inpatientId').val('$!outInHospital.inhospitalId');//门诊-住院号
+        }else{
+        	$('#patientType').val(2);// 病人类型 1住院 2门诊
+        	$('#inpatientId').val('$!outInHospital.outpatientId');//门诊-住院号
+        }
+	}
+	
+	//加载影像资料
+	function loadPacsImage(){
+		var param = {}; 
+		param.patientType = '$!outInHospital.inhospitalId'?'1':'2';
+		param.inpatientId = '$!outInHospital.inhospitalId' ? '$!outInHospital.inhospitalId': '$!outInHospital.outpatientId';
+		param.orgId = '$!outInHospital.orgId';
+		param.patientId = '$!outInHospital.patientId';
+		$.post("../pacs/findPatientExamInfo.do",param,function(result){
+			if (result.data && result.data.patientExamId) {
+				$('#pacsImage').contents().find("body").html("");
+				$('#pacsImage').attr('src','../report/examInfoShow.do?mode=pacsImage&patientExamId='+result.data.patientExamId);
+			}else{
+				$('#pacsImage').attr('src','');
+				$('#pacsImage').html('');
+			}
+		},"json");
+	}
+	 
+</script>

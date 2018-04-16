@@ -1,0 +1,3 @@
+"#displayOnlyDate($!{datamap.get($!{cell.field})})"-"#displayOnlyDate($!{datamap.get($!{cell.field2})})"
+<input type="hidden" name="${cell.field}" value="#displayOnlyDate($!{datamap.get($!{cell.field})})"/>
+<input type="hidden" name="${cell.field2}" value="#displayOnlyDate($!{datamap.get($!{cell.field2})})"/>

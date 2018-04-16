@@ -1,0 +1,129 @@
+
+<!-- 主体 -->
+<div class="modal-body form-horizontal full-height-scroll" style="padding: 0; height: calc(100% - 50px)">
+		<button type="button" class="close tabs" data-dismiss="modal">
+			<span aria-hidden="true"><i class="fa fa-close"></i></span> 
+			<span class="sr-only"><i class="fa fa-close"></i></span>
+		</button>
+		<!-- tab -->
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#tab-1">双向转诊接诊</a></li>
+		</ul>
+		<div class="tab-content table-content full-height-scroll" style="height: calc(100% - 40px); padding: 9px 8px 9px 12px; background: #fff">
+			<!-- tab1  start-->
+			<div id="tab-1" class="tab-pane active ">
+				<form id="diaApplayForm" method="get" class="form-horizontal full-height">
+						#formHiddenInput("hdDiagnosisApplyId" $!hdDiagnosisApply.hdDiagnosisApplyId " id='hdDiagnosisApplyId' ")
+				        <!-- 隐藏字段 -->
+				        <div class="ibox float-e-margins ">
+				            <div class="ibox-content" style="border: none;">
+				                <div class="form-group">
+				                	<label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;接诊科室</label>
+	                                <div class="col-sm-5">
+	                                    <div class="input-group">
+	                                    	<!-- clinicalOfficeId -->
+											<select id="clinicalOfficeId" name="clinicalOfficeId" data-placeholder="转出科室" onchange="loadDoctor(this.value);"  class="form-control" style="min-width: 178px; width: 100%" tabindex="1">
+                                                <option value="">请选择科室</option>
+                                            </select>
+	                                    </div>
+	                                </div>
+	                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;接诊医生</label>
+	                                <div class="col-sm-5">
+	                                    <div class="input-group">
+	                                    	<!-- clinicalDoctorId -->
+											<select id="clinicalDoctorId" name="clinicalDoctorId" data-placeholder="转诊医生" class="form-control" style="min-width: 178px; width: 100%" tabindex="1">
+                                                <option value="">请选择医生</option>
+                                            </select>
+	                                    </div>
+	                                </div>
+				                </div>
+				            </div>
+				        </div>
+		        </form>
+		        
+		     </div>
+		     <!-- tab2  start-->
+        </div>
+</div>
+
+<!-- 底部 -->
+<div class="modal-footer" style="text-align: center;">     
+     <button type="button" onclick="receiveTreatment();" class="btn btn-w-m btn-primary">
+     	<i class="fa fa-check-square-o"></i> 接 诊
+     </button>
+</div>
+#parse("./common/common.js.vm")
+ 
+<script type="text/javascript">
+$(document).ready(function() {
+	loadDept('$!hdDiagnosisApply.institutionUpId');
+});
+
+//标记就诊
+function receiveTreatment(){ 
+	var params = common.serializeObject($('#diaApplayForm'));
+	params.clinicalOfficeName =  $('#clinicalOfficeId').find("option:selected").text();//科室
+	params.clinicalDoctorName =  $('#clinicalDoctorId').find("option:selected").text();//医生
+ 
+	if (params.clinicalOfficeId == undefined || params.clinicalOfficeId == "") {
+		common.alert('请选择接诊科室', 0);
+		return false;
+	}
+	if (params.clinicalDoctorId == undefined || params.clinicalDoctorId == "") {
+		common.alert('请选择接诊医生', 0);
+		return false;
+	}
+
+	$.post('../gradingclinics/receiveTreatment.do', params , function(result) {
+		if (result.code == "0") {
+			common.alert("操作成功",0);
+			query();
+		} else {
+			common.alert("操作失败",0);
+		}
+	}, "json");
+}
+
+//转出科室
+function loadDept(institutionUpId){
+	if (institutionUpId == "") {
+	    //清空医生列表
+		var clinicalDoctorIdEle = $('#clinicalDoctorId');
+		$(clinicalDoctorIdEle).empty();
+		$(clinicalDoctorIdEle).trigger("chosen:updated");
+	    return false;
+	}
+	$.post("../sys/queryDepByUnitId.do",{unitId:institutionUpId},function(data){
+		//加载科室列表
+		var targetEle = $('#clinicalOfficeId');
+		$(targetEle).empty();
+		$(targetEle).append("<option value=''>请选择科室</option>");
+		if (data == null || targetEle == "" || targetEle == undefined) {
+			return false;
+		}
+		$.each(data, function (){
+			$(targetEle).append("<option value='" + this.orgId + "'>" + this.name + "</option>");
+		});
+		$(targetEle).trigger("chosen:updated");
+	},"json");
+}
+
+//转出医生
+function loadDoctor(officeId){
+	 if (officeId == "") {return false;}
+		var institutionUpId = '$!institutionUpId'; 
+		$.post("../sys/queryUserByOrgId.do",{orgId:officeId},function(data){
+			var targetEle = $('#clinicalDoctorId');
+			$(targetEle).empty();
+			$(targetEle).append("<option value=''>请选择医生</option>");
+			if (data == null || targetEle == "" || targetEle == undefined) {
+				return false;
+			}
+			$.each(data, function (){
+				$(targetEle).append("<option value='" + this.userInfoId + "'>" + this.name + "</option>");
+			});
+			$(targetEle).trigger("chosen:updated");
+		},"json");
+}
+
+</script>

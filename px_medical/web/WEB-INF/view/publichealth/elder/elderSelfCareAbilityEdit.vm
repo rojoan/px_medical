@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老年人自理能力评估</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm") 
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { height: 100% } 
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+     <form id="elderSelfCareAbilityForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+         #formHiddenInput("elderSelfCareAbilityId" "$!elderSelfCareAbility.elderSelfCareAbilityId")
+         #formHiddenInput("personDetailId" "$!elderSelfCareAbility.personDetailId" " id='personDetailId' ")
+         #formHiddenInput("hospitalId" "$!elderSelfCareAbility.hospitalId")
+         #formHiddenInput("hospitalNo" "$!elderSelfCareAbility.hospitalNo")
+         #formHiddenInput("regionId" "$!elderSelfCareAbility.regionId" "id='regionId'")
+         #formHiddenInput("assessDoctorId" "$!elderSelfCareAbility.assessDoctorId")
+         #formHiddenInput("hospitalName" "#htmlEscape($!elderSelfCareAbility.hospitalName)" " id='hospitalName' maxlength='10' class='form-control' readonly ")
+                     
+         <div class="modal-body full-height-scroll" style="height: calc(100% - 49px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+             <!-- 表单 开始 -->
+             <div class="table-content">
+                 <div class="text-box"><h5>基本信息</h5></div>
+                 <div class="form-group">
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none">姓名</label>
+                     <div class="col-sm-3"> 
+                          #formTextInput("personalName" "$!personDetail.personalName" "   id='personalName' class='form-control' readonly")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none ">性别</label>
+                     <div class="col-sm-3">
+                         #formRadioButtonsLabel("gender" "$!personDetail.gender" $dicData.dicSex "&nbsp;" "" "class='checkbox-inline i-checks' readonly ")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none ">年龄</label>
+                     <div class="col-sm-3">
+                         #formTextInput("personalAge" "$!personDetail.personalAge" "   id='personalAge' class='form-control' readonly ")
+                     </div>
+                 </div>
+                 <div class="form-group">
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">评估医生</label>
+                     <div class="col-sm-3">
+                         #formTextInput("assessDoctorName" "#htmlEscape($!elderSelfCareAbility.assessDoctorName)" " id='assessDoctorName' maxlength='10' class='form-control' readonly ")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none red">评估日期</label>
+                     <div class="col-sm-3">
+                         #formTextInput("assessTime" $!date.format('yyyy-MM-dd', $!elderSelfCareAbility.assessTime) " id='assessTime' onclick='$layerDate' maxlength='20' class='form-control'")
+         
+                     </div>
+                 </div>
+                 
+                  <div class="form-group" id="elderSelfCareItem" style="padding: 5px 15px;">
+                     <table class="table table-bordered">
+                        
+                      <tr>
+                      <th rowspan="2">评估事项、内容与评分</th>
+                      <th colspan="5"><div style="line-height: 25px;text-align: center;">程度等级</div></th>
+                      </tr>
+                       <tr>
+                         <th> <span style="line-height: 25px">可自理</span></th>
+                         <th>轻度依赖</th>
+                         <th>重度依赖</th>
+                         <th>不能自理</th>
+                         <th class="red">判断得分</th>
+                       </tr>
+                             
+                        
+                         
+                      <tbody id="elderSelfCareAbilityForm">
+                      #foreach($item in $selfCareAbilityList ) 
+                          #set ( $elderSelfCareItem = $elderSelfCareItemMap.get($item.selfCareAbilityId)) 
+                          <tr class="trRow">
+                              <td>$!item.abilityContent</td>
+                              <td>
+                                      <label  class="checkbox-inline i-checks" style="float:left;">
+                                        <input type="radio" name="$!item.selfCareAbilityId" value="$item.selfCareScore" 
+                                            #if($item.selfCareScore == $!elderSelfCareItem.score)  checked="checked" #end />
+                                        $!item.selfCare
+                                     </label>
+                                 </td>
+                              <td>
+                                   #if($item.lowDependScore)
+                                      <label  class="checkbox-inline i-checks" style="float:left;">
+                                         <input type="radio" name="$!item.selfCareAbilityId" value="$item.lowDependScore" 
+                                            #if($item.lowDependScore == $!elderSelfCareItem.score)  checked="checked" #end />
+                                         $!item.lowDepend
+                                      </label>
+                                   #else
+                                     $!item.lowDepend
+                                   #end
+                                 </td>
+                              <td>
+                                      <label  class="checkbox-inline i-checks" style="float:left;">
+                                        <input type="radio" name="$!item.selfCareAbilityId" value="$item.middleDependScore"  
+                                        #if($item.middleDependScore == $!elderSelfCareItem.score)  checked="checked" #end />
+                                         $!item.middleDepend
+                                     </label>
+                                 </td>
+                              <td>
+                                      <label  class="checkbox-inline i-checks" style="float:left;">
+                                        <input type="radio" name="$!item.selfCareAbilityId" value="$item.notSelfCareScore"  
+                                        #if($item.notSelfCareScore == $!elderSelfCareItem.score)  checked="checked" #end />
+                                         $!item.notSelfCare
+                                     </label>
+                                 </td>
+                              <td>
+                                  #formTextInput("score" "$!elderSelfCareItem.score" "class='form-control scoreResult' readonly ")
+                              </td>
+                          
+                          </tr>
+                          <tr>
+                              <td>评分</td>
+                               <td>$!item.selfCareScore</td>
+                                 <td>$!item.lowDependScore</td>
+                                 <td>$!item.middleDependScore</td>
+                                 <td>$!item.notSelfCareScore</td>
+                              <td><span style="line-height: 25px">&nbsp;</span></td>
+                          </tr>
+                          #set ( $elderSelfCareItem = '') 
+                      #end
+                      </tbody>
+                     </table>
+                  </div>
+                 <div class="form-group">
+                     <div class="col-sm-6" style="text-align: center;">
+                         <p>根据下表中5个方面进行评估，将各方面判断评分汇总后：</p>
+					     <p> 0 - 3     分者为： 生活自理能力 - 可自理  ;   4 - 8     分者为： 生活自理能力 - 轻度依赖</p>
+					     <p> 9 -  18  分者为： 生活自理能力 - 中度依赖;  >=19    分者为： 生活自理能力 - 不能自理</p>
+                     </div>
+                     <div class="col-sm-6" >
+                         <div class="col-sm-12" >
+                       <label class="col-sm-2 control-label text-right p-r-none p-l-none ">评估得分</label>
+                      <div class="col-sm-6">
+                          #formTextInput("selfCareAssessScore" "$!elderSelfCareAbility.selfCareAssessScore" " id='selfCareAssessScore' maxlength='10' class='form-control' readonly ")
+                      </div>
+                      </div>
+                      
+                      <div class="col-sm-12" style="margin-top: 10px;">
+                      <label class="col-sm-2 control-label text-right p-r-none p-l-none">评估结果</label>
+                      <div class="col-sm-6">
+                      
+                          #formTextInput("" "$dicData.dicSelfCareAssessResult.get($!elderSelfCareAbility.selfCareAssessResult)" " id='selfCareAssessResultContent' maxlength='10' class='form-control' readonly ")
+                          #formHiddenInput("selfCareAssessResult" "$!elderSelfCareAbility.selfCareAssessResult" " id='selfCareAssessResult' maxlength='10' class='form-control' readonly ")
+                      </div>
+                      </div>
+                     </div>
+                 </div>
+              </div>  <!-- div content  --> 
+         </div><!-- div modal-body  --> 
+     </form> <!-- 表单 结束 -->
+
+     <!-- 底部按钮 -->
+     <div class="tool-table-fixed" style="width: calc(100%)">
+         #if('show' != $!mode)
+             <button onclick="saveElderSelfCareAbility();" type="button" class="btn btn-success">
+                 <i class="fa fa-save"></i> 保 存
+             </button>
+         #end
+     </div>
+                
+    <!-- 全局js -->
+    #parse("./common/common.js.vm") 
+    #parse("./publichealth/elder/elderSelfCareAbilityEdit.js.vm")
+</body>
+</html>

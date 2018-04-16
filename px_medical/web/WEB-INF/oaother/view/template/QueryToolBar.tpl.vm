@@ -1,0 +1,7 @@
+#set($queryBeanMap = ${HELPER_BEAN.getBeanNameMap(${command})})
+#set($dynamicTitle = $queryBeanMap.get("DYTITLE"))
+    <div class="table_form_right_back3">
+        <ul>
+            <li class="table_form_left_back3"><span id="form_title_char">#if(${_layout.title})$!{_layout.title}#else $!{dynamicTitle} #end</span> </li>
+        </ul>
+    </div>

@@ -1,0 +1,54 @@
+<!-- 隐藏字段 -->
+					 
+    #formHiddenInput("orgId" "$!institutionDownUnit.orgId" "")<!-- 申请医院Id-->
+    #formHiddenInput("hdDiagnosisApplyId" "" " id='hdDiagnosisApplyId' ")
+    #formHiddenInput("hdDiagnosisNum" "" " id='hdDiagnosisNum' ")
+    #formHiddenInput("patientId" "" " id='patientId' ")
+    #formHiddenInput("patientNo" "" " id='patientNo' ")
+    #formHiddenInput("patientName" "" " id='patientName' ")
+    #formHiddenInput("hospitalno" "$!hospitalno" "")
+    #formHiddenInput("hdType" "$!{CONST.Contstants.DIAGNOSISAPPLY_HDTYPE_DOWN}" "")
+    #formHiddenInput("applyTime" "" " id='applyTime' ")<!-- 通过提交时后台赋值，并返回页面-->
+    #formHiddenInput("transStatus" "" " id='transStatus' ")<!-- 转诊状态，通过提交时后台赋值，并返回页面-->
+    
+    <!-- 患者来源类型 -->
+    #formHiddenInput("patientType" "" "id='patientType'")
+    #formHiddenInput("inpatientId" "" "id='inpatientId'")
+    
+    <!-- 转入医院信息-->
+    #formHiddenInput("hospitalNoUp" "$!hospitalNoUp" " id='hospitalNoUp' ")<!-- 转入医院编码-->
+    #formHiddenInput("institutionUpName" "" " id='institutionUpName' ")<!-- 转入医院名称-->
+    #formHiddenInput("officeUpName" "" " id='officeUpName' ")<!-- 转入科室名称-->
+    #formHiddenInput("doctorUpName" "" " id='doctorUpName' ")<!-- 转入医生-->
+    #formHiddenInput("doctorMobileUp" "" "")<!-- 转入医生电话-->
+   
+    <!-- 转出医院信息-->
+    #formHiddenInput("institutionDownId" "$!institutionDownUnit.orgId" "") <!-- 转出医院ID -->
+    #formHiddenInput("institutionDownName" "$!institutionDownUnit.name" "") <!-- 转出医院名称 -->
+    #formHiddenInput("hospitalNoDown" "$!institutionDownUnit.orgNo" "") <!-- 转出医院编码 -->
+    #formHiddenInput("officeDownName" "" " id='officeDownName' ") <!-- 转出科室-->
+    #formHiddenInput("doctorDownName" "" " id='doctorDownName' ") <!-- 转出医生-->
+    #formHiddenInput("institutionPhoneDow" "$!institutionDownUnit.directorTel" " id='institutionPhoneDow' ") <!-- 转出医院联系电话-->
+    
+    <!-- 上转-->
+    #formHiddenInput("firstDiagnosisUp" "" "") <!-- 初步诊断（主诉）（上转）-->
+    #formHiddenInput("otherDiagnosisUp" "" "")<!--  其他（上转）-->
+    #formHiddenInput("firstImpressUp" "" "") <!-- 初步印象（上转）-->
+    #formHiddenInput("mainSickUp" "" "") <!-- 主要现病史（上转） 上转单 必填 -->
+    #formHiddenInput("historySickUp" "" "") <!-- 主要既往史（上转） 上转单 必填 -->
+    #formHiddenInput("cureUp" "" "") <!-- 治疗经过（上转） 上转单 必填--> 
+    
+    #formHiddenInput("validStartTime" "" "") <!-- 有效期开始时间--> 
+    #formHiddenInput("validEndTime" "" "") <!-- 有效期结束时间--> 
+    <!-- 审核-->
+    #formHiddenInput("checkDoctorId" "" "") <!-- 审核医生ID-->
+    #formHiddenInput("checkDoctorName" "" "") <!-- 审核医生 -->
+    #formHiddenInput("checkOpinion" "" "") <!-- 审核意见 -->
+    #formHiddenInput("checkTime" "" "") <!-- 审核日期 -->
+    <!-- 接诊-->
+    #formHiddenInput("clinicalOfficeId" "" "") <!-- 接诊科室ID -->
+    #formHiddenInput("clinicalOfficeName" "" "") <!-- 接诊科室名称 -->
+    #formHiddenInput("clinicalDoctorId" "" "") <!-- 接诊医生ID -->
+    #formHiddenInput("clinicalDoctorName" "" "") <!-- 接诊医生 -->
+    #formHiddenInput("clinicalTime" "" "") <!-- 接诊时间 -->
+					

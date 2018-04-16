@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>疫苗程序编辑</title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+    <link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../resource/css/font-awesome.css" rel="stylesheet">
+    <link href="../resource/style/iconfont/iconfont.css" rel="stylesheet">
+    <link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../resource/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="../resource/css/animate.css" rel="stylesheet">
+    <link href="../resource/css/style.css" rel="stylesheet">
+    <link href="../resource/style/css/page.css" rel="stylesheet">
+#*
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<link href="../resource/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+<link href="../resource/style/iconfont/iconfont.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="../resource/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/citypicker/city-picker.css" rel="stylesheet">
+<link href="../resource/css/plugins/jsTree/style.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+<link href="../resource/css/plugins/popover/bootstrap-popover-x.css" rel="stylesheet">
+
+<link href="../resource/css/style.css?v=4.1.0" rel="stylesheet">
+<link href="../resource/style/css/page.css?v=201711.08" rel="stylesheet">
+*#
+    <style>
+        html,body { height: 100%}
+        button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px;}
+        table.table-jcdj > tbody > tr > td:hover { border-bottom: 0}
+        table.table-hover > tbody > tr > td { font-size: 12px;}
+    </style>
+
+</head>
+
+<body class="gray-bg top-navigation">
+    <div class="wrapper wrapper-content">
+        <div class="ibox float-e-margins full-height">
+            <div class="ibox-content">
+                <div class="row">
+                    <form method="get" class="form-horizontal">
+                        <div class="col-sm-3 ">
+                            <label class="control-label p-r-n col-sm-4">疫苗名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" >
+                            </div>
+                        </div>
+                        <div class="col-sm-3 ">
+                            <label class="control-label p-r-n col-sm-4">疫苗简称</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" >
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 text-right">
+                            <button class="btn btn-sm btn-primary"><i class="fa fa-search"></i> <span>查 询</span></button>&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-sm btn-info"><i class="iconfont fa icon-qingchu"></i> <span>清 空</span></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="ibox float-e-margins full-height m-b-none">
+            <div class="ibox-content p-b-n">
+                <div class="table-responsive">
+                    <div class=" hidden-xs m-b-sm" id="exampleTableEventsToolbar" role="group">
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#myModal1">
+                            <i class="glyphicon glyphicon-plus" aria-hidden="true"></i>
+                            <span>新 增</span>
+                        </button>
+                        &nbsp;
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#myModal2">
+                            <i class="fa fa-paste" aria-hidden="true"></i>
+                            <span>修 改</span>
+                        </button>
+                        &nbsp;
+                        <button type="button" class="btn btn-sm btn-info">
+                            <i class="glyphicon glyphicon-expand" aria-hidden="true"></i>
+                            <span>启 用</span>
+                        </button>
+                        &nbsp;
+                        <button type="button" class="btn btn-sm btn-default">
+                            <i class="glyphicon glyphicon-record" aria-hidden="true"></i>
+                            <span>停 用</span>
+                        </button>
+                        &nbsp;
+                        <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#myModal3">
+                            <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
+                            <span>查 看</span>
+                        </button>
+                    </div>
+
+                    <div class="example">
+                        <table id="exampleTableFromData" class="table table-bordered table-hover" data-mobile-responsive="true">
+                            <thead>
+                            <tr>
+                                <th data-field="col-a">序号</th>
+                                <th data-field="col-b">疫苗名称</th>
+                                <th data-field="col-c">疫苗简称</th>
+                                <th data-field="col-d">接种对象</th>
+                                <th data-field="col-e">接种剂次</th>
+                                <th data-field="col-f">接种部位</th>
+                                <th data-field="col-g">接种途径</th>
+                                <th data-field="col-h">接种剂量/剂次</th>
+                                <th data-field="col-i">是否计划内</th>
+                                <th data-field="col-j">备注</th>
+                                <th data-field="col-k">使用标志</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!--新增 疫苗-->
+    <div class="modal inmodal full-height" id="myModal1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="margin: 5px auto; width: calc(100% - 10px); max-width: 1060px; height: calc(100% - 10px);">
+            <div class="modal-content animated bounceInRight full-height">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true"><i class="fa fa-close"></i></span>
+                        <span class="sr-only"><i class="fa fa-close"></i></span>
+                    </button>
+                    <h7 class="modal-title">新增疫苗免疫程序管理</h7>
+                </div>
+                <div class="modal-body full-height-scroll" style="height: calc(100% - 93px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+                    <!-- 表单 开始 -->
+                    <div class="table-content">
+                        <form method="get" class="form-horizontal ">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">疫苗编号</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗简称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">接种对象</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种剂次</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">接种部位</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种途径</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">是否使用</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">未使用</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">使用</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种剂量/剂次</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种单位名称</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">支</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">粒</label>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">是否计划内</label>
+                                <div class="col-sm-4 ">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">否</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">是</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗价格</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">可预防疾病</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">禁忌症</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none "><span class="required">*</span> 可能出现的副反应</label>
+                                <div class="col-sm-4 ">
+                                    <input type="text"  class="form-control ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗简介</label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">备注</label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">数据排序号</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- 表单 结束 -->
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-success"><i class="fa fa-paste"></i> 保 存 </button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-close"></i> 关 闭 </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--修改 疫苗-->
+    <div class="modal inmodal full-height" id="myModal2" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="margin: 5px auto; width: calc(100% - 10px); max-width: 1060px; height: calc(100% - 10px);">
+            <div class="modal-content animated bounceInRight full-height">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true"><i class="fa fa-close"></i></span>
+                        <span class="sr-only"><i class="fa fa-close"></i></span>
+                    </button>
+                    <h7 class="modal-title">修改疫苗免疫程序</h7>
+                </div>
+                <div class="modal-body full-height-scroll" style="height: calc(100% - 93px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+                    <!-- 表单 开始 -->
+                    <div class="table-content">
+                        <form method="get" class="form-horizontal ">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="乙肝疫苗"  >
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">疫苗编号</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" value="9871962">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗简称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="乙肝疫苗">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">接种对象</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" value="0、1、6月龄">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种剂次</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="3">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">接种部位</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" value="上臂三角肌">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种途径</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="肌内注射">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">是否使用</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="" checked>未使用</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">使用</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种剂量/剂次</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" value="酵母苗5μg/0.5ml,CHO苗/10μg/1ml">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种单位名称</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="" checked>支</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">粒</label>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">是否计划内</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">否</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="" checked>是</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗价格</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="46.00">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">可预防疾病</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">禁忌症</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">可能出现的副反应</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗简介</label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">备注</label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">数据排序号</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="1">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- 表单 结束 -->
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-success"><i class="fa fa-paste"></i> 保 存 </button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-close"></i> 关 闭 </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--查看 疫苗-->
+    <div class="modal inmodal full-height" id="myModal3" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="margin: 5px auto; width: calc(100% - 10px); max-width: 1060px; height: calc(100% - 10px);">
+            <div class="modal-content animated bounceInRight full-height">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true"><i class="fa fa-close"></i></span>
+                        <span class="sr-only"><i class="fa fa-close"></i></span>
+                    </button>
+                    <h7 class="modal-title">修改疫苗免疫程序</h7>
+                </div>
+                <div class="modal-body full-height-scroll" style="height: calc(100% - 93px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+                    <!-- 表单 开始 -->
+                    <div class="table-content">
+                        <form method="get" class="form-horizontal ">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="乙肝疫苗" readonly >
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">疫苗编号</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" value="9871962" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗简称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="乙肝疫苗" readonly>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">接种对象</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" value="0、1、6月龄" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种剂次</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="3" readonly>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">接种部位</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" value="上臂三角肌" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种途径</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="肌内注射" readonly>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">是否使用</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks" >
+                                        <input type="radio" name="aa" value="" checked>未使用</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">使用</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种剂量/剂次</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" value="酵母苗5μg/0.5ml,CHO苗/10μg/1ml" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">接种单位名称</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="" checked>支</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">粒</label>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">是否计划内</label>
+                                <div class="col-sm-4">
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="">否</label>
+                                    <label class="checkbox-inline i-checks">
+                                        <input type="radio" name="aa" value="" checked>是</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗价格</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="46.00" readonly>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">可预防疾病</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">禁忌症</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" readonly>
+                                </div>
+                                <label class="col-sm-2 control-label text-right p-r-none ">可能出现的副反应</label>
+                                <div class="col-sm-4">
+                                    <input type="text"  class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">疫苗简介</label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" class="form-control" readonly></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">备注</label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" class="form-control" readonly></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">数据排序号</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" value="1" readonly>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- 表单 结束 -->
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-success"><i class="fa fa-paste"></i> 保 存 </button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-close"></i> 关 闭 </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <!-- 全局js -->
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <!-- Chosen -->
+    <script src="../js/plugins/chosen/chosen.jquery.js"></script>
+    <!-- iCheck -->
+    <script src="../js/plugins/iCheck/icheck.min.js"></script>
+    <!-- laydate -->
+    <script type="text/javascript" src="../js/plugins/layer/laydate/laydate.js" charset="UTF-8"></script>
+
+    <!-- Bootstrap table -->
+    <script src="../js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="../js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="../js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+
+    <script src="../style/js/ui-new.js"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            (function(document, window, $) {
+                'use strict';
+                // Example Bootstrap Table From Data
+                // ---------------------------------
+                (function() {
+                    var bt_data = [{
+                        "col-a": "1",
+                        "col-b": "乙肝疫苗",
+                        "col-c": "乙肝疫苗",
+                        "col-d": "0、1、6月龄",
+                        "col-e": "3",
+                        "col-f": "上臂三角肌",
+                        "col-g": "肌内注射",
+                        "col-h": "酵母苗5μg/0.5ml,CHO苗/10μg/1ml",
+                        "col-i": "是",
+                        "col-j": "出生后24小时内接种第一剂",
+                        "col-k": "使用"
+                    }, {
+                        "col-a": "2",
+                        "col-b": "卡介苗",
+                        "col-c": "卡介苗",
+                        "col-d": "卡介苗",
+                        "col-e": "1",
+                        "col-f": "上臂三角肌",
+                        "col-g": "皮内注射",
+                        "col-h": "0.1ml",
+                        "col-i": "是",
+                        "col-j": "",
+                        "col-k": "使用"
+                    }, {
+                        "col-a": "3",
+                        "col-b": "脊灰疫苗",
+                        "col-c": "乙肝疫苗",
+                        "col-d": "2、3、4月龄、4周岁",
+                        "col-e": "4",
+                        "col-f": "",
+                        "col-g": "口服",
+                        "col-h": "1粒",
+                        "col-i": "是",
+                        "col-j": "第1、2剂次，第2、3剂次",
+                        "col-k": "使用"
+                    }, {
+                        "col-a": "4",
+                        "col-b": "百白破疫苗",
+                        "col-c": "",
+                        "col-d": "3、4、5月龄",
+                        "col-e": "4",
+                        "col-f": "上臂外侧三角肌",
+                        "col-g": "肌内注射",
+                        "col-h": "0.5ml",
+                        "col-i": "是",
+                        "col-j": "第1、2剂次，第2、3剂次",
+                        "col-k": "使用"
+                    }, {
+                        "col-a": "5",
+                        "col-b": "白破疫苗",
+                        "col-c": "",
+                        "col-d": "6周岁",
+                        "col-e": "1",
+                        "col-f": "上臂三角肌",
+                        "col-g": "肌内注射",
+                        "col-h": "0.5ml",
+                        "col-i": "是",
+                        "col-j": "",
+                        "col-k": "使用"
+                    }, {
+                        "col-a": "6",
+                        "col-b": "麻风疫苗",
+                        "col-c": "",
+                        "col-d": "8月龄",
+                        "col-e": "3",
+                        "col-f": "上臂三角肌",
+                        "col-g": "皮下注射",
+                        "col-h": "0.5ml",
+                        "col-i": "是",
+                        "col-j": "",
+                        "col-k": "使用"
+                    }];
+
+                    $('#exampleTableFromData').bootstrapTable({
+                        data: bt_data,
+                        // mobileResponsive: true,
+                        pagination: true,
+                        pageNumber: true,
+                        pageSize: "15",
+                        height: "434"
+                    });
+
+                })();
+            })(document, window, jQuery);
+
+
+           // $(".chosen-container.chosen-container-single").css({width : "120px", height : "30px" });
+
+        });
+    </script>
+
+</body>
+
+</html>

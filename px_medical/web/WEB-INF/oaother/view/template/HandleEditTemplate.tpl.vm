@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+  <link href="../css/style.css" rel="stylesheet" type="text/css" />
+  <script language="javascript" type="text/javascript" src="../script/attach.js"></script>
+#parse("/template/ScriptTemplate.tpl.vm")
+
+</head>
+<script>
+#parse("/template/ValidatorTemplate.tpl.vm")
+
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+##以下是编辑界面的工具条
+#parse("/template/EditToolBar.tpl.vm")
+
+<body #if($_layout.wordAttach && $attachpage) onload="javascript:openserverdoc()"#end>
+<div class="gradual">
+    <div class="clear_Up">
+        <table cellpadding="0" cellspacing="0" class="table_form">
+            <form name="$!{_layout.viewForm.name}" method="post">
+                #set($viewBeanMap = ${HELPER_BEAN.getBeanNameMap(${viewdata})})
+                #set($cellcount=0)
+                #set($cur_colspan=0)
+                #foreach($cell in $_layout.viewFieldList)
+                    #if("hidden" != ${cell.type})
+                        #if(${cell.colspan} && ${cell.colspan} > 2)
+                            #if($cellcount!=0)##留空本行剩下的单元，准备新开一行
+                                <td width="10%" class="table_form_color_td">&nbsp;</td>
+                                <td width="40%" >&nbsp;</td>
+                                  </tr>
+                            #end
+                            #set($cellcount=0)##新开一行
+                            #set($cur_colspan=3)
+                        #end
+                        #if($cellcount==0)##行开始
+                            <tr>
+                        #end
+
+                        #set($cellcount=$cellcount+1)
+                            <td width="10%" class="table_form_color_td">#inputTitle($!{cell.title} $!{cell.required})</td>
+                            <td width="40%" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+                        #if(${cell.view})
+                            #viewInputField(${cell} $viewBeanMap)
+                        #else
+                            #inputField(${cell} $viewBeanMap)#if(${cell.required})#requiredTag()#end
+                        #end
+                            </td>
+                        #if($cur_colspan > 2)##新开一行
+                            #set($cellcount=2)
+                            #set($cur_colspan=0)
+                        #end
+                        #if($cellcount>=2)##行结束
+                            #set($cellcount=0)
+                            </tr>
+                        #end
+                    #else
+                        <input type="hidden" name="${cell.field}" value="$!{viewBeanMap.get(${cell.field})}" />
+                    #end
+                #end
+                #if($cellcount!=0)
+                    <td width="10%" class="table_form_color_td">&nbsp;</td>
+                    <td width="40%" >&nbsp;</td>
+                  </tr>
+                #end
+
+            </form>
+            #if($_layout.editForm)
+                <form name="$!{_layout.editForm.name}" method="post" action="#getRequestUri()?action=$!{_layout.editForm.action}" onsubmit="saveData(this)" enctype="multipart/form-data">
+                    #if(${_layout.editForm.viewdataList})
+                        #foreach($cell$ in ${_layout.editForm.viewdataList})
+                            #if("hidden" != ${cell.type})
+                            #if(${cell.colspan} && ${cell.colspan} > 2)
+                                #if($cellcount!=0)##留空本行剩下的单元，准备新开一行
+                                    <td width="10%" class="table_form_color_td">&nbsp;</td>
+                                    <td width="40%" >&nbsp;</td>
+                                      </tr>
+                                #end
+                                #set($cellcount=0)##新开一行
+                                #set($cur_colspan=3)
+                            #end
+                            #if($cellcount==0)##行开始
+                                <tr>
+                            #end
+
+                            #set($cellcount=$cellcount+1)
+                                <td width="10%" class="table_form_color_td">#inputTitle($!{cell.title} $!{cell.required})</td>
+                                <td width="40%" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+                            #if(${cell.view})
+                                #viewInputField(${cell} $viewBeanMap)
+                            #else
+                                #inputField(${cell} $viewBeanMap)#if(${cell.required})#requiredTag()#end
+                            #end
+                                </td>
+                            #if($cur_colspan > 2)##新开一行
+                                #set($cellcount=2)
+                                #set($cur_colspan=0)
+                            #end
+                            #if($cellcount>=2)##行结束
+                                #set($cellcount=0)
+                                </tr>
+                            #end
+                        #else
+                            <input type="hidden" name="${cell.field}" value="$!{viewBeanMap.get(${cell.field})}" />
+                            #end
+                    #end
+                #end
+                #if($cellcount!=0)
+                    <td width="10%" class="table_form_color_td">&nbsp;</td>
+                    <td width="40%" >&nbsp;</td>
+                  </tr>
+                #end
+            #end
+            #if($_layout.attach)
+                #parse("/template/attach.tpl.vm")
+            #end
+            #if($_layout.wordAttach)
+                #parse("fields/input/wordAttach.vm")
+            #end
+        </table>
+    </div>
+#if($_layout.editFieldList)
+    <div class="table_form_right_back2">
+        <ul>#if($_layout.listTitle)
+            <li class="table_form_left_back2"><span>$_layout.listTitle</span> </li>
+            #else
+                <li class="table_form_left_back2"><span>审批意见</span> </li>
+            #end
+            <li class="table_form_right_button"></li>
+        </ul>
+    </div>
+
+<div class="clear_Up">
+<table cellpadding="0" cellspacing="0" class="table_form">
+
+    <input type="hidden" name="submitFlag" value="0" />
+#set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+#set($cellcount=0)
+#set($cur_colspan=0)
+#foreach($cell in $_layout.editFieldList)
+#if("hidden" != ${cell.type})
+#if(${cell.colspan} && ${cell.colspan} > 2)
+#if($cellcount!=0)##留空本行剩下的单元，准备新开一行
+                <td width="10%" class="table_form_color_td">&nbsp;</td>
+                <td width="40%" >&nbsp;</td>
+              </tr>
+#end
+#set($cellcount=0)##新开一行
+#set($cur_colspan=3)
+#end
+#if($cellcount==0)##行开始
+              <tr>
+#end
+
+#set($cellcount=$cellcount+1)
+                <td width="10%" class="table_form_color_td">#inputTitle($!{cell.title} $!{cell.required})</td>
+                <td width="40%" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+#if(${cell.view})
+#viewInputField(${cell} $editBeanMap)
+#else
+#inputField(${cell} $editBeanMap)##if(${cell.required})#requiredTag()#end
+#end
+                 </td>
+#if($cur_colspan > 2)##新开一行
+#set($cellcount=2)
+#set($cur_colspan=0)
+#end
+#if($cellcount>=2)##行结束
+#set($cellcount=0)
+              </tr>
+#end
+#else
+<input type="hidden" name="${cell.field}" value="$!{editBeanMap.get(${cell.field})}" />
+#end
+#end
+#if($cellcount!=0)
+                <td width="10%" class="table_form_color_td">&nbsp;</td>
+                <td width="40%" >&nbsp;</td>
+              </tr>
+#end
+
+</form>
+</table>
+</div>
+#end
+#parse("/template/DataListTemplate.tpl.vm")
+#parse("/template/bindPowerDataListTemplate.tpl.vm")
+</div>
+</body>
+</html>

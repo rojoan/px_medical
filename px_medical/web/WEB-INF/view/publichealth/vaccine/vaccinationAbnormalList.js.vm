@@ -1,0 +1,220 @@
+<script>
+  //验证单选函数
+    function singleCheck(rows){
+        if (rows.length != 1 || !rows[0].vaccinationDetailId) {
+            common.alert("请选择将要编辑的行且仅能选择一行",0);
+        return false;
+    }
+    return true;
+}
+ //查询函数
+function queryRecord() {
+        var queryParams = common.serializeObject($('#vaccinationAbnormal_queryForm'));
+        var options = {url: '../vaccinationAbnormal/vaccinationAbnormalListData.jo', silent: false, query: queryParams};
+        $('#vaccinationAbnormalListGrid').bootstrapTable('refresh', options); 
+}
+//编辑方法
+function editVaccinationAbnormal(vaccinationDetailId) {
+        layer.open({
+            type: 2,
+            title: '预防接种异常表编辑 <span class="must-red font-14">(  带红色*号为必填)</span>',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccinationAbnormal/vaccinationAbnormalEdit.do?vaccinationDetailId=' + vaccinationDetailId
+        });
+}
+
+//展示方法
+function showVaccinationAbnormal(vaccinationDetailId) {
+        layer.open({
+            type: 2,
+            title: '预防接种异常表详情',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccinationAbnormal/vaccinationAbnormalShow.do?vaccinationDetailId=' + vaccinationDetailId
+        });
+}
+
+$(document).ready(function () {
+
+    // 新增按钮
+    $('#btn_add').click(function (){
+        layer.open({
+            type: 2,
+            title: '预防接种异常表编辑<span class="must-red font-14">( 带红色*号为必填 )</span>',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccinationAbnormal/vaccinationAbnormalEdit.do'
+        });
+    });
+
+    // 删除按钮
+    $('#btn_del').click(function (){
+        var rows = common.getTableSelectRow('vaccinationAbnormalListGrid', false);
+        if (rows.length != 1 || !rows[0].vaccinationDetailId ) {
+            common.alert("请选择一条要删除的数据",0);
+            return false;
+        }
+        common.confirm("您确定要执行删除吗？", function (){
+             $.post("../vaccinationAbnormal/delVaccinationAbnormal.jo", {vaccinationDetailId:rows[0].vaccinationDetailId}, function (result) {
+                 if (result.code == "0") {
+                        common.alert("删除成功",0);
+                        queryRecord();
+                    } else if (result.code == "4"){
+                       common.alert("后台删除失败!",0);
+                    } else {
+                        common.alert(result.msg,0);
+                    }
+            }, "json");
+        });
+        
+    });
+
+    // 查询按钮
+    $('#btn_query').click(function (){
+        queryRecord();
+    });
+
+    // 清空按钮
+    $('#btn_clean').click(function (){
+    // 清空按钮
+        $('#q_hospitalName').val('');
+        $('#q_vaccinatedName').val('');
+        $('#q_vaccinationCardNo').val('');
+        $('#q_vaccineBatch').val('');
+        $('#q_vaccineName').val('');
+    });
+
+
+
+            //查询预防接种异常表表列表
+            $('#vaccinationAbnormalListGrid').bootstrapTable(
+                $.extend(baseTable, {
+                    url : "../vaccinationAbnormal/vaccinationAbnormalListData.jo",
+                    queryParams : function (params){
+                        var requestParams = common.serializeObject($('#vaccinationAbnormal_queryForm'));
+                        requestParams.pageSize = params.pageSize;
+                        requestParams.pageNumber = params.pageNumber;
+                        return requestParams;
+                    },
+                    columns : [
+                    {checkbox : true} ,
+                    {
+                        field : 'abnormalTime',
+                        title : '反应时间'
+                        ,formatter :function (value) {
+                            if (value) {
+                                return getSmpFormatDateByLong(value,false);
+                            }
+                        }
+                    },
+                    {
+                        field : 'clinicHospital',
+                        title : '就诊机构'
+                    },
+                    {
+                        field : 'hospitalName',
+                        title : '医疗机构名称'
+                    },
+                    {
+                        field : 'reportDoctor',
+                        title : '接种医生'
+                    },
+                    {
+                        field : 'reportTime',
+                        title : '报告日期'
+                        ,formatter :function (value) {
+                            if (value) {
+                                return getSmpFormatDateByLong(value,false);
+                            }
+                        }
+                    },
+                    {
+                        field : 'vaccinatedName',
+                        title : '被接种人姓名'
+                    },
+                    {
+                        field : 'vaccinationCardNo',
+                        title : '预防接种卡编号'
+                    },
+                    {
+                        field : 'vaccineBatch',
+                        title : '疫苗批号'
+                    },
+                    {
+                        field : 'vaccineName',
+                        title : '疫苗名称'
+                    },
+                    {
+                        field : 'vaccineSite',
+                        title : '接种部位'
+                    },
+                    {
+                    field : 'operate',
+                    title : '操作',
+                    width : '150px',
+                    events : operateEvents,
+                    formatter : operateFormatter
+                    }     
+                              ],
+                    onDblClickRow : function (row, element){
+                        $('#vaccinationAbnormalListGrid').bootstrapTable('check',element.attr('data-index'));
+                        show();
+                    },
+                    onLoadSuccess : function(){
+                        var height = ($('#vaccinationAbnormalListGrid').parents("body").height() - $('#vaccinationAbnormal_queryForm').parents(".ibox").first().height()  - 130);
+                        $('#vaccinationAbnormalListGrid').bootstrapTable('resetView', {height: height}); 
+                    }
+                }
+                )//extends
+              );//bootstapTable
+         });//document.ready() event function
+
+    //操作栏操作按钮
+    function operateFormatter(value, row, index) {
+        var btnArray=[];
+        btnArray.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+        btnArray.push('<a id="btn_edit" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>');
+        btnArray.push('<a id="btn_delete" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>');
+        return btnArray.join("&nbsp;");
+    }
+
+    //操作栏操作按钮的事件
+    window.operateEvents = {
+        "click #btn_edit" : function (e, value, row, index) {
+            editVaccinationAbnormal(row.vaccinationDetailId);
+        },
+        "click #btn_show" : function (e, value, row, index) {
+            showVaccinationAbnormal(row.vaccinationDetailId);
+        },
+        "click #btn_delete" : function(e, value, row, index) {
+            if(!confirm("确定要删除此条预防接种异常表数据吗？")) {
+                 return ;
+            }
+            $.post("../vaccinationAbnormal/delVaccinationAbnormal.jo", {vaccinationDetailId: row.vaccinationDetailId}, function (result){
+                   if (result.code == "0") {
+                        common.alert("预防接种异常表删除成功",0);
+                        queryRecord();
+                    } else if (result.code == "4"){
+                        common.alert("后台执行预防接种异常表删除失败!",0);
+                    } else {
+                        common.alert(result.msg,0);
+                    }
+            }, "json").error(function(jqXHR) {
+                                jqueryPostError(jqXHR);
+                           }
+                       );//post;
+        }
+    };
+
+    $(window).resize(function() { 
+        var height = ($('#vaccinationAbnormalListGrid').parents("body").height() - $('#vaccinationAbnormal_queryForm').parents(".ibox").first().height() - 130);
+        $('#vaccinationAbnormalListGrid').bootstrapTable('resetView', {height: height}); 
+    })
+</script>

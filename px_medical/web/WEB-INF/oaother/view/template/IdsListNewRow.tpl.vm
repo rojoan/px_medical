@@ -1,0 +1,53 @@
+#foreach($dc in ${_layout.idsFieldList})
+    #if(${dc.type} != "button")
+        <div id="idsdiv#if($dc.arrayName)$dc.arrayName#else$dc.field#end" style="display:none">
+            #if(${dc.view})
+                #viewInputField(${dc} $editBeanMap)
+            #else
+                #inputField(${dc} $editBeanMap)
+            #end
+        </div>
+    #else
+        <div id="idsdiv$dc.field" style="display:none">
+            #foreach($button in ${dc.buttonList})
+                #buttonField($button "button_2" "")
+            #end
+        </div>
+    #end
+#end
+
+#if(!${_layout.idsFieldListview})
+<script >
+
+//加入一个新行
+function newRow() {
+
+##初始化要加入的行
+var tb = document.getElementById("idsTable");
+newrow = tb.insertRow();
+
+#foreach($dc in ${_layout.idsFieldList})
+    cell = newrow.insertCell();
+
+  #if("${dc.type}" == "hidden")
+    cell.style.display = "none";
+  #end
+    cell.align = #if(${dc.align})'$!{dc.align}'#else'left'#end;
+    cell.innerHTML = document.getElementById("idsdiv$dc.field").innerHTML;
+
+#end
+
+    if(typeof(initIdsRow) == "function") {
+        initIdsRow();
+    }
+}
+
+function doDelteRow(checkboxname) {
+    if(testBoxSelect(checkboxname)){
+
+    } else {
+       alert("请先选择要删除的数据。")
+    }
+}
+</script>
+#end

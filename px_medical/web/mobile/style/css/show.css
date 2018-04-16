@@ -1,0 +1,53 @@
+.show_fl { padding:0; margin:0 0 3% 0; }
+.show_fl .item_list { padding: .2rem;background: #ffffff; border-bottom: #cdcdcd 1px dotted;  font-size: .3rem; color: #666; line-height: 150%; }
+.show_fl .item_list label{ font-size: .3rem; font-weight: bold; color: #333; padding-right: .3rem;}
+.show_fl .item_list.db label { display: block; line-height: 180%}
+
+/*һ������ҳ*/
+.con_table { padding: .2rem; background: #fff}
+.con_table .tit { min-height: .8rem; line-height: 180%; text-align: center; font-weight: bold; color: #333 }
+.con_table .info { min-height: .4rem; text-align: center; border-bottom: #ddd 1px solid; margin-bottom: .2rem; font-size: .2rem; color: #999}
+.con_table .content { line-height: 180%; color: #555; font-size: .3rem;}
+
+.con_table .content .con_tool { text-align: right}
+.con_table .content .con_tool a{ display: inline-block; font-size: .2rem; line-height: 100%; background: #0588D8; color: #ffffff; border-radius: .2rem; padding: .15rem .25rem; margin: 0 .2rem 0 0}
+.con_table .content .con_tool a.normal{ background: #ccc}
+.con_table .content img {max-width: 100%; _width:expression(this.width > 100 ? "100%" : this.width);}
+
+
+
+/*详情页 增加底部菜单和页顶tabs*/
+.oranger { position: fixed; height: .38rem; width: 100%; }
+.oranger a{ height: .39rem; display:inline-block; line-height: .39rem; width: 25%; float:left; text-align: center; border-bottom: #dedede 1px solid; background: #0599a5; color: #fff; border-right: #4baeb7 1px solid;}
+.oranger a:last-child { border-right: 0}
+.oranger > a > span {display: block; height: .38rem; border-bottom: #0599a5 4px solid;}
+.oranger > a.hover > span {border-bottom: #f58611 4px solid}
+.oranger.w2 a{ width: 50%}
+.oranger.w3 a{ width: 33.3333%}     
+
+
+.centera { overflow:hidden; }
+#tablea { background:#fff; padding:.48rem .09rem .09rem .09rem;}
+.box {display:none}
+.page-footer { height: .72rem; position: fixed; bottom: 0; background: #f1f2f3; border-top: #dedede 1px solid; width: 100%; }
+.page-footer ul li { width: 25%; float:left; text-align: center; padding-top: .09rem; }
+.page-footer ul li a {color: #777}
+.page-footer ul li.active a {color: #fd511a}
+.page-footer ul li i.iconfont{ font-size: .3rem}
+.page-footer ul li p{ font-size: .14rem;}
+.page-footer ul.w2 li { width: 50%; }
+.page-footer ul.w3 li { width: 33.3333%; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

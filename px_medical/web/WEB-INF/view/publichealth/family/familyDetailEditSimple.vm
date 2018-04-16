@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产前筛查检查/手术记录 信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<!--城市插件-->
+<link href="../resource/css/plugins/citypicker/city-picker.css" rel="stylesheet">
+<script src="../resource/js/plugins/citypicker/city-picker.data.js"></script>
+<script src="../resource/js/plugins/citypicker/city-picker.js"></script>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style type="text/css">
+#familyPersonRows > tr > td { padding: 7px 10px; }
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+
+<!-- 主体  -->
+<div class="modal-body full-height" style="height: calc(100% - 49px); padding: 0; "><!--如果弹窗没有底部菜单栏则 -44px 没有标题减去49 -->
+     <!-- tab -->
+     <ul class="nav nav-tabs">
+         <li class="active"><a data-toggle="tab" href="#tab-familybase">家庭基本档案</a></li>
+     </ul>
+        
+     <!-- tab-content -->
+     <div class="tab-content table-content full-height-scroll" style="height: calc(100% - 40px); padding: 9px 8px 9px 12px;">
+            
+         <!-- tab 家庭基本档案 -->
+         <div id="tab-familybase" class="tab-pane active">
+
+             <form id="familyDetailForm" class="form-horizontal ">
+             	<input type="hidden" id="submitFlag" >
+             	#formHiddenInput("familyDetailId" "$!familyDetail.familyDetailId" " id='familyDetailId' ")
+             	#formHiddenInput("creatorId" "$!familyDetail.creatorId" " id='creatorId' ")<!-- 建档人Id -->
+             	#formHiddenInput("houseConditionId" "$!familyDetail.houseConditionId" " id='houseConditionId' ")<!-- 家庭居住条件Id -->
+                 <!--基本信息-->
+                 <div class="row m-l-xs m-r-xs">
+                     <div class="text-box"><h5>基本信息</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none p-l-none red">户主姓名</label>
+                         <div class="col-sm-3">
+                             #formTextInput("familyOwnerName" "#htmlEscape($!familyDetail.familyOwnerName)" " id='familyOwnerName' maxlength='10' class='form-control'")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">家庭编号</label>
+                         <div class="col-xs-3"> 
+                             #formTextInput("familyNumber" "#htmlEscape($!familyDetail.familyNumber)" " id='familyNumber' placeholder='系统自动生成' maxlength='18' class='form-control' readonly")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none ">档案编号</label>
+                         <div class="col-sm-3">
+                       		 #formTextInput("archiveNumber" "#htmlEscape($!familyDetail.archiveNumber)" " id='archiveNumber' maxlength='18' class='form-control'")
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none p-l-none ">户口薄编号</label>
+                         <div class="col-sm-3">
+                            #formTextInput("householdNumber" "#htmlEscape($!familyDetail.householdNumber)" " id='householdNumber' maxlength='10' class='form-control'")
+						</div>
+                         <label class="col-sm-1 control-label text-right p-r-none">联系电话</label>
+                         <div class="col-xs-3">
+                            #formTextInput("contactPhone" "$!familyDetail.contactPhone" " id='contactPhone' maxlength='20' class='form-control'")
+                         </div>
+		                        
+					</div>
+					
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">家庭类型</label>
+                         <div class="col-sm-3">
+                         	#formSingleSelectDictionary("familyType" $!familyDetail.familyType $dicData.dicFamilyType "id='familyType' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">户籍类型</label>
+                         <div class="col-sm-3">
+                         	#formSingleSelectDictionary("censusType" $!familyDetail.censusType $dicData.dicCensusType "id='dicCensusType' data-placeholder='选择户籍类型'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "选择户籍类型" "")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">户属性</label>
+                         <div class="col-sm-3">
+                         	#formSingleSelectDictionary("censusAttribute" $!familyDetail.censusAttribute $dicData.dicCensusAttribute "id='censusAttribute' data-placeholder='选择户属性'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "选择户属性" "")
+                         </div>
+                     </div>
+                     
+                     <div class="form-group">
+						<label class="col-md-1 control-label red">城镇街道</label>
+						<div class="col-md-3 " id="distpicker">
+							<div style="position: relative;">
+								#formTextInput("regionId" "$!regionAddress" " id='regionId' data-toggle='city-picker'  class='form-control' style='width:300px;' ")
+							</div>
+						</div>
+						<label class="col-sm-1 control-label text-right p-r-none ">居住小区</label>
+						<div class="col-sm-3">
+							#formTextInput("livingQuarter" "#htmlEscape($!familyDetail.livingQuarter)" " id='livingQuarter' maxlength='300' class='form-control'")
+						</div>
+					</div>
+                      
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none ">家庭地址</label>
+                         <div class="col-sm-7">
+                             #formTextInput("familyAddr" "#htmlEscape($!familyDetail.familyAddr)" " id='familyAddr' maxlength='300' class='form-control'")
+				
+                         </div>
+                     </div>
+                      
+                     <div class="form-group col-sm-3 m-b-md">
+                         <label class="col-sm-4 control-label text-right">成员数量</label>
+                         <div class="col-sm-8">
+                             #formIntInput("familyCount" "$!familyDetail.familyCount" " maxlength='5' class='form-control'")
+                         </div>
+                     </div>
+                     
+                     <div class="form-group col-sm-3 m-b-md">
+                         <label class="col-sm-4 control-label text-right p-r-none">现住人数</label>
+						<div class="col-sm-8">
+							#formIntInput("liveCount" "$!familyDetail.liveCount" " maxlength='5' class='form-control'")
+						</div>
+					</div>
+					
+                     <div class="form-group col-sm-3 m-b-md">
+                         <label class="col-sm-4 control-label text-right p-r-none">未成员人数</label>
+						 <div class="col-sm-8">
+							#formIntInput("childrenCount" "$!familyDetail.childrenCount" " maxlength='5' class='form-control'")
+						 </div>
+					 </div>
+					 
+                     <div class="form-group col-sm-3 m-b-md">
+                         <label class="col-sm-4 control-label text-right p-r-none">负担老人数</label>
+                         <div class="col-sm-8">
+                            #formIntInput("elderCount" "$!familyDetail.elderCount" " maxlength='5' class='form-control'")
+						</div>
+                     </div>
+                 </div>
+                 <!-- 居住条件和卫生设施-->
+                 <div class="row m-l-xs m-r-xs">
+                     <div class="text-box"><h5>居住条件和卫生设施</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">住房类型</label>
+                         <div class="col-sm-3">
+                         	#formSingleSelectDictionary("houseType" $!houseCondition.houseType $dicData.dicHouseType "id='houseType' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">住房面积</label>
+                         <div class="col-sm-2">
+                             <input name="houseArea" value="$!houseCondition.houseArea" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'')" type="text" class="form-control">
+                         </div>
+                         <div class="col-sm-1 control-label" style="text-align: left">平方米</div>
+                         <label class="col-sm-1 control-label text-right p-r-none">保暖情况</label>
+                         <div class="col-sm-3">
+                         	#formSingleSelectDictionary("warmCondition" $!houseCondition.warmCondition $dicData.dicWarmCondition "id='warmCondition' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">厨房使用方式</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("kitchenUse" $!houseCondition.kitchenUse $dicData.dicKitchenUse "id='kitchenUse' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">厨房排风设施</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("kitchenAir" $!houseCondition.kitchenAir $dicData.dicKitchenAir "id='kitchenAir' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none p-l-none">厨房饮水</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("kitchenWater" $!houseCondition.kitchenWater $dicData.dicKitchenWater "id='kitchenWater' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">厨房燃料类型</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("kitchenFuel" $!houseCondition.kitchenFuel $dicData.dicKitchenFuel "id='kitchenFuel' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">厨房湿度情况</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("kitchenHumidity" $!houseCondition.kitchenHumidity $dicData.dicKitchenHumidity "id='kitchenHumidity' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                          <label class="col-sm-1 control-label text-right p-r-none">厨房卫生情况</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("kitchenClean" $!houseCondition.kitchenClean $dicData.dicKitchenClean "id='kitchenClean' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">厨房采光情况</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("kitchenRay" $!houseCondition.kitchenRay $dicData.dicKitchenRay "id='kitchenRay' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">卫生厕所</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("toiletClean" $!houseCondition.toiletClean $dicData.dicToiletClean "id='toiletClean' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                          <label class="col-sm-1 control-label text-right p-r-none">禽畜栏</label>
+                         <div class="col-sm-3">
+                             #formSingleSelectDictionary("livestockBar" $!houseCondition.livestockBar $dicData.dicLivestockBar "id='livestockBar' data-placeholder='请选择'  class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择" "")
+                         </div>
+                     </div>
+                    
+                 </div>
+                 <!-- 建档信息 -->
+                 <div class="row m-l-xs m-r-xs">
+                     <div class="text-box"><h5>建档信息</h5></div>
+                     <div class="form-group">
+                         <label class="col-sm-1 control-label text-right p-r-none">建档人</label>
+                         <div class="col-sm-3">
+                             #formTextInput("" "$!creatorName" "class='form-control' readonly ")
+                         </div>
+                         <label class="col-sm-1 control-label text-right p-r-none">建档日期</label>
+                         <div class="col-sm-3">
+                              #formTextInput("" "$!date.format('yyyy-MM-dd HH:mm', $!{familyDetail.createTime})" "class='form-control' readonly ")
+                         </div>
+                     </div>
+                 </div>
+             </form> 
+
+         </div>
+         <!--家庭基本档案 end -->
+	</div>
+	<!-- tab-content end -->
+	
+</div>
+<!-- 主体 end  -->
+ 
+     <!-- 底部 start -->      
+    <div class="tool-table-fixed" style="width: calc(100%)">
+        #if('show' != $!mode)
+            <button onclick="saveFamilyDetail();" type="button" class="btn btn-success">
+                      <i class="fa fa-save"></i> 保 存
+            </button>
+        #end
+    </div>
+    <!-- 底部 end -->      
+                
+    <!-- 全局js -->
+    <script src="../resource/style/js/ui.js"></script>
+    #parse("./common/common.js.vm")
+    #parse("./publichealth/family/familyDetailEditSimple.js.vm")   
+</body>
+</html>

@@ -1,0 +1,134 @@
+<script type="text/javascript">
+    //打开选择儿童页面
+    function selectChild() {
+            layer.open({
+                type: 2,
+                title: '选择儿童信息',
+                shadeClose: true,
+                shade: false,
+                maxmin: false,
+                area: ['85%', '95%'],
+                content: contextPath + '/childDetail/selectCommonChildDetail.do'
+            });
+    }
+    //打开选择孕妇页面
+    function selectGravida() {
+            layer.open({
+                type: 2,
+                title: '选择孕妇信息',
+                shadeClose: true,
+                shade: false,
+                maxmin: false,
+                area: ['85%', '95%'],
+                content: contextPath + '/gravidaDetail/selectCommonGravidaDetail.do'
+            });
+    }
+    //打开选择居民页面
+    function selectPerson() {
+            layer.open({
+                type: 2,
+                title: '选择居民信息',
+                shadeClose: true,
+                shade: false,
+                maxmin: false,
+                area: ['85%', '95%'],
+                content: contextPath + '/personDetail/selectCommonPersonDetail.do'
+            });
+    }
+    
+    // 选择儿童信息回调函数
+    function selectChildCallBack(obj) {
+        $('#birthDate').val(obj.birthDate);//出生日期
+        $('#vaccinatedName').val(obj.childName);//姓名
+        $('#familyAddr').val(obj.familyAddr);//家庭地址
+        $('#childDetailId').val(obj.childDetailId);
+        $('#regionId').val(obj.regionId);//街道
+        if (obj.fatherPhone) {//家庭联系电话
+            $('#familyPhone').val(obj.fatherPhone);
+        }else{
+            $('#familyPhone').val(obj.motherPhone);
+        }
+        var genderEle = "#gender_" + obj.gender;
+        $(genderEle).iCheck('check');
+    }
+    
+    // 选择孕妇信息回调函数
+    function selectGravidaCallBack(obj) {
+    	console.log(obj);
+    	$.post('../personDetail/findPersonDetail.jo', {personDetailId:obj.personDetailId}, function(result) {
+			if (result.code == "0") {
+				var personDetail = result.data;
+				$('#personDetailId').val(obj.personDetailId);//出生日期
+		        $('#birthDate').val(personDetail.birthDate);//出生日期
+		        $('#vaccinatedName').val(personDetail.personalName);//姓名
+		        $('#familyAddr').val(personDetail.familyAddr);//家庭地址
+		        $('#regionId').val(obj.regionId);//街道
+		        $('#familyPhone').val(personDetail.contactPhone);
+		        var genderEle = "#gender_" + personDetail.gender;
+		        $(genderEle).iCheck('check');
+		        $('input[name=gender]').attr('disabled',true);
+			}
+		}, "json");
+    }
+    
+    // 选择居民信息回调函数
+    function selectPersonCallBack(obj) {
+        $('#personDetailId').val(obj.personDetailId);//出生日期
+        $('#birthDate').val(obj.birthDate);//出生日期
+        $('#vaccinatedName').val(obj.personalName);//姓名
+        $('#familyAddr').val(obj.familyAddr);//家庭地址
+        $('#regionId').val(obj.regionId);//街道
+        $('#familyPhone').val(obj.contactPhone);
+         
+        var genderEle = "#gender_" + obj.gender;
+        $(genderEle).iCheck('check');
+    }
+ 
+    // 提交表单
+    function saveDeathRecord() {
+         var deathRecordFormParams = common.serializeObject($('#deathRecordForm'));
+         if (isBlank(deathRecordFormParams.vaccinatedName)) {
+             common.alert("请选择人员姓名",0);
+             $("#vaccinatedName").focus();
+             return false;
+         }
+         if (isBlank(deathRecordFormParams.regionId)) {
+             common.alert("人员的所在街道信息不存在，请先完善街道信息",0);
+             return false;
+         }
+         if(deathRecordFormParams.deathFlag == 1){
+        	 deathRecordFormParams.gender = 2;
+         }
+         
+         $.post("../deathRecord/saveDeathRecord.jo", deathRecordFormParams,  function (result) {
+             if (result.code == "0") { 
+                 common.alertCall("保存成功!", 1, function (){
+                     // 刷新父页面
+                     var $btnQuery = $('#btn_query', window.parent.document);
+                     if($btnQuery.length > 0 ) $btnQuery.click();
+              
+                     // 关闭窗口
+                     var index = parent.layer.getFrameIndex(window.name);
+                     parent.layer.close(index); 
+                 });
+             } else {
+                 common.alert(result.msg,2);
+             }
+         }, "json");
+     }
+    
+    //查看 设置 readonly、disabled
+    $(document).ready(function() {
+        var jqForm = $('#deathRecordForm');
+        if('show' == '$!mode'){
+            jqForm.find('input').attr('readonly',true);
+            jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+        }
+        
+        //如果是孕妇，性别不可选
+        var deathFlag = jqForm.find('input[name=deathFlag]').val();
+        if(deathFlag == 1){
+	        $('input[name=gender]').attr('disabled',true);
+        }
+    });
+</script>

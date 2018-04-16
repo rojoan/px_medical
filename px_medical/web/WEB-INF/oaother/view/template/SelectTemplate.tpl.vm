@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script language="JavaScript">
+#if($message)
+alert("$esc.javascript($message)");
+#end
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+
+<body>
+<div class="gradual">
+
+##以下是查询界面的工具条
+##parse("/template/QueryToolBar.tpl.vm")
+
+##以下是录入查询条件的表格
+#parse("/template/QueryGrid4.tpl.vm")
+#if($page && ${page.token} && !${_layout.notShowPage})
+#parse("/template/PageToolBar.tpl.vm")
+#end
+
+<div class="table_page_clear">
+  <table cellpadding="0" cellspacing="0" class="table_page">
+<form name='selectForm' action='post'>
+<tr class="form_title_char">
+#foreach($dc in ${_layout.dataList})
+<td #if(${dc.width})width="$!{dc.width}"#end>${dc.title}</td>
+#end
+</tr>
+#foreach($data in ${page.data})
+#set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+#set($theFieldList = ${_layout.objectDataList})
+#set($css = "#tableCellCss($velocityCount)") ##注意这里  选择单双行颜色的方法，$velocityCount是循环的行号变量，它从1开始
+<tr onMouseOver="this.className='table_page_m_move'" onMouseOut="this.className='table_page_row_focus'"  onclick="if( this.getElementsByTagName('input')[0]){var sel = this.getElementsByTagName('input')[0];sel.click();}">
+#foreach($dc in ${_layout.dataList})
+#if(${dc.field})
+<td align=#if(${dc.align})"$!{dc.align}"#{else}left#end>#viewSelectField($dc $dataBeanMap $theFieldList)</td>
+#end
+#end
+</tr>
+#end
+</form>
+  </table>
+</div>
+
+</div>
+</body>
+</html>

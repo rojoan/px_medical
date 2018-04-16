@@ -1,0 +1,2 @@
+$!{cell.prefix}<input #if(${cell.arrayName}) name="${cell.arrayName}" #else id="$!{cell.field}checkbox" #end type="checkbox"  value="${datamap.get(${cell.field})}" #if(${cell.readonly})readonly#end class='inputobject' $!{cell.custom} #if(${cell.style})style=#singleQuotes()${cell.style}#singleQuotes()#end />$!{cell.suffix}
+

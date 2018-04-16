@@ -1,0 +1,107 @@
+<script>
+$(document).ready(function () {
+    // 查询按钮
+    $('#btn_query').click(function (){
+    	var queryParams = common.serializeObject($('#queryForm'));
+    	var options = {url: '../personInsanity/personInsanityRecordDataList.jo', silent: false, query: queryParams};
+    	$('#personInsanityList').bootstrapTable('refresh', options); 
+    });
+    
+ 	// 清空按钮
+    $('#btn_clean').click(function (){
+    	$('#gender').val('');
+    	$('#idCard').val('');
+    	$('#patientName').val('');
+    	$('#beginAttackDate').val('');
+    	$('#endAttackDate').val('');
+    	
+    	$('#chronicLevel').val('');
+    	$('#diagnosisHospitalType').val('');
+    	$('#diagnosisHospital').val('');
+    	$('#beginConfirmDate').val('');
+    	$('#endConfirmDate').val('');
+    });
+    
+    var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+    var dicFamilyRel = JSON.parse('$dicTools.changeMapToJson($dicData.dicFamilyRel)'); 
+    var dicPersonDetailCensusType = JSON.parse('$dicTools.changeMapToJson($dicData.dicPersonDetailCensusType)'); 
+ 	// 初始化列表数据
+    $('#personInsanityList').bootstrapTable({
+		url : "../personInsanity/personInsanityRecordDataList.jo",
+		mobileResponsive : true,
+		pagination : true,
+		pageNumber : true,
+		cache : false,
+		striped: true,
+		clickToSelect: true,
+		singleSelect: true,
+		pageSize : "10",
+		pageNumber : "1",
+		height : "500",
+		queryParamsType : "",
+		sidePagination : 'server',
+		halign : "center",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		columns : [
+		{ checkbox:true }, 
+		{
+			field : 'patientName',
+			title : '患者姓名'
+		}, {
+			field : 'gender',
+			title : '性 别',
+			formatter :function (value, row, index) {
+				return dicSex[row.gender];
+			}
+		}, {
+			field : 'birthDate',
+			title : '出生日期'
+		}, {
+			field : 'guardianName',
+			title : '监护人姓名'
+		}, {
+			field : 'familyRelId',
+			title : '监护人与患者关系',
+			formatter :function (value, row, index) {
+				return dicFamilyRel[row.familyRelId];
+			}
+		}, {
+			field : 'guardianPhone',
+			title : '监护人电话'
+		}, {
+			field : 'censusFlag',
+			title : '联系人户别',
+			formatter :function (value, row, index) {
+				return dicPersonDetailCensusType[row.censusFlag];
+			}
+		}, {
+			field : 'linkmanName',
+			title : '联系人姓名'
+		}, {
+			field : 'linkmanPhone',
+			title : '联系人电话'
+		}, {
+			field : 'diseaseConfirmTime',
+			title : '确诊日期'
+		}],
+		onCheck: function(row){
+			if (parent.selectInsanityCallBack && typeof(parent.selectInsanityCallBack) == "function") {
+				parent.selectInsanityCallBack(row);
+				
+				// 关闭窗口
+				var index = parent.layer.getFrameIndex(window.name);
+		        parent.layer.close(index); 
+			}
+		},
+		onLoadSuccess : function(){
+			var height = ($('#personInsanityList').parents("body").height() - $('#queryForm').parents(".ibox").height() - 72);
+			$('#personInsanityList').bootstrapTable('resetView', {height: height}); 
+		}
+	});
+});
+</script>

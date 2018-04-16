@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>大屏展示</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../resource/js/jquery.min.js"></script>
+    <script src="../resource/js/echart/echarts.js"></script>
+    <script src="../resource/js/highcharts/highcharts.js"></script>
+    <script src="../resource/js/highcharts/hibasechart.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: #f5f6f7;
+            font-size: 14px;
+
+        }
+        #main {
+            height: 100%;
+            width: 50%;
+            margin: 0;
+            float: left;
+        }
+
+        #content {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            float: right;
+            width: 50%;
+            height: 100%;
+            background: transparent;
+
+        }
+
+        #content-head {
+            display: block;
+            font-weight: bold;
+            padding: 9px 15px;
+            color: #105eda;
+            height: 48px;
+            line-height: 48px;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        #content-body {
+            padding: 0 0 9px 0;
+            height: calc(100% - 79px);
+        }
+        .table {
+            display: inline-block;
+            width: calc(100% - 62px);
+            height: calc(44% - 15px);
+            margin: 15px 15px 30px 0;
+            border-radius: 7px;            
+            border: 1px solid #1e90ff;
+            color: #105eda;
+            padding: 0 15px 9px 15px ;
+            background: #fff;
+        }
+        .table h5{ margin: 0 auto; line-height: 32px; text-align: center; background: #fff; display: table; font-size: 18px; top: -18px; position: relative; border-radius: 6px;}
+        .table h5 b { font-weight: bold; }
+        .table h5 b:first-child{ color: #105eda; padding-right: 15px;}
+        .table h5 b:last-child{ color: #105eda; padding-left: 15px;}
+
+
+    </style>
+
+</head>
+<body>
+
+<div id="main">
+
+</div>
+
+<!-- 弹出框 -->
+<div id="content">
+    <span id="content-head"></span>
+    <div id="content-body">
+
+        <div class="table">
+            <h5><b>【</b>本月转诊统计<b>】</b></h5>
+            <div class="echarts" id="hdDiagnosisMonthDownCountChart-div"></div>
+        </div>
+
+        <div class="table">
+            <h5><b>【</b>当天转诊统计<b>】</b></h5>
+            <div class="echarts" id="hdDiagnosisDayDownCountChart-div"></div>
+        </div>
+
+    </div>
+</div>
+<!--hicharts图表-->
+    <script>
+######本院当前月份转入数量 begin
+        $(document).ready(function () {
+            var examChildCountOpts =  {
+                    title: {
+                        text: '本院当前月份转入数量'                 // 标题
+                    },
+                    colors:["#FFFF00","#FF00FF"],
+                    xAxis: {
+                        title: {
+                            text: '转出医疗机构'                // x 轴标题
+                        },
+                        type:"category", //如果不指定分类类别，categories: [],则以data中的name作为分类
+                        labels: {
+                            style: {
+                                color: 'red',
+                                fontStyle : 'italic' //, //斜体
+                                 //writingMode:'tb-rl'  //文字竖排样式
+                            }
+                        }
+                    }
+                };
+        var hdDiagnosisMonthDownCountChart;
+        $.post("../hdDiagnosisData/hdDiagnosisMonthDownCountData.jo", {dataName:"HdDiagnosisApplyDownCout"}, function (result) {
+            $.extend(true, examChildCountOpts, baseColumnOpts, result);
+             hdDiagnosisMonthDownCountChart = Highcharts.chart('hdDiagnosisMonthDownCountChart-div', examChildCountOpts);
+            }, "json");
+        })
+######本院当前月份转入数量 end
+
+######本院当天转入数量 begin
+        $(document).ready(function () {
+            var examChildCountOpts =  {
+                    title: {
+                        text: '本院当天转入数量'                 // 标题
+                    },
+                    colors:["#FFFF00","#FF00FF"],
+                    xAxis: {
+                        title: {
+                            text: '转出医疗机构'                // x 轴标题
+                        },
+                        type:"category", //如果不指定分类类别，categories: [],则以data中的name作为分类
+                        labels: {
+                            style: {
+                                color: 'red',
+                                fontStyle : 'italic' //, //斜体
+                                 //writingMode:'tb-rl'  //文字竖排样式
+                            }
+                        }
+                    }
+                };
+        var hdDiagnosisMonthDownCountChart;
+        $.post("../hdDiagnosisData/hdDiagnosisDayDownCountData.jo", {dataName:"HdDiagnosisApplyDownCout"}, function (result) {
+            $.extend(true, examChildCountOpts, baseColumnOpts, result);
+             hdDiagnosisMonthDownCountChart = Highcharts.chart('hdDiagnosisMonthDownCountChart-div', examChildCountOpts);
+            }, "json");
+        })
+######本院当天转入数量 end
+    </script>
+
+<script type="text/javascript">
+    require.config({
+        paths: {
+            echarts: '../resource/js/echart'
+        }
+    });
+
+    // 使用
+    require(
+            [
+                'echarts',
+                'echarts/chart/map'
+            ],
+            function (ec) {
+                require('echarts/util/mapData/params').params.nanning = {
+
+                    getGeoJson: function (callback) {
+                        $.getJSON('../resource/geoJson/nanning.json', function (data) {
+                            // 压缩后的地图数据必须使用 decode 函数转换
+                            callback(require('echarts/util/mapData/params').decode(data));
+                        });
+                    }
+                };
+
+                var myChart = ec.init(document.getElementById('main'));
+                var ecConfig = require('echarts/config');
+
+                myChart.on(ecConfig.EVENT.MAP_SELECTED, function (param) {
+                });
+                option = {
+                    series: [
+                        {
+                            name: '',
+                            type: 'map',
+                            mapType: 'nanning',
+                            selectedMode: false,
+                            roam: true,
+                            itemStyle: {
+                                normal: {
+                                    label: {show: true,
+                                        textStyle: {
+                                            color: '#fc6248'   //区域标题
+                                        }
+                                    },
+                                    borderColor: 'rgba(30,144,255,0.6)',  //边界线颜色
+                                    borderWidth: 1,
+                                    areaStyle:{
+                                        color: '#fff'  //区域背景色
+                                    }
+                                },
+                                emphasis: {label: {show: true}}
+                            },
+                            data: [
+                                {name: '宾阳县', value: Math.round(Math.random() * 500)},
+                                {name: '横县', value: Math.round(Math.random() * 500)},
+                                {name: '江南区', value: Math.round(Math.random() * 500)},
+                                {name: '良庆区', value: Math.round(Math.random() * 500)},
+                                {name: '隆安县', value: Math.round(Math.random() * 500)},
+                                {name: '马山县', value: Math.round(Math.random() * 500)},
+                                {name: '青秀区', value: Math.round(Math.random() * 500)},
+                                {name: '上林县', value: Math.round(Math.random() * 500)},
+                                {name: '武鸣区', value: Math.round(Math.random() * 500)},
+                                {name: '西乡塘区', value: Math.round(Math.random() * 500)},
+                                {name: '兴宁区', value: Math.round(Math.random() * 500)},
+                                {name: '邕宁区', value: Math.round(Math.random() * 500)}
+                            ],
+                            /*炫光特效*/
+                            geoCoord: {
+                                '青秀区': [108.662473, 22.819352],
+                                '良庆区': [108.326147, 22.439868],
+                                '江南区': [108.17322, 22.71538],
+                                '西乡塘区': [108.149074, 22.87637],
+                                '兴宁区': [108.560138, 22.948806],
+                                '邕宁区': [108.531392, 22.635347],
+                                '武鸣区': [108.281768, 23.194796],
+                                '一医院': [108.331473, 22.816483],
+                                '四医院': [108.350481, 22.840999],
+                                '武鸣医院': [108.283656,23.162077],
+                                '五医院': [108.343708, 22.864578],
+                                '六医院': [108.310543, 22.84659],
+                                '八医院': [108.310507, 22.841195],
+                                '二医院': [108.312231, 22.801887],
+                                '三医院': [108.288813, 22.825198]
+
+                            },
+                            markPoint: {
+                                symbol: 'circle',
+                                symbolSize: 6,
+                                itemStyle: {
+                                    normal: {
+                                        //backgroundColor: '#f34010',
+                                        borderColor: '#f34010',
+                                        borderWidth: 3,            // 标注边线线宽，单位px，默认为1
+                                        label: {
+                                            show: true
+                                        }
+                                    },
+                                    emphasis: {
+                                        //backgroundColor: '#f34010',
+                                        borderColor: '#bc2e08',
+                                        borderWidth: 3,
+                                        label: {
+                                            show: true
+                                        }
+                                    }
+                                },
+                                /*
+                                 effect : {
+                                 show: true,
+                                 shadowBlur : 0,
+                                 loop: true
+                                 },
+                                 */
+                                data: [
+                                    //{name:'青秀区',value:100},
+                                    //{name:'西乡塘区',value:2},
+                                    //{name:'兴宁区'},
+                                    //{name:'邕宁区'},
+                                    {name: '武鸣医院'},
+                                    {name: '四医院'},
+                                    {name: '一医院'},
+                                    {name: '二医院'},
+                                    {name: '三医院'},
+                                    {name: '五医院'},
+                                    {name: '六医院'},
+                                    {name: '八医院'}
+
+                                ]
+                            }
+
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+
+                myChart.on('click', function (params) { //点击事件
+                    var provinceName = params.name;
+                    $('#content').css('display', 'block');
+                    ##$('#content').css('display');
+                    $("#content-head").html(provinceName);
+                });
+
+            }
+    );
+    $('#content').css('display', 'block');
+
+</script>
+
+</body>
+</html>

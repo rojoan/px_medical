@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老年人中医药健康管理评估</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm") 
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { height: 100% } 
+.tcmRow 
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+     <form id="elderHealthTcmedicineForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+         #formHiddenInput("elderHealthTcmedicineId" "$!elderHealthTcmedicine.elderHealthTcmedicineId")
+         #formHiddenInput("personDetailId" "$!elderHealthTcmedicine.personDetailId" " id='personDetailId' ")
+         #formHiddenInput("hospitalId" "$!elderHealthTcmedicine.hospitalId")
+         #formHiddenInput("hospitalNo" "$!elderHealthTcmedicine.hospitalNo")
+         #formHiddenInput("regionId" "$!elderHealthTcmedicine.regionId" "id='regionId'")
+         #formHiddenInput("assessDoctorId" "$!elderHealthTcmedicine.assessDoctorId")
+         #formHiddenInput("hospitalName" "#htmlEscape($!elderHealthTcmedicine.hospitalName)" " id='hospitalName' maxlength='10' class='form-control' readonly ")
+                     
+         <div class="modal-body full-height" ><!--如果弹窗没有底部菜单栏则 -44px -->
+             <!-- 表单 开始 -->
+             <div class="table-content full-height">
+                 <div class="form-group">
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none">姓名</label>
+                     <div class="col-sm-3"> 
+                          #formTextInput("personalName" "$!personDetail.personalName" "   id='personalName' class='form-control' readonly")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none ">性别</label>
+                     <div class="col-sm-3">
+                         #formRadioButtonsLabel("gender" "$!personDetail.gender" $dicData.dicSex "&nbsp;" "" "class='checkbox-inline i-checks' readonly ")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none ">年龄</label>
+                     <div class="col-sm-3">
+                         #formTextInput("personalAge" "$!personDetail.personalAge" "   id='personalAge' class='form-control' readonly ")
+                     </div>
+                 </div>
+                 
+                 <div class="form-group">
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none ">评估医生</label>
+                     <div class="col-sm-3">
+                         #formTextInput("assessDoctorName" "#htmlEscape($!elderHealthTcmedicine.assessDoctorName)" " id='assessDoctorName' maxlength='10' class='form-control' readonly ")
+                     </div>
+                     <label class="col-sm-1 control-label text-right p-r-none p-l-none red">评估日期</label>
+                     <div class="col-sm-3">
+                         #formTextInput("assessTime" $!date.format('yyyy-MM-dd', $!elderHealthTcmedicine.assessTime) " id='assessTime' onclick='$layerDate' maxlength='20' class='form-control'")
+         
+                     </div>
+                 </div>
+                 <div class="row"> &nbsp;</div>
+                 <div class="form-group">
+                      <label class="col-sm-2 control-label text-right p-r-none p-l-none ">中医体质辨识结果</label>
+                     <div class="col-sm-6">
+                         <table class="table table-bordered " id="tcmResult">
+                         <tr >
+                            <th>体质类型</th>
+                             #foreach($item in $elderHealthTcmResult.corporeityList ) 
+	                            <th><span style="width: 70px;">$dicData.dicHealthTcmItemGoup.get($item.corporeityType)</span></th>
+                             #end
+                         </tr>
+                      
+                          <tr>
+                              <th>得分</th>
+	                          #foreach($item in $elderHealthTcmResult.corporeityList ) 
+	                              #set($corporeity = $elderHealthTcmResult.corporeityMap.get($item.corporeityType) ) 
+	                            <td class="score">$!corporeity.score</th>
+	                          #end
+                         </tr>
+                         <tr>
+                              <th>结果</th>
+	                          #foreach($item in $elderHealthTcmResult.corporeityList ) 
+	                              #set($corporeity = $elderHealthTcmResult.corporeityMap.get($item.corporeityType) ) 
+	                            <td class="belong">$!corporeity.belong</th>
+	                          #end
+                         </tr> 
+                         </table>
+                     </div>
+                 </div>
+                 <div class="form-group" >
+                        <label class="col-sm-2 control-label text-right p-r-none p-l-none ">中医体质辨识结论</label>
+                        <div class="col-sm-10">
+                            <div class="col-sm-12">
+                                                                                主要体质是：<span id="mainCorporeity">
+		                                #foreach($item in $elderHealthTcmResult.mainCorporeityList ) 
+			                                $dicData.dicHealthTcmItemGoup.get($item.corporeityType)
+			                                &nbsp;&nbsp;&nbsp;&nbsp;
+			                            #end
+	                                 </span>
+                            </div>
+                            <div class="col-sm-12">
+                                                                                 倾向体质是：<span id="inclinationCorporeity">
+			                              #foreach($item in $elderHealthTcmResult.inclinationCorporeityList ) 
+			                                $dicData.dicHealthTcmItemGoup.get($item.corporeityType)
+			                                &nbsp;&nbsp;&nbsp;&nbsp;
+			                              #end
+                                     </span>
+                            </div>
+                        </div>
+                 </div>
+                 
+                 <div class="form-group">
+                      <label class="col-sm-1 control-label text-right p-r-none p-l-none " style="font-size: 15px;font-weight: bold;">评估选项</label>
+                 </div>
+                 
+                 <div class="row full-height-scroll"  id="elderHealthTcmedicineItemForm" style="height: calc(100% - 300px)">
+                  #formHiddenInput("healthTcmedicineSize" "$healthTcmedicineList.size()" " id='healthTcmedicineSize' ")
+                  #foreach($item in $healthTcmedicineList ) 
+                     #set ( $elderHealthTcmedicineItem = $elderHealthTcmItemMap.get($item.healthTcmedicineId))   
+                       <div class="form-group trRow" >
+		                  #formHiddenInput("index_$!{velocityCount}" "$!elderHealthTcmedicineItem.tcmScore" " index='$!{velocityCount}' class='index' ")
+	                      <label class="col-sm-1">&nbsp;</label>
+	                      <div class="col-sm-11">
+	                          <label class="" style="font-size: 15px;font-weight: bold;">
+	                               ($!{velocityCount})&nbsp;$!item.tcmedicineName
+	                          </label>
+	                      </div>
+	                      
+	                      #if($item.tcmedicineContent)
+	                          <label class="col-sm-1">&nbsp;</label>
+	                          <div class="col-sm-11">
+	                              <label style="font-size: 14px;">$!item.tcmedicineContent</label>
+	                          </div>
+	                      #end
+	                      
+	                      <label class="col-sm-1">&nbsp;</label>
+	                      <div class="col-sm-11">
+	                      <label  class="checkbox-inline i-checks" >
+                              <input type="radio" name="$!item.healthTcmedicineId" value="$item.choiceNotScore" 
+                                  #if($item.choiceNotScore == $!elderHealthTcmedicineItem.tcmScore)  checked="checked" #end />
+                                   $!item.choiceNot  
+                           </label>
+	                      </div>
+	                      
+	                      <label class="col-sm-1">&nbsp;</label>
+	                      <div class="col-sm-11">
+		                      <label  class="checkbox-inline i-checks" >
+	                              <input type="radio" name="$!item.healthTcmedicineId" value="$item.choiceLittleScore" 
+	                                  #if($item.choiceLittleScore == $!elderHealthTcmedicineItem.tcmScore)  checked="checked" #end />
+	                              $!item.choiceLittle
+	                           </label>
+	                      </div>
+	                      <label class="col-sm-1">&nbsp;</label>
+	                      <div class="col-sm-11">
+		                      <label  class="checkbox-inline i-checks" >
+	                              <input type="radio" name="$!item.healthTcmedicineId" value="$item.choiceSometimesScore" 
+	                                  #if($item.choiceSometimesScore == $!elderHealthTcmedicineItem.tcmScore)  checked="checked" #end />
+	                              $!item.choiceSometimes
+	                           </label>
+	                      </div>
+	                      
+	                      <label class="col-sm-1">&nbsp;</label>
+	                      <div class="col-sm-11">
+	                      <label  class="checkbox-inline i-checks" >
+                              <input type="radio" name="$!item.healthTcmedicineId" value="$item.choiceOftenScore" 
+                                  #if($item.choiceOftenScore == $!elderHealthTcmedicineItem.tcmScore)  checked="checked" #end />
+                              $!item.choiceOften
+                           </label>
+	                      </div>
+	                      
+	                      <label class="col-sm-1">&nbsp;</label>
+	                      <div class="col-sm-11">
+	                      <label  class="checkbox-inline i-checks" >
+                              <input type="radio" name="$!item.healthTcmedicineId" value="$item.choiceAlwaysScore" 
+                                  #if($item.choiceAlwaysScore == $!elderHealthTcmedicineItem.tcmScore)  checked="checked" #end />
+                              $!item.choiceAlways
+                           </label>
+                           </div>
+	                 </div>
+                       <div class="row">  <label class="col-sm-1">&nbsp;</label></div>
+                      #set ( $elderHealthTcmedicineItem = '')   
+                  #end
+                 </div>
+                 
+              </div>  <!-- div content  --> 
+         </div><!-- div modal-body  --> 
+     </form> <!-- 表单 结束 -->
+
+     <!-- 底部按钮 -->
+     <div class="tool-table-fixed" style="width: calc(100%)">
+         #if('show' != $!mode)
+             <button onclick="saveElderHealthTcmedicine();" type="button" class="btn btn-success">
+                 <i class="fa fa-save"></i> 保 存
+             </button>
+         #end
+     </div>
+                
+    <!-- 全局js -->
+    #parse("./common/common.js.vm") 
+    #parse("./publichealth/elder/elderHealthTcmedicineEdit.js.vm")
+     
+</body>
+</html>

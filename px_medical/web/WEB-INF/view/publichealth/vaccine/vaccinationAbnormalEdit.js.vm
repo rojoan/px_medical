@@ -1,0 +1,73 @@
+<script>
+    $(document).ready(function () {
+        // 选择疫苗接种明细弹层事件绑定到vaccinatedName
+        $('#vaccinatedName').click(function(){
+            var title = '选择疫苗接种明细信息';
+            common.open(contextPath + '/vaccinationDetail/vaccinationDetailSelectList.do', title, {area: ['85%', '95%']});
+        });
+        // 选择疫苗接种明细弹层事件绑定到vaccinationCardNo
+        $('#vaccinationCardNo').click(function(){
+            var title = '选择疫苗接种明细信息';
+            common.open(contextPath + '/vaccinationDetail/vaccinationDetailSelectList.do', title, {area: ['85%', '95%']});
+        });
+    });
+
+    // 选择疫苗程序信息回调函数
+    function selectVaccinationDetailCallBack(obj) {
+        $('#vaccinationDetailId').val(obj.vaccinationDetailId);
+        $('#vaccineId').val(obj.vaccineId);
+        $('#vaccineNo').val(obj.vaccineNo);
+        $('#vaccineName').val(obj.vaccineName);
+        $('#vaccineSite').val(obj.vaccinePart);
+        $('#productionEntp').val(obj.productEntp);
+        ##接种医部机构
+        $('#hospitalNo').val(obj.hospitalNo);
+        $('#hospitalId').val(obj.hospitalId);
+        $('#hospitalName').val(obj.hospitalName);
+
+        $('#vaccinationCardId').val(obj.vaccinationCardId);
+        $('#vaccinationCardNo').val(obj.vaccinationCardNo);
+
+        $('#personDetailId').val(obj.personDetailId);
+        $('#childDetailId').val(obj.childDetailId);
+        $('#vaccineDate').val(obj.vaccineDate);
+        $('#vaccinatedName').val(obj.vaccinatedName);
+        $('#vaccineSite').val(obj.vaccineSite);
+        
+        $('#vaccineName').val(obj.vaccineName);
+        $('#vaccineBatch').val(obj.vaccineBatch);
+    }
+
+
+        // 提交表单
+        function saveVaccinationAbnormal() {
+            var vaccinationAbnormalParams = common.serializeObject($('#vaccinationAbnormalForm'));
+            if (vaccinationAbnormalParams.hospitalId == undefined || vaccinationAbnormalParams.hospitalId  == "") {
+                common.alert("请填写医疗机构ID",0);
+                return false;
+            }
+
+            if (vaccinationAbnormalParams.vaccinationCardNo == undefined || vaccinationAbnormalParams.vaccinationCardNo  == "") {
+                common.alert("请填写预防接种卡编号",0);
+               $("#vaccinationCardNo").focus();
+                return false;
+            }
+
+                $.post("../vaccinationAbnormal/saveVaccinationAbnormal.jo", vaccinationAbnormalParams,  function (result) {
+                if (result.code == "0") {
+                  common.alert("保存成功",0);
+                  parent.queryRecord();//重新查询
+                  // 关闭窗口
+                  var index = parent.layer.getFrameIndex(window.name);
+                  parent.layer.close(index); 
+               } else {
+                  common.alert(result.msg, 2);
+               }
+            }
+            , "json").error(function(jqXHR) {
+                                        jqueryPostError(jqXHR);
+                           }
+                       );//post
+
+        }//save function
+</script>

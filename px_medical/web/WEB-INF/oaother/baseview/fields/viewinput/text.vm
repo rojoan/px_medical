@@ -1,0 +1,1 @@
+#if(${cell.dictionary})#lookUpDict(${cell.dictionary} $!{datamap.get(${cell.field})})#else#htmlEscape($!{datamap.get(${cell.field})})#end<input type="hidden" name="${cell.field}" value="#htmlEscape($!{datamap.get(${cell.field})})"/>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>肺结核-慢性病患者随访编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal" style="height: calc(100% - 44px)">
+		#formHiddenInput("submitFlag" "" "id='submitFlag'")
+		#formHiddenInput("hospitalId" "$!personChronicVisit.hospitalId" "id='hospitalId'")
+		#formHiddenInput("hospitalNo" "$!personChronicVisit.hospitalNo" "id='hospitalNo'")
+		##formHiddenInput("hospitalPhone" "$!personChronicVisit.hospitalPhone" "id='hospitalPhone'")
+		#formHiddenInput("visitDoctorId" "$!personChronicVisit.visitDoctorId" "id='visitDoctorId'")
+		#formHiddenInput("chronicVisitId" "$!personChronicVisit.chronicVisitId" "id='chronicVisitId'")
+		#formHiddenInput("personDetailId" "$!personChronicVisit.personDetailId" "id='personDetailId'")
+		#formHiddenInput("personChronicId" "$!personChronicVisit.personChronicId" "id='personChronicId'")
+		
+		##** chronicType： 1=高血压；2=糖尿病；3=慢阻肺疾病；4=冠心病；5=脑卒中；6=肺结核 *##
+		#formHiddenInput("chronicType" "6" "")
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>随访基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">患者姓名</label>
+	                <div class="col-sm-1">
+	                	#formTextInput("patientName" "#htmlEscape($!personChronicVisit.personChronic.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <div class="col-sm-1">
+	                    <button id="inportPerson" type="button" class="btn btn-info m-l-n">导入患者</button>
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">随访方式</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("visitWay" "$!personChronicVisit.visitWay" $!{dicData.dicVisitWay} "id='visitWay' class='form-control'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">随访时间</label>
+	                <div class="col-sm-2">
+						#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("visitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.visitTime)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">随访医生</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("visitDoctorName" "#htmlEscape($!personChronicVisit.visitDoctorName)" " id='visitDoctorName' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">随访医院</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalName" "#htmlEscape($!personChronicVisit.hospitalName)" " id='hospitalName' maxlength='15' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">医院联系电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalPhone" "#htmlEscape($!personChronicVisit.hospitalPhone)" "id='hospitalPhone' maxlength='100' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">下次随访时间</label>
+	                <div class="col-sm-2">
+	                    #set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("nextVisitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.nextVisitTime)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">症状</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                    #formCheckboxesLable("visitChronicSymIds" $!visitChronicSymIds $!dicData.dicPTBSymptom "&nbsp;" "class='m-t-xs m-r-xs i-checks'" "")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">其他症状描述</label>
+	                <div class="col-sm-11">
+	                	#formTextInput("personVisitItem.otherSym" "#htmlEscape($!personVisitItem.otherSym)" "maxlength='50' class='form-control'")
+	                </div>
+	            </div>
+
+	            <div class="text-box"><h5>生活方式指导</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">每日饮酒量(两)</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("personVisitItem.wineEveryday" "$!personVisitItem.wineEveryday" 2 "maxlength='4' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">下次控制饮酒量(两)</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("personVisitItem.nextWineEveryday" "$!personVisitItem.nextWineEveryday" 2 "maxlength='4' class='form-control'")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">每日抽烟量(支)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.smokeEveryday" "$!personVisitItem.smokeEveryday" "maxlength='2' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">下次控制每日抽烟量(支)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.nextSmokeEveryday" "$!personVisitItem.nextSmokeEveryday" "maxlength='2' class='form-control'")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>用药信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-md-1 control-label text-right p-r-none">化疗方案</label>
+	                <div class="col-md-11">
+	                    #formTextInput("personVisitItem.chemotherapy" "#htmlEscape($!personVisitItem.chemotherapy)" "maxlength='50' class='form-control'")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-md-1 control-label text-right p-r-n">药品剂型</label>
+	                <div class="col-sm-5" style="padding-top: 6px;">
+	                    #formCheckboxesLable("nonDrugType" $!chronicNonDrugIds $!dicData.dicPTBDosageForm "" "class='checkbox-inline i-checks'")
+	                </div>
+	                <label class="col-md-1 control-label text-right p-r-n">用 法</label>
+	                <div class="col-md-2" style="padding-top: 6px;">
+	                	#formRadioButtons("personVisitItem.drugUsage" "$!personVisitItem.drugUsage" $!dicData.dicPTBDrugUsage "" "class='checkbox-inline i-checks'")
+	                </div>
+	                <label class="col-md-1 control-label text-right p-r-n">督导人员</label>
+                    <div class="col-md-2">
+                    	#formSingleSelectFirstNone("personVisitItem.supervisorFlag" "$!personVisitItem.supervisorFlag" $!{dicData.dicPTBSupervisorFlag} "class='form-control'" "")
+                    </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-md-1 control-label text-right p-r-none">药物不良反应</label>
+	                <div class="col-md-5">
+	                    #formTextInput("personVisitItem.drugReactionOther" "#htmlEscape($!personVisitItem.drugReactionOther)" "maxlength='50' class='form-control'")
+	                </div>
+	                <label class="col-md-1 control-label text-right p-r-n">并发/合并症</label>
+	                <div class="col-md-5">
+	                    #formTextInput("personVisitItem.complication" "#htmlEscape($!personVisitItem.complication)" "maxlength='50' class='form-control'")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>停止治疗及原因</h5></div>
+	            <div class="form-group">
+	                <label class="col-md-1 control-label text-right p-r-none">停止治疗时间</label>
+	                <div class="col-md-2">
+	                 	#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("therapyStopDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.therapyStopDate)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	               </div>
+	                <label class="col-md-1 control-label text-right p-r-n">停止治疗原因</label>
+	                <div class="col-md-8" style="padding-top: 6px;">
+	                	#formRadioButtons("therapyStopReason" "$!personChronicVisit.therapyStopReason" $!dicData.dicPTBTherapyStopReason "" "class='checkbox-inline i-checks'")
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	    <div class="modal-footer" style="text-align: center">
+	        <button type="button" id="btn_save" class="btn btn-success"><i class="fa fa-paste"></i> 保 存 </button>
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+#parse("./publichealth/personPtbVisitEdit.js.vm")
+</html>

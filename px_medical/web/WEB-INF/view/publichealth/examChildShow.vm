@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1岁以内儿童健康检查编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" method="get" class="form-horizontal" style="height: calc(100% - 44px)">
+		<div class="modal-body full-height-scroll">
+			<!--如果弹窗没有底部菜单栏则 -44px -->
+			<!-- 表单 开始 -->
+			<div class="table-content">
+				<div class="text-box">
+					<h5>基本情况</h5>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">儿童姓名</label>
+					<div class="col-sm-3">
+						#formTextInput("childName" "#htmlEscape($!examChild.childName)" " id='childName' maxlength='10' class='form-control' readOnly")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">性别</label>
+					<div class="col-sm-3" style="padding-top:6px;">
+						#formRadioButtons("gender" "$!examChild.gender" $!dicData.dicSex "" "class='checkbox-inline i-checks' disabled='disabled'")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">出生日期</label>
+					<div class="col-sm-3">
+						#formTextInput("birthDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!examChild.birthDate)" " id='birthDate' class='input-sm form-control layer-date' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">体检编号</label>
+					<div class="col-sm-3">
+						#formTextInput("examBillNo" "#htmlEscape($!examChild.examBillNo)" "maxlength='25' class='form-control' readOnly")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">体检医生</label>
+					<div class="col-sm-3">
+						#formTextInput("dutyDoctor" "#htmlEscape($!examChild.dutyDoctor)" "class='form-control' readOnly")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">体检时间</label>
+					<div class="col-sm-3">
+						#formTextInput("examTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!examChild.examTime)" "class='input-sm form-control layer-date' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">体检机构</label>
+					<div class="col-sm-7">
+						#formTextInput("hospitalName" "$!examChild.hospitalName" "class='form-control' readOnly")
+					</div>
+					<label class="col-sm-1 control-label text-right p-r-none p-l-none">下次体检时间</label>
+					<div class="col-sm-3">
+						#formTextInput("nextExamTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!examChild.nextExamTime)" "class='input-sm form-control layer-date' readOnly")
+					</div>
+				</div>
+				<div class="text-box">
+					<h5>体检结果</h5>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">喂养方式</label>
+					<div class="col-md-3">
+						#formSingleSelectFirstNone("feedFlag" "$!examChild.feedFlag" $!{dicData.dicFeedFlag} "class='form-control' disabled='disabled'" "")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">辅食种类</label>
+					<div class="col-md-3">
+						#formSingleSelectFirstNone("assistedFoodFlag" "$!examChild.assistedFoodFlag" $!{dicData.dicAssistedFoodFlag} "class='form-control' disabled='disabled'" "")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-n">维生素D/钙剂</label>
+					<div class="col-md-3" style="padding-top: 6px;">
+						#formRadioButtons("vdCalcium" "$!examChild.vdCalcium" $!dicData.dicYesNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">身高（cm）</label>
+					<div class="col-md-3">
+						#formFloLenInput("childHeight" "$!examChild.childHeight" 3 "maxlength='5' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">体重（Kg）</label>
+					<div class="col-md-3">
+						#formFloLenInput("childWeight" "$!examChild.childWeight" 3 "maxlength='5' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-n">胸围（cm）</label>
+					<div class="col-md-3">
+						#formFloLenInput("bustLine" "$!examChild.bustLine" 3 "maxlength='5' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">身高评价</label>
+					<div class="col-md-3">
+						#formTextInput("childHeightAssess" "#htmlEscape($!examChild.childHeightAssess)" "maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">体重评价</label>
+					<div class="col-md-3">
+						#formTextInput("childWeightAssess" "#htmlEscape($!examChild.childWeightAssess)" "maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-n ">头围（cm）</label>
+					<div class="col-md-3">
+						#formFloLenInput("headSize" "$!examChild.headSize" 3 "maxlength='5' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">前囟闭合</label>
+					<div class="col-md-3">
+						#formSingleSelectFirstNone("fontanelleClosed" "$!examChild.fontanelleClosed" $!{dicData.dicfontanelleClosed} "class='form-control' disabled='disabled'" "")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-n ">前囟横径（cm）</label>
+					<div class="col-md-3">
+						#formFloLenInput("fontanelleAcross" "$!examChild.fontanelleAcross" 3 "maxlength='5' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">前囟纵径（cm）</label>
+					<div class="col-md-3" style="padding-top:6px;">
+						#formFloLenInput("fontanelleVertical" "$!examChild.fontanelleVertical" 3 "maxlength='5' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">心脏听诊</label>
+					<div class="col-md-3">
+						#formTextInput("heartAus" "#htmlEscape($!examChild.heartAus)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">浅表淋巴结检查</label>
+					<div class="col-md-3">
+						#formTextInput("suplExam" "#htmlEscape($!examChild.suplExam)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">肺部听诊</label>
+					<div class="col-md-3">
+						#formTextInput("lungAus" "#htmlEscape($!examChild.lungAus)" " maxlength='20' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">四肢检查</label>
+					<div class="col-md-3">
+						#formTextInput("limbsExam" "#htmlEscape($!examChild.limbsExam)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">肝脏触诊</label>
+					<div class="col-md-3">
+						#formTextInput("liverAus" "#htmlEscape($!examChild.liverAus)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">脊椎检查</label>
+					<div class="col-md-3">
+						#formTextInput("spineExam" "#htmlEscape($!examChild.spineExam)" " maxlength='20' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">脾脏触诊</label>
+					<div class="col-md-3">
+						#formTextInput("spleenAus" "#htmlEscape($!examChild.spleenAus)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">腹部检查</label>
+					<div class="col-md-3">
+						#formTextInput("abdominalExam" "#htmlEscape($!examChild.abdominalExam)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">皮肤毛发检查</label>
+					<div class="col-md-3">
+						#formTextInput("skinExam" "#htmlEscape($!examChild.skinExam)" " maxlength='20' class='form-control'")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">外生殖器官检查</label>
+					<div class="col-md-3">
+						#formTextInput("repOrganExam" "#htmlEscape($!examChild.repOrganExam)" " maxlength='20' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">左眼视力</label>
+					<div class="col-md-3">
+						#formTextInput("leftEyesight" "#htmlEscape($!examChild.leftEyesight)" " maxlength='10' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">左耳检查</label>
+					<div class="col-md-3">
+						#formTextInput("leftHearExam" "#htmlEscape($!examChild.leftHearExam)" " maxlength='20' class='form-control'")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">沙眼标志</label>
+					<div class="col-sm-3" style="padding-top:6px;">
+						#formRadioButtons("trachomaFlag" "$!examChild.trachomaFlag" $!dicData.dicYesNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">右眼视力</label>
+					<div class="col-md-3">
+						#formTextInput("rightEyesight" "#htmlEscape($!examChild.rightEyesight)" " maxlength='10' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">右耳检查</label>
+					<div class="col-md-3">
+						#formTextInput("rightHearExam" "#htmlEscape($!examChild.rightHearExam)" " maxlength='20' class='form-control'")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">左侧听力检测</label>
+					<div class="col-sm-3">
+						#formTextInput("leftHearingDetection" "#htmlEscape($!examChild.leftHearingDetection)" " maxlength='50' class='form-control'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">鼻部检查</label>
+					<div class="col-md-3">
+						#formTextInput("noseExam" "#htmlEscape($!examChild.noseExam)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">扁桃体检查</label>
+					<div class="col-md-3">
+						#formTextInput("tonsilExam" "#htmlEscape($!examChild.tonsilExam)" " maxlength='20' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">右侧听力检测</label>
+					<div class="col-sm-3">
+						#formTextInput("rightHearingDetection" "#htmlEscape($!examChild.rightHearingDetection)" " maxlength='50' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">咽部检查</label>
+					<div class="col-md-3">
+						#formTextInput("pharyngealExam" "#htmlEscape($!examChild.pharyngealExam)" " maxlength='20' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">体格发育评价</label>
+					<div class="col-md-3">
+						#formSingleSelectFirstNone("growthAssess" "$!examChild.growthAssess" $!{dicData.dicGrowthAssess} "class='form-control' disabled='disabled'" "")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">出牙月龄</label>
+					<div class="col-sm-3">
+						#formIntZeroInput("teethingMonth" "$!examChild.teethingMonth" "maxlength='2' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">出牙数（颗）</label>
+					<div class="col-md-3">
+						#formIntZeroInput("toothNum" "$!examChild.toothNum" "maxlength='2' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">龋齿数（颗）</label>
+					<div class="col-md-3">
+						#formIntZeroInput("decayedToothNum" "$!examChild.decayedToothNum" "maxlength='2' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">佝偻病症状</label>
+					<div class="col-sm-3" style="padding-top:6px;">
+						#formRadioButtons("ricket" "$!examChild.ricket" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">症状</label>
+					<div class="col-md-3">
+						#formTextInput("symptom" "#htmlEscape($!examChild.symptom)" " maxlength='50' class='form-control' readOnly")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">体征</label>
+					<div class="col-md-3">
+						#formTextInput("sign" "#htmlEscape($!examChild.sign)" " maxlength='50' class='form-control' readOnly")
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-1 control-label text-right p-r-none">两次体检之间患病情况</label>
+					<div class="col-sm-3">
+						#formSingleSelectFirstNone("sickenCondition" "$!examChild.sickenCondition" $!{dicData.dicSickenCondition} "class='form-control' disabled='disabled'" "")
+					</div>
+					<label class="col-md-1 control-label text-right p-r-none">两次体检之间其他患病</label>
+					<div class="col-md-7">
+						#formTextInput("sickenOrtherCondition" "#htmlEscape($!examChild.sickenOrtherCondition)" " maxlength='40' class='form-control' readOnly")
+					</div>
+				</div>
+			</div>
+			<!-- 表单 结束 -->
+		</div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+</html>

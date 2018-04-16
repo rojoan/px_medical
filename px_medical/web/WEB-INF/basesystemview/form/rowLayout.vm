@@ -1,0 +1,24 @@
+#set($labelWidth = ${info.option('labelWidth', 100)})
+#set($rowHeight = ${info.option('rowHeight', 28)})
+<form id="$!{info.name}" name="$!{info.name}" action="$!{info.action}" method="$!{info.method}" class="i-form i-layout-row" tipMode="${info.option('tipMode', 'inplace')}">
+#foreach($field in ${info.fields}) #if(${field.type} == "hidden")
+<input type="hidden" name="$!{field.name}" value="$!{field.valueString}" noclean="true"></input>
+#end #end
+<table class="i-form-table" width="100%" cellpadding="0" cellspacing="0">
+#foreach($field in ${info.fields}) #if(${field.type} != "hidden")
+<tr>
+#if(${field.label} != "")<td class="i-label-wrap" style="width:${labelWidth}px" valign=top>#if($field.required)<span class="i-required">*</span>#end ${field.label}</td>#end
+<td class="i-field-wrap" #if(${field.label} == "")colspan="2"#end>
+#if(${field.mode} == '')
+#parse('form/field.vm')
+#else
+#set($fieldvm = "form/${field.mode}.vm")#parse($fieldvm)
+#end
+</td>
+#if(${info.option('tipMode', 'alter')} == 'inplace')
+<td valign="top" class="i-vtip-wrap"><div id="vt-${info.name}-${field.name}" class="i-vtip"></div></td>
+#end
+</tr>
+#end #end
+</table>
+</form>

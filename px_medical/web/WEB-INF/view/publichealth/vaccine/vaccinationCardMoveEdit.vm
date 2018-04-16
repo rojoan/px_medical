@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>疫苗接种证调动记录表编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+
+#parse("./common/pageCss.vm")
+
+<style>
+html, body { height: 100% }
+</style>
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+</head>
+
+<body class="gray-bg top-navigation">
+
+    <!--新增 疫苗接种证调动记录表-->
+    <form id="vaccinationCardMoveForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+        <input type="hidden" id="submitFlag" >
+        #formHiddenInput("cardMoveId" "$!{vaccinationCardMove.cardMoveId}" " id='cardMoveId' ")
+        #formHiddenInput("creatorId" "$!{vaccinationCardMove.creatorId}" " id='creatorId' ")
+        #formHiddenInput("handleDoctorId" "$!{vaccinationCardMove.handleDoctorId}" " id='handleDoctorId' ")
+        #formHiddenInput("inHospitalName" "$!{vaccinationCardMove.inHospitalName}" " id='inHospitalName' ")
+        #formHiddenInput("outHospitalName" "$!{vaccinationCardMove.inHospitalName}" " id='outHospitalName' ")
+        ##formHiddenInput("inHospitalId" "$!{vaccinationCardMove.inHospitalId}" " id='inHospitalId' ")
+        ##formHiddenInput("outHospitalId" "$!{vaccinationCardMove.outHospitalId}" " id='outHospitalId' ")
+
+        ##formHiddenInput("hospitalId" "$!{vaccinationDetail.hospitalId}" " id='hospitalId' ")
+        #formHiddenInput("childDetailId" "$!{vaccinationDetail.childDetailId}" " id='childDetailId' ")
+        #formHiddenInput("personDetailId" "$!{vaccinationDetail.personDetailId}" " id='personDetailId' ")
+        #formHiddenInput("vaccinationCardId" "$!{vaccinationDetail.vaccinationCardId}" " id='vaccinationCardId' ")
+        
+        //申请调动人ID
+        #formHiddenInput("proposerId" "$!{vaccinationDetail.proposerId}" " id='proposerId' ")
+
+        <div class="modal-body full-height-scroll" style="height: calc(100% - 49px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+            <div class="table-content"><!-- 表单可视域 内容 开始 -->
+
+                <div class="text-box"><h5>疫苗接种证调动记录表</h5></div>
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>预防接种卡编号</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccinationCardNo" "#htmlEscape($!{vaccinationCardMove.vaccinationCardNo})" " id='vaccinationCardNo' maxlength='20' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>被接种人姓名</label>
+                             <div class="col-sm-3">
+                                #formTextInput("vaccinatedName" "#htmlEscape($!{vaccinationCardMove.vaccinatedName})" " id='vaccinatedName' maxlength='50' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">调动原因</label>
+                             <div class="col-sm-3">
+                                #formTextInput("moveReason" "#htmlEscape($!{vaccinationCardMove.moveReason})" " id='moveReason' maxlength='200' class='form-control'")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">拒绝理由</label>
+                             <div class="col-sm-3">
+                                #formTextInput("refuseReason" "#htmlEscape($!{vaccinationCardMove.refuseReason})" " id='refuseReason' maxlength='200' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">操作时间</label>
+                             <div class="col-sm-3">
+                                #formTextInput("createTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationCardMove.createTime})" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">处理医生</label>
+                             <div class="col-sm-3">
+                                #formTextInput("handleDoctor" "#htmlEscape($!{vaccinationCardMove.handleDoctor})" " id='handleDoctor' maxlength='20' class='form-control'")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">调动申请人</label>
+                             <div class="col-sm-3">
+                                #formTextInput("proposerName" "#htmlEscape($!{vaccinationCardMove.proposerName})" " id='proposerName' maxlength='30' class='form-control'")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">处理结果</label>
+                             <div class="col-sm-3">
+                                #formRadioButtonsLabel("handleResult" "$!{vaccinationCardMove.handleResult}" ${dicData.dicHandleResult} "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none ">处理日期</label>
+                             <div class="col-sm-3">
+                                #formTextInput("handleTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationCardMove.handleTime})" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>调入医疗机构</label>
+                             <div class="col-sm-3">
+                                ##formTextInput("inHospitalName" "#htmlEscape($!{vaccinationCardMove.inHospitalName})" " id='inHospitalName' maxlength='100' class='form-control'")
+                                #formSingleSelectDictionary("inHospitalId" "$!{vaccinationCardMove.inHospitalId}" $!hospitalMap "id='inHospitalId' data-placeholder='选择转入医院' onchange='changeInHospital(this);' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择转入医院" "")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>调出医疗机构</label>
+                             <div class="col-sm-3">
+                                ##formTextInput("outHospitalName" "#htmlEscape($!{vaccinationCardMove.outHospitalName})" " id='outHospitalName' maxlength='100' class='form-control'")
+                                #formSingleSelectDictionary("outHospitalId" "$!{vaccinationCardMove.outHospitalId}" $!hospitalMap "id='outHospitalId' data-placeholder='选择转入医院' onchange='changeOutHospital(this);' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择转入医院" "")
+                             </div>
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>调动日期</label>
+                             <div class="col-sm-3">
+                                #formTextInput("moveTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!{vaccinationCardMove.moveTime})" "maxlength='10' class='form-control layer-date' onclick='$layerDate' ")
+                             </div>
+                        </div>
+
+                        <div class="form-group">
+
+                             <label class="col-sm-1 control-label text-right p-r-none p-l-none "><font color="red">*</font>行政区域ID</label>
+                             <div class="col-sm-11">
+                                #formTextInput("regionId" "#htmlEscape($!{vaccinationCardMove.regionId})" " id='regionId' maxlength='18' class='form-control'")
+                             </div>
+                        </div>
+
+             </div><!--表单可视域内容 结束 -->
+        </div>
+    </form>
+
+    <div class="tool-table-fixed" style="width: calc(100%)">
+        <button onclick="saveVaccinationCardMove();" type="button" class="btn btn-success"><i class="fa fa-save"></i> 保 存</button>
+        &nbsp;
+    </div>
+<!--编 疫苗接种证调动记录表 表单及控件结束-->
+
+#parse("./common/pageJs.vm")
+#parse("./common/common.js.vm")
+#parse("./publichealth/vaccine/vaccinationCardMoveEdit.js.vm")
+ </body>
+
+</html>

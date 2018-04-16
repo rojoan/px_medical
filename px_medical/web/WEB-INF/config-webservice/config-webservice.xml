@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+ 
+	
+	<bean id="pacsService" class="com.bofan.pacs.webservice.IPacsService"  />
+	<jaxws:client id="pacsService"
+		address="${pacsServiceWsdlAddress}"
+		serviceClass="com.bofan.pacs.webservice.IPacsService">
+		<jaxws:properties>
+			<entry key="mtom-enabled" value="true" />
+		</jaxws:properties> 
+	</jaxws:client> 
+	
+	<bean id="lisService" class="com.bofan.lis.webservice.ILisService"  />
+	<jaxws:client id="lisService"
+		address="${lisServiceWsdlAddress}"
+		serviceClass="com.bofan.lis.webservice.ILisService">
+		<jaxws:properties>
+			<entry key="mtom-enabled" value="true" />
+		</jaxws:properties> 
+	</jaxws:client> 
+	
+	<bean id="patientWebService" class="com.bofan.patient.webservice.IPatientService"  />
+	<jaxws:client id="patientWebService"
+		address="${patientServiceWsdlAddress}"
+		serviceClass="com.bofan.patient.webservice.IPatientService">
+		<jaxws:properties>
+			<entry key="mtom-enabled" value="true" />
+		</jaxws:properties> 
+	</jaxws:client> 
+     
+</beans>

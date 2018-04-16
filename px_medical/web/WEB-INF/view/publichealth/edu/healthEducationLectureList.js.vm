@@ -1,0 +1,159 @@
+<script>
+var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+$(document).ready(function () {
+	// 新增
+    $('#btn_add_register').click(function (){
+    	var title = '健康知识讲座编辑<span class="must-red font-14">( 红字为必填 )</span>';
+		var url = contextPath + '/healthEducation/healthEducationEdit.do?view=healthEducationLectureEdit';
+		common.open(url, title, {area: ['99%', '99%']});
+    });
+	// 删除
+	$('#btn_delete').click(function (){
+		var ids = [];
+		var row = common.getTableSelectRow('personHypList', true);
+		if (row.length == undefined || row.length <= 0) {
+			common.alert("请选择要删除的数据", 0);
+    		return ;
+		}
+		$.each(row, function (){
+			ids.push(this.healthEducationId);
+		});
+		common.confirm("确定要删除吗？", function (){
+			$.post(
+					contextPath +'/healthEducation/deleteHealthEducation.jo',
+					{ids: ids.join(',')}, 
+					function (result){
+						if (result.code == "0") {
+							$('#btn_query').click();
+						} else {
+							common.alert(result.msg, 2);
+						}
+					}, 
+			'json').error(function (e){jqueryPostError(e)});
+		});
+    });
+	
+    // 查询按钮
+    $('#btn_query').click(function (){
+    	var queryParams = common.serializeObject($('#queryForm'));
+    	var options = {url: '../healthEducation/lectureList.jo', silent: false, query: queryParams};
+    	$('#personHypList').bootstrapTable('refresh', options); 
+    });
+    
+ 	// 清空按钮
+    $('#btn_clean').click(function (){
+    	$('#eduName').val('');
+    	$('#eduThemeId').val('');
+    	$('#beginEduTime').val('');
+    	$('#endEduTime').val('');
+    });
+    
+    var dicYesNo = JSON.parse('$dicTools.changeMapToJson($dicData.dicYesNo)'); 
+    var dicEduThemeName = JSON.parse('$dicTools.changeMapToJson($dicData.dicEduThemeName)'); 
+    var dicSysUserInfoByUserInfoId = JSON.parse('$dicTools.changeMapToJson($dicData.dicSysUserInfoByUserInfoId)'); 
+ 	// 初始化列表数据
+    $('#personHypList').bootstrapTable({
+		url : "../healthEducation/lectureList.jo",
+		mobileResponsive : true,
+		pagination : true,
+		pageNumber : true,
+		cache : false,
+		striped: true,
+		//clickToSelect: true,
+		singleSelect: false,
+		pageSize : "10",
+		pageNumber : "1",
+		height : "500",
+		queryParamsType : "",
+		sidePagination : 'server',
+		halign : "center",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		columns : [
+		{ checkbox:true }, 
+		{
+			field : 'eduName',
+			title : '活动名称'
+		}, {
+			field : 'eduThemeId',
+			title : '活动主题',
+			formatter :function (value, row, index) {
+				return dicEduThemeName[row.eduThemeId];
+			}
+		}, {
+			field : 'eduTime',
+			title : '活动时间'
+		}, {
+			field : 'organizer',
+			title : '组织者'
+		}, {
+			field : 'eduSite',
+			title : '活动地点'
+		}, {
+			field : 'eduTeacher',
+			title : '授课老师'
+		}, {
+			field : 'creatorId',
+			title : '创建人',
+			formatter :function (value, row, index) {
+				return dicSysUserInfoByUserInfoId[row.creatorId];
+			}
+		}, {
+			field : 'createTime',
+			title : '创建时间'
+		}, {
+   			field : 'operate',
+   			title : '操作',
+   			events : operateEvents,
+   			formatter : operateFormatter
+   		}],
+		onDblClickRow: function (row, element){
+			var title = '健康知识讲座详情';
+	    	common.open(contextPath + '/healthEducation/healthEducationEdit.do?view=healthEducationLectureShow&healthEducationId=' + row.healthEducationId, title, {area: ['99%', '99%']});
+		},
+		onLoadSuccess : function(){
+			var height = ($('#personHypList').parents("body").height() - $('#queryForm').parents(".ibox").height() - 72);
+			$('#personHypList').bootstrapTable('resetView', {height: height}); 
+		}
+	});
+});
+window.operateEvents = {
+		"click #btn_show": function(e, value, row, index) {
+			var title = '健康知识讲座详情';
+	    	common.open(contextPath + '/healthEducation/healthEducationEdit.do?view=healthEducationLectureShow&healthEducationId=' + row.healthEducationId, title, {area: ['99%', '99%']});
+	    	
+		},
+		"click #btn_edit": function(e, value, row, index) {
+			var title = '健康知识讲座编辑 <span class="must-red font-14">( 红字为必填 )</span>';
+	    	common.open(contextPath + '/healthEducation/healthEducationEdit.do?view=healthEducationLectureEdit&healthEducationId=' + row.healthEducationId, title, {area: ['99%', '99%']});
+	    	
+		},
+		"click #btn_del": function(e, value, row, index) {
+			common.confirm("确定要删除吗？", function (){
+				$.post(
+						contextPath +'/healthEducation/deleteHealthEducation.jo',
+						{ids: row.healthEducationId}, 
+						function (result){
+							if (result.code == "0") {
+								$('#btn_query').click();
+							} else {
+								common.alert(result.msg, 2);
+							}
+						}, 
+				'json').error(function (e){jqueryPostError(e)});
+			});
+		}
+	};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+	            '<a id="btn_edit" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+	            '<a id="btn_del" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+	            ];
+	return html.join('');
+}
+</script>

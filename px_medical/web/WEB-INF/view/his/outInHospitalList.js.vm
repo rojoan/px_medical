@@ -1,0 +1,143 @@
+<script type="text/javascript">
+    var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+    var dicDiagnosisFlag = JSON.parse('$dicTools.changeMapToJson($dicData.dicDiagnosisFlag)');
+ console.log(JSON.stringify(dicDiagnosisFlag));
+    //验证单选
+	function singleCheck(rows){
+		if (rows.length != 1 || !rows[0].outpatientInhospitalId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行",0);
+			return false;
+		}
+		return true;
+	}
+  
+	//添加
+	function add(){
+		var title = '新增患者门诊住院信息';
+        var url = '../outInhospital/edit.do';
+        common.open(url, title, {area: ['99%', '99%']});
+	}
+ 
+    // 患者查询条件清空
+	function clearQuery(){
+		var $form = $('#outInHospital_queryForm');
+		$form.find('[name=patientName]').val('');
+		$form.find('[name=patientIdCard]').val('');
+	}
+    
+    // 患者查询
+	function query(){
+		var queryParams = common.serializeObject($('#outInHospital_queryForm'));
+		var options = {url: '../outInhospital/listData.do', silent: false, query: queryParams};
+		$('#outInHospitalGrid').bootstrapTable('refresh', options); 
+	}
+    
+    $(document).ready(
+    		function() {
+    			//查询患者列表
+    			$('#outInHospitalGrid').bootstrapTable(
+    			   $.extend(baseTable,	{
+    					url : "../outInhospital/listData.do",
+    					queryParams : function (params){
+    						var requestParams = common.serializeObject($('#patient_queryForm'));
+    				        requestParams.pageSize = params.pageSize;
+    				        requestParams.pageNumber = params.pageNumber;
+    				        return requestParams;
+    					},
+    					columns : [
+    					{
+    						checkbox : true
+    					},{
+    						field : 'patientName',
+    						title : '患者姓名'
+    					},{
+    						field : 'patientIdCard',
+    						title : '证件号码'
+    					},{
+    						field : 'patientCardNo',
+    						title : '就诊卡号'
+    					},{
+    						field : 'inhospitalNo',
+    						title : '住院号'
+    					},{
+    						field : 'outpatientId',
+    						title : '门诊流水号'
+    					},{
+    						field : 'inhospitalId',
+    						title : '住院流水号'
+    					},{
+    						field : 'diagnosisDate',
+    						title : '门诊/住院时间'
+    					},{
+    						field : 'diagnosisFlag',
+    						title : '状态',
+    						formatter :function (value, row, index) {
+    							console.log(value);
+    							if (value) return dicDiagnosisFlag[value];
+    						}
+    					},{
+                            field : 'operate',
+                            title : '操作',
+                            events : operateEvents,
+                            formatter : operateFormatter
+                        } ], 
+    					onDblClickRow : function (row, element){
+    						var title = row.patientName + ' ('+ dicSex[row.patientSex] +')';
+   			                var url = '../outInhospital/edit.do?mode=show&outpatientInhospitalId=' + row.outpatientInhospitalId ;
+   			                common.open(url, title, {area: ['99%', '99%']});
+    			   		},
+    					onLoadSuccess : function(){
+    						var height = ($('#outInHospitalGrid').parents("body").height() - $('#outInHospital_queryForm').parents(".ibox").first().height() - 75);
+    						$('#outInHospitalGrid').bootstrapTable('resetView', {height: height}); 
+    					}
+    			     }
+    			   )
+    			); 
+    		}
+    );
+    
+   
+	$(window).resize(function() { 
+		var height = ($('#outInHospitalGrid').parents("body").height() - $('#outInHospital_queryForm').parents(".ibox").first().height() - 75);
+		$('#outInHospitalGrid').bootstrapTable('resetView', {height: height}); 
+	})
+	
+   window.operateEvents = {
+           "click #btn_show_outInHospital": function(e, value, row, index) {
+               var title = row.patientName + ' ('+ dicSex[row.patientSex] +')';
+               var url = '../outInhospital/edit.do?mode=show&outpatientInhospitalId=' + row.outpatientInhospitalId ;
+               common.open(url, title, {area: ['99%', '99%']});
+           },
+           
+           "click #btn_edit_outInHospital": function(e, value, row, index) {
+               var title = row.patientName + ' ('+ dicSex[row.patientSex] +')';
+               var url = '../outInhospital/edit.do?outpatientInhospitalId=' + row.outpatientInhospitalId ;
+               common.open(url, title, {area: ['99%', '99%']});
+           },
+            
+           "click #btn_del_outInHospital": function(e, value, row, index) {
+               common.confirm("确定要删除吗？", function (){
+                   $.post( '../outInhospital/markInvalid.do',
+                   		{outpatientInhospitalId:row.outpatientInhospitalId}, 
+                           function (result){
+                               if (result.code == "0") {
+                                    common.alert("删除成功",0);
+                                    $('#btn_query').click();
+                               } else {
+                                   common.alert(result.msg, 2);
+                               }
+                           }, 
+                   'json');
+               });
+           }
+     };
+    
+    function operateFormatter(value, row, index) {
+        var html = [
+                    '<a id="btn_show_outInHospital" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+                    '<a id="btn_edit_outInHospital" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+                    '<a id="btn_del_outInHospital" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+                    ];
+        return html.join('');
+    }
+</script>

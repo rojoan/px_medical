@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>肿瘤-慢性病患者随访编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal" style="height: calc(100% - 44px)">
+		#formHiddenInput("submitFlag" "" "id='submitFlag'")
+		#formHiddenInput("hospitalId" "$!personChronicVisit.hospitalId" "id='hospitalId'")
+		#formHiddenInput("hospitalNo" "$!personChronicVisit.hospitalNo" "id='hospitalNo'")
+		##formHiddenInput("hospitalPhone" "$!personChronicVisit.hospitalPhone" "id='hospitalPhone'")
+		#formHiddenInput("visitDoctorId" "$!personChronicVisit.visitDoctorId" "id='visitDoctorId'")
+		#formHiddenInput("chronicVisitId" "$!personChronicVisit.chronicVisitId" "id='chronicVisitId'")
+		#formHiddenInput("personDetailId" "$!personChronicVisit.personDetailId" "id='personDetailId'")
+		#formHiddenInput("personChronicId" "$!personChronicVisit.personChronicId" "id='personChronicId'")
+		
+		##** chronicType： 1=高血压；2=糖尿病；3=慢阻肺疾病；4=冠心病；5=脑卒中；6=肺结核 ；7=肿瘤*##
+		#formHiddenInput("chronicType" "7" "")
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>随访基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">患者姓名</label>
+	                <div class="col-sm-1">
+	                	#formTextInput("patientName" "#htmlEscape($!personChronicVisit.personChronic.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <div class="col-sm-1">
+	                    <button id="inportPerson" type="button" class="btn btn-info m-l-n">导入患者</button>
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">随访方式</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("visitWay" "$!personChronicVisit.visitWay" $!{dicData.dicVisitWay} "id='visitWay' class='form-control'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">目前情况</label>
+	                <div class="col-sm-2">
+	                	#formSingleSelectFirstNone("personVisitItem.currentCondition" "$!personVisitItem.currentCondition" $!{dicData.dicTumCurrentCondition} "id='visitType' class='form-control'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none must-red">随访时间</label>
+	                <div class="col-sm-2">
+						#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("visitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.visitTime)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">随访医生</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("visitDoctorName" "#htmlEscape($!personChronicVisit.visitDoctorName)" " id='visitDoctorName' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">随访医院</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalName" "#htmlEscape($!personChronicVisit.hospitalName)" " id='hospitalName' maxlength='15' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">医院联系电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalPhone" "#htmlEscape($!personChronicVisit.hospitalPhone)" "id='hospitalPhone' maxlength='100' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">下次随访时间</label>
+	                <div class="col-sm-2">
+	                    #set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("nextVisitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.nextVisitTime)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	               </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>治疗情况</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">治疗情况</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                    #formCheckboxesLable("visitCureTypes" $!visitCureTypes $!dicData.dicTumNonDrugType "" "class='checkbox-inline i-checks'")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">其他情况</label>
+	                <div class="col-sm-11">
+	                    #formTextInput("personVisitItem.cureOther" "#htmlEscape($!personVisitItem.cureOther)" "maxlength='50' class='form-control'")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">有无复发</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("personVisitItem.recurFlag" "$!personVisitItem.recurFlag" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">复发次数</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.recurCount" "$!personVisitItem.recurCount" "maxlength='2' class='form-control'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">复发时间</label>
+	                <div class="col-sm-2">
+	                	#set($dateFormat = '"YYYY-MM-DD hh:mm:ss"')
+						#formTextInput("personVisitItem.recurDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personVisitItem.recurDate)" "class='input-sm form-control layer-date' onclick='laydate({istime: true, start: laydate.now(0, $!dateFormat), format: $!dateFormat})' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">转移部位</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personVisitItem.tansPart" "#htmlEscape($!personVisitItem.tansPart)" "maxlength='20' class='form-control'")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">卡氏评分</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("personVisitItem.kps" "$!personVisitItem.kps" 2 "maxlength='4' class='form-control'")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">报导内容</label>
+	                <div class="col-sm-8"  style="padding-top: 6px;">
+	                	#formCheckboxesLable("visitContentTypes" $!visitContentTypes $!dicData.dicTumContentType "" "class='checkbox-inline i-checks'")
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	    <div class="modal-footer" style="text-align: center">
+	        <button type="button" id="btn_save" class="btn btn-success"><i class="fa fa-paste"></i> 保 存 </button>
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+#parse("./publichealth/personTumVisitEdit.js.vm")
+</html>

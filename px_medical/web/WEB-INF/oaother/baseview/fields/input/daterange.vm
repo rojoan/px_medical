@@ -1,0 +1,6 @@
+##当需要格式化日期时，调用HtmlHelper的格式化日期函数
+#if(${cell.formatDate})
+    #calendarRange("$!{cell.field}" "$!{cell.field2}" "#displayOnlyDate($!{datamap.get($!{cell.field})})" "#displayOnlyDate($!{datamap.get($!{cell.field2})})")$!{cell.button}
+#else
+    #calendarRange("$!{cell.field}" "$!{cell.field2}" "$!{datamap.get($!{cell.field})}" "$!{datamap.get($!{cell.field2})}")$!{cell.button}
+#end

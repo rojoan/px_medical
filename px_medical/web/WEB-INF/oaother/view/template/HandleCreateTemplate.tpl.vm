@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+  <link href="../css/style.css" rel="stylesheet" type="text/css" />
+  <script language="javascript" type="text/javascript" src="../script/attach.js"></script>
+#parse("/template/ScriptTemplate.tpl.vm")
+
+</head>
+<script>
+#parse("/template/ValidatorTemplate.tpl.vm")
+
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+##以下是编辑界面的工具条
+#parse("/template/EditToolBar.tpl.vm")
+<body #if($_layout.wordAttach && $attachpage) onload="javascript:openserverdoc()"#end>
+<div class="gradual">
+    <div class="clear_Up">
+    <table cellpadding="0" cellspacing="0" class="table_form">
+    <form name="$!{_layout.editForm.name}" method="post" action="#getRequestUri()?action=$!{_layout.editForm.action}" onsubmit="saveData(this)" enctype="multipart/form-data">
+        <input type="hidden" name="submitFlag" value="0" />
+    #set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+    #set($cellcount=0)
+    #set($cur_colspan=0)
+    #foreach($cell in $_layout.editFieldList)
+    #if("hidden" != ${cell.type})
+    #if(${cell.colspan} && ${cell.colspan} > 2)
+    #if($cellcount!=0)##留空本行剩下的单元，准备新开一行
+                    <td width="10%" class="table_form_color_td">&nbsp;</td>
+                    <td width="40%" >&nbsp;</td>
+                  </tr>
+    #end
+    #set($cellcount=0)##新开一行
+    #set($cur_colspan = ${cell.colspan})
+    #end
+    #if($cellcount==0)##行开始
+                  <tr>
+    #end
+
+    #set($cellcount=$cellcount+1)
+        #if("${cell.notshowtitle}" != "true")
+                    <td width="10%" class="table_form_color_td">#inputTitle($!{cell.title} $!{cell.required})</td>
+        #end
+                    <td width="40%" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+    #if(${cell.view})
+    #viewInputField(${cell} $editBeanMap)
+    #else
+    #inputField(${cell} $editBeanMap)##if(${cell.required})#requiredTag()#end
+    #end
+                     </td>
+    #if($cur_colspan > 2)##新开一行
+    #set($cellcount=2)
+    #set($cur_colspan=0)
+    #end
+    #if($cellcount>=2)##行结束
+    #set($cellcount=0)
+                  </tr>
+    #end
+    #else
+    <input type="hidden" name="${cell.field}" value="$!{editBeanMap.get(${cell.field})}" />
+    #end
+    #end
+    #if($cellcount!=0)
+                    <td width="10%" class="table_form_color_td">&nbsp;</td>
+                    <td width="40%" >&nbsp;</td>
+                  </tr>
+    #end
+    #if($_layout.attach)
+        #parse("/template/attach.tpl.vm")
+    #end
+    </form>
+    #if($_layout.wordAttach)
+        #parse("fields/input/wordAttach.vm")
+    #end
+    </table>
+</div>
+
+#parse("/template/DataListTemplate.tpl.vm")
+</div>
+#parse("/template/bindPowerDataListTemplate.tpl.vm")
+</body>
+</html>

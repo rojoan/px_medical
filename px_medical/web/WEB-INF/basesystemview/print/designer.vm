@@ -1,0 +1,1337 @@
+ <html>
+  <head>
+    <meta http-equiv=Content-Type content="text/html; charset=gbk">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link href="../app/print/designer.css" rel="stylesheet" type="text/css" />
+    <script language="javascript" type="text/javascript" src="../app/print/printDesigner.js"></script>
+#loadDefaultScript("appPrintDwr")
+<style type=text/css rel="stylesheet">
+.print {
+  Z-INDEX: 1; CURSOR: move; POSITION: absolute; border:0 none;
+}
+
+.noprint {
+  PADDING-RIGHT: 0px; PADDING-LEFT: -15px; PADDING-BOTTOM: 0px; PADDING-TOP: -10px
+}
+
+.undrageobject {}
+
+.showdiv {display:block}
+.hidediv {display:none}
+.backobj .mouseoveronobj {position:absolute;z-index:100;margin:0px;padding:0px;overflow:hidden;list-style:none;-moz-opacity:.45;filter:Alpha(opacity=45);}
+.selectedobj {position:absolute;z-index:100;margin:0px;padding:0px;overflow:hidden;list-style:none;-moz-opacity:.65;filter:Alpha(opacity=65);background:#C4CAAE;}
+.selectedchildobj {background:#ffffe0;}
+
+@media Print
+{
+  .noprint {
+    DISPLAY: none
+  }
+  .print {
+    Z-INDEX: 1; CURSOR: move; POSITION: absolute
+  }
+  .backobj .mouseoveronobj, .undrageobject, .showdiv, .hidediv {}
+}
+
+BODY {
+  BACKGROUND: white;
+}
+</style>
+
+<script language="javascript">
+
+var template_prefix = "", TO_VARAINT = "variant", TO_INPUT = "input";
+
+var defaultFontSize = 22;
+var fontSize = {};
+var ZOOM_OUT = "out", ZOOM_IN = "in", FIELD_TYPE_CHAR = "char", FIELD_TYPE_NUMBER = "number", FIELD_TYPE_CLASS = "class", FIELD_TYPE_FONT = "font";
+var fontStyles = [new Option("正常", "normal"), new Option("斜体", "italic")];
+var fontWeights = [new Option("正常", "normal"), new Option("粗体", "bold")];
+var fontFamilys = [new Option("宋体", "宋体"), new Option("黑体", "黑体"), new Option("楷体", "楷体_GB2312")];
+var specialFormats = new Array();
+var printSheetFormart='';
+//替换文本中的回车，使其在用到的地方能生效
+function convertValueChar(value, flag) {
+    var result = "", reg, chars;
+    if (flag == TO_VARAINT) {
+        reg = new RegExp('\r\n','g');
+        chars = "<br>";
+    } else {
+        reg = new RegExp('<br>','g');
+        chars = "\r\n";
+    }
+    return value.replace(reg, chars);
+}
+//弹出内容格式化窗体
+function showDataFormatPage() {
+    var rule = new Object();
+    if (currentSelectObj == null || currentSelectObj.printId == null || currentSelectObj.data == null) {
+        return;
+    }
+    if (specialFormats[currentSelectObj.printId] != undefined) {
+        rule = specialFormats[currentSelectObj.printId];
+    }
+    rule.sourceValue = currentSelectObj.data.sourceValue;
+    rule.value = currentSelectObj.innerText;
+    var retVal = FCKDialog.OpenDialog("dataformat", "格式化打印数据", "../app/print/dataformat.html", 650, 460, rule, window);
+    if (retVal != null && retVal.value != null && retVal.value != "") {
+        specialFormats[currentSelectObj.printId] = retVal;
+        setTrPropertyValue(document.getElementById("value"), retVal.value);
+        updateObjProperty(currentSelectObj);
+    }
+}
+//打印项的缩放:flag=out缩小 flag=in放大
+function zoom(flag) {
+    if (!currentSelectObj) {
+        return;
+    }
+    var va = currentSelectObj.data["fontSize"];
+    try {
+        if (flag == ZOOM_OUT) {
+            va = parseInt(va) - 1;
+        } else {
+            va = parseInt(va) + 1;
+        }
+        setPropertyValue("fontSize", va.toString());
+        currentSelectObj.data["fontSize"] = va + "pt";
+        currentSelectObj.style.fontSize = va + "pt";
+    } catch (e) {
+
+    }
+}
+
+//将打印元素保存到Cookie中
+function savePositions() {
+    var divs = document.getElementsByTagName("DIV");
+    var printXY = "[", rule;
+     //仅保存元素的printId、left、top、width、fontSize、fontStyle、fontWeight、fontFamily、bindName、rule属性值；元素间用“<I>”分隔，属性间用“<S>”分隔
+     //其中bindName和rule属性不是每个元素都有。i < 2的元素可能是图片面板等非数据打印项 [{printId:xx,pixelLeft:xx},{}]
+    for (i = 0; i < divs.length; i++) {
+        var prtElement = divs.item(i);
+        if (prtElement.name == "printElement") {
+            printXY += ((printXY == "[") ? "" : ",") + "{printId:'" + prtElement.printId + "', pixelLeft:" + prtElement.style.pixelLeft + ",pixelTop:"
+                + prtElement.style.pixelTop + ",pixelWidth:" + prtElement.style.pixelWidth + ",fontSize:'" + prtElement.style.fontSize
+                + "',fontStyle:'" + prtElement.style.fontStyle + "',fontWeight:'" + prtElement.style.fontWeight + "',fontFamily:'"
+                + prtElement.style.fontFamily + "'";
+            if (prtElement.data != undefined) {
+                printXY += ",bindName:'" + prtElement.data.bindName + "'";
+            }
+            rule = specialFormats[prtElement.printId];
+            if (rule != undefined && rule != null) {
+                printXY += ",rule:'" + anaylseRules(rule, prtElement.data.sourceValue, prtElement.innerText) + "'";
+            }
+            printXY += "}";
+        }
+    }
+    printXY += "]";
+    //通过AJAX保存至数据库
+    if (printXY.length > 0) {
+        return printXY;
+    }
+
+    return "";
+}
+
+//savePrintSettings方法的回调函数，没有执行语句
+function ajaxPrintSettingsCallback(result) {
+    alert("成功保存打印设置！");
+}
+//装载打印机的设置
+function loadPrintSettings(printerSetting) {
+    if (!checkPrinting()) {
+        return;
+    }
+    //清除页眉页脚
+    factory.printing.header = "";
+    factory.printing.footer = "";
+    //横向
+    factory.printing.portrait = false;
+    //装载打印机的Cookie保存值
+    if(printerSetting && printerSetting.leftMargin) {
+        factory.printing.leftMargin = printerSetting.leftMargin;
+    }else{
+        factory.printing.leftMargin = -15;
+    }
+
+    if(printerSetting && printerSetting.topMargin) {
+        factory.printing.topMargin = printerSetting.topMargin;
+    }else{
+        factory.printing.topMargin = -10;
+    }
+
+    if(printerSetting && printerSetting.rightMargin) {
+        factory.printing.rightMargin = printerSetting.rightMargin;
+    }else{
+        factory.printing.rightMargin = 0;
+    }
+
+    if(printerSetting && printerSetting.bottomMargin) {
+        factory.printing.bottomMargin = printerSetting.bottomMargin;
+    }else{
+        factory.printing.bottomMargin = 0;
+    }
+}
+
+//保存打印设置
+function savePrintSettings() {
+    var margins = "";
+    //保存拖动格式
+    var printItemProps = savePositions();
+    if(checkPrinting()){
+        margins = "{'leftMargin':'" + factory.printing.leftMargin + "','topMargin':'" +
+            factory.printing.topMargin + "','rightMargin':'" +
+            factory.printing.rightMargin + "','bottomMargin':'" +
+            factory.printing.bottomMargin + "'}";
+    }
+    appPrintDwr.savePrintFormat(template_prefix, printItemProps, margins, printSheetFormart, ajaxPrintSettingsCallback);
+}
+
+//打印操作    +++++++++++++++++++++++++++++
+function print() {
+var contextPanel = document.getElementById('contextPanel');
+    contextPanel.innerhtml = '';
+    contextPanel.defaultTop = 0;
+    contextPanel.defaultLeft = 0;
+    contextPanel.style.pixelLeft = contextPanel.defaultLeft;
+    contextPanel.style.pixelTop = contextPanel.defaultTop;
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    //document.all.WebBrowser.ExecWB(6,1)
+    if (!factory.object){
+        alert("打印控件没有正确安装!");
+        return;
+	}
+    factory.printing.Print(true);
+}
+
+//打印预览
+function preview() {
+	contextPanel.innerhtml = '';
+    contextPanel.defaultTop = 0;
+    contextPanel.defaultLeft = 0;
+    contextPanel.style.pixelLeft = contextPanel.defaultLeft;
+    contextPanel.style.pixelTop = contextPanel.defaultTop;
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+    //document.all.WebBrowser.ExecWB(7,1)
+    factory.printing.Preview();
+}
+//打印页设置
+function pageSetup() {
+    //检查打印插件是否安装，打印机是否已经连上
+    if (!checkPrinting()) {
+        return;
+    }
+	document.all.WebBrowser.ExecWB(8,1);
+	//factory.printing.PageSetup();
+}
+//检查打印插件是否安装，打印机链接是否正常
+function checkPrinting() {
+    if (!factory.object) {
+        alert("安装打印ActiveX插件失败，可能浏览器的安全设置过高！");
+        return false;
+    }
+    //检查打印设备是否正确连接
+    try {
+        factory.printing.header;
+    } catch(ex) {
+       if(ex.number == -2147220485) {
+           alert("查找打印设备失败，请确认是否正确设置默认打印机？");
+       } else {
+           alert("初始化打印插件失败:" + ex.description);
+       }
+       return false;
+    }
+    return true;
+}
+
+</script>
+
+<script>
+
+/*
+ * 初始化打印项目
+ *  template = {
+ *                 name:''
+ *                ,img_url:''
+ *                ,defaultTop: -160
+ *                ,defaultLeft: -110
+ *                ,items: [
+ *                  {'ptype':''}
+ *
+ *                ]
+ *
+ *             }
+ *
+ *  data = {
+ *           name1:value1
+ *          ,name2:value2
+ *          ,name3:value3
+ *          ,name4:value4
+ *         }
+ *
+ */
+function buildContextByData(template, data) {
+    template_prefix = (template.templateId != "") ? template.templateId : "";
+    //设置底图在容器中的位置
+    var contextPanel = document.getElementById('contextPanel');
+    contextPanel.innerhtml = '';
+    contextPanel.defaultTop = template.defaultTop || 0;
+    contextPanel.defaultLeft = template.defaultLeft || 0;
+    contextPanel.style.pixelLeft = contextPanel.defaultLeft;
+    contextPanel.style.pixelTop = contextPanel.defaultTop;
+    //添加底图
+    buildBackImg(contextPanel, template.img_url || "");
+    //字体类型数组
+    var fontselectlist = [];
+    //创建打印项
+    buildItems(contextPanel, template.items, data, fontselectlist);
+    //装载打印设置
+    loadPrintSettings(template.printerSetting);
+    //初始化打印模板中打印对象延迟标题和鼠标点击、拖动事件
+    initPrintTitle();
+}
+//根据打印元素项数组来选择打印项构建方法
+function buildItems(contextPanel, items, data, fontselectlist) {
+    if (items) {
+        for (var i = 0, len = items.length; i < len; i++) {
+            var it = items[i];
+            var atype = it.atype || 'simple';
+            if (atype == 'simple') {
+                buildSimple(i + 2, contextPanel, it, data, fontselectlist);
+            }
+        }
+    }
+}
+//构建打印元素(向底图模板中添加DIV元素 每个DIV元素就是一个打印项；打印项中不包含打印内容)
+function buildPrintElement(id, contextPanel, it) {
+    var div = document.createElement("DIV");
+    contextPanel.appendChild(div);
+
+    div.name = "printElement";
+    div.className = "print";
+    div.printId = "p" + id;
+    div.id = div.printId;
+    div.defaultTop = it.defaultTop;
+    div.defaultLeft = it.defaultLeft;
+    div.style.position = "absolute";
+    div.style.pixelTop = it.defaultTop;
+    div.style.pixelLeft = it.defaultLeft;
+    div.style.fontWeight = it.fontWeight;
+    div.style.fontStyle = it.fontStyle;
+    div.style.fontFamily = it.fontFamily;
+    if (it.fontSize) {div.style.fontSize = it.fontSize;}
+    if (it.width) {div.style.pixelWidth = it.width;}
+    if (it.height) {div.style.pixelHeight = it.height;}
+    if (globalZindex) div.style.zIndex = globalZindex++;
+    div.data = it;
+    return div;
+}
+
+//构建简单类型的打印元素
+function buildSimple(id, contextPanel, it, data, fontselectlist) {
+    //在底图模板中添加DIV项
+    var container = buildPrintElement(id, contextPanel, it);
+    //设置DIV的显示内容
+    if (it.bindName && data[it.bindName] != undefined) {
+        container.innerText = data[it.bindName];
+        if (it.rule != undefined) {
+            specialFormats[container.printId] = it.rule;
+        }
+    }
+    return container;
+}
+
+//在底图容器中添加底图
+function buildBackImg(par, img_url) {
+    var img = document.createElement("IMG");
+    par.appendChild(img);
+    img.className = "noprint";
+    img.src = img_url;
+}
+
+</script>
+
+</head>
+<!--<BODY onload="initPrintForm();if (parent != window && parent.iframeLoaded) {parent.iframeLoaded();}">-->
+<body onload="javascript:initPrintForm();if (parent != window && parent.iframeLoaded) {parent.iframeLoaded();}">
+
+
+<!-- 解决打印卡死的问题，升级到7.2 -->
+<!--  从Medaco网站购买证书可以使用高级功能 ：
+    http://scriptx.meadroid.com/license-pricing/client-side.aspx
+    按下列方式使用:
+-->
+<!-- MeadCo ScriptX  简单应用 -->
+<object id="factory" viewastext style="display:none" classid="clsid:1663ed61-23eb-11d2-b92f-008048fdd814" codebase="ocx/smsx.cab#Version=7,2,0,36"> </object>
+<OBJECT id="WebBrowser" height="0" width="0" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" VIEWASTEXT> </OBJECT>
+<script language="javascript">
+var globalZindex = 1;
+var dragtitle = '可以进行拖动（按下"Shift"键不放可进行左右拖动;按下"Ctrl"键不放可进行上下拖动;），双击恢复原来位置。';
+//设置指定对象中所有DIV和SPAN元素的鼠标延时展示标题
+function initChildTitle(parObj) {
+    var pt = parObj.getElementsByTagName("DIV");
+    for (var i = 0, len = pt.length;i < len; i++) {
+        var it = pt[i];
+        it.title = dragtitle;
+        initChildTitle(it);
+    }
+    pt = parObj.getElementsByTagName("SPAN");
+    for (var i = 0, len = pt.length;i < len; i++) {
+       var it = pt[i];
+       it.title = dragtitle;
+    }
+}
+//阻止对象向上传递事件源
+function doCancelBubble() {
+    event.cancelBubble = true;
+}
+//初始化不能拖动组件的事件(如属性面板中的文本框)
+function initUnDrageEvent(obj) {
+//如果未设置相应的鼠标事件就赋予对应的事件
+    if (!obj.onmousedown) {obj.onmousedown = doCancelBubble};
+    if (!obj.onmouseup) {obj.onmouseup = doCancelBubble};
+    if (!obj.onmousemove) {obj.onmousemove = doCancelBubble};
+    if (!obj.oncontextmenu) {obj.oncontextmenu = doCancelBubble};
+    if (!obj.onclick) {obj.onclick = doCancelBubble};
+    if (!obj.onselectstart) {obj.onselectstart = doCancelBubble};
+    if (!obj.onmouseover) {obj.onmouseover = doCancelBubble};
+    if (!obj.onmouseout) {obj.onmouseout = doCancelBubble};
+    if (!obj.ondblclick) {obj.ondblclick = doCancelBubble};
+}
+//根据给出的className查找页面所有是指定类名的元素
+function getElementsByClassName(eleClassName, container) {
+    var result = [];//定义一个数组
+    var myclass = new RegExp("\\b"+eleClassName+"\\b");//创建一个正则表达式对像
+    container = container || document;
+    var elem = container.getElementsByTagName("*");//获取文档里所有的元素
+    for(var i = 0, len = elem.length;i < len; i++) {
+        var classes = elem[i].className;//获取class对像
+        if (myclass.test(classes)) result.push(elem[i]);//正则比较，取到想要的CLASS对像
+    }
+    return result;//返回数组
+}
+//初始化不能拖动控件的鼠标事件
+function doInitUnDrageEvent() {
+    var pt = getElementsByClassName("undrageobject");
+    for (var i = 0, len = pt.length;i < len; i++) {
+        initUnDrageEvent(pt[i]);
+    }
+}
+//初始化打印对象obj的鼠标事件
+function initPrintEvent(obj) {
+    obj.onmousedown = doonmousedown;
+    obj.onmouseup = doonmouseup;
+    obj.onmousemove = doonmousemove;
+    obj.oncontextmenu = dooncontextmenu;
+    obj.onselectstart = doonselectstart;
+    if (!obj.moveable) {
+        obj.onmouseover = doonmouseover;
+        obj.onmouseout = doonmouseout;
+        obj.ondblclick = doondblclick;
+        obj.onclick = doonclick;
+    }
+}
+//初始化打印窗体
+function initPrintForm() {
+    //设置多打印项面板的属性
+    var items = getPropertyItems(MULTI_PANEL);
+}
+//初始化打印模板中打印对象延迟标题和鼠标点击、拖动事件
+function initPrintTitle() {
+    var pt = document.getElementsByTagName("DIV");
+    for (var i = 0, len = pt.length; i < len; i++) {
+        var it = pt[i];
+        if (it.name == "printElement" || it.moveable) {
+            if (!it.moveable) {
+                it.title = dragtitle;
+                initChildTitle(it);
+            }
+            initPrintEvent(it);
+        }
+    }
+    //初始化字体属性的下拉框内容
+    initFontPropertySelect();
+    //初始化不能拖动面板的属性
+    doInitUnDrageEvent();
+}
+
+//初始化字体属性下拉框
+function initFontPropertySelect() {
+    var fontStyleSelect = document.getElementsByName("fontStyleSelect"), fontProp;
+    for (var i = 0; i < fontStyleSelect.length; i++) {
+        if (fontStyleSelect[i].options.length == 0) {
+            for (var j = 0; j < fontStyles.length; j++) {
+                fontProp = new Option(fontStyles[j].text, fontStyles[j].value);
+                fontStyleSelect[i].options.add(fontProp);
+            }
+        }
+    }
+    var fontWeightSelect = document.getElementsByName("fontWeightSelect");
+    for (var i = 0; i < fontWeightSelect.length; i++) {
+        if (fontWeightSelect[i].options.length == 0) {
+            for (var j = 0; j < fontWeights.length; j++) {
+                fontProp = new Option(fontWeights[j].text, fontWeights[j].value);
+                fontWeightSelect[i].options.add(fontProp);
+            }
+        }
+    }
+    var fontFamilySelect = document.getElementsByName("fontFamilySelect");
+    for (var i = 0; i < fontFamilySelect.length; i++) {
+        if (fontFamilySelect[i].options.length == 0) {
+            for (var j = 0; j < fontFamilys.length; j++) {
+                fontProp = new Option(fontFamilys[j].text, fontFamilys[j].value);
+                fontFamilySelect[i].options.add(fontProp);
+            }
+        }
+    }
+}
+
+var isMouseDown = false;
+//鼠标拖拽移动
+function doonmousemove() {
+    //拖拽:如果按住shift键组件只沿着x轴拖动；按住ctrl键则组件只沿着y轴拖动；否则将随着鼠标拖动
+    if (isMouseDown == true) {
+        if (event.button) {
+            if (event.shiftKey) {
+                this.style.pixelLeft = parseInt(px) + event.x - parseInt(x);
+            } else if (event.ctrlKey) {
+                this.style.pixelTop  = parseInt(py) + event.y - parseInt(y);
+            } else {
+                this.style.pixelLeft = parseInt(px) + event.x - parseInt(x);
+                this.style.pixelTop  = parseInt(py) + event.y - parseInt(y);
+            }
+            if (typeof changeObjPosition == 'function') {
+                changeObjPosition(this);
+            }
+        }
+        //不让鼠标点击事件层层触发
+        event.cancelBubble = true;
+    }
+}
+//鼠标按下
+function doonmousedown() {
+    //鼠标按下
+    this.setCapture();
+    isMouseDown = true;
+    x = event.x;
+    y = event.y;
+    px = this.style.pixelLeft;
+    py = this.style.pixelTop;
+    if (!this.moveable) {
+        this.style.zIndex = globalZindex++;
+    }
+    event.cancelBubble = true;
+    if (typeof setSelectObject == 'function') {
+        setSelectObject(this);
+    }
+}
+//鼠标放开
+function doonmouseup() {
+    //鼠标放开
+    isMouseDown = false;
+    this.releaseCapture();
+    event.cancelBubble = true;
+    if (typeof changeObjPosition == 'function') {
+        changeObjPosition(this);
+    }
+}
+//双击
+function doondblclick() {
+    this.style.pixelLeft = parseInt(this.defaultLeft);
+    this.style.pixelTop  = parseInt(this.defaultTop);
+    event.cancelBubble = true;
+    if (typeof changeObjPosition == 'function') {
+        changeObjPosition(this);
+    }
+    if (typeof setSelectObject == 'function' && this == currentSelectObj) {
+        setSelectObject(currentSelectObj);
+    }
+}
+//单击
+function doonclick() {
+    document.body.focus();
+    if (typeof setSelectObject == 'function' && this == currentSelectObj) {
+        setSelectObject(currentSelectObj);
+    }
+}
+
+//选取
+function doonselectstart() {
+    return false;
+}
+//右键
+function dooncontextmenu() {
+    return false;
+}
+
+var currentOverObj;
+//向指定对象中添加样式类
+function addClass(obj, className) {
+    if (obj) {
+        obj.className += className;
+    }
+}
+//将指定对象中的样式类移出
+function removeClass(obj, classPattern) {
+    if (obj) {
+        obj.className = obj.className.replace(classPattern, '');
+    }
+}
+//鼠标经过事件
+function doonmouseover() {
+    if (this != currentOverObj) {
+        addClass(this, " mouseoveronobj");
+        removeClass(currentOverObj, / mouseoveronobj/g);
+        currentOverObj = this;
+        event.cancelBubble = true;
+    }
+}
+//鼠标移出事件
+function doonmouseout() {
+    if (this == currentOverObj) {
+        removeClass(currentOverObj, / mouseoveronobj/g);
+        currentOverObj = null;
+        event.cancelBubble = true;
+    }
+}
+
+</script>
+
+<br/>
+<div class=noprint style="Z-INDEX: 10000; LEFT: 410px; WIDTH: 450px; POSITION: absolute; TOP: -10px">
+  <fieldset>
+    <legend>打印控制</legend>
+    <center>
+      <img style="CURSOR: hand" onclick="javascript:preview();" alt="打印" src="../app/print/images/icon_print.gif" border=0>
+      ##<img style="CURSOR: hand" onclick="javascript:preview();" alt="打印预览" src="../app/print/images/icon_preview.gif" border=0>
+      <img style="CURSOR: hand" onclick="javascript:pageSetup();" alt="页面设置" src="../app/print/images/icon_set.gif" border=0>
+      <img style="CURSOR: hand" onclick="javascript:savePrintSettings()" alt="保存打印格式" src="../app/print/images/icon_save_print.gif" border=0>
+      <br>
+    </center>
+  </fieldset>
+</div>
+
+<div id="contextPanel" name="printElement" class="backobj print" style="FONT-SIZE: 13px; LEFT: -110px; POSITION: absolute; TOP: -160px" defaultTop="-160" defaultLeft="-110" printId="p1">
+</div>
+<div id=property class=noprint moveable=true style="border:1px solid #C0C0C0; background:#FFFFFF;  padding:5px;FONT-SIZE: 13px; Z-INDEX: 30000; LEFT: 10px; WIDTH: 420px; POSITION: absolute; TOP: 10px;">
+<script>
+var unit_id_prefix = 'unit_';
+var property_list_type = {
+  'simple' : [
+    {field:'atype', property: 'atype', type:'char', notnull:false, dfvalue:'simple'}
+    ,{field:'defaultTop', property: 'top', type:'number', notnull:false, dfvalue:100}
+    ,{field:'defaultLeft', property: 'left', type:'number', notnull:false, dfvalue:100}
+    ,{field:'width', property: 'width', type:'number', notnull:false, dfvalue:100}
+    ,{field:'height', property: 'height', type:'number', notnull:false}
+    ,{field:'bindName', property: 'bindName', type:'char', notnull:true}
+    ,{field:'fontSize', property: 'fontSize', type:'font', notnull:false, dfvalue:10}
+    ,{field:'fontStyle', property: 'fontStyle', type:'char', notnull:false, dfvalue:'normal'}
+    ,{field:'fontWeight', property: 'fontWeight', type:'char', notnull:false, dfvalue:'normal'}
+    ,{field:'fontFamily', property: 'fontFamily', type:'char', notnull:false, dfvalue:'宋体'}
+    ,{field:'selectfont', property: 'selectfont', type:'class', notnull:false}
+    ,{field:'title', property: 'title', type:'char', notnull:false}
+    ,{field:'functionName', property: 'functionName', type:'char', notnull:false}
+    ,{field:'value', property: 'value', type:'char', notnull:true}
+    ,{field:'sourceValue', property: 'sourceValue', type:'char', notnull:true}
+  ]
+};
+
+var currentSelectObj;
+var currentChildIndex;
+
+var currentFieldList;
+var currentData;
+var currentName;
+var currentImgUrl;
+
+var cachePropertyItems = {};
+//独立打印属性设置面板
+var SINGLE_PANEL = {"id" : "single", "panel" : "unit_property", "change" : updateUnitPropertyToObj, "keypress" : updateUnitPropertyToObj};
+//多属性设置面板
+var MULTI_PANEL = {"id" : "multi", "panel" : "batch_unit_property", "change" : updateBatchUnitProperty, "keypress" : updateBatchUnitProperty};
+//克隆指定对象
+function cloneObj(obj) {
+    var res = {};
+    if (obj) {
+        for (var i in obj) {
+            res[i] = obj[i];
+        }
+    } else {
+        return obj;
+    }
+    return res;
+}
+//获取TR标签中的编辑组件(一个tr至少包含两个td，编辑组件是第二个td中的第一个组件)
+function getEditor(tr) {
+    return tr.childNodes[1].childNodes[0];
+}
+
+//获取属性面板中的所有属性
+function getPropertyItems(panelId) {
+    panelId = (panelId == undefined) ? SINGLE_PANEL : panelId;
+    if (!cachePropertyItems[panelId.id]) {
+        cachePropertyItems[panelId.id] = {};
+        var t = document.getElementById(panelId.panel);
+        if (t) {
+            var c = t.childNodes[0].childNodes;
+            if (c) {
+                for (var i = 0, len = c.length; i < len; i++) {
+                    var tr = c[i];
+                    var id = tr.id;
+                    if (id) {
+                        cachePropertyItems[panelId.id][id] = tr;
+                        var ed = getEditor(tr);
+                        ed.onchange = function () {panelId.change(this)};
+                        ed.onkeypress = function () {if (event.keyCode == '13') {panelId.keypress(this)}};
+                    }
+                }
+            }
+        }
+    }
+    return cloneObj(cachePropertyItems[panelId.id]);
+}
+//若对象含有printId和data属性就返回true，即 该元素是打印元素
+function isPropertyObj(obj) {
+//    top.document.title = obj.printId;
+    if (obj == null || obj == undefined) {
+        return false;
+    }
+    return obj.printId && obj.data;
+}
+//改变对象的位置
+function changeObjPosition(obj) {
+    if (obj && isPropertyObj(obj)) {
+        //打印元素的数据
+        var pro = obj.data;
+        //获取tp类型对应的属性数组
+        var ap = property_list_type["simple"];
+        var items = getPropertyItems();
+        if (ap) {
+            for (var i = 0, len = ap.length; i < len; i++) {
+                var pit = ap[i];
+                var pn = pit.property;
+                if (pn != "left" && pn != "top") {
+                    continue;
+                }
+                //当前属性是“left”或“top”时修改obj中data对象的相应值
+                if (pn == 'left') {
+                    pro[pit.field] = obj.style.pixelLeft;
+                } else if (pn == 'top') {
+                    pro[pit.field] = obj.style.pixelTop;
+                }
+                setTrPropertyValue(items[pn], pro[pit.field]);
+            }
+        }
+    }
+}
+//设置鼠标选择的元素
+function setSelectObject(obj) {
+    //若当前选择的元素未被记录（即 不是currentSelectObj对象 且是打印对象则设置其className）
+    if (currentSelectObj != obj && isPropertyObj(obj)) {
+        //如果有当前选择对象则将该对象的className属性中的“selectedobj”匹配字符去掉
+        if (currentSelectObj) {
+            removeClass(currentSelectObj, / selectedobj/g);
+        }
+        //在当前对象的className属性中添加“selectedobj”字符
+        currentSelectObj = obj;
+        if (currentSelectObj) {
+            addClass(currentSelectObj, " selectedobj");
+        }
+        showCurrentProperty();
+    } else if (!isPropertyObj(obj) && obj != null && obj.id != undefined && obj.id != "property") {
+        if (currentSelectObj) {
+            removeClass(currentSelectObj, / selectedobj/g);
+        }
+        //鼠标点击的区域不是打印元素或属性面板则清空属性面板中的内容
+        cleanUnitProperty();
+        currentSelectObj = null;
+    }
+}
+//初始化打印数据
+function installDesignerData(fieldlist, template) {
+    cleanOldTemplate();
+    currentFieldList = fieldlist;
+    //重置打印项数组
+    var fdata = buildFieldDataObj(fieldlist);
+    currentData = fdata;
+    if (template) {
+        document.getElementById("templateId").value = template.templateId;
+    } else {
+        template = buildInitTemplate(template.name, template.img_url, fieldlist);
+    }
+    currentName = template["name"];
+    currentImgUrl = template["img_url"];
+    buildContextByData(template, fieldlist);
+    showCurrentProperty();
+}
+//构建默认的打印域数组
+function buildInitTemplate(name, img_url, fieldlist) {
+    var res = {};
+    res["name"] = name;
+    res["img_url"] = img_url;
+    res["defaultTop"] = 0;
+    res["defaultLeft"] = 0;
+    var items = [];
+    if (fieldlist) {
+        for(var i = 0, len = fieldlist.length; i < len; i++) {
+            var f = fieldlist[i];
+            var it = {
+                   defaultTop: 100 + i * 35
+                  ,defaultLeft: 450
+                  ,width:200
+                  ,bindName:f.title || f.field || f
+              };
+            items[items.length] = it;
+        }
+    }
+    if (items.length > 0) {res["items"] = items;}
+    return res;
+}
+//重组域数组:返回以fieldlist数组元素为索引 以fieldlist数组元素为新数组元素的新数组。result[fieldlist[x]] = fieldlist[x]
+function buildFieldDataObj(fieldlist) {
+    var res = {};
+    if (fieldlist) {
+        for (var i = 0, len = fieldlist.length; i < len; i++) {
+            res[fieldlist[i]] = fieldlist[i];
+        }
+    }
+    return res;
+}
+//重置底图模板
+function cleanOldTemplate() {
+    var tp = document.getElementById("contextPanel");
+    if (tp) {tp.innerhtml = "";}
+}
+
+//在指定元素（na）中设置指定值（va）一般是指设置行x的xx域的值 <tr id=x><td><input xx></td></tr>
+function setPropertyValue(na, va) {
+    var tr = document.getElementById(na);
+    setTrPropertyValue(tr, va);
+}
+var oFCKeditor;
+//页面加载完成后加载编辑器组件，并且将页面上的String转化为html格式
+function FCKeditor_OnComplete(editorInstance) {
+    oFCKeditor = editorInstance;
+	for (var i = 0; i < 50 ; i++) {
+		var id = "p" + i;
+    	if(typeof(document.getElementById(id)) == 'object'){
+			var obj = document.getElementById(id);
+        	if(obj != null){
+            	setUnitProperty(obj);
+                updateObjProperty(obj);
+        	}
+    	}
+	}
+}
+//设置行对象tr的第二个td的首元素的值为va
+function setTrPropertyValue(tr, va) {
+    if (tr) {
+        var editor = tr.childNodes[1].childNodes[0];
+        var value = va;
+        if (editor.filterStr != undefined) {
+            value = filterEditValue(va, editor.filterStr);
+        }
+        if(tr.id == 'value'){
+        	oFCKeditor.EditorDocument.body.innerHTML = value;
+        } else {
+    	    tr.childNodes[1].childNodes[0].value = value;
+        }
+    }
+}
+//从属性面板中获取属性数据
+function getTrPropertyValue(tr) {
+    if (tr) {
+        return tr.childNodes[1].childNodes[0].value;
+    }
+    return null;
+}
+//将当前属性面板中的值更新到打印对象（div）中
+function updateUnitPropertyToObj() {
+    if (isPropertyObj(currentSelectObj)) {
+        updateObjProperty(currentSelectObj);
+    }
+}
+//具体执行将属性面板的内容更新到当前选择对象中
+function updateObjProperty(proElement) {
+    if (proElement == undefined || proElement == null) {
+        return;
+    }
+    var pro = proElement.data;
+    //获取相应类型的属性映射数组
+    var ap = property_list_type["simple"];
+    var items = getPropertyItems();
+    //打印项（div）
+    var targetObj = proElement;
+    //ap[i]:属性面板与打印对象属性间的关系数组；pn:属性面板中的属性项名称；pf:打印对象的属性名称；va:属性面板对应属性的展示域
+    //pro[pf]:currentSelectObj中的data对应pf的值 items[pn]:属性面板的对应pn的tr行
+    for (var i = 0, len = ap.length; i < len; i++) {
+        if (items[ap[i].property]) {
+            var va = getTrPropertyValue(items[ap[i].property]);
+            if (va && va != "") {
+                pro[ap[i].field] = va;
+            }
+            switch (ap[i].property) {
+                case 'left':targetObj.style.pixelLeft = parseInt(va);break;
+                case 'top':targetObj.style.pixelTop = parseInt(va);break;
+                case 'width':targetObj.style.pixelWidth = parseInt(va);break;
+                case 'height':targetObj.style.pixelHeight = parseInt(va);break;
+                case 'fontSize':targetObj.style.fontSize = va + "pt";break;
+                case 'fontStyle':targetObj.style.fontStyle = va;break;
+                case 'fontWeight':targetObj.style.fontWeight = va;break;
+                case 'fontFamily':targetObj.style.fontFamily = va;break;
+                case 'value': targetObj.innerHTML = oFCKeditor.EditorDocument.body.innerHTML;
+               	if(oFCKeditor.EditorDocument.body.innerHTML.indexOf('</TABLE>')>0){
+               		printSheetFormart = convertValueChar(oFCKeditor.EditorDocument.body.innerHTML,"TO_VARAINT").replace(/[\r\n]/g,"");
+               	}
+                break;
+            }
+        }
+    }
+}
+//批量设置打印元素
+function updateBatchUnitProperty() {
+    //获取要变更属性的打印div项
+    var divs = document.getElementsByTagName("div");
+    //获取批量变更属性面板上的所有属性值
+    var items = getPropertyItems(MULTI_PANEL);
+    //获取相应类型的属性映射数组
+    var ap = property_list_type["simple"];
+    for (var i = 0; i < ap.length; i++) {
+        var prop = items[ap[i].property];
+        if (prop) {
+            var va = getTrPropertyValue(items[ap[i].property]);
+            if (va && va != "") {
+                for (var j = 0; j < divs.length; j++) {
+                    var targetObj = divs[j];
+                    if (isPropertyObj(targetObj)) {
+                        targetObj.data[ap[i].field] = va;
+                        switch (ap[i].property) {
+                            case 'left':targetObj.style.pixelLeft = parseInt(va);break;
+                            case 'top':targetObj.style.pixelTop = parseInt(va);break;
+                            case 'width':targetObj.style.pixelWidth = parseInt(va);break;
+                            case 'height':targetObj.style.pixelHeight = parseInt(va);break;
+                            case 'fontSize':targetObj.style.fontSize = va + "pt";break;
+                            case 'fontStyle':targetObj.style.fontStyle = va;break;
+                            case 'fontWeight':targetObj.style.fontWeight = va;break;
+                            case 'fontFamily':targetObj.style.fontFamily = va;break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+//将当前打印项（div对象）的属性展示在属性面板上
+function setUnitProperty(obj) {
+    if (typeof obj.data == 'object') {
+        var pro = obj.data;
+        var tp = pro.atype || 'simple';
+        var ap = property_list_type[tp];
+        if (ap) {
+            var items = getPropertyItems();
+            for (var i = 0; i < ap.length; i++) {
+                var pn = ap[i].property;
+                var tr = items[pn];
+                if (tr) {
+                    var pf = ap[i].field;
+                    if (pro[pf]) {
+                        setTrPropertyValue(tr, pro[pf]);
+                    } else {
+                        setTrPropertyValue(tr, '');
+                    }
+                    tr.style.display = 'block';
+                }
+                items[pn] = null;
+            }
+        }
+    }
+}
+//清除属性面板上的内容
+function cleanUnitProperty(panelId) {
+    panelId = (panelId == undefined) ? SINGLE_PANEL : panelId;
+    var ap = property_list_type['simple'];
+    if (ap) {
+        var items = getPropertyItems(panelId);
+        for (var i = 0; i < ap.length; i++) {
+            var pn = ap[i].property;
+            var tr = items[pn];
+            if (tr) {
+                setTrPropertyValue(tr, '');
+                tr.style.display = 'block';
+            }
+            items[pn] = null;
+        }
+    }
+}
+//锁定/解锁属性面板
+function lockPropertyPanel(obj) {
+    if (obj.state == "lock") {
+        getObjectById("expand_btn").disabled = false;
+        getObjectById("collapse_btn").disabled = false;
+        obj.state = "unlock";
+        obj.src = "../app/print/images/unlock.png";
+    } else {
+        getObjectById("expand_btn").disabled = true;
+        getObjectById("collapse_btn").disabled = true;
+        obj.state = "lock";
+        obj.src = "../app/print/images/lock.png";
+    }
+}
+//将指定对象展示（display值为block）
+function showElement(id) {
+    if (getObjectById("lock_panel_btn").state == "unlock") {
+        document.getElementById(id).style.display = 'block';
+    }
+}
+//将指定对象隐藏（display值为none）
+function hideElement(id) {
+    if (getObjectById("lock_panel_btn").state == "unlock") {
+        document.getElementById(id).style.display = 'none';
+    }
+}
+//展开属性面板的sheet页
+function showPropertyPanelSheet(panelId) {
+    var sheets = {"singlePropPanel" : "singlePropPanelSheet", "multiPropPanel" : "multiPropPanelSheet"};
+    for (id in sheets) {
+        if (id == panelId) {
+            showElement(id);
+            document.getElementById(sheets[id]).className = "index";
+        } else {
+            hideElement(id);
+            document.getElementById(sheets[id]).className = "";
+        }
+    }
+}
+
+//展示当前选择对象的属性值
+function showCurrentProperty() {
+    setPropertyValue("name", currentName);
+    setPropertyValue("img_url", currentImgUrl);
+    currentChildIndex = null;
+    if (currentSelectObj) {
+        //showElement('all_property');
+        setUnitProperty(currentSelectObj);
+    } else {
+        //hideElement('all_property');
+    }
+}
+
+//替换编辑器中的指定字符
+function filterEditValue(editorValue, filters) {
+    eval("var result = editorValue.replace(/" + filters + "/g, '');");
+    if (result == undefined || result == "") {
+       var result = editorValue;
+    }
+    return result;
+}
+
+//删除当前选择的打印项（打印内容div等）
+function deleteCurrentObj() {
+    if (currentSelectObj && confirm('确定要删除吗？')) {
+        cleanUnitProperty();
+        if (currentSelectObj.parentNode) {
+            currentSelectObj.innerhtml = '';
+            currentSelectObj.parentNode.removeChild(currentSelectObj);
+        }
+        currentSelectObj = null;
+        setSelectObject(null);
+    }
+}
+//清除属性面板上的内容，并且将当前选择对象置空
+function cleanCurrentObj() {
+    cleanUnitProperty();
+    currentSelectObj = null;
+}
+//清除批量属性设置面板上的内容
+function cleanBatchProperty() {
+    cleanUnitProperty(MULTI_PANEL);
+}
+//新增打印项Div
+function newSimpleDiv() {
+    var items = getPropertyItems();
+    var contextPanel = document.getElementById("contextPanel");
+        //获取相应类型的属性映射数组
+        var ap = property_list_type['simple'];
+        if (ap) {
+            //打印项（div）
+            var targetObj = Object();
+            var printItems = "";
+            //pit:属性面板与打印对象属性间的关系数组；pn:属性面板中的属性项名称；pf:打印对象的属性名称；va:属性面板对应属性的展示域
+            //pro[pf]:currentSelectObj中的data对应pf的值 items[pn]:属性面板的对应pn的tr行
+            for (var i = 0; i < ap.length; i++) {
+                var pn = ap[i].property;
+                var tr = items[pn];
+                if (tr) {
+                    var itemvalue = getPrintProperty(ap[i], getTrPropertyValue(tr));
+                    if (itemvalue == "false") {
+                        alert("新增元素的信息不全，请填写完整再执行新增操作！");
+                        return;
+                    } if (itemvalue != "") {
+                        printItems += (printItems == "") ? itemvalue : "," + itemvalue;
+                    }
+                }
+            }
+            eval("targetObj = {" + printItems + "}");
+            eval("var data = {" + targetObj.bindName + ": '" + getTrPropertyValue(items["value"]) + "'}");
+            if (data && targetObj) {
+                var printItem = buildSimple(getNewPrintId(contextPanel), contextPanel, targetObj, data, []);
+                if (printItem) {
+                    initPrintEvent(printItem);
+                    setSelectObject(printItem);
+                }
+            }
+        }
+}
+//整理属性面板中的值
+function getPrintProperty(itProperty, propertyValue) {
+    var result = "", value = propertyValue;
+    try {
+        if (itProperty.notnull && propertyValue == "") {
+            return "false";
+        } else if (!itProperty.notnull && propertyValue == "" && itProperty.dfvalue == undefined) {
+            return "";
+        }
+        if (propertyValue == "" && itProperty.dfvalue != undefined) {
+            value = itProperty.dfvalue;
+        }
+        if (itProperty.type == FIELD_TYPE_CHAR) {
+            result = itProperty.field + ":'" + value + "'";
+        } else if (itProperty.type == FIELD_TYPE_FONT) {
+            result = itProperty.field + ":'" + value + "pt'";
+        } else {
+            result = itProperty.field + ":" + value;
+        }
+    } catch(e) {
+        return "false";
+    }
+    return result;
+}
+//获取打印项上的ID
+function getNewPrintId(contextPanel) {
+    return contextPanel.childNodes.length + 1;
+}
+
+var useHasOwn = {}.hasOwnProperty ? true : false;
+var m = {
+    "\b": '\\b',
+    "\t": '\\t',
+    "\n": '\\n',
+    "\f": '\\f',
+    "\r": '\\r',
+    '"' : '\\"',
+    "\\": '\\\\'
+};
+//字符串编码Ext
+var encodeString = function(s){
+    if (/["\\\x00-\x1f]/.test(s)) {
+        return '"' + s.replace(/([\x00-\x1f\\"])/g, function(a, b) {
+            var c = m[b];
+            if(c){
+                return c;
+            }
+            c = b.charCodeAt();
+            return "\\u00" +
+                Math.floor(c / 16).toString(16) +
+                (c % 16).toString(16);
+        }) + '"';
+    }
+    return '"' + s + '"';
+};
+
+var encodeArray = function(o){
+    var a = ["["], b, i, l = o.length, v;
+        for (i = 0; i < l; i += 1) {
+            v = o[i];
+            switch (typeof v) {
+                case "undefined":
+                case "function":
+                case "unknown":
+                    break;
+                default:
+                    if (b) {
+                        a.push(',');
+                    }
+                    a.push(v === null ? "null" : jsonEncode(v));
+                    b = true;
+            }
+        }
+        a.push("]");
+        return a.join("");
+};
+
+function jsonEncode(o){
+    if(typeof o == "undefined" || o === null){
+        return "null";
+    }else if(typeof o.pop == 'function'){
+        return encodeArray(o);
+    }else if(typeof o == "string"){
+        return encodeString(o);
+    }else if(typeof o == "number"){
+        return isFinite(o) ? String(o) : "null";
+    }else if(typeof o == "boolean"){
+        return String(o);
+    }else {
+        var a = ["{\n"], b, i, v;
+        for (i in o) {
+            if(!useHasOwn || o.hasOwnProperty(i)) {
+                v = o[i];
+                switch (typeof v) {
+                case "undefined":
+                case "function":
+                case "unknown":
+                    break;
+                default:
+                    if(b){
+                        a.push('\n,');
+                    }
+                    a.push(jsonEncode(i), ":", v === null ? "null" : jsonEncode(v));
+                    b = true;
+                }
+            }
+        }
+        a.push("\n}");
+        return a.join("");
+    }
+}
+
+</script>
+<input id="templateId" type="hidden" name="templateId" />
+<table cellpadding="3" cellspacing="0" border="0" height="100%" width="100%">
+  <tr>
+    <td>
+      <fieldset class="search_border">
+        <legend class="search_title"><b>模板属性</b></legend>
+        <table id="template_property" width="100%" class="label_form_tab" cellpadding="0" cellspacing="0">
+          <tr id="name" class="form_title_char"><td align="right">模板名:</td><td><input class="undrageobject" type="text" readOnly="true" size="40"/></td></tr>
+          <tr id="img_url" class="form_title_char"><td align="right">模板图url:</td><td><input class="undrageobject" type="text" readOnly="true" size="40"/></td></tr>
+        </table>
+        <table id="show_template_property" width="100%">
+          <tr id="icon_zone">
+            <td align="right">
+              <img id="lock_panel_btn" class="undrageobject" state="unlock" style="CURSOR: hand" onclick="javascript:lockPropertyPanel(this);" height="16" src="../app/print/images/unlock.png" width="16" border="0" title="锁定属性面板"/>
+
+              <img id="expand_btn" class="undrageobject" style="CURSOR: hand" onclick="javascript:showElement('all_property');" height=16 src="../app/print/images/arrow_down.png" width=16 border=0 title="展开属性面板"/>
+              <img id="collapse_btn" class="undrageobject" style="CURSOR: hand" onclick="javascript:hideElement('all_property');" height=16 src="../app/print/images/arrow_up.png" width=16 border=0 title="收起属性面板"/>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table id="all_property" cellpadding="0" cellspacing="0" class="button_line_lr" width="100%" style="display:none;">
+        <tr valign="top">
+          <td class="dymenu">
+            <a href="#" id="singlePropPanelSheet" class="index" onclick="javascript:showPropertyPanelSheet('singlePropPanel');return false;"><span>属性设置</span></a>
+            <a href="#" id="multiPropPanelSheet" onclick="javascript:showPropertyPanelSheet('multiPropPanel');return false;"><span>属性批量设置</span></a>
+          </td>
+        </tr>
+        <tr id="singlePropPanel" style="display:;">
+          <td>
+            <fieldset class="search_border">
+              <legend class="search_title"><b>元素属性</b></legend>
+              <div id="mulelement"></div>
+              <table id="unit_property" width="100%" cellpadding="0" cellspacing="0" class="label_form_tab">
+                <tr id="left" class="form_title_char"><td align="right" width="20%">左:</td><td width="80%"><input class="undrageobject" type="text" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/></td></tr>
+                <tr id="top" class="form_title_char"><td align="right">上:</td><td><input class="undrageobject" type="text" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/></td></tr>
+                <tr id="width" class="form_title_char"><td align="right">宽:</td><td><input class="undrageobject" type="text" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/></td></tr>
+                <tr id="bindName" class="form_title_char"><td align="right"><font style="color:red">*</font>字段名:</td><td><input class="undrageobject" type="text" #if($currentUser.getSysUser().getAccount() != 'cc-admin' ) readonly #end /></td></tr>
+                <tr id="title" class="form_title_char"><td align="right">标题:</td><td><input class="undrageobject" type="text" /></td></tr>
+                <tr id="fontSize" class="form_title_char"><td align="right">字号:</td>
+                  <td>
+                    <input class="undrageobject" type="text" size="5" filterStr="px|pt" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/>
+                    <img class="undrageobject" style="CURSOR: hand" onclick="zoom('in');" height=16 src="../app/print/images/zoom_in.png" width=16 border=0 title="放大字体"/>
+                    <img class="undrageobject" style="CURSOR: hand" onclick="zoom('out');" height=16 src="../app/print/images/zoom_out.png" width=16 border=0 title="缩小字体"/>
+                  </td>
+                </tr>
+                <tr id="fontStyle" class="form_title_char"><td align="right">字形:</td><td><select name="fontStyleSelect" class="undrageobject"></select></td></tr>
+                <tr id="fontWeight" class="form_title_char"><td align="right">字体粗细:</td><td><select name="fontWeightSelect" class="undrageobject"></select></td></tr>
+                <tr id="fontFamily" class="form_title_char"><td align="right">字体:</td><td><select name="fontFamilySelect" class="undrageobject"></select></td></tr>
+                <tr id="value" class="form_title_char">
+                  <td align="right"><font style="color:red">*</font>内容:</td>
+                  <td>
+                  	$!{FCKeditor.get("aaa", "", "100%", "200px")}
+                    ##<textarea id="ddd" class="undrageobject" rows="8" cols="40"></textarea>
+					<br>
+                    &nbsp;<button onclick='javascript:updateUnitPropertyToObj();' class="confirm_update_btn"><span>确认更改内容</span></button>&nbsp;
+                    &nbsp;<button onclick='javascript:showDataFormatPage();' class="set_format_btn"><span>内容格式化</span></button>&nbsp;
+                  </td>
+                </tr>
+                <tr>
+                  <td align="right" colspan="2">
+                    <button onclick='javascript:newSimpleDiv();' class="new_btn"><span>新增</span></button>&nbsp;
+                    <button onclick='javascript:cleanCurrentObj();' class="clean_btn"><span>清空属性</span></button>&nbsp;
+                    <button onclick='javascript:deleteCurrentObj(); currentSelectObj = null;' class="del_btn"><span>删 除</span></button>&nbsp;
+                  </td>
+                </tr>
+              </table>
+            </fieldset>
+          </td>
+        </tr>
+        <tr id="multiPropPanel" style="display:none;">
+          <td>
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <fieldset class="search_border">
+                    <legend class="search_title"><b>打印元素共同属性</b></legend>
+                    <table id="batch_unit_property" width="100%" cellpadding="0" cellspacing="0" class="label_form_tab">
+                      <tr id="left" class="form_title_char">
+                        <td align="right" width="20%">左:</td>
+                        <td><input class="undrageobject" field="left" type="text" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/></td>
+                      </tr>
+                      <tr id="top" class="form_title_char">
+                        <td align="right">上:</td>
+                        <td><input class="undrageobject" field="top" type="text" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/></td>
+                      </tr>
+                      <tr id="width" class="form_title_char">
+                        <td align="right">宽:</td>
+                        <td><input class="undrageobject" field="width" type="text" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/></td>
+                      </tr>
+                      <tr id="fontSize" class="form_title_char">
+                        <td align="right">字号:</td>
+                        <td>
+                          <input class="undrageobject" type="text" size="5" field="fontSize" filterStr="px|pt" onkeyup="value=value.replace(/^0|[^\d]/g,'');" onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))"/>
+                          <img class="undrageobject" style="CURSOR: hand" onclick="zoom('in');" height=16 src="../app/print/images/zoom_in.png" width=16 border=0 title="放大字体"/>
+                          <img class="undrageobject" style="CURSOR: hand" onclick="zoom('out');" height=16 src="../app/print/images/zoom_out.png" width=16 border=0 title="缩小字体"/>
+                        </td>
+                      </tr>
+                      <tr id="fontStyle" class="form_title_char">
+                        <td align="right" width="">字形:</td>
+                        <td><select name="fontStyleSelect" field="fontStyle" class="undrageobject"></select></td>
+                      </tr>
+                      <tr  id="fontWeight" class="form_title_char">
+                        <td align="right">字体粗细:</td>
+                        <td colspan="2" propField><select name="fontWeightSelect" field="fontWeight" class="undrageobject"></select></td>
+                      </tr>
+                      <tr id="fontFamily" class="form_title_char">
+                        <td align="right">字体:</td>
+                        <td><select name="fontFamilySelect" field="fontFamily" class="undrageobject"></select></td>
+                      </tr>
+                      <tr class="form_title_char">
+                        <td align="right" colspan="6">
+                          <button onclick='javascript:updateBatchUnitProperty();' class="confirm_update_btn"><span>确认更改内容</span></button>&nbsp;
+                          <button onclick='javascript:cleanBatchProperty();' class="clean_btn"><span>清空属性</span></button>&nbsp;
+                        </td>
+                      </tr>
+                    </table>
+                  </fieldset>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</div>
+</body>
+</html>

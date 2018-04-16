@@ -1,0 +1,60 @@
+<script type="text/javascript">
+     
+ 
+    // 提交表单
+    function saveElderHealthAssess() {
+         var elderHealthAssessFormParams = common.serializeObject($('#elderHealthAssessForm'));
+         var elderHealthAssessRetionData = {};
+         elderHealthAssessRetionData.elderHealthAssessEditInfo = elderHealthAssessFormParams;
+         elderHealthAssessRetionData.healthAssessTypeItemEditInfoList = buildHealthAssessTypeItemParam();
+      
+         $.post("../elder/saveElderHealthAssess.jo", 
+        		{elderHealthAssessRetionData : JSON.stringify(elderHealthAssessRetionData)},  
+        	    function (result) {
+		             if (result.code == "0") {
+		                 common.alert("保存成功",1);
+		                  
+		              // 关闭窗口
+		                 /*var index = parent.layer.getFrameIndex(window.name);
+		                 parent.layer.close(index); */
+		             } else {
+		                 common.alert(result.msg,2);
+		             }
+                },
+          "json");
+     }
+    
+    //构建 老年人健康评估结果明细表 参数
+    function buildHealthAssessTypeItemParam(){
+        var elderHealthAssessItemArr = new Array();  
+        var healthAssessTypeMap = JSON.parse('$dicTools.changeMapToJson($healthAssessTypeMap)'); 
+        //循环分类 获取分类的数组
+        $.each(healthAssessTypeMap,function(healthAssessTypeId,healthAssessTypeName){  
+            // 使用 分类 ID作为 name
+            $('input[name="' + healthAssessTypeId + '"]:checked').each(function(i) {
+                
+                elderHealthAssessItem = {};
+                elderHealthAssessItem.healthAssessItemId = $(this).val();
+                elderHealthAssessItem.healthAssessTypeId = healthAssessTypeId;
+                
+                var $elderHealthAssessItemIdEle = $(this).parent().next().find('input[name=elderHealthAssessItemId]');
+                if($elderHealthAssessItemIdEle.length > 0 ){
+                    elderHealthAssessItem.elderHealthAssessItemId = $elderHealthAssessItemIdEle.val();
+                }
+                elderHealthAssessItemArr.push(elderHealthAssessItem);
+             
+            });
+            
+        }); 
+        
+        return elderHealthAssessItemArr;
+    }
+    
+    //查看 设置 readonly、disabled
+    $(document).ready(function() {
+        var jqForm = $('#elderHealthAssessForm');
+        if('show' == '$!mode'){
+            common.setFormReadOnly(jqForm);
+        }
+    });
+</script>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>产前筛查检查/手术记录 信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { height: 100% }
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+        <!-- form start -->
+     <form id="gravidaSurgeryForm" class="form-horizontal table-content">
+          #formHiddenInput("gravidaSurgeryId" "$!gravidaSurgery.gravidaSurgeryId" " id='gravidaSurgeryId' ")
+          #formHiddenInput("gravidaDetailId" "$!gravidaSurgery.gravidaDetailId" " id='gravidaDetailId' ")
+          #formHiddenInput("personDetailId" "$!gravidaSurgery.personDetailId" " id='personDetailId' ")
+          #formHiddenInput("regionId" "$!gravidaSurgery.regionId" " id='regionId' ")
+          #formHiddenInput("hospitalId" "$!{gravidaSurgery.hospitalId}" " id='hospitalId' ")
+          #formHiddenInput("dutyDoctorId" "$!{gravidaSurgery.dutyDoctorId}" " id='deliverDoctorId' ")
+          <div class="modal-body  full-height-scroll" style=" padding: 0 15px 40px">
+          <div class="row">
+              <div class="text-box"><h5>基础信息</h5></div>
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">姓名</label>
+                  <div class="col-md-8">
+                      #formTextInput("gravidaName" "#htmlEscape($!gravidaSurgery.gravidaName)" " id='gravidaName' maxlength='10' class='form-control'")
+                  </div>
+              </div>
+          
+               <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">保健卡号</label>
+                  <div class="col-md-8">
+                      #formTextInput("gravidaCard" "#htmlEscape($!gravidaDetail.gravidaCard)" " id='gravidaCard' maxlength='20' class='form-control' readonly ")
+                  </div>
+              </div>
+                <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">年龄</label>
+                  <div class="col-md-8">
+                      #formIntInput("gravidaAge" $!gravidaSurgery.gravidaAge  " id='gravidaAge' maxlength='2' class='form-control'")
+                  </div>
+              </div>
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">产前诊断编号</label>
+                  <div class="col-md-8">
+                      #formIntInput("pregnancySurgeryNo" $!gravidaSurgery.pregnancySurgeryNo  " id='pregnancySurgeryNo' maxlength='20' class='form-control'")
+                  </div>
+              </div>
+          
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label red">孕周</label>
+                  <div class="col-md-8">
+                      #formTextInput("pregnancyWeek" "#htmlEscape($!gravidaSurgery.pregnancyWeek)" " id='pregnancyWeek' maxlength='10' class='form-control'")
+                  </div>
+              </div>
+          
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label red">手术方式</label>
+                  <div class="col-md-8">
+                       #formSingleSelectFirstNone("surgeryWayId" "$!surgeryWayId" $!{dicData.dicSurgeryWay} "class='form-control'" "")
+                  </div>
+              </div>
+              
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label red">手术过程</label>
+                  <div class="col-md-8">
+                      #formTextarea("chiefAction" "#htmlEscape($!gravidaSurgery.chiefAction)" " id='chiefAction' maxlength='2000' class='form-control'")
+                  </div>
+              </div>
+          
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">手术后注意事项</label>
+                  <div class="col-md-8">
+                      #formTextarea("heartLungAuscultation" "#htmlEscape($!gravidaSurgery.heartLungAuscultation)" " id='heartLungAuscultation' maxlength='2000' class='form-control'")
+                  </div>
+              </div>
+          
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">特殊记录</label>
+                  <div class="col-md-8">
+                      #formTextarea("uterusHeigth" "#htmlEscape($!gravidaSurgery.uterusHeigth)" " id='uterusHeigth' maxlength='1000' class='form-control'")
+                  </div>
+              </div>
+              
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label  red">手术日期 </label>
+                  <div class="col-md-8">
+                      #formTextInput("curSurgeryTime" "$!date.format('yyyy-MM-dd', $!gravidaSurgery.curSurgeryTime)" " onclick='$layerDate' id='curSurgeryTime' class='form-control  layer-date' ")
+                  </div>
+              </div>
+              
+               <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">手术主治医生</label>
+                  <div class="col-md-8">
+                      #formTextInput("dutyDoctorName" "#htmlEscape($!gravidaSurgery.dutyDoctorName)" " id='dutyDoctorName' maxlength='10' class='form-control' readonly")
+                  </div>
+              </div>
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">手术医院名称</label>
+                  <div class="col-md-8">
+                      #formTextInput("hospitalName" "#htmlEscape($!gravidaSurgery.hospitalName)" " id='hospitalName' maxlength='20' class='form-control' readonly")
+                  </div>
+              </div>
+              <div class="col-md-6 form-group">
+                  <label class="col-md-4 control-label">备注</label>
+                  <div class="col-md-8">
+                      #formTextInput("remark" "#htmlEscape($!gravidaSurgery.remark)" " id='remark' maxlength='100' class='form-control'")
+                  </div>
+              </div>
+
+          </div>
+          </div>
+      </form>
+     <!-- form end -->
+     
+    <!-- 底部 start -->      
+	<div class="tool-table-fixed" style="width: calc(100%)">
+		#if('show' != $!mode)
+		    <button onclick="saveGravidaSurgery();" type="button" class="btn btn-success">
+                      <i class="fa fa-save"></i> 保 存
+                  </button>
+	    #end
+	</div>
+    <!-- 底部 end -->      
+				
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm") 
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/gravida/gravidaSurgeryEdit.js.vm")
+</body>
+</html>

@@ -1,0 +1,91 @@
+<script>
+$(document).ready(function() {
+	// 搜索按钮
+	$('#_bnt_search').click(function (){
+		var queryParams = common.serializeObject($('#sc_queryForm'));
+		//alert(JSON.stringify(queryParams));
+		var options = {url: '../systemCloud/cloudList.do', silent: false, query: queryParams};
+		$('#exampleTableFromData').bootstrapTable('refresh', options); 
+		
+	});
+	// 清空按钮
+	$('#_bnt_clean').click(function (){
+		$("#_des").val("");
+		 $("#patientExamNum").val("");
+		 $("#patientInfoId").val("");
+		 $("#beginExamDate").val("");
+		 $("#endExamDate").val("");
+		 $("#patientName").val("");
+		 $("input[name='examCategory']").each(function (){
+			 $(this).iCheck('uncheck');
+		 });
+	});
+});
+
+$(function() {
+	var tableParams = {
+			url : "../systemCloud/cloudList.do",
+			queryParams : function (params){
+				var requestParams = common.serializeObject($('#sc_queryForm'));
+		        requestParams.pageSize = params.pageSize;
+		        requestParams.pageNumber = params.pageNumber;
+		        return requestParams;
+			},
+			columns : [
+		   		{ checkbox:true },
+		   		{
+		   			field : 'patientExamNum',
+		   			title : '检查编号'//,width : "100px"
+		   		}, {
+		   			field : 'examDate',
+		   			title : '检查时间'
+		   		}, {
+		   			field : 'examType',
+		   			title : '检查类型'
+		   		}, {
+		   			field : 'examPart',
+		   			title : '检查部位'
+		   		}, {
+		   			field : 'patientId',
+		   			title : '患者ID'
+		   		}, {
+		   			field : 'patientName',
+		   			title : '患者姓名'
+		   		}, {
+		   			field : 'patientFrom',
+		   			title : '来源'
+		   		}, {
+		   			field : 'diagnosisFlag',
+		   			title : '申请状态',
+		   			formatter: function (value, row, index) {
+		   				return $("#diagnosisFlag option[value='" + row.diagnosisFlag + "']").text(); 
+		               } 
+		   		}, {
+		   			field : 'operate',
+		   			title : '操作',
+		   			width : '100px',
+		   			events : operateEvents,
+		   			formatter : operateFormatter
+		   		}],
+	   		onDblClickRow : function (row, element){
+	   			var title = '检查详情';
+	   			common.open("../report/examInfoShow.do?patientExamId=" + row.patientExamId, title, {area: ['99%', '99%']});
+	   		},
+	   		onLoadSuccess : function(){
+	   			var height = ($('#exampleTableFromData').parents("body").height() - $('#sc_queryForm').parents(".ibox").height() - 44);
+	   			$('#exampleTableFromData').bootstrapTable('resetView', {height: height}); 
+	   		}
+	}
+	$('#exampleTableFromData').bootstrapTable($.extend(baseTable, tableParams));
+});
+window.operateEvents = {
+	"click #btn_show" : function (e, value, row, index) {
+		var title = '检查详情';
+		common.open("../report/examInfoShow.do?patientExamId=" + row.patientExamId, title, {area: ['99%', '99%']});
+	}
+};
+function operateFormatter(value, row, index) {
+	var html = ['<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>'];
+	return html.join('');
+	}
+</script>

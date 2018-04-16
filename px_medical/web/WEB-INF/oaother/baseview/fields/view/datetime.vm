@@ -1,0 +1,1 @@
+#displayOnlyTime($!{datamap.get($!{cell.field})})<input type="hidden" name="${cell.field}" value="#displayOnlyTime($!{datamap.get($!{cell.field})})"/>

@@ -1,0 +1,107 @@
+
+<script src="../resource/style/js/ui.js"></script>
+ <script src="../resource/js/plugins/citypicker/city-picker.data.js"></script>
+ <script src="../resource/js/plugins/citypicker/city-picker.js"></script>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm") 
+#set($layerDate = 'laydate({istime: true, format: "YYYY-MM-DD hh:mm:ss"})')
+<div class="modal-body full-height-scroll" style="height: calc(100% - 92px)">
+	<!--如果弹窗没有底部菜单栏则 -44px -->
+	<form id="emEventTypeForm" class="form-horizontal">
+		<input type="hidden" id="submitFlag" >
+		<input type="hidden" id="healthReportId" name="healthReportId" value="$!emHealthReport.healthReportId" >
+		
+		<div class="row">
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">接种时间</label>
+				<div class="col-md-8">
+					<div class="input-daterange input-group date ">
+						<input type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" name="inoculateTime" value="$!date.format('yyyy-MM-dd', $!{emHealthReport.fillTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="form-group" style="margin-top:50px; ">
+				<label class="col-md-2 control-label must-red">致病因素:</label>
+				<div class="col-md-10" style="border: 1px gray solid; width: 800px;">
+					#formCheckboxesLable("diseaseFactorSubtype" "$!emHealthReport.diseaseFactorId" $dicData.dicDiseaseFactor7 "" "" "class='checkbox-inline i-checks'")
+				</div>
+			</div>
+			<div class=" form-group">
+				<label class="col-md-2 control-label">事件发生原因:</label>
+				<div class="col-md-10" style="border: 1px gray solid; width: 800px;">
+					#formCheckboxesLable("occurReason" "$!emHealthReport.eventLevelId" $dicData.dicOccurReason7 "" "" "class='checkbox-inline i-checks'")
+				</div>
+
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">病人处理过程:</label>
+				<div class="col-md-10" style="border: 1px gray solid; width: 800px;">
+					#formCheckboxesLable("patientDeal" "$!emHealthReport.eventLevelId" $dicData.dicPatientDeal7 "" "" "class='checkbox-inline i-checks'")
+				</div>
+			</div>
+			
+			<div class="form-group" >
+				<label class="col-md-2 control-label must-red" >事件控制措施:</label>
+				<div class="col-md-10" style="border: 1px gray solid; width: 800px;">
+					<div class="input-daterange input-group date" >
+						#formCheckboxesLable("controlMeasure" "$!emHealthReport.eventLevelId" $dicData.dicControlMeasure7 "" "" "class='checkbox-inline i-checks'")
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</form>
+</div>
+<div class="modal-footer" style="text-align: center">
+	<button onclick="saveEmHealthReport();" type="button" class="btn btn-success">
+		<i class="fa fa-save"></i> 下一步
+	</button>
+	<button type="button" class="btn btn-warning" data-dismiss="modal">
+		<i class="fa fa-close"></i> 关闭
+	</button>
+</div>
+
+#parse("./common/common.js.vm")
+
+<script>
+
+        // 提交上转申请表单
+        function saveEmHealthReport() {
+        	 var emEventTypeParams = common.serializeObject($('#emEventTypeForm'));
+            
+            if (emHealthReportParams.fillTime == undefined || emHealthReportParams.fillTime == "") {
+                common.alert("请选择填报日期！",0);
+                return false;
+            }
+            if (emHealthReportParams.eventName == undefined || emHealthReportParams.eventName == "") {
+                common.alert("请填报事件名称！",0);
+                return false;
+            }
+            if (emHealthReportParams.inoculateTime == undefined || emHealthReportParams.inoculateTime == "") {
+                common.alert("请选择接种时间！",0);
+                return false;
+            }
+    	    if (!checkMobile(emHealthReportParams.diseaseFactorSubtype) && !checkPhone(emHealthReportParams.diseaseFactorSubtype)) {
+    	    	common.alert("请勾选致病因素！",0);
+    			return false;
+    		}
+            if (emHealthReportParams.controlMeasure == undefined || emHealthReportParams.controlMeasure == "") {
+                common.alert("请勾选事件控制措施！",0);
+                return false;
+            }
+             
+            $.post("../emHealthReport/addEventType.do", emEventTypeParams, function (result) {
+                if (result.code == "0") {
+                    $('#submitFlag').val("1");
+                    $("#healthReportId").val( result.data.healthReportId);
+                    common.alert("保存成功",0);
+                    query();//重新查询
+                } else {
+                    common.alert("保存失败",0);
+                    $('#submitFlag').val("");
+                }
+            }, "json");
+        }
+</script>
+

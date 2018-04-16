@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 单位id -->
+    <bean id="CONST_IdForQgs" class="java.lang.String">
+        <!--数据库中sys_department的编号固定为1 的单位-->
+        <constructor-arg type="java.lang.String"><value>1</value></constructor-arg>
+    </bean>
+
+    <!--    Excel文件的模式的常量-->
+    <bean id="FILENAME_IDENTIFIER" class="java.lang.String" init-method="">
+        <!--导出Excel文件的名字的模式的常量 -->
+        <constructor-arg type="java.lang.String"><value>FILENAME</value></constructor-arg>
+    </bean>
+
+</beans>

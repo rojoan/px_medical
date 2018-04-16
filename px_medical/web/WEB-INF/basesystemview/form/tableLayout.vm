@@ -1,0 +1,37 @@
+#set($colCount = ${info.option('colCount', 3)})
+#set($labelWidth = ${info.option('labelWidth', 80)})
+#set($rowHeight = ${info.option('rowHeight', 28)})
+<form id="$!{info.name}" name="$!{info.name}" action="$!{info.action}" method="$!{info.method}" class="i-form i-layout-table" tipMode="${info.option('tipMode', 'inplace')}">
+#foreach($field in ${info.fields}) #if(${field.type} == "hidden")
+<input type="hidden" name="$!{field.name}" value="$!{field.valueString}" noclean="true"></input>
+#end #end
+<table class="i-form-table" width="100%" cellpadding="0" cellspacing="0">
+#set($colIndex = 0)
+#foreach($field in ${info.fields}) #if(${field.type} != "hidden")
+#set($cols = ${field.option('cols', 1)})
+#set($cellWidth = $cols * 100 / $colCount)
+#if($colIndex == 0)
+<tr>
+#elseif($colIndex + $cols > $colCount)
+<td colspan="${cols}"></td></tr><tr>#set($colIndex = 0)
+#end
+<td colspan="${cols}" style="height:${rowHeight}px;width:${cellWidth}%;">
+<table width="100%" height="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+#if(${field.label} != "")<td class="i-label-wrap" style="width:${labelWidth}px" valign=top>#if($field.required)<span class="i-required">*</span>#end ${field.label}</td>#end
+<td class="i-field-wrap" #if(${field.label} == "")colspan="2"#end>
+#if(${field.mode} == '')
+#parse('form/field.vm')
+#else
+#set($fieldvm = "form/${field.mode}.vm")#parse($fieldvm)
+#end
+</td>
+</tr></table>
+</td>
+#set($colIndex = $colIndex + $cols)
+#if($colIndex == $colCount)
+#set($colIndex = 0)</tr>
+#elseif($colIndex == $colCount)
+#end
+#end #end
+</table>
+</form>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+    <link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../resource/css/font-awesome.css" rel="stylesheet">
+    <link href="../resource/style/iconfont/iconfont.css" rel="stylesheet">
+    <link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../resource/css/plugins/datatimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" >
+    <link href="../resource/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="../resource/css/plugins/bootstrap-select/bootstrap-select.css" rel="stylesheet">
+    <link href="../resource/css/plugins/citypicker/city-picker.css" rel="stylesheet">
+    <link href="../resource/css/plugins/popover/bootstrap-popover-x.css" rel="stylesheet">
+    <link href="../resource/css/animate.css" rel="stylesheet">
+    <link href="../resource/css/style.css" rel="stylesheet">
+    <link href="../resource/style/css/page.css" rel="stylesheet">
+    <style>
+        body { background: #f8fafb}
+        button.close {
+	position: relative;
+	z-index: 5555;
+	right: 9px;
+	top: 5px;
+}
+    </style>
+</head>
+<body class="top-navigation gray-bg-1">
+	#set($bottomHeigth = "49px")
+	#if("$!mode" == "show")
+		#set($bottomHeigth = "0px")
+	#end
+    <div class="modal-body full-height" style="height: calc(100% - $!bottomHeigth); padding: 0; "><!--如果弹窗没有底部菜单栏则 -44px 没有标题减去49 -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#tab-1">第一页</a></li>
+            <li class=""><a data-toggle="tab" href="#tab-2">第二页</a></li>
+            <li class=""><a data-toggle="tab" href="#tab-3">第三页</a></li>
+            <li class=""><a data-toggle="tab" href="#tab-4">第四页</a></li>
+        </ul>
+        <div class="tab-content full-height-scroll table-content" style="height: calc(100% - 40px); padding: 9px 8px 9px 12px;">
+            <div id="tab-1" class="tab-pane full-height active">
+            	#if("$!mode" == "show")
+            		#parse("./publichealth/module/examPersonShow.BaseInfo.vm")
+            	#else
+            		#parse("./publichealth/module/examPersonEdit.BaseInfo.vm")
+            	#end
+            </div>
+            <!-- 脏器功能 -->
+            <div id="tab-2" class="tab-pane full-height">
+            	#if("$!mode" == "show")
+            		#parse("./publichealth/module/examPersonShow.viscera.vm")
+            	#else
+            		#parse("./publichealth/module/examPersonEdit.viscera.vm")
+            	#end
+            </div>
+			<!-- 辅助检查 -->
+            <div id="tab-3" class="tab-pane">
+            	#if("$!mode" == "show")
+            		#parse("./publichealth/module/examPersonShow.assist.vm")
+            	#else
+            		#parse("./publichealth/module/examPersonEdit.assist.vm")
+            	#end
+            </div>
+            <!-- 治疗、用药等情况 -->
+            <div id="tab-4" class="tab-pane">
+            	#if("$!mode" == "show")
+            		#parse("./publichealth/module/examPersonShow.treat.vm")
+            	#else
+            		#parse("./publichealth/module/examPersonEdit.treat.vm")
+            	#end
+            </div>
+        </div>
+    </div>
+    #if("$!mode" != "show")
+	    <div class="modal-footer" style="text-align: center">
+	        <button type="button" id="btn_save" class="btn btn-success"><i class="fa fa-save"></i> 保存 </button>
+	    </div>
+	
+		<!-- 弹出选择药品层111 -->
+		<div class="modal inmodal full-height" id="selectDiseaseDrug" tabindex="-1" data-backdrop="static">
+			<div class="modal-dialog" style="margin: 50px auto; width: calc(100% - 20%); height: calc(100% - 16%);">
+				<div class="modal-content animated bounceInRight full-height">
+					<button type="button" class="close tabs" data-dismiss="modal">
+						<span aria-hidden="true"><i class="fa fa-close"></i></span> 
+						<span class="sr-only"><i class="fa fa-close"></i></span>
+					</button>
+					<iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="../diseaseDrug/chronicDrugList.do" style="margin-top: -24px;" frameborder="0"></iframe>
+				</div>
+			</div>
+		</div>
+		<!-- 弹出选择居民信息层 -->
+		<div class="modal inmodal full-height" id="selectPersonDetail" tabindex="-1" data-backdrop="static">
+			<div class="modal-dialog" style="margin: 50px auto; width: calc(100% - 20%); height: calc(100% - 16%);">
+				<div class="modal-content animated bounceInRight full-height">
+					<button type="button" class="close tabs" data-dismiss="modal">
+						<span aria-hidden="true"><i class="fa fa-close"></i></span> 
+						<span class="sr-only"><i class="fa fa-close"></i></span>
+					</button>
+					<iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="../personDetail/selectPersonDetail.do" style="margin-top: -24px;" frameborder="0"></iframe>
+				</div>
+			</div>
+		</div>
+	#end
+	<!-- 全局js -->
+    <script src="../resource/js/jquery.min.js"></script>
+    <script src="../resource/js/bootstrap.min.js"></script>
+    <script src="../resource/js/plugins/layer/layer.min.js"></script>
+    <script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+    <script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+    <script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+    <script src="../resource/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="../resource/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="../resource/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../resource/js/plugins/layer/laydate/laydate.js"></script>
+    <!--当前位置弹框插件-->
+	<script src="../resource/js/plugins/popover/bootstrap-popover-x.js"></script>
+    <!--城市插件-->
+    <script src="../resource/js/plugins/citypicker/city-picker.data.js"></script>
+    <script src="../resource/js/plugins/citypicker/city-picker.js"></script>
+    <script src="../resource/style/js/ui.js"></script>
+    
+    #parse("./common/common.js.vm")
+	<!-- 页面js -->
+	#parse("./publichealth/examPersonEdit.js.vm")
+</body>
+
+</html>

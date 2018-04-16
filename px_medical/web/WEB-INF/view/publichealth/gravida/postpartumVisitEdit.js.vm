@@ -1,0 +1,95 @@
+<script type="text/javascript">
+     
+    // 提交表单
+    function savePostpartumVisit() {
+         var postpartumVisitParam = common.serializeObject($('#postpartumVisitForm'));
+         if (isBlank(postpartumVisitParam.gravidaName)) {
+             common.alert('请选择人员姓名',0);
+             $('#gravidaName').focus();
+             return false;
+         }
+         if (isBlank(postpartumVisitParam.regionId)) {
+             common.alert("人员的所在街道信息不存在，请先完善街道信息",0);
+             return false;
+         }  
+         if (isBlank(postpartumVisitParam.commonHealth)) {
+             common.alert("请填写一般健康情况",0);
+             $('#commonHealth').focus();
+             return false;
+         }  
+         if (isBlank(postpartumVisitParam.mentalityState)) {
+             common.alert("请填写一般心理状况",0);
+             $('#mentalityState').focus();
+             return false;
+         }  
+         if (isBlank(postpartumVisitParam.mentalityFlag)) {
+             common.alert("请选择是否 情绪低落、容易掉泪、精神懒散等现象",0);
+             $('#mentalityFlag').focus();
+             return false;
+         }  
+         if (isBlank(postpartumVisitParam.breastFeeding)) {
+             common.alert("请填写母乳喂养情况",0);
+             $('#breastFeeding').focus();
+             return false;
+         }  
+         if (isBlank(postpartumVisitParam.healthGuide)) {
+             common.alert("请选择指导",0);
+             $('#healthGuide').focus();
+             return false;
+         }  
+         if (isBlank(postpartumVisitParam.visitTime)) {
+             common.alert("请填写随访日期",0);
+             $('#visitTime').focus();
+             return false;
+         }  
+         if (isBlank(postpartumVisitParam.nextVisitTime)) {
+             common.alert("请填写下次随访日期",0);
+             $('#nextVisitTime').focus();
+             return false;
+         }  
+         
+         $.post("../gravidaHeathCare/savePostpartumVisit.jo", postpartumVisitParam,  function (result) {
+             if (result.code == "0") {
+                 common.alert("保存成功",0);
+              // 关闭窗口
+                 var index = parent.layer.getFrameIndex(window.name);
+                 parent.layer.close(index); 
+             } else {
+                 common.alert(result.msg,2);
+             }
+         }, "json");
+     }
+    
+    //查看 设置 readonly、disabled
+    $(document).ready(function() {
+        var jqForm = $('#postpartumVisitForm');
+        if('show' == '$!mode'){
+            jqForm.find('input').attr('readonly',true);
+            jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+            jqForm.find('select').attr('disabled',true);
+            jqForm.find('textarea').attr('readonly',true);
+        }
+        
+        //指导-选择事件
+        healthGuideEvent();
+    });
+    
+    //指导-选择事件
+    function healthGuideEvent(){
+        var dicHealthGuide = JSON.parse('$dicTools.changeMapToJson($dicData.dicHealthGuide)'); 
+        $('input[name="healthGuide"]').on('ifClicked', function(event){
+             var healthGuideValue = $(this).val();
+             var healthGuide = dicHealthGuide[healthGuideValue];
+             //如果是'其他'
+             if(healthGuide == '其他'){
+                 if($(this).is(':checked')){//当前状态是否为选中  ，click事件在change事件之前
+                    //设置- 其他情况 的输入内容
+                    $('#otherHealthGuide').val('');
+                    $('#otherHealthGuide').attr('readonly',true);
+                 }else{
+                     $('#otherHealthGuide').attr('readonly',false);
+                 }
+             }
+        });
+    }
+</script>

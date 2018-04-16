@@ -1,0 +1,328 @@
+<form id="formBaeInfo" class="form-horizontal ">
+    <!--基本信息-->
+    <div class="row m-l-xs m-r-xs">
+        <div class="text-box"><h5>基本信息</h5></div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none p-l-none red">参检人姓名</label>
+            <div class="col-sm-2">
+            	#formTextInput("examedPersonName" "#htmlEscape($!examPerson.examedPersonName)" "maxlength='15' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none red">参检人性别</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examedPersonGender" "$!examPerson.examedPersonGender" $!{dicData.dicSex} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">参检人年龄</label>
+            <div class="col-xs-2">
+            	#formTextInput("curExamedPersonAge" "$!examPerson.curExamedPersonAge" "maxlength='3' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+        	<label class="col-sm-1 control-label text-right p-r-none red">体检编号</label>
+            <div class="col-xs-2">
+            	#formTextInput("examBillNo" "#htmlEscape($!examPerson.examBillNo)" "maxlength='25' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">体检日期</label>
+            <div class="col-xs-2">
+                <div class=" input-daterange date">
+                	#formTextInput("examTime" "$!date.format('yyyy-MM-dd', $!examPerson.examTime)" "class='form-control' readonly")
+                </div>
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none red">责任医生</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("dutyDoctorId" "" "" "id='dutyDoctorId' class='chosen-select' style='min-width: 172px;' disabled='disabled' data-placeholder='&nbsp;'" "")
+            </div>
+            <label class="col-sm-3 m-t-xs i-checks">
+            #set($check = "")
+            #if("$!examPerson.freeFlag" == "1")
+            	#set($check = "checked='checked'")
+            #end
+            #formSimpleCheckbox("freeFlag" "1" "" "class='m-t-xs m-r-xs i-checks' $!check disabled='disabled'" " 是否免费体检")
+        </div>
+    </div>
+    <!--症状-->
+    <div class="row m-l-xs m-r-xs">
+        <div class="text-box"><h5>症状</h5></div>
+        <div class="form-group">
+            <div class="col-sm-12">
+            	#formCheckboxesLable("symptomIds" $!sxamSymptomIds $!dicData.dicAllExamSymptom "&nbsp;" "disabled='disabled'" "class='col-sm-1 m-t-xs i-checks'")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">其他症状</label>
+            <div class="col-sm-10">
+            	#formTextInput("symptomOtherContent" "#htmlEscape($!examPerson.symptomOtherContent)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+    </div>
+    <!--一般状态-->
+    <div class="row m-l-xs m-r-xs">
+        <div class="text-box"><h5>一般状态</h5></div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">体温</label>
+            <div class="col-sm-2">
+            	#formTextInput("temperature" "$!examPerson.temperature" "maxlength='3' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">℃</div>
+            <label class="col-sm-1 control-label text-right p-r-none">脉率</label>
+            <div class="col-sm-2">
+            	#formTextInput("pulseRate" "$!examPerson.pulseRate" "maxlength='3' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">次/分</div>
+            <label class="col-sm-1 control-label text-right p-r-none">呼吸频率</label>
+            <div class="col-sm-2">
+            	#formTextInput("breathingRate" "$!examPerson.breathingRate" "maxlength='2' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">次/分</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-n">左侧血压</label>
+            <div class=" input-group col-sm-2" style="padding-left: 9px; display: inline-table; float: left">
+            	#formTextInput("lminBloodPressure" "$!examPerson.lminBloodPressure" "maxlength='3' class='input-xs form-control' readonly")
+                <span class="input-group-addon">/</span>
+                #formTextInput("lmaxBloodPressure" "$!examPerson.lmaxBloodPressure" "maxlength='3' class='input-xs form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">mmHg</div>
+            <label class="col-sm-1 control-label text-right p-r-none">身高</label>
+            <div class="col-sm-2">
+            	#formTextInput("height" "$!examPerson.height" "maxlength='4' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">cm</div>
+            <label class="col-sm-1 control-label text-right p-r-none">体重</label>
+            <div class="col-sm-2">
+                #formTextInput("weight" "$!examPerson.weight" "maxlength='4' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">kg</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-n">右侧血压</label>
+            <div class=" input-group col-sm-2" style="padding-left: 9px; display: inline-table; float: left">
+            	#formTextInput("rminBloodPressure" "$!examPerson.rminBloodPressure" "maxlength='3' class='input-sm form-control' readonly")
+                <span class="input-group-addon">/</span>
+                #formTextInput("rmaxBloodPressure" "$!examPerson.rmaxBloodPressure" "maxlength='3' class='input-sm form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">mmHg</div>
+            <label class="col-sm-1 control-label text-right p-r-none">腰围</label>
+            <div class="col-sm-2">
+            	#formTextInput("waistline" "$!examPerson.waistline" "maxlength='4' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">cm</div>
+            <!-- 
+            <label class="col-sm-1 control-label text-right p-r-none">BMI</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" disabled>
+            </div>
+             -->
+        </div>
+    </div>
+    
+    <!--老年人-->
+    <div class="row m-l-xs m-r-xs white-bg" style="border-radius: 7px; padding: 9px 9px 0 9px; border: #ededed 1px solid">
+        <div class="col-sm-1" style="width: 30px; background: #F7F9FA; padding: 9px; font-weight: bold">老<br><br>年<br><br>人</div>
+        <div class="col-sm-11">
+            <div class="form-group">
+                <label class="col-sm-2 control-label text-right p-r-n">健康状态自我评估</label>
+                <div class="col-sm-4">
+                	#formSingleSelectFirstNone("examElder.healthAssess" "$!examElder.healthAssess" $!{dicData.dicHealthAssess} "class='form-control' disabled='disabled'" "")
+                </div>
+                <label class="col-sm-3 control-label text-right p-r-n">简易智力状态检查，总分</label>
+                <div class="col-sm-3">
+                	#formTextInput("examElder.intelligenceCheck" "$!examElder.intelligenceCheck" "maxlength='3' class='form-control' readonly")
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label text-right p-r-n">认知能力</label>
+                <div class="col-sm-4">
+                    #formSingleSelectFirstNone("examElder.cognitiveFunction" "$!examElder.cognitiveFunction" $!{dicData.dicEmotionCondition} "class='form-control' disabled='disabled'" "")
+                </div>
+                <label class="col-sm-3 control-label text-right p-r-n">生活处理能力自我评估</label>
+                <div class="col-sm-3">
+                	#formSingleSelectFirstNone("examElder.liveSelfAssess" "$!examElder.liveSelfAssess" $!{dicData.dicLiveSelfAssess} "class='form-control' disabled='disabled'" "")
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label text-right p-r-n">情感状态</label>
+                <div class="col-sm-4">
+                    #formSingleSelectFirstNone("examElder.emotionCondition" "$!examElder.emotionCondition" $!{dicData.dicEmotionCondition} "class='form-control' disabled='disabled'" "")
+                </div>
+                <label class="col-sm-3 control-label text-right p-r-n">抑郁评分检查，总分</label>
+                <div class="col-sm-3">
+                	#formTextInput("examElder.depressionCheck" "$!examElder.depressionCheck" "maxlength='3' class='form-control' readonly")
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--生活方式-->
+    <div class="row m-l-xs m-r-xs">
+        <div class="text-box"><h5>生活方式</h5></div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">锻炼频率</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.exeFrequency" "$!liveWay.exeFrequency" $!{dicData.dicExeFrequency} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">每次锻炼时间</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.exeTimeEvery" "$!liveWay.exeTimeEvery" "maxlength='10' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">分钟</div>
+            <label class="col-sm-1 control-label text-right p-r-none">坚持锻炼时间</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.exeTimeYear" "$!liveWay.exeTimeYear" "maxlength='10' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">年</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">锻炼方式</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.exeType" "$!liveWay.exeType" "maxlength='10' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">饮食习惯</label>
+            <div class="col-sm-8 m-t-xs">
+            	#formCheckboxesLable("dietaryHabitIds" $!dietaryIds $!dicData.dicDietaryHabit "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">吸烟情况</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.smokeState" "$!liveWay.smokeState" $!{dicData.dicSmokeState} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">日吸烟量</label>
+            <div class="col-sm-1">
+            	#formTextInput("examLiveWay.smokeDay" "$!liveWay.smokeDay" "maxlength='3' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">支</div>
+            <label class="col-sm-1 control-label text-right p-r-none">开始吸烟年龄</label>
+            <div class="col-sm-1">
+            	#formTextInput("examLiveWay.smokeStartAge" "$!liveWay.smokeStartAge" "maxlength='2' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">岁</div>
+            <label class="col-sm-1 control-label text-right p-r-none">戒烟年龄</label>
+            <div class="col-sm-1">
+            	#formTextInput("examLiveWay.giveUpSmokeAge" "$!liveWay.giveUpSmokeAge" "maxlength='3' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">岁</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">饮酒频率</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.drinkFrequency" "$!liveWay.drinkFrequency" $!{dicData.dicDrinkFrequency} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">日饮酒量</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.drinkDay" "$!liveWay.drinkDay" "maxlength='2' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">两</div>
+            <label class="col-sm-1 control-label text-right p-r-none">开始饮酒年龄</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.drinkStartAge" "$!liveWay.drinkStartAge" "maxlength='3' class='form-control' disabled='disabled'")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">岁</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">是否戒酒</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.giveUpDrink" "$!liveWay.giveUpDrink" $!{dicData.dicGiveUpDrink} "class='form-control' disabled='disabled'" "")
+            </div>
+            
+            <label class="col-sm-1 control-label text-right p-r-none">戒酒年龄</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.giveUpDrinkAge" "$!liveWay.giveUpDrinkAge" "maxlength='3' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label" style="text-align: left">岁</div>
+            <label class="col-sm-1 control-label text-right p-r-none">一年内曾醉酒</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.nearYearDrunk" "$!liveWay.nearYearDrunk" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">饮酒种类</label>
+            <div class="col-sm-6 m-t-xs" style="width: auto; padding-right: 0px;">
+            	#formCheckboxesLable("drinkTypeIds" $!drinkIds $!dicData.dicDrinkType "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+            <div class="col-sm-5" style="padding-left: 0px;">
+            	#formTextInput("examLiveWay.otherDrinkType" "#htmlEscape($!liveWay.otherDrinkType)" "maxlength='20' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">职业危害因素</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.harmCareerFlag" "$!liveWay.harmCareerFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">工种</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.harmCareer" "#htmlEscape($!liveWay.harmCareer)" "maxlength='20' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">从业时间</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.harmCareerAge" "$!date.format('yyyy-MM-dd', $!liveWay.harmCareerAge)" "class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">粉尘</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.dustFactor" "#htmlEscape($!liveWay.dustFactor)" "maxlength='20' class='form-control' readonly")
+            	##formSingleSelectFirstNone("examLiveWay.dustFactor" "" $!{dicData.dicExeFrequency} "class='form-control'" "")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">防护措施</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.dustFlag" "$!liveWay.dustFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-5">
+            	#formTextInput("examLiveWay.dustDefend" "#htmlEscape($!liveWay.dustDefend)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">放射物质</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.rayFactor" "#htmlEscape($!liveWay.rayFactor)" "maxlength='20' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">防护措施</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.rayFlag" "$!liveWay.rayFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-5">
+            	#formTextInput("examLiveWay.rayDefend" "#htmlEscape($!liveWay.rayDefend)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">物理因素</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.physicsFactor" "#htmlEscape($!liveWay.physicsFactor)" "maxlength='20' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">防护措施</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.physicsFlag" "$!liveWay.physicsFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-5">
+            	#formTextInput("examLiveWay.physicsDefend" "#htmlEscape($!liveWay.physicsDefend)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">化学物质</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.chemFactor" "#htmlEscape($!liveWay.chemFactor)" "maxlength='20' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">防护措施</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.chemFlag" "$!liveWay.chemFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-5">
+            	#formTextInput("examLiveWay.chemDefend" "#htmlEscape($!liveWay.chemDefend)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">其他</label>
+            <div class="col-sm-2">
+            	#formTextInput("examLiveWay.otherFactor" "#htmlEscape($!liveWay.otherFactor)" "maxlength='20' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">防护措施</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("examLiveWay.otherFlag" "$!liveWay.otherFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+            <div class="col-sm-5">
+            	#formTextInput("examLiveWay.otherDefend" "#htmlEscape($!liveWay.otherDefend)" "maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+    </div>
+</form>

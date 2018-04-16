@@ -1,0 +1,50 @@
+<script type="text/javascript">
+     
+    // 提交表单
+    function saveGravidaParturition() {
+         var gravidaParturitionParams = common.serializeObject($('#gravidaParturitionForm'));
+         if (isBlank(gravidaParturitionParams.gravidaName)) {
+             common.alert("请选择人员姓名",0);
+             $("#gravidaName").focus();
+             return false;
+         }
+         if (isBlank(gravidaParturitionParams.regionId)) {
+             common.alert("人员的所在街道信息不存在，请先完善街道信息",0);
+             return false;
+         }
+         if (isBlank(gravidaParturitionParams.pregnancyWeek)) {
+             common.alert("请填写孕周",0);
+             return false;
+         }
+         if (isBlank(gravidaParturitionParams.fetusNum)) {
+             common.alert("请填写胎数",0);
+             return false;
+         }
+         if (isBlank(gravidaParturitionParams.bloodFlowVolume)) {
+             common.alert("请填写血流量",0);
+             return false;
+         }
+         
+         $.post("../gravidaHeathCare/saveGravidaParturition.jo", gravidaParturitionParams,  function (result) {
+             if (result.code == "0") {
+                 common.alert("保存成功",0);
+              // 关闭窗口
+                 var index = parent.layer.getFrameIndex(window.name);
+                 parent.layer.close(index); 
+             } else {
+                 common.alert(result.msg,2);
+             }
+         }, "json");
+     }
+    
+    //查看 设置 readonly、disabled
+    $(document).ready(function() {
+        var jqForm = $('#gravidaParturitionForm');
+        if('show' == '$!mode'){
+            jqForm.find('input').attr('readonly',true);
+            jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+            jqForm.find('select').attr('disabled',true);
+            jqForm.find('textarea').attr('readonly',true);
+        }
+    });
+</script>

@@ -1,0 +1,172 @@
+<script>
+var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+$(document).ready(function () {
+	// 新增登记
+    $('#btn_add_register').click(function (){
+    	var title = '重性精神病患者随访编辑<span class="must-red font-14">( 红字为必填 )</span>';
+    	common.open(contextPath + '/personInsanity/personInsanityEdit.do?view=personInsanityRecordEdit', title, {area: ['99%', '99%']});
+    });
+
+	// 删除
+	$('#btn_delete').click(function (){
+		var ids = [];
+		var row = common.getTableSelectRow('personInsanityList', true);
+		if (row.length == undefined || row.length <= 0) {
+			common.alert("请选择要删除的数据", 0);
+    		return ;
+		}
+		$.each(row, function (){
+			ids.push(this.personInsanityId);
+		});
+		common.confirm("确定要删除吗？", function (){
+			$.post(
+					contextPath +'/personInsanity/deletePersonInsanity.jo',
+					{ids: ids.join(',')}, 
+					function (result){
+						if (result.code == "0") {
+							$('#btn_query').click();
+						} else {
+							common.alert(result.msg, 2);
+						}
+					}, 
+			'json').error(function (e){jqueryPostError(e)});
+		});
+    });
+	
+    // 查询按钮
+    $('#btn_query').click(function (){
+    	var queryParams = common.serializeObject($('#queryForm'));
+    	var options = {url: '../personInsanity/personInsanityRecordDataList.jo', silent: false, query: queryParams};
+    	$('#personInsanityList').bootstrapTable('refresh', options); 
+    });
+    
+ 	// 清空按钮
+    $('#btn_clean').click(function (){
+    	$('#gender').val('');
+    	$('#familyRelId').val('');
+    	$('#patientName').val('');
+    	$('#beginBirthDate').val('');
+    	$('#endBirthDate').val('');
+    	
+    	$('#guardianName').val('');
+    	$('#linkmanName').val('');
+    	$('#censusFlag').val('');
+    	$('#beginDiseaseConfirmTime').val('');
+    	$('#endDiseaseConfirmTime').val('');
+    });
+    
+    var dicFamilyRel = JSON.parse('$dicTools.changeMapToJson($dicData.dicFamilyRel)'); 
+ 	// 初始化列表数据
+    $('#personInsanityList').bootstrapTable({
+		url : "../personInsanity/personInsanityRecordDataList.jo",
+		mobileResponsive : true,
+		pagination : true,
+		pageNumber : true,
+		cache : false,
+		striped: true,
+		//clickToSelect: true,
+		singleSelect: false,
+		pageSize : "10",
+		pageNumber : "1",
+		height : "500",
+		queryParamsType : "",
+		sidePagination : 'server',
+		halign : "center",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		columns : [
+		{ checkbox:true }, 
+		{
+			field : 'patientName',
+			title : '患者姓名'
+		}, {
+			field : 'gender',
+			title : '性 别',
+			formatter :function (value, row, index) {
+				return dicSex[row.gender];
+			}
+		}, {
+			field : 'birthDate',
+			title : '出生日期'
+		}, {
+			field : 'familyRelId',
+			title : '监护人与患者关系',
+			formatter :function (value, row, index) {
+				return dicFamilyRel[row.familyRelId];
+			}
+		}, {
+            field : 'guardianName',
+            title : '监护人姓名'
+        }, {
+			field : 'guardianPhone',
+			title : '监护人电话'
+		}, {
+			field : 'linkmanName',
+			title : '联系人姓名'
+		}, {
+			field : 'linkmanPhone',
+			title : '联系人电话'
+		}, {
+			field : 'diseaseConfirmTime',
+			title : '确诊日期'
+		}, {
+   			field : 'operate',
+   			title : '操作',
+   			events : operateEvents,
+   			formatter : operateFormatter
+   		}],
+		onDblClickRow: function (row, element){
+			var title = '<div style="width:100%; text-align:center"><b>' + row.patientName + '（' + dicSex[row.gender] + '）</b></div>';
+	    	common.open(contextPath + '/personInsanity/personInsanityShow.do?personInsanityId=' + row.personInsanityId, title, {area: ['99%', '99%']});
+		},
+		onLoadSuccess : function(){
+			var height = ($('#personInsanityList').parents("body").height() - $('#queryForm').parents(".ibox").height() - 72);
+			$('#personInsanityList').bootstrapTable('resetView', {height: height}); 
+		}
+	});
+});
+window.operateEvents = {
+		"click #btn_add_visit": function(e, value, row, index) {
+			var title = '重性精神病患者随访编辑<span class="must-red font-14">( 红字为必填 )</span>';
+	    	common.open(contextPath + '/personInsanity/personInsanityVisitEdit.do?view=personInsanityVisitEdit&personInsanityId=' + row.personInsanityId, title, {area: ['99%', '99%']});
+		
+		},
+		"click #btn_show_register": function(e, value, row, index) {
+			var title = '<div style="width:100%; text-align:center"><b>' + row.patientName + '（' + dicSex[row.gender] + '）</b></div>';
+	    	common.open(contextPath + '/personInsanity/personInsanityShow.do?personInsanityId=' + row.personInsanityId, title, { area: ['99%', '99%']});
+	    	
+		},
+		"click #btn_edit_register": function(e, value, row, index) {
+			var title = '重性精神病患者登记编辑 <span class="must-red font-14">( 红字为必填 )</span>';
+	    	common.open(contextPath + '/personInsanity/personInsanityEdit.do?view=personInsanityRecordEdit&personInsanityId=' + row.personInsanityId, title, {area: ['99%', '99%']});
+		},
+		"click #btn_del_register": function(e, value, row, index) {
+			common.confirm("确定要删除吗？", function (){
+				$.post(
+					contextPath +'/personInsanity/deletePersonInsanity.jo',
+					{ids: row.personInsanityId}, 
+					function (result){
+						if (result.code == "0") {
+							$('#btn_query').click();
+						} else {
+							common.alert(result.msg, 2);
+						}
+					}, 
+				'json').error(function (e){jqueryPostError(e)});
+			});
+		}
+	};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_add_visit" href="javascript:void(0)" title="添加随访"><i class="fa fa-plus-square"></i></a>',
+				'<a id="btn_show_register" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+	            '<a id="btn_edit_register" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+	            '<a id="btn_del_register" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+	            ];
+	return html.join('');
+}
+</script>

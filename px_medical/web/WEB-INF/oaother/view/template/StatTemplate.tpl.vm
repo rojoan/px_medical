@@ -1,0 +1,209 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+  <link href="../script/css.css" rel="stylesheet" type="text/css" />
+#if(${_layout.jslib.calendar})  <link href="../script/DHTML_calendar_style.css" rel="stylesheet" type="text/css" media="all"  title="calendar_style" />
+#end
+  <script language="javascript" type="text/javascript" src="../script/common.js"></script>
+  <script language="javascript" type="text/javascript" src="../script/appcommon.js"></script>
+#if(${_layout.jslib.validator})  <script language="JavaScript" type="text/javascript" src="../script/validator.js"></script>
+#end
+#if(${_layout.jslib.calendar})  <script language="JavaScript" type="text/javascript" src="../script/DHTML_calendar.js"></script>
+#end
+<script language="JavaScript">
+#if($message)
+alert("$message");
+#end
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top" height="1">
+    <td>
+      <table width="100%" height="26" border="0" cellpadding="0" cellspacing="0" class="table_bg">
+        <tr>
+          <td height="24">
+            <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0" class="pagetitle">
+              <tr>
+                <td>
+                  <table width="100%" border="0" cellpadding="0" cellspacing="0" class="unnamed1">
+                    <tr> <!-- 页面标题及相关按钮 begin --->
+                      <td width="1%"></td>
+                      <td width="49%" height="24">
+                        <img src="../images/mb_top_zl1.gif" width="16" height="13" align="absmiddle" alt="工具条" />
+                        <span class="text12">$!{_layout.title}</span>
+                      </td>
+                      <td width="49%" align="right" valign="middle" class="text12">
+                      </td>
+                      <td width="1%"></td>
+                    </tr> <!-- 页面标题及相关按钮 end --->
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td>
+      <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0" class="table_border">
+        <tr valign="top" height="1">
+          <td>
+            <table width="100%" border="0" cellpadding="3" cellspacing="0" class="t">
+<form name="$!{_layout.queryForm.name}" method="post" action="$!{_layout.queryForm.action}">
+            <!-- 输入框 Begin --->
+     <tbody id="queryBody" style="display:none">
+##!!!!!!!!! $command对应的查询条件对象实例，在Controller中以command的名字将查询条件put到model中
+##
+###############可隐藏的查询条件从这里开始加入
+##
+#set($queryBeanMap = ${HELPER_BEAN.getBeanNameMap(${command})})
+#set($nowcol = "1")
+#foreach($hidecell in ${_layout.hideQueryCondition})
+#if("1" == $nowcol)
+#set($nowcol = "2")
+              <tr align="center">
+                <td width="18%" align="right" class="textarea">$!{hidecell.title}</td>
+                <td width="32%" align="left" class="inputarea">
+#inputField($hidecell ${queryBeanMap})
+                </td>
+#else
+#set($nowcol = "1")
+                <td width="18%" align="right" class="textarea">$!{hidecell.title}</td>
+                <td width="32%" align="left" class="inputarea">
+#inputField($hidecell ${queryBeanMap})
+                </td>
+              </tr>
+#end##endif
+#end
+#if("2" == $nowcol)
+                <td width="18%" align="right" class="textarea"></td>
+                <td width="32%" align="left" class="inputarea"></td>
+              </tr>
+#end
+##
+###############可隐藏的查询条件到这里加入结束
+##
+       </tbody>
+##
+###############主要的查询条件从这里开始加入
+##
+#set($nowcol = "1")
+#foreach($showcell in ${_layout.queryCondition})
+#if("1" == $nowcol)
+#set($nowcol = "2")
+              <tr align="center">
+                <td width="18%" align="right" class="textarea">${showcell.title}</td>
+                <td width="32%" align="left" class="inputarea">
+#inputField($showcell ${queryBeanMap})
+                </td>
+#else
+#set($nowcol = "1")
+                <td width="18%" align="right" class="textarea">${showcell.title}</td>
+                <td width="32%" align="left" class="inputarea">
+#inputField($showcell  ${queryBeanMap})
+                </td>
+              </tr>
+#end##endif
+#end
+#if("2" == $nowcol)
+                <td width="18%" align="right" class="textarea"></td>
+                <td width="32%" align="left" class="inputarea"></td>
+              </tr>
+#end
+              <tr align="center">
+                <td class="inputarea" colspan="4" align=center>
+#foreach($button in ${_layout.buttonList})
+#buttonField($button "com_btn" $queryBeanMap)
+#end
+                </td>
+              </tr>
+##
+###############主要的查询条件到这里加入结束
+##
+</form>
+            </table>
+#if(${columns})
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" class="t">
+##!!!!!!!!! $page对应Page的对象实例，是queryMethodService.selectQueryList在返回结果，Controller中以page的名字将该结果put到model中
+##  这里是显示分页控制的，就这么写，一般不要修改
+##  #changePage(分页数据对象 点击翻页时跳到的url)
+#changePage($page "#getRequestUri()")
+              <tr>
+                <td colspan="4" class="tablearea">
+                  <!-- 子项表格 Begin --->
+                  <table id="myTable" width="100%" border="0" cellspacing="0" cellpadding="1" class="detailTable">
+                    <!-- 子项表格标题 --->
+                    <tr align="center" >
+#foreach($col in ${columns})
+#set($dc=${_layout.columnsMap.get($col)})
+<td #if(${dc.width})width="$!{dc.width}"#end class="tabletitle">${dc.title}</td>
+#end
+                    </tr>
+                    <!-- 子项表格内容 --->
+
+##!!!!!!!!! $page.data中记录了实际查询返回的数据List对象，这里List中的对象对应Config-dxstock-demo.xml中
+##!!!!!!!!!                       demoStaffQueryMethodService的valueObjectClassName属性记录的类的对象
+                    #foreach($data in ${page.data})
+#set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+                         ##  #tableCellCss(行号值)
+                    #set($css = "#tableCellCss($velocityCount)") ##注意这里  选择单双行颜色的方法，$velocityCount是循环的行号变量，它从1开始
+                    <tr align="center" >
+#foreach($col in ${columns})
+#set($dc=${_layout.columnsMap.get($col)})
+#if(${dc.field})
+<td align=#if(${dc.align})"$!{dc.align}"#{else}left#end class="$css">#viewField($dc $dataBeanMap)</td>
+#elseif('button' == ${dc.type})
+<td align=#if(${dc.align})"$!{dc.align}"#{else}center#end class="$css">
+#foreach($bt in ${dc.buttonList})
+#buttonField($bt "com_btn" $dataBeanMap)
+#end
+</td>
+#end
+#end
+##                      <td class="$css">$!{data.mtNo}</td>
+##                      <td align="left" class="$css">$!{data.mtName}</td>
+##                      <td align="left" class="$css">$!{data.specsName}</td>
+##                      <td align="left" class="$css">$!{data.mtType.mtTypeName}</td>
+##                      <td class="$css">$!{data.mtUnit.unitName}</td>
+##                      <td align="right" class="$css"><span id="price_$velocityCount">#showNumber($!{data.price})</span></td>
+##                      <td class="$css">#lookUpDict($dicData.dicValid $!{data.isValid})</td>
+##                      <td class="$css">$!{data.sortId}</td>
+
+##                      <td class="$css">
+##                        #if("$!{command.showOnly}" != "1")
+##                        <input type="button" class="com_btn" value="调价" onclick="javascript:modifyMtPrices($!{data.mtId}, '0')" />
+##                        <input type="button" class="com_btn" value="修改" onclick="javascript:window.location='../basedata/mtinfEdit.do?mtId=$!{data.mtId}'" />
+##                        #else
+##                        <input type="button" class="com_btn" value="查看价格" onclick="javascript:modifyMtPrices($!{data.mtId}, '1')" />
+##                        #end
+##                      </td>
+
+                    </tr>
+                    #end
+                  </table>
+                  <!-- 子项表格 End --->
+                </td>
+              </tr>
+              <!-- 输入框End --->
+            </table>
+#end
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

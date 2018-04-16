@@ -1,0 +1,23 @@
+##用于对查询提交数据的较验,与QueryTemplate.tpl.vm配合使用 add by csx
+##validator是检查form中的field是否录入和合法的值的javascript对象
+##validator.formName记录要检查的form的名字
+    validator.formName = "$!{_layout.queryForm.name}";
+## addNormalCheckPoint(field的名字, 有错误时显示的文字, 检查类型);
+##   检查类型目前有：
+##          checkNotNull 检查field中是否为null，如是则不通过
+##          checkNotEmpty 检查field中是否为""，如是则不通过
+##          checkInt 检查field中是否为整数，如不是则不通过
+##          checkFloat 检查field中是否为浮点数，如不是则不通过
+##   多个类型之间用分号隔开
+#foreach($cell in $_layout.queryCondition)
+    #if(${cell.type}=="multiobj")
+        #foreach($childCell in $cell.objectList)
+            #validatorNormal("validator" $childCell)
+        #end
+	#else
+        #validatorNormal("validator" $cell)
+    #end
+#end
+#foreach($cell in $_layout.queryCondition)
+    #validatorRange("validator" $cell)
+#end

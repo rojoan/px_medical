@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>知识库列表</title>
+	<link rel="shortcut icon" href="../resource/favicon.ico">
+	#parse("./common/pageCss.vm")
+	#parse("./common/pageJs.vm")
+	<style>
+	  .zzk-list dl {margin:0 10px 0 10px}
+	  .zzk-list dl dd { display: inline-block; width: 48%; padding: 9px 0}
+	  .zzk-list a{ 
+	     margin-right: 15px;
+	     width: 50%;
+	 }
+	</style>
+</head>
+<body class="gray-bg">
+	<div class="ibox-content white-bg full-height" style="border:0" >
+		<div class="zzk-list">
+			<dl>
+				<!--信息热点列表　开始 --> 
+				#foreach($item in $!faqDetailList)
+					 <dd>
+						<a onClick="window.parent.showFaqDetail($!item.faqDetailId)" href="javascript:void(0)" title="#htmlEscape($!item.faqTitle)">
+					  		#htmlEscape($!item.faqTitle)
+					  	</a>
+					  	<span>($!item.clickCount)</span>
+					 </dd>
+				#end
+				<!--信息热点列表　结束-->
+			</dl>
+		</div>
+	</div>	
+	<form id="queryForm" action="../faq/faqList.jo">
+		<input type="hidden" id="faqTitle" name="faqTitle" value="" />
+		<input type="hidden" id="faqContent" name="faqContent" value="" />
+	</form>	                  
+</body>
+</html>

@@ -1,0 +1,58 @@
+<script>
+	$(function() {
+		var inspectionId = $("#inspectionId").val();
+		if (inspectionId == "") {
+			return false;
+		}
+		$('#generalSurveyResult').bootstrapTable({
+			url : "../lis/generalSurveyList.do?inspectionId=" + inspectionId,
+			mobileResponsive : true,
+			pagination : true,
+			pageNumber : true,
+			cache : false,
+			//method : "get",
+			pageSize : "10",
+			pageNumber : "1",
+			height : "320",
+			columns : [
+			{
+				field : 'indexNo',
+				title : '序号',
+				width : "50px",
+				formatter: function (value, row, index) { return  index + 1; } 
+			},
+			{
+				field : 'testItemId',
+				title : '项目ID'
+			}, {
+				field : 'englishName',
+				title : '英文名称'
+			}, {
+				field : 'chineseName',
+				title : '中文名称'
+			}, {
+				field : 'quantitativeResult',
+				title : '结果'
+			}, {
+				field : 'qualitativeResult',
+				title : '定性'
+			}, {
+				field : 'testItemReference',
+				title : '参考值'
+			}, {
+				field : 'testItemUnit',
+				title : '单位'
+			}]
+		});
+		
+		var viewer = new Viewer(document.getElementById('dowebok'), {
+            url: 'data-original'
+        });
+
+        $('.viewer-in').css({position: "relative", width: "100%", height: "100%", top: "0", left: "0"});
+        
+        $('#go_back').click(function (){
+        	window.location.href = "../lis/openGeneralSurvey.do";
+        });
+	});
+</script>

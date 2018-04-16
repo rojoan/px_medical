@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${SessionSysPortal.appTitle}</title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+    <link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../resource/css/font-awesome.css" rel="stylesheet">
+    <link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../resource/css/plugins/datatimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <link href="../resource/css/animate.css" rel="stylesheet">
+    <link href="../resource/css/style.css" rel="stylesheet">
+    <link href="../resource/style/css/page.css" rel="stylesheet">
+    <style>
+        html,body { height: 100%}
+    </style>
+</head>
+
+<body class="gray-bg top-navigation">
+<div id="page-wrapper" class="gray-bg full-height" style="margin-bottom: 0">
+    <div class="wrapper wrapper-content" style="height: calc(100% - 0px);">
+        <div class="row full-height">
+
+			<div class="ibox float-e-margins m-b-none ">
+				<div class="ibox-title" style="border: 0"><h5>患者信息</h5></div>
+				<div class="ibox-content" >
+					<form method="get" class="form-horizontal">
+						<input type="hidden" name="reConsultingId" value="$!consult.reConsultingId" />
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">患者姓名</label>
+							<div class="col-sm-4">
+								<input type="text" name="patientName" class="form-control" value="$!patientArchive.patientName">
+							</div>
+							<label class="col-sm-2 control-label text-right p-r-none">患者性别</label>
+							<div class="col-sm-4">
+								<div class="switch">
+									<input type="checkbox" name="male">
+									<input type="checkbox" name="female" checked="checked">
+									<span class='switch-btn switch-left #if("$!patientArchive.patientSex" == "男") chosen #end'>男</span>
+									<span class='switch-btn switch-right #if("$!patientArchive.patientSex" == "女") chosen #end'>女</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">患者年龄</label>
+							<div class="col-sm-4">
+								<input type="text"  class="form-control" value="$!patientArchive.patientAge">
+							</div>
+							<label class="col-sm-2 control-label text-right p-r-none">联系电话</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" value="$!patientArchive.telephone">
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="ibox float-e-margins ">
+				<div class="ibox-title" style="border: 0"><h5>申请信息</h5></div>
+				<div class="ibox-content" >
+					<form method="get" class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">检查类型</label>
+							<div class="col-sm-4">
+								<input type="text" name="" class="form-control" value="$!patientExam.examCategory">
+							</div>
+							<label class="col-sm-2 control-label text-right p-r-none">检查部位</label>
+							<div class="col-sm-4">
+								<input type="text" name="biopsySite" class="form-control" value="$!patientExam.examPart">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">申请科室</label>
+							<div class="col-sm-4">
+								<div class="input-group">
+									<input type="text" name="biopsySite" class="form-control" value="$!consult.officeName">
+								</div>
+							</div>
+							<label class="col-sm-2 control-label text-right p-r-none">申请医生</label>
+							<div class="col-sm-4">
+								<input type="text" name="biopsySite" class="form-control" value="$!consult.doctorName">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">临床诊断</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" placeholder="填写临床诊断...">$!consult.clinicalDiagnosis</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">会诊要求</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" placeholder="填写会诊要求...">$!consult.consultationAsk</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">病史描述</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" placeholder="填写病史描述...">$!consult.diseaseDescribe</textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="radio i-checks">
+								<label>
+									<input type="radio" name="consultationType" #if("$!consult.consultationType" == "1") checked #end> <i></i> 非交互式会诊(不支持音视频通信、文字聊天功能，仅根据发起方提交的病历资料进行会诊)</label>
+							</div>
+							<div class="radio i-checks">
+								<label>
+									<input type="radio" name="consultationType" #if("$!consult.consultationType" == "2") checked #end> <i></i> 交互式会诊（协同模式:支持音视频通信、文字聊天、文档共享、桌面/程序共享、白板注释、数据交互、影音播放和协同浏览等功能）</label>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- begin 会议信息 -->
+			<div class="ibox float-e-margins m-b-none ">
+				<div class="ibox-title" style="border: 0"><h5>会议信息</h5></div>
+				<div class="ibox-content" >
+					<form id="meetingForm" class="form-horizontal">
+						<input type="hidden" id="submitFlag" name="submitFlag" value="" />
+						<input type="hidden" name="reConsultingId" value="$!consult.reConsultingId" />
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;会议名称</label>
+							<div class="col-sm-4">
+								<input type="text" name="topic" maxlength="64" class="form-control" value="$!consult.topic">
+							</div>
+
+							<div class="col-sm-6">
+								<label class="control-label text-right col-sm-2 p-r-n">#requiredTag&nbsp;会议时间</label>
+								<div class="col-sm-10">
+									<div class="input-daterange input-group ">
+										<input type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" name="beginTime" value="" />
+										<span class="input-group-addon">到</span>
+										<input type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" name="endTime" value="" />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;会议参与人</label>
+							<div class="col-sm-10">
+								<select name="ponsultingProfessor" data-placeholder="选择会议参与人" class="chosen-select" multiple style="min-width: 230px; width: 100%" tabindex="2">
+									#foreach($item in $!professorList)
+									<option value="$!item.reProfessorId" hassubinfo="true">$!item.doctorName</option>
+									#end
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right p-r-none">会议内容</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" name="content" placeholder="填写会诊要求..."></textarea>
+							</div>
+						</div>
+						<div class="form-group text-center">
+							<button type="button" id="btn_pass" class="btn btn-w-m btn-primary"><i class="fa fa-paste"></i> 审核通过</button>
+							<button type="button" id="btn_save" class="btn btn-w-m btn-success"><i class="fa fa-save"></i> 暂 存 </button>
+						</div>
+
+					</form>
+				</div>
+			</div>
+			<!-- end 会议信息 -->
+
+
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- 全局js -->
+    <script src="../resource/js/jquery.min.js"></script>
+    <script src="../resource/js/bootstrap.min.js"></script>
+    <!-- Chosen -->
+    <script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+    <!-- Flot -->
+    <script src="../resource/js/plugins/flot/jquery.flot.js"></script>
+    <script src="../resource/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="../resource/js/plugins/flot/jquery.flot.resize.js"></script>
+    <!-- ChartJS-->
+    <script src="../resource/js/plugins/chartJs/Chart.min.js"></script>
+    <!-- Data time picker -->
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+    <!-- iCheck -->
+    <script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	#parse("./reconsulting/remoteConsultAudit.js.vm")
+</body>
+
+</html>

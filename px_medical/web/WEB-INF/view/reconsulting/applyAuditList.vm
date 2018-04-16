@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<style>
+.yxlx-label-f-none label {
+	font-weight: 100
+}
+button.close { position: relative; z-index: 5555; right:9px; top:5px;}
+</style>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<div class="row">
+					<form id="queryForm" class="form-horizontal">
+						<input type="hidden" name="queryDateType" value="apply" />
+						<div class="col-sm-12">
+							<div class="col-sm-3 form-group">
+								<label class="control-label p-r-n col-sm-4">会诊类型</label>
+								<div class="col-sm-8">
+									#formSingleSelectFirstNone("consultationType" "" $dicData.consultingConsultationType "class='form-control' id='consultationType'" "")
+								</div>
+							</div>
+							<div class="col-sm-3 form-group">
+								<label class="control-label p-r-n col-sm-4">患者姓名</label>
+								<div class="col-sm-8">
+									<input type="text" id="patientName" name="patientName" class="form-control ">
+								</div>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label class="control-label p-r-n col-sm-2">申请时间</label>
+								<div class="input-group date" data-date="" data-date-format="yyyy-MM-dd" data-link-field="dtp_input1">
+                                    <input class="form-control layer-date" onclick="laydate({format: 'YYYY-MM-DD'})" id="beginQueryDate" name="beginQueryDate" type="text" value="" placeholder="开始时间">
+                                    <span class="input-group-addon">到</span>
+                                    <input class="form-control layer-date" onclick="laydate({format: 'YYYY-MM-DD'})" id="endQueryDate" name="endQueryDate" type="text" value="" placeholder="截止时间">
+                                </div>
+							</div>
+						</div>
+						<div class="col-sm-12 text-right">
+							<button type="button" id="btn_search" class="btn btn-primary btn-sm">
+								<i class="fa fa-search"></i> 查 询
+							</button>
+							<button type="button" id="btn_clean" class="btn btn-sm btn-info">
+								<i class="iconfont fa icon-qingchu"></i> 清 空
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="ibox float-e-margins m-b-none">
+			<div class="ibox-content" style="padding-bottom: 4px;">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="table-responsive">
+							#formSingleSelect("patientSex" "" $dicData.dicSex "class='form-control' id='patientSex' style='display:none'" "全部")
+							<table id="applyAuditList" class="table table-bordered table-hover"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- 全局js -->
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	#parse("./reconsulting/applyAuditList.js.vm")
+</body>
+
+</html>

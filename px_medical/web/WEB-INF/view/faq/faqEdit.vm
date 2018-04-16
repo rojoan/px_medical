@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>法律法规库管理</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+<link href="../resource/css/plugins/summernote/summernote.css" rel="stylesheet">
+<link href="../resource/css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+
+#parse("./common/pageJs.vm")
+<!-- SUMMERNOTE -->
+<script src="../resource/js/plugins/summernote/summernote.min.js"></script>
+<script src="../resource/js/plugins/summernote/summernote-zh-CN.js"></script>
+
+<!-- 页面js -->
+#parse("./common/common.js.vm")
+<script type="text/javascript">
+$(function (){
+	// 保存按钮
+	$('#btn_save').click(function (){
+		if ($('#faqTypeId').val() == "") {
+			common.alert("请选择知识分类", 0);
+			return ;
+		}
+		if ($('#faqTitle').val() == "") {
+			common.alert("请填写知识标题", 0);
+			return ;
+		}
+		
+		if ($('#editContont').code() == "" || $('#editContont').code() == "<p><br></p>") {
+			common.alert("请填写知识内容", 0);
+			return ;
+		}
+		$('#faqContent').val($('#editContont').code());
+		//alert($('#editContont').code());
+		//return ;
+		$('#eidtForm').submit();
+	});
+	
+	//获取父窗口知识分类
+	var typeId = $('#editFaqTypeId', parent.document).val();
+	var typeName = $('#editor_title', parent.document).text();
+	if (typeId != "") {
+		$('#faqTypeId').val(typeId);
+	}
+	if (typeName != "") {
+		$('#faqTypeName').val(typeName);
+	}
+	
+	// 初始化在线编辑器
+	$("#_contentEditor").addClass("no-padding");
+    $('.click2edit').summernote({ lang: 'zh-CN', height:350, focus: true });
+
+});
+</script>
+</head>
+<body >
+	<div class="modal-body" style="height: calc(100% - 53px); padding:0px">			
+		<form id="eidtForm" action="../faq/faqSave.do" class="form-horizontal" method="post">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content p-b-n">				
+					#formHiddenInput("faqContent" "" "id='faqContent'")
+					#formHiddenInput("faqDetailId" "$!faqDetail.faqDetailId" "")
+					<div class="form-group">
+		               <label class="col-sm-1 control-label text-right p-r-none p-l-none">知识分类</label> 
+		               <div class="col-sm-11">
+			               	#formHiddenInput("faqTypeId" "$!faqTypeId" "id='faqTypeId'")
+			            	#formHiddenInput("faqTypeCode" "$!faqTypeCode" "id='faqTypeCode'")
+			            	#formTextInput("faqTypeName" "$!faqDetail.faqType.faqTypeName" "id='faqTypeName' readonly class='form-control'")
+		               </div>
+		            </div>
+					<div class="form-group">
+		               <label class="col-sm-1 control-label text-right p-r-none p-l-none">标题</label> 
+		               <div class="col-sm-11">
+		              	 	#formTextInput("faqTitle" "$!faqDetail.faqTitle" "id='faqTitle' maxlength='500' class='form-control'")
+		               </div>				          
+			        </div>           
+	            </div>
+	            <div class="ibox-content">
+	           	   <div class="col-sm-12" id="_contentEditor">		               	
+	                     <div id='editContont' class="click2edit wrapper">$!faqDetail.faqContent</div>		               
+	               </div>            
+	            </div>
+		    </div> 
+		</form>	
+	</div>
+	<div class="modal-footer text-center">
+	   	<div class="text-center">
+          <button id="btn_save" type="button" class="btn btn-primary">
+          	<i class="fa fa-save"></i> 保 存
+          </button>
+          #if("$!faqDetail.faqDetailId" != "")
+	          <button id="btn_detail_delete" type="button" class="btn btn-danger" onclick="parent.deleteDetail('$!faqDetail.faqDetailId')">
+	          	<i class="fa fa-warning"></i> 删 除
+	          </button>
+          #end
+        </div>
+    </div>	
+</body>
+</html>

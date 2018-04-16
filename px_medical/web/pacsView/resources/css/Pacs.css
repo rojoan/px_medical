@@ -1,0 +1,315 @@
+.pacsIconCls{
+    margin: 0px 0px;
+    padding: 0px 0px;
+    width: 64px !important;
+    height: 64px !important;
+}
+.pacsBtnMargin{
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.pacsBtn .x-button-pressed {
+    border: #00C2FF solid 1px !important;
+    background: rgb(239, 249, 255);
+}
+.pacs-segmentedbutton{
+    width: 20%;
+    min-height: 100% !important;
+    height: 100%;
+    background: rgb(239, 249, 255);
+}
+.pacs-segmentedbutton-main{
+    width: 75% !important;
+    min-height: 100% !important;
+    height: 100%;
+}
+.pacsBtn{
+    min-height: 100% !important;
+    width:15%;
+    padding: 0em 0em;
+    height: 100%;
+    background: #eff9ff;
+}
+
+
+.pacs-segmentedbutton.x-button-pressed {
+    -webkit-filter:grayscale(1);
+    background-color: #bdbdbd;
+}
+.pacsListItem{
+    display:inline-block;
+}
+
+.smallPicCard{/*缩略图的样式*/
+   text-align: center;
+   height:200px;
+   width:200px;
+   padding:5px;
+   border:3px solid #ffffff;
+   border-radius:10px;
+   /*margin:0px auto 0px auto;*/
+   position: relative;
+    -webkit-box-shadow:2px 2px 3px #bfbfbf;
+}
+.smallPicCard2{/*缩略图的样式*/
+    text-align: center;
+    height:200px;
+    width:90%;
+    padding:5px;
+    border:3px solid #ffffff;
+    border-radius:10px;
+    margin:0px auto 0px auto;
+    position: relative;
+    -webkit-box-shadow:2px 2px 3px #bfbfbf;
+}
+
+#ExtendBtnDiv{/*按钮那条竖的宽度条*/
+    background: black !important;
+    border: 1px !important;
+    margin-left: 0px !important;
+    border-radius: 0px !important;
+}
+#ExtendBtnDiv .x-button-icon.x-shown.pacsIconCls{/*缩略图按钮样式*/
+    background:  black  no-repeat;
+    padding:5px;
+    width:50px;
+    height:50px;
+    margin-left: -27px !important;
+}
+.pacs-CanvasController{
+    background-color:rgba(238, 238, 238, 1);
+}
+.pacs-slider{
+    background-color: black;
+}
+
+.pacs-canvas-list-title {
+    /*width: 100%;*/
+    background-color: #ccc;
+    font-size: 1.2em;
+    height: 2.2em;
+    line-height: 2.2em;
+    text-align: center
+}
+
+.pacs-canvas-list {
+    background-color: black;
+    text-align: left;
+    font-size: 1.2em;
+    height: 2.2em;
+    line-height: 2.2em;
+    height: 100%;
+    /*padding-left: 10px;
+    padding-right: 10px;*/
+    border-right-color: #53ad4c;
+    border-right-width: 3px;
+    border-right-style: solid;
+}
+
+.pacs-canvas-list-item {
+    color: #fff;
+    position: relative;
+    height: 100%;
+}
+
+.pacs-canvas-list-item.pacs-canvas-selected {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #000000;
+}
+
+.pacs-canvas-list-item.pacs-canvas-selected .smallPicCard2{
+    border:3px solid #42a3de !important;
+    -webkit-box-shadow:2px 2px 3px #305f8a !important;
+}
+
+.pacs-canvas-list-item.pacs-canvas-selected .smallPicCard{
+    border:3px solid #42a3de !important;
+    -webkit-box-shadow:2px 2px 3px #305f8a !important;
+}
+
+.pacsmainpanel{
+    background-color:black;
+    /*padding: 0 !important;*/
+    /*margin: 0 !important;*/
+    /*border: 0 !important;*/
+    /*width: 100% !important;*/
+    /*height: 100% !important;*/
+}
+.pacsmainpanel .x-html{
+    padding: 0px;
+}
+.pacs-tool{
+    position: absolute;
+    right:0%;
+    top:43px;
+    bottom: 100px;
+}
+/*.pacs-tool .element.style{
+    -webkit-transform: translate3d(900px,0px,0px) !important;
+}*/
+
+.pacs-tool-img{
+    margin: 20% 20% 20% 20%;
+    color: #99e4dd;
+    font-size: 15px !important;
+}
+.pacs-item-selected{
+    background-image: -webkit-gradient(linear, 100% 0%, 0% 100%, color-stop(0%, rgb(53, 62, 162)), color-stop(50%, rgb(198, 194, 208)), color-stop(100%, rgb(1, 23, 34)));
+    background-color: rgb(171, 190, 204);
+    border-top-left-radius: 1.2em;
+    border-bottom-left-radius: 1.2em;
+}
+.pacs-slider-lucency{
+    position: absolute;
+    bottom:0%;
+    left: 12%;
+    right: 9%;
+    background: none;
+}
+
+.pacs-slider-lucency .x-slider:before{
+    height: 0.2em !important;
+    opacity:0.2 !important;
+    margin:0 20px !important;
+}
+.pacs-slider-lucency .x-thumb:after{
+    width: 2em !important;
+    height: 1.2em !important;
+    top:0.25em !important;
+    left:0em !important;
+    opacity:0.5 !important;
+}
+.pacs-btnSmallPic{
+    position: absolute;
+    bottom:1em;
+    right: 0em;
+    background: rgb(239, 249, 255);
+}
+
+.pacsListItemSmall{
+    display:inline-block;
+    width:100%;
+    padding-bottom: 8px;
+}
+
+.pacs-list-main {
+    position: absolute;
+    /*border-right-color: none !important;*/
+    top:1em;
+    left:0em;
+    bottom: 1em;
+}
+
+.pacs-tool-img-small {/*缩略图样式*/
+    text-align: center;
+    height:14%;
+    width:90%;
+    padding:5px;
+    border:2px solid #ffffff;
+    border-radius:10px;
+    margin:0px auto 0px auto;
+    position: relative;
+    color:#eee;
+    font-size: 15px !important;
+    -webkit-box-shadow:2px 2px 3px #bfbfbf;
+}
+/*.pacs-list-main-item.pacs-canvas-selected {
+}*/
+.pacs-list-main-item.pacs-canvas-selected .pacs-tool-img-small{
+    border:2px solid #42a3de !important;
+    -webkit-box-shadow:2px 2px 3px #305f8a !important;
+    color:#4f4 !important;
+}
+
+.winList{
+    -webkit-text-size-adjust:none;
+    font-size:12px !important;
+    padding:6px 0px 5px 0px;
+}
+
+.winList-Select{
+    background-color: #ffa74d;
+}
+
+.remove{
+    background: rgb(239, 249, 255);
+}
+
+.x-mask{
+    margin-right:5% !important;
+    padding-left : 5% !important;
+}
+
+.setButton{
+    position: absolute;
+    /*-webkit-mask-size:100%;*/
+    top:10px;
+    right:10px;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    /*background-color: #ffffff;*/
+}
+
+.x-button .x-button-icon{
+    width: 100%;
+    height: 100%;
+}
+
+.setico {
+    -webkit-mask-size:100%;
+    background-color: #000000;
+}
+
+.close{
+    padding: 0px !important;
+}
+
+.delete{
+    padding: 0px;
+    margin: 0px;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+.checkBoxLabel{
+    width:50% !important;
+}
+
+.basePopup {
+    background-color: #ffffff !important; }
+.basePopup .x-panel-inner {
+    background-color: transparent !important; }
+.basePopup .basePopup-title {
+    background-color: transparent;
+    border-bottom: #157efb solid 1px; }
+.basePopup .basePopup-title .x-title {
+    color: #157efb;
+    font-weight: bold; }
+.basePopup .basePopup-container {
+    width: 100%; }
+.basePopup .basePopup-container > .x-inner > .x-container.x-unsized {
+    height: 100%;
+    width: 100%; }
+.basePopup .basePopup-toolbar {
+    border-top: #157efb solid 1px;
+    background-color: transparent; }
+
+/*放大镜样式*/
+.magnifierCanvas{
+    position: absolute;
+    background:none;
+    width:200px;
+    height:200px;
+    left: 12%;
+    top: 2%;
+    /*padding: 0 !important;*/
+    /*margin: 0 !important;*/
+    /*border: 0 !important;*/
+    /*width: 100% !important;*/
+    /*height: 100% !important;*/
+}
+.magnifierCanvas .x-html{
+    padding: 0px;
+}

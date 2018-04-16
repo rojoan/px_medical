@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>病人检查信息页</title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+    <link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../resource/css/font-awesome.css" rel="stylesheet">
+    <link href="../resource/css/animate.css" rel="stylesheet">  
+    <link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+   	<link href="../resource/css/plugins/datatimepicker/datetimepicker.css" rel="stylesheet" >  
+    <link href="../resource/css/style.css" rel="stylesheet">    
+    <link href="../resource/style/css/page.css" rel="stylesheet">
+	<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+	<link href="../resource/style/css/viewer.min.css" rel="stylesheet">
+	<style>
+	.pic-viewer {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+	}
+	
+	html, body {
+		height: 100%;
+	}
+	
+	dl#dowebok dd img {
+		width: 20%;
+		max-height: 120px;
+		margin: 2%;
+		float: left;
+	}
+	</style>
+
+<!-- 头部 -->
+<button type="button" class="close tabs" data-dismiss="modal">
+	<span aria-hidden="true"><i class="fa fa-close"></i></span> <span class="sr-only"><i class="fa fa-close"></i></span>
+</button>
+<div class="modal-body " style="padding: 0; height: calc(100%)">
+	<ul class="nav nav-tabs">
+		<li class=""><a data-toggle="tab" href="#patientInfo">患者信息</a></li>
+		<li class="active"><a data-toggle="tab" href="#examInfo">影像资料</a></li>
+	</ul>
+
+	<!-- 检查资料 -->
+	<div class="tab-content full-height-scroll" style="height: calc(100% - 50px)">
+		<div id="examInfo" class="tab-pane active">
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="table-responsive">
+
+						<table class="table table-bordered table-jcdj">
+							<tbody>
+								
+								<tr>
+									<th class="text-nowrap">检查部位</th>
+									<td>$!patientExam.examPart</td>
+									<th class="text-nowrap">检查方式</th>
+									<td>$!patientExam.examWay</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">登记医生</th>
+									<td>$!patientExam.registerDoctor</td>
+									<th class="text-nowrap">诊断医生</th>
+									<td>$!patientExam.diagnosisDoctor</td>
+								</tr>
+								<tr>
+									<th class="text-nowrap">主诉</th>
+									<td colspan="3">$!patientExam.mainDesc</td>
+									 
+								</tr>
+								<tr>
+									<th class="text-nowrap">检查所见</th>
+									<td colspan="3">$!examResult.examFindings</td>
+								</tr>
+
+								<tr>
+									<th class="text-nowrap">检查提示</th>
+									<td colspan="3">$!examResult.examHint</td>
+								</tr>
+
+								<tr>
+									<th class="text-nowrap">病理诊断</th>
+									<td colspan="3">$!examResult.pathologicDiagnosis</td>
+								</tr>
+
+								<tr>
+									<th class="text-nowrap">检查建议</th>
+									<td colspan="3">$!examResult.examAdvise</td>
+								</tr>
+								<tr>
+		                          <td colspan="4" style="text-align:center;">
+									<button type="button" id="downloadImg" class="btn btn-w-m btn-primary">
+										<i class="fa fa-arrow-circle-down"></i>下载图片
+									</button>
+									<br>
+									<div id="downloadMsg"></div>
+									<iframe id="downloadIfrmae" src="" style="border: none; height: 0px; width: 100%"></iframe>
+		                          </td>
+		                      </tr>
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+
+				<div class="col-xs-8 " style="min-height: 450px;">
+					#if($!patientExam.imageType == '1')
+						<!--iframe start-->
+						<iframe src="../pacsView/index.html?patientid=$!patientExam.patientExamId&pacsaccessnumber=" width="100%" height="500px" style="border: none"></iframe>
+						<dl id="dowebok" style="display: none;"></dl>
+					#else
+						<!-- pic start-->
+						<dl id="dowebok">
+							#foreach($item in $!patientExamJpgList)
+							<dd>
+								<img src="data:image/jpg;base64,$!item" />
+							</dd>
+							#end
+					 
+						</dl>
+					#end
+				</div>
+			</div>
+		</div>
+
+		<!-- 患者资料 -->
+		<div id="patientInfo" class="tab-pane ">				
+			<div class="table-responsive">
+				<table class="table table-bordered table-jcdj">
+					<tbody>
+						<tr>
+							<th class="text-nowrap">患者姓名</th>
+							<td>$!patientExam.patientName</td>
+							<th class="text-nowrap">身份证号</th>
+							<td>$!patient.patientIdCard</td>
+						</tr>
+
+						<tr>
+							<th class="text-nowrap">性 别</th>
+							<td>#lookUpDict($dicData.dicSex $!patient.patientSex)</td>
+							<th class="text-nowrap">出生日期</th>
+							<td>$!date.format('yyyy-MM-dd', $!patient.patientBirth)</td>
+						</tr>
+
+						<tr>
+							<th class="text-nowrap">联系方式</th>
+							<td>$!patient.contactPhone</td>
+							<th class="text-nowrap">社会保险号</th>
+							<td>$!patient.insuranceNo</td>
+						</tr>
+
+						<tr>
+							<th class="text-nowrap">民 族</th>
+							<td>#lookUpDict($dicData.dicNation $!patient.patientNation)</td>
+							<th class="text-nowrap">血型</th>
+							<td>$!patient.bloodType</td>
+						</tr>
+						<tr>
+							<th class="text-nowrap">身 高</th>
+							<td>$!patientExam.patientHeight</td>
+							<th class="text-nowrap">体 重</th>
+							<td>$!patientExam.patientWeight</td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div>				
+		</div>
+	</div>
+
+</div>
+<!-- 全局js -->
+<script src="../resource/js/jquery.min.js"></script>
+<script src="../resource/js/bootstrap.min.js"></script>
+<script src="../resource/js/plugins/layer/layer.min.js"></script>
+<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+<script type="text/javascript" src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+<script src="../resource/style/js/img-viewer.min.js"></script>
+#parse("./common/common.js.vm")
+<script>
+	//预加载
+	$(document).ready(function() {
+		// 打包下载图片
+	    $('#downloadImg').click(function (){
+	    	$('#downloadMsg').html('正在打包压缩要下载的图片...');
+	    	$.post("../pacs/compressImg.do", {patientExamId : "$!patientExam.patientExamId"}, function(result){
+	    		if (result == "0") {
+	    			$('#downloadMsg').html('正在下载图片');
+	    			$('#downloadIfrmae').attr('src','../pacs/downloadImg.do?patientExamId=$!patientExam.patientExamId');
+	    			$('#downloadMsg').html('');
+	    		} else {
+	    			$('#downloadMsg').html('压缩图片失败, 请检查是否有可压缩的图片数据');
+	    		}
+	    		
+	    	},"json");
+	    });
+		
+		//图片查看插件
+		var viewer = new Viewer(document.getElementById('dowebok'), {
+			url : 'data-original'
+		});
+
+		$('.viewer-in').css({
+			position : "relative",
+			width : "100%",
+			height : "100%",
+			top : "0",
+			left : "0"			
+		
+		});
+					
+	});
+</script>

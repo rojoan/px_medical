@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孕产妇档案登记</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<style>
+    html,body { height: 100%}
+    button.close.tabs { position: relative; z-index: 5555; right:9px; top:5px; }
+</style>
+</head>
+
+<body class="gray-bg top-navigation">
+
+	<div class="wrapper wrapper-content">
+		<div class="ibox float-e-margins full-height">
+			<div class="ibox-content">
+				<div class="row">
+					<form id="gravidaDetail_queryForm" method="get" class="form-horizontal">
+						
+						<div class="col-sm-3 m-b-sm ">
+							<label class="control-label col-sm-4">保健卡号</label>
+							<div class="input-daterange input-group date col-sm-8 ">
+								<input type="text" name="gravidaCard" class="form-control"  />
+							</div>
+						</div>
+						<div class="col-sm-3 m-b-sm ">
+							<label class="control-label col-sm-4">孕妇姓名</label>
+							<div class="input-daterange input-group date col-sm-8 ">
+								<input type="text" name="gravidaName" class="form-control"  />
+							</div>
+						</div>
+						<div class="col-sm-3 m-b-sm ">
+							<label class="control-label col-sm-4">身份证号</label>
+							<div class="input-daterange input-group date col-sm-8 ">
+								<input type="text" name="gravidaIdCard" class="form-control"  />
+							</div>
+						</div>
+						<div class="col-sm-3 text-center">
+							<button type="button" onclick="queryGravidaDetail();" class="btn btn-sm btn-primary">
+								<i class="fa fa-search"></i> <span>查 询</span>
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" onclick="clearQuery();" class="btn btn-sm btn-info">
+								<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+							</button>
+						</div>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="ibox float-e-margins full-height m-b-none">
+				<div class="ibox-content p-b-n">
+					<div class="table-responsive">
+						<!-- 列表表格 -->
+						<div class="example">
+							<table id="gravidaDetailGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+						</div>
+
+					</div>
+				</div>
+			</div>
+	</div>
+	
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/select/selectCommonGravidaDetail.js.vm")
+</body>
+</html>

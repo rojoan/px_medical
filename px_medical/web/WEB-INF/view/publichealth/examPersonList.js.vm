@@ -1,0 +1,190 @@
+<script>
+$(document).ready(function () {
+    //下拉表单
+    var config = {
+        '.chosen-select': {},
+        '.chosen-select-deselect': { allow_single_deselect: true },
+        '.chosen-select-no-single': { disable_search_threshold: 10 },
+        '.chosen-select-no-results': {  no_results_text: 'Oops, nothing found!' },
+        '.chosen-select-width': { width: "100%" }
+    };
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+
+    // 查询按钮
+    $('#btn_query').click(function (){
+    	query();
+    });
+    
+ 	// 清空按钮
+    $('#btn_clean').click(function (){
+    	$('#examBillNo').val('');
+    	$('#examedPersonPame').val('');
+    	$('#beginExamTime').val('');
+    	$('#endExamTime').val('');
+    	$('#hospitalName').val('');
+    	$('#dutyDoctor').val('');
+    	$('#beginCreateTime').val('');
+    	$('#endCreateTime').val('');
+    });
+ 	
+ 	// 新增按钮
+    $('#btn_add').click(function (){
+    	var title = '居民健康体检编辑<span class="must-red font-14">( 红字为必填 )</span>';
+		common.open('../examPerson/editExamPerson.do', title, {area: ['99%', '99%']});
+    });
+ 	
+ 	// 修改按钮
+    $('#btn_edit').click(function (){
+    	var rows = common.getTableSelectRow('examPersonData', false);
+    	if (rows.length != 1 || rows[0].examPersonId == "" || rows[0].examPersonId == undefined) {
+    		common.alert("请选择要修改的体检数据", 0);
+    		return ;
+    	}
+    	$('#editExamPersonIframe').attr('src', '../examPerson/editExamPerson.do?examPersonId=' + rows[0].examPersonId);
+    	$('#editExamPerson').modal({ keyboard: true });
+    });
+
+ 	// 删除按钮
+    $('#btn-delete').click(function (){
+    	var ids = [];
+		var row = common.getTableSelectRow('examPersonData', true);
+		if (row.length == undefined || row.length <= 0) {
+			common.alert("请选择要删除的数据", 0);
+    		return ;
+		}
+		$.each(row, function (){
+			ids.push(this.examPersonId);
+		});
+    	common.confirm("您确定要删除吗？", function (){
+    		$.post("../examPerson/deleteExamPerson.do", {ids: ids.join(',')}, function (result){
+        		if (result.code == "0") {
+        			query();
+				} else {
+					common.alert(result.msg, 2);
+				}
+        		
+        	}, "json").error(function (e){jqueryPostError(e)});
+    	});
+    });
+    
+ 	// 初始化列表数据
+ 	var tableParams = {
+ 		url : "../examPerson/examPersonList.do",
+ 		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		clickToSelect: false,
+		singleSelect: false,
+		columns : [
+	   		{ checkbox:true }, 
+	   		{
+	   			field : 'examBillNo',
+	   			title : '体检编号'
+	   		}, {
+	   			field : 'examedPersonName',
+	   			title : '姓名'//,width : "100px"
+	   		}, {
+	   			field : 'examedPersonGender',
+	   			title : '性别',
+	   			formatter :function (value, row, index) {
+	   				if (row.examedPersonGender == "1") {
+	   					return "男";
+	   				}
+	   				if (row.examedPersonGender == "2") {
+	   					return "女";
+	   				}
+	   				return "";
+	   			}
+	   		}, {
+	   			field : 'examTime',
+	   			title : '体检日期'
+	   		}, {
+	   			field : 'curExamedPersonAge',
+	   			title : '体检年龄'
+	   		}, {
+	   			field : 'freeFlag',
+	   			title : '是否免费',
+	   			formatter :function (value, row, index) {
+	   				if (row.freeFlag == "1") {
+	   					return "是";
+	   				}
+	   				return "";
+	   			}
+	   		}, {
+	   			field : 'hospitalName',
+	   			title : '机构名称'
+	   		}, {
+	   			field : 'dutyDoctor',
+	   			title : '责任医生'
+	   		}, {
+	   			field : 'creatorName',
+	   			title : '建档人'
+	   		}, {
+	   			field : 'createTime',
+	   			title : '建档时间'
+	   		}, {
+	   			field : 'operate',
+	   			title : '操作',
+	   			events : operateEvents,
+	   			formatter : operateFormatter
+	   		}
+	   	],
+   		onDblClickRow : function (row, element){
+   	    	var title = '居民健康体检详情';
+   			common.open('../examPerson/editExamPerson.do?mode=show&examPersonId=' + row.examPersonId, title, {area: ['99%', '99%']});
+   		},
+   		onLoadSuccess : function(){
+   			var height = ($('#examPersonData').parents("body").height() - $('#queryForm').parents(".ibox").height() - 72);
+   			$('#examPersonData').bootstrapTable('resetView', {height: height}); 
+   		}
+ 	}
+    $('#examPersonData').bootstrapTable($.extend(baseTable, tableParams));
+});
+//查询按钮时间
+function query(){
+	var queryParams = common.serializeObject($('#queryForm'));
+	var options = {url: '../examPerson/examPersonList.do?', silent: false, query: queryParams};
+	$('#examPersonData').bootstrapTable('refresh', options); 
+}
+
+window.operateEvents = {
+		"click #btn_show_register": function(e, value, row, index) {
+			var title = '居民健康体检详情';
+   			common.open('../examPerson/editExamPerson.do?mode=show&examPersonId=' + row.examPersonId, title, {area: ['99%', '99%']});
+			
+		},
+		"click #btn_edit_register": function(e, value, row, index) {
+			var title = '居民健康体检编辑 <span class="must-red font-14">( 红字为必填 )</span>';
+	    	common.open('../examPerson/editExamPerson.do?examPersonId=' + row.examPersonId, title, {area: ['99%', '99%']});
+	    	
+		},
+		"click #btn_del_register": function(e, value, row, index) {
+			common.confirm("确定要删除吗？", function (){
+				$.post(
+						'../examPerson/deleteExamPerson.do',
+						{ids: row.examPersonId}, 
+						function (result){
+							if (result.code == "0") {
+								$('#btn_query').click();
+							} else {
+								common.alert(result.msg, 2);
+							}
+						}, 
+				'json').error(function (e){jqueryPostError(e)});
+			});
+		}
+	};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_show_register" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+	            '<a id="btn_edit_register" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+	            '<a id="btn_del_register" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+	            ];
+	return html.join('');
+}
+</script>

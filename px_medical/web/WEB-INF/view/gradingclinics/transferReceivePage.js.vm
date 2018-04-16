@@ -1,0 +1,180 @@
+<script>
+	$(function() {
+		var sexData = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)');
+		var typeDta = JSON.parse('$dicTools.changeMapToJson($dicData.dicHdType)');
+		var statusData =  JSON.parse('$dicTools.changeMapToJson($dicData.dicTransStatus)');
+		$('#auditTurnInGrid').bootstrapTable({
+			url: "../gradingclinics/diagnosisApplyList.do",
+			mobileResponsive: true,
+			pagination: true,
+			pageNumber: true,
+			cache: false,
+			striped: true,
+			clickToSelect: true,
+			singleSelect: false,
+			pageSize: "10",
+			pageNumber: "1",
+			height: "500",
+			queryParams: function (params){
+				var requestParams = common.serializeObject($('#queryForm'));
+		        requestParams.pageSize = params.pageSize;
+		        requestParams.pageNumber = params.pageNumber;
+		        return requestParams;
+			},
+			queryParamsType : "",
+			sidePagination : 'server',
+			columns : [
+			{ checkbox:true },
+			{
+				field : 'hdDiagnosisNum',
+				title : '转诊单号'
+			}, {
+				field : 'patientName',
+				title : '患者姓名'
+			}, {
+				field : 'patientSex',
+				title : '患者性别',
+				formatter : function(value, row, index) {
+					return sexData[value];
+				}
+			}, {
+				field : 'idCard',
+				title : '身份证号'
+			}, {
+				field : 'applyTime',
+				title : '申请时间'
+			}, {
+				field : 'institutionDownName',
+				title : '转出医院'
+			}, {
+				field : 'officeDownName',
+				title : '转出科室'
+			}, {
+				field : 'doctorDownName',
+				title : '转出医生'
+			}, {
+				field : 'transStatus',
+				title : '转诊状态',
+				formatter : function(value, row, index) {
+					return statusData[value];
+				}
+			}, {
+				field : 'hdType',
+				title : '转诊类型',
+				formatter : function(value, row, index) {
+					return typeDta[value];
+				}
+			},{
+                field : 'operate',
+                title : '操作',
+                events : operateEvents,
+                formatter : operateFormatter
+            }],
+			onDblClickRow : function (row, element){
+				if (row.hdType == "1") {
+					openModal('down_modalId', '../gradingclinics/applyTurnOutShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+				}
+				if (row.hdType == "2") {
+					openModal('up_modalId', '../gradingclinics/applyTurnOutShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+				}
+	   		},
+	   		onLoadSuccess : function(){
+	   			adaptTableHeight();
+	   		}
+		});
+	});
+
+    $(window).resize(function() { 
+        adaptTableHeight();
+    })
+        
+    function adaptTableHeight() {
+    	var height = ($('#auditTurnInGrid').parents("body").height() - $('#queryForm').parents(".ibox").height() - 76);
+        $('#auditTurnInGrid').bootstrapTable('resetView', {height: height}); 
+    }
+    
+   window.operateEvents = {
+       "click #btn_show_applyIn": function(e, value, row, index) {
+    	   if (row.hdType == "1") {
+               openModal('down_modalId', '../gradingclinics/applyTurnOutShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+           }
+           if (row.hdType == "2") {
+               openModal('up_modalId', '../gradingclinics/applyTurnOutShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+           }
+       } 
+   }
+   
+   function operateFormatter(value, row, index) {
+       var html = [
+                   '<a id="btn_show_applyIn" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>'
+                  ];
+       return html.join('');
+   }
+    
+    $('#btn_query').click(function (){
+        var queryParams = common.serializeObject($('#queryForm'));
+        var options = {url: '../gradingclinics/diagnosisApplyList.do', silent: false, query: queryParams};
+        $('#auditTurnInGrid').bootstrapTable('refresh', options); 
+    });
+    
+    $('#btn_clean').click(function (){
+        $('#idCard').val('');
+        $('#patientName').val('');
+        $('#endApplyTime').val('');
+        $('#beginApplyTime').val('');
+        $('#institutionDownId').val('');
+    });
+    
+    $('#btn_pass').click(function (){
+        var arrayId = getRowIds();
+        if (arrayId == "" || arrayId == undefined) {
+            common.alert("请选择接诊数据", 0);
+            return ;
+        }
+        common.confirm("确定要接诊吗？", function (){
+            $.post('../gradingclinics/receivePatient.do', {ids: arrayId, transStatus: '3'}, callBackRefresh, "json").error(function (e){jqueryPostError(e)});
+        });
+        
+    });
+    
+    $('#btn_not_pass').click(function (){
+        var arrayId = getRowIds();
+        if (arrayId == "" || arrayId == undefined) {
+            common.alert("请选择接诊数据", 0);
+            return ;
+        }
+        common.confirm("确定要拒绝接诊吗？", function (){
+            $.post('../gradingclinics/receivePatient.do', {ids: arrayId, transStatus: '5'}, callBackRefresh, "json").error(function (e){jqueryPostError(e)});
+        });
+        
+    });
+    
+    // 获取所有被选中行的ID
+    function getRowIds() {
+        var rows = common.getTableSelectRow('auditTurnInGrid', true);
+        if (rows.length == undefined || rows.length <= 0) {
+            common.alert("请选择接诊数据", 0);
+            return ;
+        }
+        
+        var arrayId = [];
+        $.each(rows, function (){
+            arrayId.push(this.hdDiagnosisApplyId);
+        });
+        return arrayId.join(',');
+    }
+    
+    // 回调刷新列表数据
+    function callBackRefresh(result) {
+        if (result.code == "0") {
+            common.alertCall(result.msg, 1, function (){
+                $('#btn_query').click();
+            });
+        } else {
+            common.alert(result.msg, 0);
+        }
+        
+    }
+    
+
+</script>

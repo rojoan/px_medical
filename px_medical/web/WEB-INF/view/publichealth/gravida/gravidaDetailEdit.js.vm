@@ -1,0 +1,123 @@
+<script>
+		//打开选择居民页面
+	    function selectPersonDetail() {
+	            var title = '选择居民信息';
+	            var url = '../personDetail/selectCommonPersonDetail.do?mode=gravida';
+	            common.open(url, title, {area: ['99%', '99%']});
+	    }
+		  
+		//选择居民信息回显函数
+		function selectPersonCallBack(obj){
+			$.post('../gravidaDetail/findGravidaDetail.jo', {personDetailId:obj.personDetailId}, function(result) {
+				if (result.code == "0") {
+					common.alert("此居民信息已登记为孕妇,请重新选择！",0);
+				} else {
+					var jqFrom = $('#gravidaForm'); 
+		            jqFrom.find('input[name="personDetailId"]').val(obj.personDetailId);
+		            jqFrom.find('input[name="gravidaName"]').val(obj.personalName);
+		            jqFrom.find('input[name="gravidaIdCard"]').val(obj.certificateNumber);
+		            jqFrom.find('input[name="gravidaPhone"]').val(obj.myselfPhone);
+		            jqFrom.find('input[name="gravidaAddr"]').val(obj.familyAddr);
+		            jqFrom.find('input[name="gravidaCensus"]').val(obj.censusAddr);
+		            jqFrom.find('input[name="regionId"]').val(obj.regionId);
+		            jqFrom.find('input[name="gravidaAge"]').val(getAge(obj.certificateNumber));
+				}
+			}, "json");
+		}
+		
+		//从身份证读取年龄
+		function getAge(idCard){
+			 if (!checkIDcard(idCard)) {
+				return  '';
+			 }
+			 var date = new Date();
+			 var year = date.getFullYear(); 
+			 var birthday_year = parseInt(idCard.substr(6,4));
+			 var userAge = year - birthday_year;
+			 if(userAge < 0 ){
+			     return;
+			 }
+			 return userAge ;
+		 }
+		 
+		 
+        // 提交表单
+        function saveGravidaDetail() {
+        	var gravidaFormParams = common.serializeObject($('#gravidaForm'));
+        	if ($('#submitFlag').val() == "1") {
+                common.alert("不能重复提交", 0);
+                return ;
+            }
+            if (gravidaFormParams.gravidaName == undefined || gravidaFormParams.gravidaName == "") {
+                common.alert("请填写孕妇姓名",0);
+                $("#gravidaName").focus();
+                return false;
+            }
+            if (isBlank(gravidaFormParams.regionId)) {
+                common.alert("人员的所在街道信息不存在，请先完善街道信息",0);
+                return false;
+            }
+            if (gravidaFormParams.gravidaIdCard == undefined || gravidaFormParams.gravidaIdCard == "") {
+                common.alert("请填写身份证号码",0);
+                $("#gravidaIdCard").focus();
+                return false;
+            }else {
+    			if (!checkIDcard(gravidaFormParams.gravidaIdCard)) {
+    				common.alert("身份证号码格式错误",0);
+    				$("#gravidaIdCard").focus();
+    				 return false;
+    			}
+    		}
+            if (gravidaFormParams.gravidaPhone == undefined || gravidaFormParams.gravidaPhone == "") {
+                common.alert("请填写联系电话",0);
+                $("#gravidaIdCard").focus();
+                return false;
+            }else{
+            	if (!checkMobile(gravidaFormParams.gravidaPhone) && !checkPhone(gravidaFormParams.gravidaPhone)) {
+       				common.alert("联系电话格式错误！",0);
+   	    			$("#gravidaPhone").focus();
+       				return false;
+       			}
+            }
+            
+            if (isBlank(gravidaFormParams.highRiskPregnancy)) {
+                common.alert("请选择是否高危",0);
+                return false;
+            }
+            
+            $.post("../gravidaDetail/saveGravidaDetail.do", gravidaFormParams,  function (result) {
+                if (result.code == "0") {
+                    $("#familyDetailId").val( result.data.gravidaDetailId);  
+                    $('#submitFlag').val('1');
+                    common.alertCall("保存成功!", 1, function (){
+                        // 刷新父页面
+                        var $btnQuery = $('#btn_query', window.parent.document);
+                        if($btnQuery.length > 0 ) $btnQuery.click();
+                 
+                        // 关闭窗口
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index); 
+                    });
+                } else {
+                    common.alert(result.msg, 2);
+                }
+            }, "json");
+        }
+        
+        
+        //查看 设置 readonly、disabled
+        $(document).ready(function() {
+        	//妇科手术史选择事件
+        	highRiskPregnancyEvent();
+        	var jqForm = $('#gravidaForm');
+        	//查看 - 编辑模式的页面显示
+	        if('show' == '$!mode'){
+	        	jqForm.find('input').attr('readonly',true);
+              	jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+              	jqForm.find('select').attr('disabled',true);
+              	jqForm.find('textarea').attr('readonly',true);
+	        }
+        });	 
+        
+         
+</script>

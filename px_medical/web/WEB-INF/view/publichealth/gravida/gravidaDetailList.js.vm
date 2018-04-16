@@ -1,0 +1,138 @@
+<script>
+	var dicYesNo = JSON.parse('$dicTools.changeMapToJson($dicData.dicYesNo)'); 
+	//验证单选
+	function singleCheck(rows){  
+		if (rows.length != 1 || !row.gravidaDetailId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行",0);
+			return false;
+		}
+		return true;
+	}
+ 
+	// 添加按钮
+	function add(){
+		var title = '添加孕妇档案信息';
+        var url = '../gravidaDetail/edit.do' ;
+        common.open(url, title, {area: ['99%', '99%']});
+	}
+	
+	//查询按钮
+	  function queryGravidaDetail(){ 
+		  var queryParams = common.serializeObject($('#gravidaDetail_queryForm'));
+		  var options = {url: '../gravidaDetail/listData.do?time=' + new Date().getTime(), silent: false, query: queryParams};
+		  $('#gravidaDetailGrid').bootstrapTable('refresh', options); 
+	  }
+	  //清空查询框
+	  function clearQuery(){
+			var $form = $("#gravidaDetail_queryForm");
+			$form.find('[name="gravidaCard"]').val("");  
+			$form.find('[name="gravidaName"]').val(""); 
+			$form.find('[name="gravidaIdCard"]').val(""); 
+			 
+	  }
+	
+	$(function() {
+		$('#gravidaDetailGrid').bootstrapTable(//bootstrapTable
+				$.extend(baseTable, {
+					url : "../gravidaDetail/listData.do",
+					queryParams : function (params){
+						var requestParams = common.serializeObject($('#gravidaDetail_queryForm'));
+				        requestParams.pageSize = params.pageSize;
+				        requestParams.pageNumber = params.pageNumber;
+				        return requestParams;
+					},
+					columns : [
+					{checkbox:true},
+					{
+						field : 'gravidaCard',
+						title : '保健卡号'
+					}, {
+						field : 'gravidaName',
+						title : '姓名'
+					}, {
+						field : 'gravidaIdCard',
+						title : '身份证号'
+					},{
+						field : 'gravidaPhone',
+						title : '联系电话'
+					},{
+						field : 'gravidaAddr',
+						title : '联系地址'
+					},{
+						field : 'highRiskPregnancy',
+						title : '是否高危',
+						formatter :function (value, row, index) {
+							if (value)  return dicYesNo[value];
+						}
+					}, {
+						field : 'husbandName',
+						title : '丈夫姓名'
+					}, {
+						field : 'husbandIdCard',
+						title : '丈夫身份证号'
+					},{
+						field : 'createTime',
+						title : '建档时间'
+					},{
+                        field : 'operate',
+                        title : '操作',
+                        events : operateEvents,
+                        formatter : operateFormatter
+                    } ],
+					onDblClickRow : function (row, element){
+						  var title = '孕妇档案信息';
+			                var url = '../gravidaDetail/edit.do?mode=show&gravidaDetailId=' + row.gravidaDetailId ;
+			                common.open(url, title, {area: ['99%', '99%']});
+			   		},
+					onLoadSuccess : function(){
+						var height = ($('#gravidaDetailGrid').parents("body").height() - $('#gravidaDetail_queryForm').parents(".ibox").first().height() - 72);
+						$('#gravidaDetailGrid').bootstrapTable('resetView', {height: height}); 
+					}
+				})//$.extend
+		);//bootstrapTable
+	});//(function(){})
+
+	$(window).resize(function() { 
+		var height = ($('#gravidaDetailGrid').parents("body").height() - $('#gravidaDetail_queryForm').parents(".ibox").first().height() - 72);
+		$('#gravidaDetailGrid').bootstrapTable('resetView', {height: height});
+	})
+	
+	window.operateEvents = {
+            "click #btn_show_gravidaDetail": function(e, value, row, index) {
+            	var title = '孕妇档案信息';
+                var url = '../gravidaDetail/edit.do?mode=show&gravidaDetailId=' + row.gravidaDetailId ;
+                common.open(url, title, {area: ['99%', '99%']});
+            },
+            
+            "click #btn_edit_gravidaDetail": function(e, value, row, index) {
+                var title = '修改孕妇档案信息';
+                var url = '../gravidaDetail/edit.do?gravidaDetailId=' + row.gravidaDetailId ;
+                common.open(url, title, {area: ['99%', '99%']});
+            },
+             
+            "click #btn_del_gravidaDetail": function(e, value, row, index) {
+                common.confirm("确定要删除吗？", function (){
+                    $.post( '../gravidaDetail/delGravidaDetail.jo',
+                            {gravidaDetailId : row.gravidaDetailId}, 
+                            function (result){
+                                if (result.code == "0") {
+                                     common.alert("删除成功",0);
+                                     $('#btn_query').click();
+                                } else {
+                                    common.alert(result.msg, 2);
+                                }
+                            }, 
+                    'json');
+                });
+            }
+     };
+    
+    function operateFormatter(value, row, index) {
+        var html = [
+                    '<a id="btn_show_gravidaDetail" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+                    '<a id="btn_edit_gravidaDetail" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+                    '<a id="btn_del_gravidaDetail" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+                    ];
+        return html.join('');
+    }
+	</script>

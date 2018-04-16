@@ -1,0 +1,156 @@
+<script>
+	//验证单选
+	function singleCheck(rows){  
+		if (rows.length != 1 || !rows[0].gravidaDetailId ) {
+			common.alert("请选择将要编辑的行且仅能选择一行",0);
+			return false;
+		}
+		return true;
+	}
+	
+	//查询按钮
+	  function queryGravidaDetail(){ 
+		  var queryParams = common.serializeObject($('#gravidaDetail_queryForm'));
+		  var options = {url: '../gravidaHeathCare/gravidaHeathCareListData.do?time=' + new Date().getTime(), silent: false, query: queryParams};
+		  $('#gravidaDetailGrid').bootstrapTable('refresh', options); 
+	  }
+	  //清空查询框
+	  function clearQuery(){
+			var $form = $("#gravidaDetail_queryForm");
+			$form.find('[name="gravidaCard"]').val("");  
+			$form.find('[name="gravidaName"]').val(""); 
+			$form.find('[name="gravidaIdCard"]').val(""); 
+			 
+	  }
+	
+    //列表数据
+	$(document).ready(function() {
+		$('#gravidaDetailGrid').bootstrapTable(//bootstrapTable
+                $.extend(baseTable, {
+                    url : "../gravidaHeathCare/gravidaHeathCareListData.do",
+                    queryParams : function (params){
+                        var requestParams = common.serializeObject($('#gravidaDetail_queryForm'));
+                        requestParams.pageSize = params.pageSize;
+                        requestParams.pageNumber = params.pageNumber;
+                        return requestParams;
+                    },
+                    columns : [
+                    {checkbox:true},
+                    {
+                        field : 'gravidaCard',
+                        title : '保健卡号'
+                    }, {
+                        field : 'gravidaName',
+                        title : '姓名'
+                    }, {
+                        field : 'gravidaIdCard',
+                        title : '身份证号'
+                    },{
+                        field : 'gravidaPhone',
+                        title : '联系电话'
+                    },{
+                        field : 'gravidaAddr',
+                        title : '联系地址'
+                    },{
+                        field : 'highRiskPregnancy',
+                        title : '是否高危',
+                        formatter :function (value, row, index) {
+                            var dicYesNo = JSON.parse('$dicTools.changeMapToJson($dicData.dicYesNo)'); 
+                            if (value)  return dicYesNo[value];
+                        }
+                    }, {
+                        field : 'husbandName',
+                        title : '丈夫姓名'
+                    }, {
+                        field : 'husbandIdCard',
+                        title : '丈夫身份证号'
+                    },{
+                        field : 'createTime',
+                        title : '建档时间'
+                    },{
+                        field : 'operate',
+                        title : '操作',
+                        width : '150px',
+                        formatter : operateFormatter
+                    } ],
+                    onDblClickRow : function (row, element){
+                        $('#gravidaDetailGrid').bootstrapTable('check',element.attr('data-index'));
+                        show();
+                    },
+                    onLoadSuccess : function(){
+                        var height = ($('#gravidaDetailGrid').parents("body").height() - $('#gravidaDetail_queryForm').parents(".ibox").first().height() - 72);
+                        $('#gravidaDetailGrid').bootstrapTable('resetView', {height: height}); 
+                    }
+                })//$.extend
+        );//bootstrapTable
+	});
+
+	$(window).resize(function() { 
+		var height = ($('#gravidaDetailGrid').parents("body").height() - $('#gravidaDetail_queryForm').parents(".ibox").first().height() - 72);
+		$('#gravidaDetailGrid').bootstrapTable('resetView', {height: height});
+	})
+	
+    function operateFormatter(value, row, index) {
+        var html =   '<a href="javascript:void(0)" title="详情" onclick="editGravidaHeathCareDetail('+row.gravidaDetailId+')"><i class="fa fa-pencil-square-o"></i></a>';
+        return html;
+    }
+	
+    // 进入孕妇的详情编辑页
+    function editGravidaHeathCareDetail(gravidaDetailId){
+        var title = '孕妇保健管理详情';
+        var url = '../gravidaHeathCare/gravidaHeathCareDetail.do?gravidaDetailId=' + gravidaDetailId ;
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+    
+	 /******************* 孕前期体检  start ********************/
+    function addPregnancyFirstExam(){
+        var rows = common.getTableSelectRow('gravidaDetailGrid', false);
+        if (!singleCheck(rows) )   return ;
+        var title = '新增孕妇前期体检<span class="must-red font-14">( 红字为必填 )</span>';
+        var url = '../gravidaHeathCare/editPregnancyFirstExam.do?gravidaDetailId=' + rows[0].gravidaDetailId ;
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+    
+    // 添加按钮
+    function addPregnancyExam(){
+        var rows = common.getTableSelectRow('gravidaDetailGrid', false);
+        if (!singleCheck(rows) )   return ;
+        var title = '新增孕中期体检<span class="must-red font-14">( 红字为必填 )</span>';
+        var url = '../gravidaHeathCare/editPregnancyExam.do?gravidaDetailId=' + rows[0].gravidaDetailId ;
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+  
+    // 添加孕妇分娩按钮
+    function addGravidaParturition(){
+        var rows = common.getTableSelectRow('gravidaDetailGrid', false);
+        if (!singleCheck(rows) )   return ;
+        var title = '新增孕妇分娩<span class="must-red font-14">( 红字为必填 )</span>';
+        var url = '../gravidaHeathCare/editGravidaParturition.do?gravidaDetailId=' + rows[0].gravidaDetailId ;
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+    
+    // 添加产后访视 按钮
+    function addPostpartumVisit(fortyTwoExamFlag){
+        var rows = common.getTableSelectRow('gravidaDetailGrid', false);
+        if (!singleCheck(rows) )   return ;
+        
+        var url = '../gravidaHeathCare/editPostpartumVisit.do?gravidaDetailId=' 
+            + rows[0].gravidaDetailId + '&fortyTwoExamFlag=' +fortyTwoExamFlag;
+        
+        var title  = '新增产后访视 <span class="must-red font-14">( 红字为必填 )</span>';
+        if (fortyTwoExamFlag) {
+            title  = '新增产后42天检查 <span class="must-red font-14">( 红字为必填 )</span>';
+        }
+        
+        common.open(url, title, {area: ['99%', '99%']});
+    }
+ 
+    // 添加产前筛查检查/手术记录 按钮
+    function addGravidaSurgery(){
+        var rows = common.getTableSelectRow('gravidaDetailGrid', false);
+        if (!singleCheck(rows) )   return ;
+        var title = '新增产前筛查检查/手术记录 <span class="must-red font-14">( 红字为必填 )</span>';
+        var url = '../gravidaHeathCare/editGravidaSurgery.do?gravidaDetailId=' + rows[0].gravidaDetailId;
+        common.open(url, title, {area: ['99%', '99%']});
+    } 
+	</script>

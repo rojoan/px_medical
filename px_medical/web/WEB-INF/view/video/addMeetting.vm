@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+<form id="editForm" action="">
+	<label>用户账号</label><br />
+	<input id="userLogin" name="userLogin" value="" /><br />
+	
+	<label>用户密码</label><br />
+	<input type="password" id="userPwd" name="userPwd" value="" /><br />
+	
+	<label>会议名称</label><br />
+	<input id="topic" name="topic" value="" /><br />
+	
+	<label>开始时间</label><br />
+	<input id="beginTime" name="beginTime" value="" />格式：2008-09-10 12:00:00<br />
+	
+	<label>结束时间</label><br />
+	<input id="enTime" name="enTime" value="" />格式：2008-09-10 12:00:00<br />
+	
+	<label>用户数量</label><br />
+	<input id="userNum" name="userNum" value="" />必须是整型<br />
+	
+	<label>会议编号</label><br />
+	<input id="configId" name="configId" value=""  readonly="readonly"/>回显创建成功后的会议编号(整型并且大于0表示成功)<br />
+	
+	<input type="button" value=" 提 交 " onclick="addMeetting()" />
+</form>
+<!-- 全局js -->
+<script src="../resource/js/jquery.min.js"></script>
+#parse("./common/common.js.vm")
+<script type="text/javascript">
+	function addMeetting() {
+		var queryParams = common.serializeObject($('#editForm'));
+		$.post("../video/addMeetting.do", queryParams, function (result){
+			$('#configId').val(result);
+			if (result > 0) {
+				alert("创建成功");
+			} else {
+				alert(result);
+			}
+		}, "json");
+	}
+</script>
+</body>
+</html>

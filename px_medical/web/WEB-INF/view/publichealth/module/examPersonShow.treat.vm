@@ -1,0 +1,182 @@
+<div class="row m-l-xs m-r-xs">
+    <div class="text-box">
+	    <h5>住院治疗情况</h5>
+    </div>
+	 <div class="ibox-content">
+	    <table class="table table-bordered">
+	        <thead>
+	            <tr>
+	                <th>入院日期</th>
+	                <th>出院日期</th>
+	                <th>原因</th>
+	                <th>医疗机构名称</th>
+	                <th>病案号</th>
+	            </tr>
+	        </thead>
+	        <tbody id="add-treat-tr">
+	        	#foreach($item in $!inHosList)
+	        		<tr>
+	        			<td>
+	        				<input type="hidden" name="inHospitalId" value="$!item.inHospitalId" />
+	        				<input name="inHospitalTime" value="#htmlEscape($!item.inHospitalTime)" maxlength="10" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="outHospiralTime" value="#htmlEscape($!item.outHospiralTime)" maxlength="10" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="inHospitalReason" value="#htmlEscape($!item.inHospitalReason)" maxlength="50" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="hospitalOrg" value="#htmlEscape($!item.hospitalOrg)" maxlength="40" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="patientNum" value="#htmlEscape($!item.patientNum)" maxlength="10" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        		</tr>
+	        	#end
+	        </tbody>
+	    </table>
+	</div>
+   </div>
+   <div class="row m-l-xs m-r-xs">
+       <div class="text-box">
+       	<h5>主要用药情况</h5>
+     </div>
+        <div class="ibox-content">
+	    <table class="table table-bordered">
+	        <thead>
+	            <tr>
+	                <th>药品名称</th>
+	                <th>用法</th>
+	                <th>用量</th>
+	                <th>用药时间</th>
+	                <th>服药依从性</th>
+	            </tr>
+	        </thead>
+	        <tbody id="add-dosage-tr">
+		        #foreach($item in $!drugList)
+	        		<tr>
+	        			<td>
+	        				<input type="hidden" name="personDrugId" value="$!item.personDrugId" />
+	        				<input type="hidden" name="diseaseDrugId" value="$!item.diseaseDrugId" />
+	        				<input name="diseaseDrugName" value="#htmlEscape($!item.diseaseDrugName)" maxlength="20" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="drugUsage" value="#htmlEscape($!item.drugUsage)" maxlength="10" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="drugQuantity" value="#htmlEscape($!item.drugQuantity)" maxlength="10" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="eatDrugTime" value="#htmlEscape($!item.eatDrugTime)" maxlength="20" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        			<td>
+	        				<input name="eatDrugBelong" value="#htmlEscape($!item.eatDrugBelong)" maxlength="40" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+	        			</td>
+	        		</tr>
+	        	#end
+	        </tbody>
+	    </table>
+	</div>
+   </div>
+   <div class="row m-l-xs m-r-xs">
+       <div class="text-box">
+       	<h5>非免疫规划预防接种史</h5>
+    </div>
+       <div class="ibox-content">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>接种日期</th>
+                <th>接种机构名称</th>
+            </tr>
+        </thead>
+        <tbody id="add-prevent-tr">
+        	#foreach($item in $!novacList)
+        		<tr>
+        			<td>
+        				<input type="hidden" name="personNovacId" value="$!item.personNovacId" />
+        				<input name="vacName" value="#htmlEscape($!item.vacName)" maxlength="40" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+        			</td>
+        			<td>
+        				<input name="vacTime" value="#htmlEscape($!item.vacTime)" maxlength="10" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+        			</td>
+        			<td>
+        				<input name="vacOrg" value="#htmlEscape($!item.vacOrg)" maxlength="40" class="form-control" readonly style="width:100%;border:none; background-color: white;" />
+        			</td>
+        		</tr>
+        	#end
+        </tbody>
+    </table>
+</div>
+   </div>
+   <form id="formOther" class="form-horizontal">
+    <div class="row m-l-xs m-r-xs">
+        <div class="text-box">
+        	<h5>健康评价</h5>
+	     </div>
+	     <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">体检异常</label>
+            <div class="col-sm-2">
+            	#formSingleSelectFirstNone("healthProblem.healthAssessFlag" "$!healthProblem.healthAssessFlag" $!{dicData.dicHaveNo} "class='form-control' disabled='disabled'" "")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">异常1</label>
+            <div class="col-sm-8">
+            	#formTextInput("healthAbnormalContent" "#if($!healthAssessList.size() > 0)#htmlEscape($!healthAssessList[0])#end" "maxlength='100' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">异常2</label>
+            <div class="col-sm-8">
+            	#formTextInput("healthAbnormalContent" "#if($!healthAssessList.size() > 1)#htmlEscape($!healthAssessList[1])#end" "maxlength='100' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">异常3</label>
+            <div class="col-sm-8">
+            	#formTextInput("healthAbnormalContent" "#if($!healthAssessList.size() > 2)#htmlEscape($!healthAssessList[2])#end" "maxlength='100' class='form-control' readonly")
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-right p-r-none">异常4</label>
+            <div class="col-sm-8">
+            	#formTextInput("healthAbnormalContent" "#if($!healthAssessList.size() > 3)#htmlEscape($!healthAssessList[3])#end" "maxlength='100' class='form-control' readonly")
+            </div>
+        </div>
+    </div>
+    <div class="row m-l-xs m-r-xs">
+        <div class="text-box">
+        	<h5>健康指导</h5>
+	    </div>
+		<div class="form-group">
+			<label class="col-sm-1 control-label text-right p-r-none">建议</label>
+            <div class="col-sm-8">
+				#formCheckboxesLable("healthGuideTypeIds" $!guideIds $!dicData.dicHealthGuideType "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+        </div>
+        <div class="form-group">
+        	<label class="col-sm-1 control-label text-right p-r-none">危险控制因素</label>
+            <div class="col-sm-8">
+				#formCheckboxesLable("healthDangerTypeIds" $!dangerIds $!dicData.dicRiskControlFactors "&nbsp;" "disabled='disabled'" "class='m-t-xs m-r-xs i-checks'")
+            </div>
+        </div>
+        <div class="form-group">
+        	<label class="col-sm-1 control-label text-right p-r-none">减重目标</label>
+            <div class="col-sm-2">
+				#formTextInput("healthProblem.targetWeight" "#htmlEscape($!healthProblem.targetWeight)" "id='show-5' maxlength='50' class='form-control' readonly")
+            </div>
+            <div class="col-sm-1 control-label">kg</div>
+            <label class="col-sm-1 control-label text-right p-r-none">接种疫苗描述</label>
+            <div class="col-sm-2">
+				#formTextInput("healthProblem.vacVaccinate" "#htmlEscape($!healthProblem.vacVaccinate)" "id='show-6' maxlength='50' class='form-control' readonly")
+            </div>
+            <label class="col-sm-1 control-label text-right p-r-none">其他描述</label>
+            <div class="col-sm-3">
+				#formTextInput("healthProblem.riskFactors" "#htmlEscape($!healthProblem.riskFactors)" "id='show-7' maxlength='50' class='form-control' readonly")
+            </div>
+        </div>
+    </div>
+	</form>

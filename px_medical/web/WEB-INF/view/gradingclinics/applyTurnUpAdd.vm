@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 导入头部信息及css -->
+    <title>转诊(上转)申请</title>
+	#parse("./common/pageCss.vm") 
+	#parse("./common/pageJs.vm")
+    <style>
+        html,body { height: 100%}
+        #affixList{ background: #eff7ff; border: #96c2f1 1px solid; padding: 3px 6px; }
+        #affixList .affixRow { padding: 6px; border-bottom: #bbe1f1 1px dashed; }
+    </style>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content full-height">
+        <div class="row full-height">
+            <div class="col-sm-3" style="height: calc(100%); padding: 0 0 0 10px;">
+                <div class="ibox float-e-margins m-b-none">
+                	<!-- 患者查询 -->
+					<div class="ibox-title"><h5>就诊登记信息</h5></div>
+                    <div id="pateintQury" class="ibox-content ">
+						<form id="patient_queryForm" method="post" class="form-horizontal">
+						    #formHiddenInput("diagnosisFlag" "0" "")
+                            <div class="form-group">
+                                <label class="col-md-3 control-label text-right p-r-none">患者姓名</label>
+                                <div class="col-md-9">
+                              	  <input type="text" id="q_name" name="patientName" value="$!patientName" class="form-control" maxlength="25">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label text-right p-r-none">证件号码</label>
+                                <div class="col-md-9">
+                                	<input type="text" id="q_idcard" name="patientIdCard"  value="$!patientIdCard" class="form-control" maxlength="18">
+                          		</div>
+                            </div>
+
+                            <div class="form-group text-right" style="margin: 0; ">
+                                <button onclick="queryPatient();" type="button" class="btn btn-primary btn-sm"><i class="fa fa-search"></i> 查 询 </button>
+                                <button onclick="clearQuery();" type="button" class="btn btn-primary btn-sm"><i class="iconfont fa icon-qingchu"></i> 清 空</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- 患者列表Grid -->
+                    <div class="ibox-content ">
+					    <div class="example">
+                             <table id="patientGrid" data-mobile-responsive="true">
+                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>			
+            <div class="col-sm-9 full-height" style="padding: 0 0 0 10px;">
+            	 <!-- tab -->
+			     <ul class="nav nav-tabs">
+			         <li class="active"><a data-toggle="tab" href="#tab-1">申请表单</a></li>
+			         <li class=""><a data-toggle="tab" href="#tab-2">影像资料</a></li>
+			         <li class=""><a data-toggle="tab" href="#tab-3">附件资料</a></li>
+			     </ul>
+			     <div class="tab-content full-height-scroll" style="padding: 9px 8px 0px 12px; height:calc(100% - 38px); background: #fff">
+	            	<div id="tab-1" class="tab-pane full-height active">
+	            		 <form id="diaApplayForm" method="get" class="form-horizontal">
+							<!-- 隐藏字段 -->
+							#parse("./gradingclinics/applyTurnUpAddHidden.vm")	            
+			                <!-- 患者基本信息 -->
+			                <div class="ibox float-e-margins ">
+			                    <div class="ibox-title"><h5>患者基本信息 </h5></div>
+			                    <div class="ibox-content" >
+		                            <div class="form-group">
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">就诊卡号</label>
+		                                <div class="col-sm-3">
+		                                    <input type="text" id="patientCardNo" disabled="disabled" class="form-control">
+		                                </div>
+										<label class="col-sm-1 control-label text-right p-r-none p-l-none">身份证号码</label>
+		                                <div class="col-sm-3">
+		                                    <input type="text" id="patientIdCard"  disabled="disabled" class="form-control">
+		                                </div>
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">医/农保证号</label>
+		                                <div class="col-sm-3">
+			                                <div class="input-group">
+			                                    <input type="text" id="insuranceNo"  disabled="disabled"  class="form-control">
+		                                    </div>
+		                                </div>
+		                            </div>
+		                            <div class="form-group">
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">患者姓名</label>
+		                                <div class="col-sm-3">
+		                                    <input type="text" id="pName" disabled="disabled" class="form-control">
+		                                </div>
+										<label class="col-sm-1 control-label text-right p-r-none p-l-none">患者性别</label>
+		                                <div class="col-sm-3">
+											<input type="text" id="patientSex"   disabled="disabled" class="form-control">
+		                                </div>
+		                                 <label class="col-sm-1 control-label text-right p-r-none p-l-none">出生日期</label>
+		                                <div class="col-xs-3">                                
+			                         		<div class="input-group date" data-date="" data-date-format="yyyy-MM-dd" data-link-field="dtp_input1">
+			                                     <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" id="birthday" name="birthday"  disabled="disabled" type="text" value="" >
+			                                </div>                                    
+		                                </div>
+		                            </div>
+		                            <div class="form-group m-b-none">
+										<label class="col-sm-1 control-label text-right p-r-none p-l-none">联系电话</label>
+		                                <div class="col-sm-3">
+		                                    <input type="text" id="patientPhone"  disabled="disabled" class="form-control">
+		                                </div>
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none" >联系地址</label>
+		                                <div class="col-sm-6">
+		                                    <input type="text" id="patientNowAddr"  disabled="disabled" class="form-control">
+		                                </div>
+		                                
+		                            </div>
+			                    </div>
+			                </div>
+						    <!--转入医院信息-->
+			                <div class="ibox float-e-margins ">
+			                    <div class="ibox-title"><h5>转入医院信息</h5></div>
+			                    <div class="ibox-content" >
+			                            
+									<div class="form-group p-r-none">
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;转入医院</label>
+		                                <div class="col-sm-3">
+		                                    <div class="input-group">
+												<select id="institutionUpId" name="institutionUpId" onchange="loadOfficeUp(this.value);" data-placeholder="选择医院" class="form-control" style="min-width: 220px" tabindex="2">
+														#foreach($option in $hospitalMap.entrySet())
+										                        <option value='${option.key}' >${option.value}</option>
+														#end
+												</select>
+		                                    </div>
+		                                </div>
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;转入科室</label>
+		                                <div class="col-sm-3">
+		                                    <div class="input-group">
+												<!-- officeName -->
+												<select id="officeUpId" name="officeUpId" data-placeholder="选择科室" onchange="loadDoctorUp(this.value);" class="chosen-select" style="min-width: 178px; width: 100%" tabindex="1">
+		                                            <option value="">请选择科室</option>
+		                                        </select>
+		                                    </div>
+		                                </div>
+										<!--doctorName -->
+										<label class="col-sm-1 control-label text-right p-r-none p-l-none">转入医生</label>
+		                                <div class="col-sm-3">
+		                                    <div class="input-group">
+												<select id="doctorUpId" name="doctorUpId" data-placeholder="请选择医生" class="chosen-select" style="min-width: 150px;" tabindex="1">
+		                                            <option value="">请选择医生</option>
+		                                        </select>
+										   </div>
+		                                </div>
+		                            </div>
+		                            <div class="form-group p-r-none">
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;转诊目的</label>
+		                                <div class="col-sm-7 p-r-none">
+												#formRadioButtonsLabel("transAim" "" $dicData.dicTransAim "" "" "class='checkbox-inline i-checks'")
+		                                </div>
+		                                <label class="col-sm-1 control-label text-right p-r-none">联系电话</label>
+		                                <div class="col-sm-3">
+		                                    <input type="text" id="institutionPhoneUp" name="institutionPhoneUp" class="form-control">
+		                                </div>
+		                            </div>
+		                            <div class="form-group p-r-none m-b-none">
+		                                <label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;转诊原因</label>
+		                                <div class="col-sm-10">
+		                                    <input type="text" id="transReason" name="transReason" class="form-control">
+		                                </div>
+		                            </div>
+			                         
+			                    </div>
+			                </div>
+							<!--转出医院信息-->
+			                <div class="ibox float-e-margins ">
+			                    <div class="ibox-title"><h5>转出单位信息</h5></div>
+			                        <div class="ibox-content" >
+			                             
+		                                <div class="form-group p-r-none">
+		                                    <label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;转出科室</label>
+		                                    <div class="col-sm-3">
+		                                        <div class="input-group">
+													<select id="offficeDownId" name="offficeDownId" data-placeholder="转出科室" onchange="loadDoctorDown(this.value);"  class="chosen-select" style="min-width: 178px; width: 100%" tabindex="1">
+		                                                <option value="">请选择科室</option>
+		                                            </select>
+		                                        </div>
+		                                    </div>
+		                                    <label class="col-sm-1 control-label text-right p-r-none p-l-none">#requiredTag&nbsp;转出医生</label>
+		                                    <div class="col-sm-3">
+		                                        <div class="input-group">
+		                                        	<select id="doctorDownId" name="doctorDownId" data-placeholder="转诊医生" class="chosen-select" style="min-width: 178px; width: 100%" tabindex="1">
+		                                                <option value="" >请选择医生</option>
+		                                            </select>
+		                                        </div>
+		                                    </div>
+		                                    <label class="col-sm-2 control-label text-right p-r-none  p-l-none">#requiredTag&nbsp;医生电话</label>
+		                                    <div class="col-sm-2">
+		                                        <input type="text" id="doctorMobileDown" value="$!doctorPhone" name="doctorMobileDown" class="form-control">
+		                                    </div>
+		                                </div>
+		                                <div class="form-group p-r-none m-b-none" id="data_5">
+		                                    <label class="col-sm-1 control-label text-right p-r-none">有效期</label>
+											<div class="col-sm-5" >
+												<div class="input-group date">
+												<input type="text" id="validStartTime" name="validStartTime" value="$!date.format('yyyy-MM-dd', $!validStartTime)" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" >
+													<span class="input-group-addon">到</span>
+													<input type="text" class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" id="validEndTime" name="validEndTime" value="" />
+												</div>
+		                                    </div>
+											
+											<!-- 
+											<label class="col-sm-2 control-label text-right p-r-none">自动审核</label>
+		                                    <div class="col-sm-2 p-r-none">
+		    									#formRadioButtonsLabel("autoCheckFlag" "0" $dicData.dicYesNo "&nbsp;" "" "class='checkbox-inline i-checks'")
+		                                    </div>
+		                                     -->
+		                                </div>
+										
+			                    </div>
+			                </div>
+			            	<!--转诊信息-->
+			                <div class="ibox float-e-margins m-b-f-42 ">
+			                    <div class="ibox-title"><h5>转诊信息</h5></div>
+			                    <div class="ibox-content" >
+		                            <!--转出诊断信息-->
+		                            <div class="form-group">
+		                                <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;初步印象（主诉）</label>
+		                                <div class="col-sm-10">
+		                                    <textarea id="firstImpressUp" name="firstImpressUp" class="form-control"></textarea>
+		                                </div>
+		                            </div>
+		                            <div class="form-group">
+		                                <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;初步诊断</label>
+		                                <div class="col-sm-10">
+		                                    <textarea  id="firstDiagnosisUp" name="firstDiagnosisUp" class="form-control" ></textarea>
+		                                </div>
+		                            </div>
+		                            <div class="form-group">
+		                                <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;主要现病史</label>
+		                                <div class="col-sm-10">
+		                                    <textarea id="mainSickUp" name="mainSickUp" class="form-control" ></textarea>
+		                                </div>
+		                            </div>
+		                            <div class="form-group">
+		                                <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;主要既往史</label>
+		                                <div class="col-sm-10">
+		                                    <textarea id="historySickUp" name="historySickUp" class="form-control" ></textarea>
+		                                </div>
+		                            </div>
+		                            <div class="form-group m-b-none">
+		                                <label class="col-sm-2 control-label text-right p-r-none">#requiredTag&nbsp;治疗经过</label>
+		                                <div class="col-sm-10">
+		                                    <textarea id="cureUp" name="cureUp" class="form-control" ></textarea>
+		                                </div>
+		                            </div>
+		
+			                    </div>
+			                </div>
+		                    <!-- 操作按钮 -->
+		                    <div class=" tool-table-fixed" style="margin-left: -12px; width: 72.8%;">
+		                       <button type="button" onclick="saveDiagnosisApply(2);" class="btn btn-w-m btn-primary"><i class="fa fa-check-square-o"></i> 请求转诊 </button>&nbsp;&nbsp;
+		                       <button type="button" onclick="saveDiagnosisApply(0);"  class="btn btn-w-m btn-success"><i class="fa fa-save"></i> 保 存 </button>
+		                    </div>
+			                
+			            </form>
+	            	</div>
+  	
+	            	<div id="tab-2" class="tab-pane full-height">
+	            		<div class="full-height">
+	            			 <iframe id="pacsImage" src="" style="height: 100%; width: 100%;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" >   
+				             </iframe>
+						</div>
+	            	</div>
+	            	
+	            	<div id="tab-3" class="tab-pane full-height">
+	            		<div class="full-height">
+	            			 <div class="form-group m-b-none">							
+								<div class="row" id="affixList" style="margin: 11px auto 10px 19px;">
+							 		<div class="affixRow" style="display: none;">
+						 				<span class="showNum"></span>&nbsp;&nbsp;&nbsp;
+						 				<span class="showTrueName"><a href="../pateintAffix/download.do?affixItemId=$!item.affixItemId">附件名称</a></span>&nbsp;&nbsp;&nbsp;
+						 				<span class="showFileSize">&nbsp;&nbsp;&nbsp;附件大小</span>
+								    </div>
+								 </div>
+							</div>
+						</div>
+	            	</div>
+	            	
+			   	 </div>
+            
+        </div>
+        </div>  
+    </div>
+
+#parse("./common/common.js.vm")
+#parse("./gradingclinics/applyTurnUpAdd.js.vm")
+
+<script type="text/javascript">
+$(document).ready(function () {
+		$('.slimScrollDiv').css("height","calc(100% - 40px)");
+});
+</script>
+</body>
+</html>

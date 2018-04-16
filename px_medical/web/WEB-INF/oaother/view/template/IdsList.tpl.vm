@@ -1,0 +1,48 @@
+<table cellpadding="0" cellspacing="0" class="table_form">
+     <tr align="right">
+        <td>
+        #foreach($button in ${_layout.idsButtonList})
+            #buttonField($button "button_2" "")
+        #end
+        #if(!${_layout.idsFieldListview})
+        &nbsp;<input type="button" class="button_2" value="新&nbsp;增"  onclick="javascript:newRow()" />
+        &nbsp;<input type="button" class="button_2" value="删&nbsp;除"  onclick="javascript:doDelteRow('${_layout.idscheckname}')" />
+        #end
+        </td>
+     </tr>
+</table>
+
+<table id="idsTable" cellpadding="0" cellspacing="0" class="table_page">
+##标题栏
+    <tr class="form_title_char">
+#foreach($dc in ${_layout.idsFieldList})
+      <td #if(${dc.tdwidth})width="$!{dc.tdwidth}"#end #if("${dc.type}" == "hidden")style="display:none"#end>#inputTitle($!{dc.title} $!{dc.required})</td>
+#end
+    </tr>
+##内容栏
+#foreach($idsdata in ${idsdatas})
+    #set($idsdataBeanMap = ${HELPER_BEAN.getBeanNameMap(${idsdata})})
+    #set($css = "#tableCellCss($velocityCount)") ##注意这里  选择单双行颜色的方法，$velocityCount是循环的行号变量，它从1开始
+    <tr onMouseOver="this.className='table_page_m_move'" onMouseOut="this.className='table_page_row_focus'">
+    #foreach($dc in ${_layout.idsFieldList})
+        #if(${dc.type} != "button")
+      <td align=#if(${dc.align})"$!{dc.align}"#{else}center#end #if("${dc.type}" == "hidden")style="display:none"#end>
+            #if(${dc.view})
+                #viewInputField(${dc} $idsdataBeanMap)
+            #else
+                #inputField(${dc} $idsdataBeanMap)##if(${cell.required})#requiredTag()#end
+            #end
+      </td>
+        #else
+      <td align=#if(${dc.align})"$!{dc.align}"#{else}center#end>
+            #foreach($button in ${dc.buttonList})
+                #buttonField($button "button_2" "")
+            #end
+      </td>
+        #end
+    #end
+    </tr>
+#end
+  </table>
+</div>
+

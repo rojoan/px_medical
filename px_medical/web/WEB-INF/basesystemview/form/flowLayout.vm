@@ -1,0 +1,30 @@
+#set($fieldWidth = ${info.option('fieldWidth', 350)})
+#set($labelWidth = ${info.option('labelWidth', 70)})
+#set($rowHeight = ${info.option('rowHeight', 28)})
+<form id="$!{info.name}" name="$!{info.name}" action="$!{info.action}" method="$!{info.method}" class="i-form i-layout-flow" tipMode="${info.option('tipMode', 'alert')}">
+#foreach($field in ${info.fields}) #if(${field.type} == "hidden") ##首先循环处理隐藏字段
+<input type="hidden" name="${field.name}" value="$!{field.valueString}" noclean="true">
+#end #end
+#foreach($field in ${info.fields}) #if(${field.type} != "hidden") ##处理其他字段
+#set($colWidth = ${math.mul($fieldWidth, $field.option("cols", "1"))})
+#if(${field.label} != "")#set($boxWidth = $colWidth - $labelWidth)#else#set($boxWidth = $colWidth)#end
+<div class="i-field-box" style="width:${colWidth}px;">
+<table width="100%" style="table-layout:fixed;"><tr>
+<td class="i-label-wrap" style="width:${labelWidth}px" valign=top>
+<span id="i-label-${info.name}-${field.name}">#if($field.required)<span class="i-required">*</span>#end ${field.label}</span>
+</td>
+<td class="i-field-wrap">
+#if(${field.mode} == '')
+#parse('form/field.vm')
+#else
+#set($fieldvm = "form/${field.mode}.vm")#parse($fieldvm)
+#end
+</td>
+#if(${info.option('tipMode', 'alert')} == 'inplace')
+<td valign="top" class="i-vtip-wrap"><div id="vt-${info.name}-${field.name}" class="i-vtip"></div></td>
+#end
+</tr></table>
+</div>
+#end #end
+<div class="clearfloat"></div>
+</form>

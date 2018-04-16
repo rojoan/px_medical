@@ -1,0 +1,55 @@
+<html>
+<base target="_self"/>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+  <title>${SessionSysPortal.appTitle}</title>
+  <link rel="stylesheet" type="text/css" href="../app/right/right.css">
+  <script language="JavaScript" type="text/javascript" src="../app/print/printDesigner.js"></script>
+#loadDefaultScript("")
+<script language="javascript">
+
+//装载打印设计页完成时的调用事件
+function onSetTemplate() {
+    if (getObjectByName("licencePicSrc", 0).value != "") {
+        var designParams = initPrintItem();
+        if (designParams != null) {
+            //document.frames["designFrame"].installDesignerData(designParams.data, designParams.template);
+            window.frames["designFrame"].installDesignerData(designParams.data, designParams.template);
+        }
+    }
+}
+</script>
+#parse("/print/template/PrintModelData.tpl.vm")
+#if(!${printItemList})
+    #set($_model = $_printItemData.get("${appLicenceType.licenceEnName}"))
+    #if($_model)
+        #if($_model.sameModel)
+            #set($_model = $_printItemData.get($_model.sameModel))
+        #end
+        #set($_setup = true)
+        #buildPrintLicenceInfo(${_model.elements})
+    #end
+    #if(!$_setup)
+        #buildPrintLicenceInfo([])
+    #end
+#else
+    #buildPrintLicenceInfo(${printItemList})
+#end
+</head>
+<body scroll="no">
+#formHiddenInput("licenceName" "$!{appLicenceType.licenceName}" "id='licenceName'")
+#formHiddenInput("licencePicSrc" "#appLicenceImagePath()$!{appLicenceType.licenceImgName}.jpg" "id='licencePicSrc'")
+#formHiddenInput("licenceTypeId" "$!{appLicenceType.licenceTypeId}" "id='licenceTypeId'")
+#formHiddenInput("printFormat" "$!{appLicenceType.printFormat}" "id='printFormat'")
+#formHiddenInput("printerSettng" "$!{appLicenceType.printerSettng}" "id='printerSettng'")
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+    <tr>
+      <td>
+        <iframe frameborder="0" height="100%" src="../manage/commonFindView.do?view=/print/designer" width="100%" marginwidth="10" scrolling="auto" id="designFrame" name="designFrame" onload="javascript:onSetTemplate();"></iframe>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+

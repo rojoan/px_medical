@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人基本档案管理-公共选择页</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#parse("./common/common.js.vm")
+<style>
+        html,body { height: 100%}
+        button.close { position: relative; z-index: 5555; right:9px; top:5px;}
+    </style>
+</head>
+
+<body class="gray-bg top-navigation">
+
+	<div class="ibox float-e-margins ">
+		<div class="ibox-content">
+			<div class="row">
+				<form id="personDetail_queryForm" method="get" class="form-horizontal">
+					<div class="form-group">
+						<label class="col-sm-1 control-label text-right p-r-none">姓名</label>
+			            <div class="col-sm-2">
+							<input type="text" id="q_personalName" name="personalName" class="form-control"   />
+			            </div>
+		            	#if('gravida' == $!mode)
+			            	#formHiddenInput("gender" "2" "")
+						#else
+						<label class="col-sm-1 control-label text-right p-r-none">性别</label>
+			            <div class="col-sm-2">
+				            	#formSingleSelectFirstNone("gender" "" $!{dicData.dicSex} "id='gender' class='form-control'" "")
+			            </div>
+						#end 
+			            <label class="col-sm-1 control-label text-right p-r-none">户籍类型</label>
+			            <div class="col-sm-2">
+			            	#formSingleSelectFirstNone("censusType" "" $!{dicData.dicPersonDetailCensusType} "id='censusType' class='form-control'" "")
+			            </div>
+			            <div class="col-sm-3">
+				            <button type="button" onclick="queryPersonDetail();" class="btn btn-sm btn-primary">
+								<i class="fa fa-search"></i> <span>查 询</span>
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<button type="button" onclick="clearQuery();" class="btn btn-sm btn-info">
+								<i class="iconfont fa icon-qingchu"></i> <span>清 空</span>
+							</button>
+			            </div>
+			        </div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="ibox float-e-margins m-b-none">
+		<div class="ibox-content p-b-n">
+			<div class="table-responsive">
+				<!-- 列表表格 -->
+				<table id="personDetailGrid" class="table table-bordered" data-mobile-responsive="true"> </table>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- 全局js -->
+    #parse("./common/pageJs.vm") 
+    #parse("./common/common.js.vm")
+    <!-- 页面js -->
+    #parse("./publichealth/select/selectCommonPersonDetail.js.vm")
+</body>
+</html>

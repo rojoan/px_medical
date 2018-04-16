@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预防接种明细 - 详细信息</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+<link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="../resource/css/font-awesome.css" rel="stylesheet">
+<link href="../resource/css/animate.css" rel="stylesheet">
+<link href="../resource/css/style.css" rel="stylesheet">
+<link href="../resource/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+
+<link href="../resource/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+<link href="../resource/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="../resource/style/css/page.css" rel="stylesheet">
+
+
+
+<style>
+.lightBoxGallery img {
+	margin: 5px;
+	width: 90px;
+}
+
+.hzzb-tool {
+	height: 48px;
+	background: #ccc;
+	width: 100%;
+	line-height: 48px;
+	padding: 0 15px;
+}
+
+.hzzb-yxzl-left {
+	width: 20%
+}
+
+.hzzb-yxzl-right {
+	width: 77.5%
+}
+
+.form-control.full-height {
+	height: 100%
+}
+
+table.table-jcdj>tbody>tr>th, table.table-jcdj>tbody>tr>td {
+	padding: 9px 15px
+}
+
+table.table-jcdj>tbody>tr>td:hover {
+	border-bottom: #00b7ee 1px solid
+}
+
+.modal-dialog {
+	width: 100%;
+	margin: 0 auto
+}
+</style>
+</head>
+
+<body class="gray-bg top-navigation">
+	<div class="wrapper wrapper-content full-height">				
+		<div class="ibox-content">
+			<!-- 表格显示内容 开始 -->
+			<div class="table-responsive">
+				<table class="table table-bordered table-jcdj">
+					<tbody>
+#* ids
+                            <th class="text-nowrap">医疗机构ID：</th>
+                            <td >$!{vaccinationDetail.hospitalId}</td>
+                            <th class="text-nowrap">被接种人个人ID：</th>
+                            <td >$!{vaccinationDetail.personDetailId}</td>
+                            <th class="text-nowrap">接种医生ID：</th>
+                            <td >$!{vaccinationDetail.vaccinationDoctorId}</td>
+                            <th class="text-nowrap">被接种儿童基本信息ID：</th>
+                            <td >$!{vaccinationDetail.childDetailId}</td>
+*#
+                        <tr>
+                            <th class="text-nowrap">预防接种卡编号：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.vaccinationCardNo})</td>
+                            <th class="text-nowrap">被接种人姓名：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.vaccinatedName})</td>
+                            <th class="text-nowrap">接种日期：</th>
+                            <td >$!date.format('yyyy-MM-dd HH:mm', $!{vaccinationDetail.vaccinationDate})</td>
+                        </tr>
+                        <tr>
+                            <th class="text-nowrap">疫苗名称：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.vaccineName})</td>
+                            <th class="text-nowrap">疫苗编码</th>
+                            <td > #htmlEscape($!{vaccinationDetail.vaccineNo})</td>
+                            <th class="text-nowrap">疫苗批号：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.vaccineBatch})</td>
+                        </tr>
+                        <tr>
+                            <th class="text-nowrap">接种部位：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.vaccineSite})</td>
+                            <th class="text-nowrap">医疗机构名称：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.hospitalName})</td>
+                            <th class="text-nowrap">接种医生：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.vaccinationDoctor})</td>
+                        </tr>
+
+                        </tr>
+                        <tr>
+                            <th class="text-nowrap">有效日期：</th>
+                            <td >$!date.format('yyyy-MM-dd HH:mm', $!{vaccinationDetail.effectiveDate})</td>
+                            <th class="text-nowrap">生产企业：</th>
+                            <td > #htmlEscape($!{vaccinationDetail.productionEntp})</td>
+                            <th class="text-nowrap">生产企业编码：</th>
+                            <td >$!{vaccinationDetail.productionEntpNo}</td>
+                        </tr>
+					</tbody>
+				</table>
+			</div>
+			<!-- 表格显示内容 结束 -->
+		</div>
+	</div>
+
+	<!-- 全局js -->
+	<script src="../resource/js/jquery.min.js"></script>
+	<script src="../resource/js/bootstrap.min.js"></script>
+
+	<!-- Flot -->
+	<script src="../resource/js/plugins/flot/jquery.flot.js"></script>
+	<script src="../resource/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+	<script src="../resource/js/plugins/flot/jquery.flot.resize.js"></script>
+
+	<!-- ChartJS-->
+	<script src="../resource/js/plugins/chartJs/Chart.min.js"></script>
+
+	<!-- Data picker -->
+	<script src="../resource/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+
+	<!-- Chosen -->
+	<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+
+	<!-- iCheck -->
+	<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+
+	<script>
+        $(document).ready(function () {
+
+            $('#myTabs a[href="#tab-one"]').tab('show') // Select tab by name
+            $('#myTabs a:first').tab('show') // Select first tab
+            $('#myTabs a:last').tab('show') // Select last tab
+            $('#myTabs li:eq(2) a').tab('show') // Select third tab (0-indexed)
+
+            //下拉表单
+            var config = {
+                '.chosen-select': {},
+                '.chosen-select-deselect': {
+                    allow_single_deselect: true
+                },
+                '.chosen-select-no-single': {
+                    disable_search_threshold: 10
+                },
+                '.chosen-select-no-results': {
+                    no_results_text: 'Oops, nothing found!'
+                },
+                '.chosen-select-width': {
+                    width: "350px;"
+                }
+            };
+            for (var selector in config) {
+                $(selector).chosen(config[selector]);
+            };
+
+
+            $('#data_4 .input-group.date').datepicker({
+                minViewMode: 1,
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                todayHighlight: true
+            });
+
+            $('#data_5 .input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true
+            });
+
+
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+            //性别switch
+            $(".switch").click(function () {
+                if ($(".switch-left").hasClass('chosen') == true) {
+                    $(".switch-left").removeClass('chosen');
+                    $("input[name=male]").attr("checked", false);
+                    $(".switch-right").addClass('chosen');
+                    $("input[name=female]").attr("checked", true);
+                } else {
+                    $(".switch-right").removeClass('chosen');
+                    $("input[name=female]").attr("checked", false);
+                    $(".switch-left").addClass('chosen');
+                    $("input[name=male]").attr("checked", true);
+                }
+            });
+
+            $(".chosen-container.chosen-container-single").css({width:"150px",height:"30px"});
+            $(".chosen-container.chosen-container-multi").css({width:"100%",height:"30px"});
+            $("a.chosen-single").css("line-height","30px");
+
+
+
+        });
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高血压-慢性病患者随访编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal full-height">
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>随访基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">此次随访分类</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                    #formRadioButtons("visitClassify" "$!personInsanityVisit.visitClassify" $!dicData.dicVisitClassify "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">患者姓名</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("patientName" "#htmlEscape($!personInsanityVisit.personInsanity.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">随访方式</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("visitWay" "#lookUpDict($dicData.dicVisitWay $!personInsanityVisit.visitWay)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">随访时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("visitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personInsanityVisit.visitTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">随访医生</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("visitDoctorName" "#htmlEscape($!personInsanityVisit.visitDoctorName)" " id='visitDoctorName' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">随访医院</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("hospitalName" "#htmlEscape($!personInsanityVisit.hospitalName)" " id='hospitalName' maxlength='15' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">医院联系电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalPhone" "#htmlEscape($!personInsanityVisit.hospitalPhone)" "id='hospitalPhone' maxlength='100' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">失访原因</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("lossReasonFlag" "#lookUpDict($dicData.dicLossReasonFlag $!personInsanityVisit.lossReasonFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">死亡原因</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("deathReasonFlag" "#lookUpDict($dicData.dicDeathReasonFlag $!personInsanityVisit.deathReasonFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">死亡时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("deathDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personInsanityVisit.deathDate)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">躯体疾病</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("bodyDiseaseFlag" "#lookUpDict($dicData.dicBodyDiseaseFlag $!personInsanityVisit.bodyDiseaseFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">危险性评估</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("insanityDangerFlag" "#lookUpDict($dicData.dicInsanityDangerFlag $!personInsanityVisit.insanityDangerFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">下次随访时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("nextVisitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personInsanityVisit.nextVisitTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">自知力</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("insightFlag" "#lookUpDict($dicData.dicInsightFlag $!personInsanityVisit.insightFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">睡眠情况</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("sleepFlag" "#lookUpDict($dicData.dicSituationFlag $!personInsanityVisit.sleepFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">饮食情况</label>
+	                <div class="col-sm-2">
+	               		#formTextInput("dietContentFlag" "#lookUpDict($dicData.dicSituationFlag $!personInsanityVisit.dietContentFlag)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">目前症状</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                    #formCheckboxesLable("symptomIds" $!insanitySymIds $!dicData.dicInsanitySymptom "&nbsp;" "class='m-t-xs m-r-xs i-checks' disabled='disabled'" "")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">其他症状描述</label>
+	                <div class="col-sm-11">
+	                    #formTextInput("symDescribe" "#htmlEscape($!personInsanityVisit.symDescribe)" " id='symDescribe' maxlength='100' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>社会功能情况</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">个人生活料理</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("livingContentFlag" "#lookUpDict($dicData.dicSituationFlag $!personInsanityVisit.livingContentFlag)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">家务劳动</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("houseworkFlag" "#lookUpDict($dicData.dicSituationFlag $!personInsanityVisit.houseworkFlag)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">生产劳动及工作</label>
+	                <div class="col-sm-3">
+	               		#formTextInput("workFlag" "#lookUpDict($dicData.dicSituationOtherFlag $!personInsanityVisit.workFlag)" "class='form-control' readOnly")
+	                </div>
+	               <label class="col-sm-1 control-label text-right p-r-none p-l-none">学习能力</label>
+	                <div class="col-sm-3">
+	               		#formTextInput("learnFlag" "#lookUpDict($dicData.dicSituationFlag $!personInsanityVisit.learnFlag)" "class='form-control' readOnly")
+	                </div>
+	               <label class="col-sm-1 control-label text-right p-r-none p-l-none">社会人际交往</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("humanFlag" "#lookUpDict($dicData.dicSituationFlag $!personInsanityVisit.humanFlag)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+				
+	            <div class="text-box"><h5>危险行为</h5></div>
+	            <div id="behaviorList">
+		            <div class="form-group">  
+			            #foreach($item in $!dicData.dicInsanityType.keySet())
+			            	#set($num=$!velocityCount % 5)
+			            	#if($!num == 0)
+								</div>
+								<div class="form-group"> 
+							#end
+							<label class="col-sm-1 control-label text-right p-r-none p-l-none">$!dicData.dicInsanityType.get($!item)(次)</label>
+							<div class="col-sm-2">
+								#set($behavior = "")
+								#set($behavior = $!behaviorMap.get($!item))
+								#formIntZeroInput("insanityTypeCount" "$!behavior.insanityTypeCount" "id='$!item' maxlength='3' class='form-control' readOnly")
+							</div>
+						#end
+		            </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>治疗情况</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">两次随访之间关锁情况</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("lockingFlag" "#lookUpDict($dicData.dicLockingFlag $!personInsanityVisit.lockingFlag)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">两次随访期间住院情况</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("inhospitalFlag" "#lookUpDict($dicData.dicInhospitalFlag $!personInsanityVisit.inhospitalFlag)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">末次出院时间</label>
+	                <div class="col-sm-3">
+						#formTextInput("outhospitalTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personVisitItem.outhospitalTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">实验室检查</label>
+	                <div class="col-sm-11">
+	                	#formTextInput("labExam" "#htmlEscape($!personVisitItem.labExam)" "maxlength='50' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">服药依从性</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("eatDrugBelong" "#lookUpDict($dicData.dicDrugCompliance $!personInsanityVisit.eatDrugBelong)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">药物不良反应</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("drugSideEffect" "#lookUpDict($dicData.dicHaveNo $!personInsanityVisit.drugSideEffect)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">药物名称</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("drugName" "#htmlEscape($!personVisitItem.drugName)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">治疗效果</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("cureEffect" "#lookUpDict($dicData.dicCureEffect $!personInsanityVisit.cureEffect)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">康复措施</label>
+	                <div class="col-sm-5" style="padding-top: 6px;">
+	                    #formCheckboxesLable("recoveryTypes" $!insanityRecoveryTypes $!dicData.dicRecoveryType "&nbsp;" "class='m-t-xs m-r-xs i-checks' disabled='disabled'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">其他康复措施</label>
+	                <div class="col-sm-3"> 
+	                	#formTextInput("recoveryOther" "#htmlEscape($!personInsanityVisit.recoveryOther)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box">
+		            <h5>用药情况</h5>
+	            </div>
+	            <div id="drugList">
+		            #foreach($item in $!usedrugList)
+			            <div class="form-group">
+			            	<label class="col-md-1 control-label text-right p-r-none p-l-none">药物名称</label>
+					        <div class="col-md-2 ">
+					            #formTextInput("diseaseDrugName" "#htmlEscape($!item.diseaseDrugName)" "onclick='selectDrug(this)' maxlength='20' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none">用法用量</label>
+					        <div class="col-md-1" style="width:150px;">
+					            #formTextInput("drugQuantity" "#htmlEscape($!item.drugQuantity)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none">用药单位</label>
+					        <div class="col-md-1" style="width:150px;">
+					            #formTextInput("drugUnit" "#htmlEscape($!item.drugUnit)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none">每次用药次数</label>
+					        <div class="col-md-1" style="width:100px;">
+					            #formTextInput("drugFreq" "#htmlEscape($!item.drugFreq)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+			            </div>
+			        #end
+	            </div>
+	            
+	            <div class="text-box">
+		            <h5>用药指导</h5>
+	            </div>
+	            <div id="guidanceDrugList">
+		            #foreach($item in $!guidedrugList)
+			            <div class="form-group">
+			            	<label class="col-md-1 control-label text-right p-r-none p-l-none">药物名称</label>
+					        <div class="col-md-2 ">
+					            #formTextInput("diseaseDrugName" "#htmlEscape($!item.diseaseDrugName)" "onclick='selectDrug(this)' maxlength='20' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none">用法用量</label>
+					        <div class="col-md-1" style="width:150px;">
+					            #formTextInput("drugQuantity" "#htmlEscape($!item.drugQuantity)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none">用药单位</label>
+					        <div class="col-md-1" style="width:150px;">
+					            #formTextInput("drugUnit" "#htmlEscape($!item.drugUnit)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none">每次用药次数</label>
+					        <div class="col-md-1" style="width:100px;">
+					            #formTextInput("drugFreq" "#htmlEscape($!item.drugFreq)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+			            </div>
+			        #end
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+</html>

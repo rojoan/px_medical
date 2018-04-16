@@ -1,0 +1,153 @@
+<!-- 新增行的模板  -->
+<div id="template" style="display: none;">
+
+	<!-- 既往史模板 -->
+	<div id="pastDiseaseTemplate">
+		  <div class="trRow show">
+			<div class="delBtn">
+				<a href="javascript:void(0);" onclick="delPastDisease(this);" title="删除当前记录"><i class="glyphicon glyphicon-remove-circle red"></i></a>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none red">疾病名称</label>
+				<div class="col-xs-3">
+					#formTextInput("diseaseName" "" " onclick='showPastDiseasePop(this);'  readonly maxlength='50' class='form-control  tigger pastDiseaseSelect' style='background-color: white;'")
+					#formHiddenInput("diseaseId" "" "")
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none">得病时间</label>
+				<div class="col-sm-3">
+					<div class=" input-daterange date">
+						#formTextInput("diseaseTime" "$!date.format('yyyy-MM-dd', $!item.diseaseTime)" " onclick='$layerDate' class='form-control form_datetime'")
+					</div>
+				</div>
+				<label class="col-sm-1 control-label text-right p-r-none">是否为遗传</label>
+				<div class="col-sm-2">
+					<!-- 多组redio需要设置： name=familyDiseaseFlag+ $item.pastDiseaseId -->
+					#formRadioButtonsLabel("familyDiseaseFlag" "" $dicData.dicYesNo "&nbsp;" "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none ">得病部位描述</label>
+				<div class="col-xs-10">
+					#formTextInput("diseaseContent" "" "maxlength='200' class='form-control'")
+				</div>
+			</div>
+		</div>
+		  
+	</div>
+
+	<!-- 个人暴露史 -->
+	<div id="exposeDiseaseTemplate">
+		<div class="trRow">
+			<div class="delBtn">
+				<a href="javascript:void(0);" onclick="delExposeDisease(this);" title="删除当前记录"><i class="glyphicon glyphicon-remove-circle red"></i></a>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none red">暴露源</label>
+				<div class="col-xs-10">
+					#formTextInput("exposeName" "" "maxlength='50' class='form-control'")
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 个人过敏史新增项 -->
+	<div id="drugAllergyTemplate">
+		<div class="trRow show" >
+			<div class="delBtn">
+				<a href="javascript:void(0);" onclick="delDrugAllergy(this);" title="删除当前记录"><i class="glyphicon glyphicon-remove-circle red"></i></a>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-1 control-label text-right p-r-none red">过敏物质</label>
+				<div class="col-xs-10">
+					#formTextInput("drugAllergyName" "" "maxlength='50' class='form-control'")
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 家族史新增项 -->
+	<div id="familyDiseaseTemplate">
+		<div class="trRow show" >
+            <div class="delBtn">
+                <a href="javascript:void(0);" onclick="delFamilyDisease(this);" title="删除当前记录"><i class="glyphicon glyphicon-remove-circle red"></i></a>
+            </div>
+			<div class="form-group">
+				<div class="col-sm-2">
+					#formSingleSelectDictionary("familyMemberFlag" $!item.familyMemberFlag $dicData.dicFamilyMemberFlag "id='familyMemberFlag' data-placeholder='请选择成员'  class='form-control' style='min-width: 80px; width: 70%;margin-left: 40px;' tabindex='1'" "请选择成员" "")
+				</div>
+				<div class="col-sm-9">
+					<div class="input-group ">
+						#formTextInput("diseaseNames" "" " onclick='showFamilyPop(this);'  readonly maxlength='50' class='form-control  tigger familyDisNameSelect' style='background-color: white;'")
+						#formHiddenInput("diseaseId" "" "")
+						<div class="input-group-btn">
+							<button   data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
+								<span class="caret"></span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 手术、创伤、输血史增项 -->
+	<div id="personSurgeryTemplate">
+		<div id="surgeryTemplate">
+			<div class="surgeryRow trRow show">
+				<input type="hidden" name="surgeryType"  value="surgeryType">
+				<div class="delBtn">
+					<a href="javascript:void(0);" onclick="delSurgery(this);" title="删除当前记录"><i class="glyphicon glyphicon-remove-circle red"></i></a>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none ">手术名称</label>
+					<div class="col-sm-6">
+						<input type="text" name="surgeryName" class="form-control">
+					</div>
+
+					<label class="col-sm-1 control-label text-right p-r-none ">手术时间</label>
+					<div class="col-sm-3 input-daterange date">
+						<input type="text" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" name="surgeryTime" value="" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="traumaTemplate">
+			<div class="traumaRow trRow show">
+				<input type="hidden" name="surgeryType"  value="traumaType">
+                <div class="delBtn">
+                    <a href="javascript:void(0);" onclick="delSurgery(this);" title="删除当前记录"><i class="glyphicon glyphicon-remove-circle red"></i></a>
+                </div>				
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none ">外伤名称</label>
+					<div class="col-sm-6">
+						<input type="text" name="traumaName" class="form-control">
+					</div>
+
+					<label class="col-sm-1 control-label text-right p-r-none ">外伤时间</label>
+					<div class="col-sm-3 input-daterange date">
+						<input type="text" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" name="traumaTime"  />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="bloodTransTemplate">
+			<div class="bloodTransRow trRow show">
+			    <input type="hidden" name="surgeryType"  value="bloodTransType">
+				<div class="delBtn">
+					<a href="javascript:void(0);" onclick="delSurgery(this);" title="删除当前记录"><i class="glyphicon glyphicon-remove-circle red"></i></a>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label text-right p-r-none ">输血原因</label>
+					<div class="col-sm-6">
+						<input type="text" name="bloodTransReason" class="form-control">
+					</div>
+
+					<label class="col-sm-1 control-label text-right p-r-none ">输血时间</label>
+					<div class="col-sm-3 input-daterange date">
+						<input type="text" name="bloodTransTime" class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})"  />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+</div>

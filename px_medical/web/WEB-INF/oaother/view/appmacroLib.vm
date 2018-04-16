@@ -1,0 +1,2609 @@
+#**
+* 带图片按钮
+*#
+#macro(qbutton $picture $title $onclick)<button class="q-button" #if($onclick) onclick="$onclick" #end><img src="../app/right/images/$picture"> $title</button>#end
+
+#**
+ * requiredInput
+ *
+ * 以红色显示文字。
+ *
+ * @param message 要显示的信息
+ *
+#macro(requiredInput $message)#if($message)<font color="red">$!message</font>#end#end
+*#
+
+#**buildQueryList
+ * requiredInput
+ *
+ * 按必填项要求显示文字,格式为: xxx(*)。
+ *
+ * @param message 要显示的信息
+ *
+*#
+#macro(requiredInput $message)#if($message)<font color="red">*</font>$!{message}#end#end
+
+#**
+ * inputTitle
+ *
+ * 处理输入标题的显示颜色，必须录入的输入项的标题以红色显示。
+ *
+ * @param message 要显示的信息
+ *
+*#
+#macro(inputTitle $message $isRequired)#if($isRequired)#requiredInput($message)#else $!message#end#end
+
+
+#macro(inputTitle2 $cell)
+    #if(${cell.fullScreen})
+        #set( $q = '"')
+        #set($!{cell.title} = ${cell.title} + "<p><input type='button' class='btn_back' value='全&nbsp;屏' onclick=$q$!{cell.fullScreenOnclick}$q  />")
+    #end
+    #inputTitle($!{cell.title} $!{cell.required})
+#end
+
+##
+##公用"导出" csx－2014－4－23
+##
+##
+#macro(doexportExcel $action $filename $modelname $ispage)
+
+<input type="button" class="input_style" value="导&nbsp;出" onclick="doExport('$action'#if($filename != ''), '$filename' #if($modelname != ''), '$modelname' #if($ispage != ''),'$ispage'#end#end#end)" />
+#end
+
+##
+##公用"打印" csx－2014－4－23
+##
+##
+#macro(doPrint $action)
+<input type="button" class="input_style" value="打&nbsp;印" onclick="doPrint('$action')" />
+#if(!$INCLUDE_SHOW_SELECT_DOPRINT_SCRIPT)
+#set($INCLUDE_SHOW_SELECT_DOPRINT_SCRIPT = true)
+<script type="text/javascript">
+function doPrint(action) {
+    var e = document.queryForm;
+    if (e) {
+        e.action = "../scm/go.do?action=" + action;
+        e.submit();
+    }
+}
+</script>
+#end
+#end
+
+##
+##用于将信息连接成文字
+##csx－2014－4－24
+##
+##
+#macro(joinText $cell $datamap)
+    ${cell.title}:#viewField($cell $datamap)
+#end
+
+##
+##用于将附件大小的字节转为KB
+##csx－2014－4－24
+##
+#macro(getfileSizeKb $filesize)
+    #set($size = $filesize / 1024)
+    #if ($size > 0)
+        $size KB
+    #else
+        1KB
+    #end
+#end
+
+##奇偶行的单元格颜色
+#macro(tableRowBgcolor $index)
+#if($index % 2 == 0)bgcolor="#E5EDF7"#end
+#end
+
+##奇偶日常监管统计奇偶列的单元格颜色
+#macro(examTableRowBgcolor $index)
+#if($index % 2 == 0)bgcolor="#E9F7F7"#end
+#end
+
+#**
+ * buildEditPageScrollGrid
+ *
+ * 根据模板构建滚动条Grid
+ * 由于此Grid在将操作按钮放到列表前面，导致构建FormValidator时验证错位，所以模板内不允许check
+ * 如果需要对字段进行验证，可在外面使用validator.addNormalCheckPoint('columns','name','checkType')
+ * @param _gridSourceS 源模板对象
+ * @param readOnlyS 网格是否只读
+ * @param showTitleS 是否显示标题
+ *#
+#macro(buildEditPageScrollGrid $_gridSourceS $readOnlyS $showTitleS $widthS)
+#if($_gridSourceS)
+    #set($gridId = ${_gridSourceS.gridId})
+    #set($hidGridName = "")
+    #set($hidGridName = ${_gridSourceS.gridId} + "_hits")
+    #set($hidGridCheckName = ${_gridSourceS.gridId} + "_check")
+    #set($hidGridHiddenName = ${_gridSourceS.gridId} + "_hidden")
+    #set($hidGridInfoName = ${_gridSourceS.gridId} + "_info")
+    #set($hidGridPageName = ${_gridSourceS.gridId} + "_pageInfo")
+    #set($gridSelectName = ${_gridSourceS.gridId} + "_select_")
+    #set($name = "")
+    #set($name = ${_gridSourceS.title})
+    #set($columns = [])
+    #set($columns = ${_gridSourceS.columns})
+    #set($operates = [])
+    #set($operates = ${_gridSourceS.operate})
+    #set($gridDatas = [])
+    #set($gridDatas = ${_gridSourceS.gridDatas})
+    #set($hidDatas = [])
+    #set($hidDatas = ${_gridSourceS.hiddens})
+    #set($gridInfo = " titleLine='0' ")
+    #set($events = "")
+<div style="overflow: auto;width:100%">
+	#if(!$widthS)
+		#set($widthS = '3000px')
+	#end
+<table id="$gridId" style="width:$widthS" class="list_tab">
+    #if($gridDatas != [])
+      <script defer language="javascript">
+        var divId = getParentDivID(document.getElementById("${gridId}"));
+      var tempIdArray = (divId.split("_"));
+          var flag = document.getElementById("buildedSheet_" + tempIdArray[tempIdArray.length -1]);
+      if (flag) {
+          flag.value = "true";
+      }
+      </script>
+    #end
+    #if($readOnlyS == false && $operates)
+        #set($columnLen = $columns.size() + 1)
+    #else
+        #set($columnLen = $columns.size())
+    #end
+    #if($showTitleS)
+        #set($gridInfo = " titleLine='1' ")
+  <tr><td colspan="$columnLen"><div class="form_title_char"><span>${name}</span></div></td></tr>
+    #end
+  <tr>
+    ##设置标题栏的操作列
+    #if($readOnlyS == false && $operates)
+    <td width="$operates.width" class="form_gray_center">$operates.name
+      <img src="../base/js/swfupload/add.png" gridId="$gridId" onclick="javascript:editGridAddRow('${gridId}');" alt="添加一行">
+            #foreach($operate in $operates.operates)
+                #set($hidContext = "gridType='operate' gridAlt='$!{operate.alt}' opEvent='$!{operate.opEvent}' imgSrc='$!{operate.imgSrc}'")
+                #formHiddenInput(${hidGridName} "" $!{hidContext})
+            #end
+    </td>
+    #end
+    #set($gridInfo = "$gridInfo isRead='$readOnlyS' #if(${_gridSourceS.checkNotEmpty})notEmpty='${_gridSourceS.checkNotEmpty}'#end gridName=${name}")
+    #formHiddenInput(${hidGridInfoName} "" $!{gridInfo})
+##设置普通标题列
+    #foreach($col in $columns)
+##如果列的控件属性是下拉框则构建隐藏的控件提供给新增行时使用
+        #if($col.type.indexOf("select,") == 0)
+            #if($col.type.indexOf("FIRSTEMPTY") > 0)
+                #formSingleSelectFirstNone("${gridSelectName}${col.field}" "$!{col.defaultValue}" $!{col.dictionary} " style='display:none;'" "-- 请选择 --")
+            #else
+                #formSingleSelect("${gridSelectName}${col.field}" "$!{col.defaultValue}" $!{col.dictionary} " style='display:none;'")
+            #end
+        #end
+    <td #if(${col.width})width="${col.width}"#end class="form_gray_center">
+        #if(!$readOnlyS && ${col.check} && ${col.check.checkType.indexOf('checkNotNull;checkNotEmpty')} >= 0)
+      <font color="red">*</font>
+        #end
+        ${col.name}
+		#if(!$readOnly && $!{col.showDateFormatExample} == "true")
+			<br><font color="red">(#displayOnlyDate(${date.systemDate}))</font>
+        #end
+##单元格组件的事件
+        #if ($col.events)
+            #set($events = "")
+            #if ($col.events.onclick)
+                #set($events = $events + " fieldClickEvent=" + $col.events.onclick)
+            #elseif ($col.events.onchange)
+                #set($events = $events + " fieldChangeEvent=" + $col.events.onchange)
+            #elseif ($col.events.onkeypress)
+                #set($events = $events + " fieldKeypress=" + $col.events.onkeypress)
+            #elseif ($col.events.onkeydown)
+                #set($events = $events + " fieldKeydown=" + $col.events.onkeydown)
+            #end
+        #end
+##设置单元格全属性
+        #if($velocityCount == 2)
+            #set($hidContext = "gridType='${col.type}' gridField='$!{col.field}' fieldName='$!{col.name}' fielddefVal='$!{col.defaultValue}' isFirstCol $!events")
+        #elseif($velocityCount == $columns.size())
+            #set($hidContext = "gridType='${col.type}' gridField='$!{col.field}' fieldName='$!{col.name}' fielddefVal='$!{col.defaultValue}' isLastCol $!events")
+        #else
+            #set($hidContext = "gridType='${col.type}' gridField='$!{col.field}' fieldName='$!{col.name}' fielddefVal='$!{col.defaultValue}' $!events")
+        #end
+        #formHiddenInput(${hidGridName} "" $!{hidContext})
+        #if(!$readOnlyS)
+            #set($checkContext = " ")
+            #if($col.check)
+                #set($checkContext = " checkType='$!{col.check.checkType}' rangeType='$!{col.check.rangeType}' checkRange='$!{col.check.checkRange}' relationField='$!{col.check.relationField}' relationType='$!{col.check.relationType}' relationFieldName='$!{col.check.relationFieldName}'")
+            #end
+            #formHiddenInput(${hidGridCheckName} "" $!{checkContext})
+        #end
+    </td>
+    #end
+##设置隐含域的内容
+    #foreach($hid in $hidDatas)
+        #if(${hid.static})
+            #set($hidContext = "gridType='hid' gridField='$!{hid.field}' fieldValue='$!{hid.static}'")
+        #else
+            #set($hidContext = "gridType='hid' gridField='$!{hid.field}' fieldValue=''")
+        #end
+        #formHiddenInput(${hidGridHiddenName} "" $!{hidContext})
+    #end
+  </tr>
+    #set($index = 0)
+    #foreach($data in $gridDatas)
+        #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+        #if(${_gridSourceS.rowCondition})
+            #set($tmp = '#set($condition = ' + ${HELPER_BEAN.formatCondition(${_gridSourceS.rowCondition}, ${dataBeanMap})} + ')')
+            ## use new method in current version of velocity
+            ##${render.eval($tmp)}
+            #evaluate($tmp)
+            #if(${condition})
+                #buildGridRecord($dataBeanMap $_gridSourceS $readOnlyS)
+            #end
+        #else
+            #buildGridRecord($dataBeanMap $_gridSourceS $readOnlyS)
+        #end
+    #end
+    #if(${_gridSourceS.showPage} && ${_gridSourceS.showPage} != "")
+  <tr gridType="${gridId}_empty"><td height="25" colspan="$columnLen">&nbsp;</td></tr>
+        #if (${_gridSourceS.pageSize})
+            #set($pageSize = ${_gridSourceS.pageSize})
+        #else
+            #set($pageSize = 20)
+        #end
+        #if (${gridDatas.size()} > 0)
+            #set($dataSize = ${gridDatas.size()})
+            #set($pageCount = $math.ceil($math.div($dataSize, $pageSize)))
+        #else
+            #set($dataSize = 0)
+            #set($pageCount = 0)
+        #end
+        #set($pageInfo = " cursor1=0 cursor2=#if($dataSize < $pageSize)${dataSize}#else${pageSize}#end pageSize=${pageSize}")
+#formHiddenInput("$hidGridPageName" "" "$!{pageInfo}")
+#buildGridPageBar(${gridId} ${pageSize} ${pageCount} ${columnLen} "")
+    #end
+</table>
+<br>
+</div>
+#end
+
+#end
+
+
+
+#**
+ * buildEditPageGrid
+ *
+ * 根据模板构建Grid
+ *
+ * @param _gridSource 源模板对象
+ * @param readOnly 网格是否只读
+ * @param showTitle 是否显示标题
+ *#
+#macro(buildEditPageGrid $_gridSource $readOnly $showTitle)
+#if($_gridSource)
+    #set($gridId = ${_gridSource.gridId})
+    #set($hidGridName = "")
+    #set($hidGridName = ${_gridSource.gridId} + "_hits")
+    #set($hidGridCheckName = ${_gridSource.gridId} + "_check")
+    #set($hidGridHiddenName = ${_gridSource.gridId} + "_hidden")
+    #set($hidGridInfoName = ${_gridSource.gridId} + "_info")
+    #set($hidGridPageName = ${_gridSource.gridId} + "_pageInfo")
+    #set($gridSelectName = ${_gridSource.gridId} + "_select_")
+    #set($name = "")
+    #set($name = ${_gridSource.title})
+    #set($columns = [])
+    #set($columns = ${_gridSource.columns})
+    #set($operates = [])
+    #set($operates = ${_gridSource.operate})
+    #set($gridDatas = [])
+    #set($gridDatas = ${_gridSource.gridDatas})
+    #set($hidDatas = [])
+    #set($hidDatas = ${_gridSource.hiddens})
+    #set($gridInfo = " titleLine='0' ")
+    #set($events = "")
+<table id="$gridId" width="100%" cellpadding="0" cellspacing="0" class="list_tab">
+    #if($gridDatas != [])
+      <script defer language="javascript">
+        var divId = getParentDivID(document.getElementById("${gridId}"));
+      var tempIdArray = (divId.split("_"));
+          var flag = document.getElementById("buildedSheet_" + tempIdArray[tempIdArray.length -1]);
+      if (flag) {
+          flag.value = "true";
+      }
+      </script>
+    #end
+    #if($readOnly == false && $operates)
+        #set($columnLen = $columns.size() + 1)
+    #else
+        #set($columnLen = $columns.size())
+    #end
+    #if($showTitle)
+        #set($gridInfo = " titleLine='1' ")
+  <tr><td colspan="$columnLen"><div class="form_title_char"><span>${name}</span></div></td></tr>
+    #end
+  <tr>
+    ##设置标题栏的操作列
+    #if($readOnly == false && $operates)
+    <td width="$operates.width" class="form_gray_center">$operates.name
+      <img src="../base/js/swfupload/add.png" gridId="$gridId" onclick="javascript:editGridAddRow('${gridId}');" alt="添加一行">
+            #foreach($operate in $operates.operates)
+                #set($hidContext = "gridType='operate' gridAlt='$!{operate.alt}' opEvent='$!{operate.opEvent}' imgSrc='$!{operate.imgSrc}'")
+                #formHiddenInput(${hidGridName} "" $!{hidContext})
+            #end
+    </td>
+    #end
+    #set($gridInfo = "$gridInfo isRead='$readOnly' #if(${_gridSource.checkNotEmpty})notEmpty='${_gridSource.checkNotEmpty}'#end gridName=${name}")
+    #formHiddenInput(${hidGridInfoName} "" $!{gridInfo})
+##设置普通标题列
+    #foreach($col in $columns)
+##如果列的控件属性是下拉框则构建隐藏的控件提供给新增行时使用
+        #if($col.type.indexOf("select,") == 0)
+            #if($col.type.indexOf("FIRSTEMPTY") > 0)
+                #formSingleSelectFirstNone("${gridSelectName}${col.field}" "${col.defaultValue}" $!{col.dictionary} " style='display:none;'" "-- 请选择 --")
+            #else
+                #formSingleSelect("${gridSelectName}${col.field}" "$!{col.defaultValue}" $!{col.dictionary} " style='display:none;'")
+            #end
+        #end
+    <td #if(${col.width})width="${col.width}"#end class="form_gray_center">
+        #if(!$readOnly && ${col.check} && ${col.check.checkType.indexOf('checkNotNull;checkNotEmpty')} >= 0)
+      <font color="red">*</font>
+        #end
+        ${col.name}
+		#if(!$readOnly && $!{col.showDateFormatExample} == "true")
+			<br><font color="red">(#displayOnlyDate(${date.systemDate}))</font>
+        #end
+##单元格组件的事件
+        #if ($col.events)
+            #set($events = "")
+            #if ($col.events.onclick)
+                #set($events = $events + " fieldClickEvent=" + $col.events.onclick)
+            #elseif ($col.events.onchange)
+                #set($events = $events + " fieldChangeEvent=" + $col.events.onchange)
+            #elseif ($col.events.onkeypress)
+                #set($events = $events + " fieldKeypress=" + $col.events.onkeypress)
+            #elseif ($col.events.onkeydown)
+                #set($events = $events + " fieldKeydown=" + $col.events.onkeydown)
+            #end
+        #end
+##设置单元格全属性
+        #if($velocityCount == 2)
+            #set($hidContext = "gridType='${col.type}' gridField='$!{col.field}' fieldName='$!{col.name}' fielddefVal='$!{col.defaultValue}' isFirstCol $!events")
+        #elseif($velocityCount == $columns.size())
+            #set($hidContext = "gridType='${col.type}' gridField='$!{col.field}' fieldName='$!{col.name}' fielddefVal='$!{col.defaultValue}' isLastCol $!events")
+        #else
+            #set($hidContext = "gridType='${col.type}' gridField='$!{col.field}' fieldName='$!{col.name}' fielddefVal='$!{col.defaultValue}' $!events")
+        #end
+        #formHiddenInput(${hidGridName} "" $!{hidContext})
+        #if(!$readOnly)
+            #set($checkContext = " ")
+            #if($col.check)
+                #set($checkContext = " checkType='$!{col.check.checkType}' rangeType='$!{col.check.rangeType}' checkRange='$!{col.check.checkRange}' relationField='$!{col.check.relationField}' relationType='$!{col.check.relationType}' relationFieldName='$!{col.check.relationFieldName}'")
+            #end
+            #formHiddenInput(${hidGridCheckName} "" $!{checkContext})
+		#end
+    </td>
+    #end
+##设置隐含域的内容
+    #foreach($hid in $hidDatas)
+        #if(${hid.static})
+            #set($hidContext = "gridType='hid' gridField='$!{hid.field}' fieldValue='$!{hid.static}'")
+        #else
+            #set($hidContext = "gridType='hid' gridField='$!{hid.field}' fieldValue=''")
+        #end
+        #formHiddenInput(${hidGridHiddenName} "" $!{hidContext})
+    #end
+  </tr>
+    #set($index = 0)
+    #foreach($data in $gridDatas)
+        #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+        #if(${_gridSource.rowCondition})
+            #set($tmp = '#set($condition = ' + ${HELPER_BEAN.formatCondition(${_gridSource.rowCondition}, ${dataBeanMap})} + ')')
+            ## use new method in current version of velocity
+            ##${render.eval($tmp)}
+            #evaluate($tmp)
+            #if(${condition})
+                #buildGridRecord($dataBeanMap $_gridSource $readOnly)
+            #end
+        #else
+            #buildGridRecord($dataBeanMap $_gridSource $readOnly)
+        #end
+
+    #end
+    #if(${_gridSource.showPage} && ${_gridSource.showPage} != "")
+  <tr gridType="${gridId}_empty"><td height="25" colspan="$columnLen">&nbsp;</td></tr>
+        #if (${_gridSource.pageSize})
+            #set($pageSize = ${_gridSource.pageSize})
+        #else
+            #set($pageSize = 20)
+        #end
+        #if (${gridDatas.size()} > 0)
+            #set($dataSize = ${gridDatas.size()})
+            #set($pageCount = $math.ceil($math.div($dataSize, $pageSize)))
+        #else
+            #set($dataSize = 0)
+            #set($pageCount = 0)
+        #end
+        #set($pageInfo = " cursor1=0 cursor2=#if($dataSize < $pageSize)${dataSize}#else${pageSize}#end pageSize=${pageSize}")
+#formHiddenInput("$hidGridPageName" "" "$!{pageInfo}")
+#buildGridPageBar(${gridId} ${pageSize} ${pageCount} ${columnLen} "")
+    #end
+</table>
+#end
+
+#end
+
+#**
+ * buildGridRecord
+ *
+ * 构建Grid的数据行
+ *
+ * @param dataBeanMap 行数据
+ * @param gridSource grid信息
+ * @param readOnly 只读
+ *
+ *#
+#macro(buildGridRecord $dataBeanMap $gridSource $readOnly)
+    #set($gridId = ${_gridSource.gridId})
+    #set($gridSelectName = ${_gridSource.gridId} + "_select_")
+    ##set($recordColumns = [])
+    #set($columns = ${_gridSource.columns})
+    ##set($recordOperates = [])
+    #set($operates = ${_gridSource.operate})
+    ##set($recordHidDatas = [])
+    #set($hidDatas = ${_gridSource.hiddens})
+    #set($events = "")
+  <tr>
+        #if($readOnly == false && $operates)
+    <td width="$operates.width" align="center">
+            #foreach($operate in $operates.operates)
+                #if($operate.opEvent && $operate.opEvent == "DEFAULT_DEL")
+                    #set($clickEvent = "delGridRow('$gridId', this)")
+                #end
+                #formDefImg("$!{operate.imgSrc}" " gridId='$gridId' alt='${operate.alt}'" "$!clickEvent")
+            #end
+    </td>
+        #end
+    #set($index = $index + 1)
+        #foreach($col in $columns)
+            #if($col.type == "idx")
+    <td align="center">$index
+                #if(!$readOnly)
+                    #foreach($hid in $hidDatas)
+                        #if(${hid.static})
+                            #formHiddenInput("${hid.field}" "${hid.static}" "")
+                        #else
+##如果noMapData属性存在 则defaultValue优先于从datamap中下载
+                            #if(${hid.noMapData})
+                                #formHiddenInput("${hid.field}" "$!{hid.defaultValue}" "")
+                            #else
+                                #set($hidData = "")
+                                #if(${hid.dictionary})
+                                    #set($hidData = '#lookUpDict(${hid.dictionary} $dataBeanMap.get($!{hid.field}))')
+                                #else
+                                    #set($hidData = $dataBeanMap.get($!{hid.field}))
+                                #end
+                                #if($hidData == "")
+                                    #set($hidData = $!hid.defaultValue)
+                                #end
+                                #formHiddenInput("${hid.field}" "$!{hidData}" "")
+                            #end
+                        #end
+                    #end
+                #end
+    </td>
+            #else
+                #set($colTypes = $col.type.split(","))
+                #foreach($type in $colTypes)
+                    #if($velocityCount == 1)
+                        #set($inputType = $type)
+                    #elseif($velocityCount == 2)
+                        #set($classType = $type)
+                    #elseif($velocityCount == 3)
+                        #set($classLen = $type)
+                    #end
+                #end
+                ##在编辑状态下要判断当前的编辑域的类型是text还是select，否则都是静态文本
+                #if($readOnly == false)
+                    #if ($col.events)
+                        #set($events = "")
+                        #if ($col.events.onclick)
+                            #set($events = $events + " onclick=javascript:" + $col.events.onclick + ";")
+                        #end
+                        #if ($col.events.onchange)
+                            #set($events = $events + " onchange=javascript:" + $col.events.onchange + ";")
+                        #end
+                        #if ($col.events.onkeypress)
+                            #set($events = $events + " onkeypress=javascript:" + $col.events.onkeypress + ";")
+                        #end
+                        #if ($col.events.onkeydown)
+                            #set($events = $events + " onkeydown=javascript:" + $col.events.onkeydown + ";")
+                        #end
+                    #end
+                    #if($inputType == "text")
+                        #if($classType == "INT")
+    <td >#formIntDefInput("${col.field}" "$!dataBeanMap.get($!{col.field})" "$!{classLen}" "$!events")</td>
+                        #elseif($classType == "FLO")
+    <td >#formFloDefInput("${col.field}" "$!dataBeanMap.get($!{col.field})" "$!{classLen}" "$!events")</td>
+                        #elseif($classType == "DATE")
+                            #if($classLen == "10")
+    <td >#formDefInput("${col.field}" "#displayOnlyDate($!dataBeanMap.get($!{col.field}))" "$!{classLen}" "$!events")</td>
+                            #else
+    <td >#formDefInput("${col.field}" "#displayOnlyTime($!dataBeanMap.get($!{col.field}))" "$!{classLen}" "$!events")</td>
+                            #end
+                        #else
+    <td >#formDefInput("${col.field}" "$!dataBeanMap.get($!{col.field})" "$!{classLen}" "$!events")</td>
+                        #end
+                    #elseif($inputType == "select")
+    <td >
+                        #if($col.type.indexOf("FIRSTEMPTY") > 0)
+                            #set($_def = "$!dataBeanMap.get($!{col.field})")
+                            #if($_def == "" && $col.defaultValue)
+                                #set($_def = $!col.defaultValue)
+                            #end
+    #formSingleSelectFirstNone("${col.field}" "$!_def" $!{col.dictionary} "$!events" "-- 请选择 --")
+                        #else
+    #formSingleSelect("${col.field}" "$!_def" $!{col.dictionary} "$!events")
+                        #end
+    </td>
+                    #end
+                #else
+                    #set($_formula = "")
+                    #if ($col.calculate)
+                        #set($_formula = ${HELPER_BEAN.getFormatFormula($!{col.calculate.param}, $!{col.calculate.formula}, $dataBeanMap)})
+                    #end
+                    #if($_formula && $_formula != "")
+                        #set($tmp = '#set($_formulaValue=' + $_formula + ')')
+                         ## use new method in current version of velocity
+                         ##${render.eval($tmp)}
+                         #evaluate($tmp)
+                        #if($classType == "INT" || $classType == "FLO")
+                            <td align="right">$!{_formulaValue}</td>
+                        #elseif($classType == "DATE")
+                            #if($classLen == "10")
+                            <td align="right">#displayOnlyDate($!{_formulaValue})</td>
+                            #else
+                            <td align="right">#displayOnlyTime($!{_formulaValue})</td>
+                            #end
+                        #else
+                            <td >$!{_formulaValue}</td>
+                        #end
+                    #else
+                        #if($classType == "INT" || $classType == "FLO")
+    <td align="right">#if(${col.dictionary})#lookUpDict($!{col.dictionary} $!{dataBeanMap.get($!{col.field})})#else $!{dataBeanMap.get($!{col.field})}#end</td>
+                        #elseif($classType == "DATE")
+                            #if($classLen == "10")
+    <td >#displayOnlyDate($!{dataBeanMap.get($!{col.field})})</td>
+                            #else
+    <td >#displayOnlyTime($!{dataBeanMap.get($!{col.field})})</td>
+                            #end
+                        #else
+    <td >#if(${col.dictionary})#lookUpDict($!{col.dictionary} $!{dataBeanMap.get($!{col.field})})#else $!{dataBeanMap.get($!{col.field})}#end</td>
+                        #end
+                    #end
+                #end
+            #end
+        #end
+  </tr>
+#end
+#**
+ * buildGridPageBar
+ *
+ * 构建Grid的分页栏
+ *
+ * @param gridId 网格Id
+ * @param pageSize 每页记录数
+ * @param pageCount 页总数
+ * @param columnLen 记录数
+ * @param chekcboxname checkbox名
+ *
+ *#
+#macro(buildGridPageBar $gridId $pageSize $pageCount $columnLen $chekcboxname)
+<tr gridType="${gridId}_pageBar" valign="bottom" >
+  <td colspan="$columnLen">
+    <table cellpadding="0" cellspacing="0" class="page_tab">
+<script>
+function pageSubmit(page) {
+    if (event.keyCode == '13') {
+        if (!isInt(page.value) || Number(page.value) <= 0) {
+            alert("请输入正确的页号！");
+            return;
+        }
+    }
+}
+</script>
+      <tr>
+#if($chekcboxname && $chekcboxname != "")
+        <td height="1" align="left" valign="middle" class="text12">#checkboxSelectFunc($chekcboxname)</td>
+#end
+        <td align="right" class="page_link"><span id="${gridId}_pageInfoBlock">#if(${pageCount} > 0)第 1 / $!{pageCount} 页#{else}第 / 页 #end</span>
+          <span id="${gridId}_prevBlock" style="display:none;">
+          | <a id="${gridId}_firstHref" href="#" gridId="${gridId}" op="first" onclick="return changePage(this);" >首页</a>
+          | <a id="${gridId}_prevHref" href="#" gridId="${gridId}" op="prev" onclick="return changePage(this);">上一页</a>
+          </span>
+          <span id="${gridId}_prevStatic" style="display:;">| 首页 | 上一页</span>
+
+          <span id="${gridId}_nextBlock" style="display:#if(${pageCount} < 2)none#end;">
+          | <a id="${gridId}_nextHref" href="#" gridId="${gridId}" op="next" onclick="return changePage(this);" >下一页</a>
+          | <a id="${gridId}_lastHref" href="#" gridId="${gridId}" op="last" onclick="return changePage(this);">尾页</a>
+          </span>
+          <span id="${gridId}_nextStatic" style="display:#if(${pageCount} > 1)none#end;">| 下一页 | 尾页</span>
+
+          | 转到 <input id="${gridId}_pageNumber" gridId="${gridId}" op="jump" size="5" maxLength="5" class="text_input" value="#if(${pageCount} > 0)1#end"
+            onkeypress="javascript:pageSubmit(this);" onkeyup="value=value.replace(/[^\d]/g,'')"
+            onbeforepaste="clipboardData.setData('text', clipboardData.getData('text').replace(/[^\d]/g,''))" /> 页,每页${pageSize}行&nbsp;
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+#end
+
+#**
+ * buildAjaxElementsInfo
+ *
+ * 构建页面Ajax元素的信息数组
+ *
+ * @param _gridSource 源模板对象
+ *
+ *#
+#macro(buildAjaxElementsInfo $_gridSource)
+    #if($_gridSource && $_gridSource.elements.size() > 0)
+        #set($elements = $_gridSource.elements)
+<script language="javascript">
+var elements = new Array();
+        #foreach($el in $elements)
+            #set($idx = $velocityCount - 1)
+				elements[$idx] = new Object();
+				elements[$idx].name = '${el.name}';
+				elements[$idx].field = '${el.field}';
+				elements[$idx].fillType = '$!{el.fillType}';
+				elements[$idx].disType = '$!{el.disType}';
+				elements[$idx].source = '${el.source}';
+				elements[$idx].arrayName = '$!{el.arrayName}';
+				elements[$idx].index = '$!{el.index}';
+				elements[$idx].defaultValue = '$!{el.defaultValue}';
+				elements[$idx].spanId = '$!{el.spanId}';
+            #if($el.fillType == "relArray")
+				elements[$idx].relKey = '${el.relKey}';
+				elements[$idx].relMap = '${el.relMap}';
+            #end
+            #if($el.arrayEls)
+				elements[$idx].arrayEls = new Array();
+				var relArrays = new Array();
+				var idx = 0;
+                #foreach($relEls in $el.arrayEls)
+					relArrays[idx++] = new Object();
+					relArrays[relArrays.length - 1].name = '${relEls.name}';
+					relArrays[relArrays.length - 1].field = '${relEls.field}';
+					relArrays[relArrays.length - 1].fillType = '$!{relEls.fillType}';
+					relArrays[relArrays.length - 1].disType = '$!{relEls.disType}';
+					relArrays[relArrays.length - 1].spanId = '$!{relEls.spanId}';
+					relArrays[relArrays.length - 1].defaultValue = '$!{relEls.defaultValue}';
+					relArrays[relArrays.length - 1].arrayName = '$!{relEls.arrayName}';
+					relArrays[relArrays.length - 1].index = '$!{relEls.index}';
+                    #if($relEls.check)
+						relArrays[relArrays.length - 1].check = new Object();
+						relArrays[relArrays.length - 1].check.checkType = "$!{relEls.check.checkType}";
+						relArrays[relArrays.length - 1].check.checkRange = "$!{relEls.check.checkRange}";
+						relArrays[relArrays.length - 1].check.rangeType = "$!{relEls.check.rangeType}";
+						relArrays[relArrays.length - 1].check.relationFieldName = "$!{relEls.check.relationFieldName}";
+						relArrays[relArrays.length - 1].check.relationField = "$!{relEls.check.relationField}";
+						relArrays[relArrays.length - 1].check.relationType = "$!{relEls.check.relationType}";
+                        #if($!{relEls.check.relationNum})
+							relArrays[relArrays.length - 1].check.relationNum = "$!{relEls.check.relationNum}";
+                        #end
+                        #if($!{relEls.check.checkIndex})
+							relArrays[relArrays.length - 1].check.checkIndex = "$!{relEls.check.checkIndex}";
+                        #end
+                    #end
+                #end
+				elements[$idx].arrayEls = relArrays;
+            #end
+            #if($el.check)
+				elements[$idx].check = new Object();
+				elements[$idx].check.checkType = "$!{el.check.checkType}";
+				elements[$idx].check.checkRange = "$!{el.check.checkRange}";
+				elements[$idx].check.rangeType = "$!{el.check.rangeType}";
+				elements[$idx].check.relationFieldName = "$!{el.check.relationFieldName}";
+				elements[$idx].check.relationField = "$!{el.check.relationField}";
+				elements[$idx].check.relationType = "$!{el.check.relationType}";
+               #if($!{el.check.relationNum})
+				elements[$idx].check.relationNum = "$!{el.check.relationNum}";
+               #end
+               #if($!{el.check.checkIndex})
+				elements[$idx].check.checkIndex = "$!{el.check.checkIndex}";
+               #end
+            #end
+        #end
+</script>
+    #end
+#end
+
+#**
+ * buildHiddenFields
+ *
+ * 构建动态生成隐含域
+ *
+ *#
+#macro(buildHiddenFields $_hiddenSource)
+<script language="javascript">
+#if(!$hiddenElementsFlag)
+    var hiddenElements = new Array(), hid;
+    #set($index = 0)
+    #set($hiddenElementsFlag = true)
+#end
+
+#foreach($_hsource in $_hiddenSource)
+    #foreach($_hid in ${_hsource.hidden})
+hid = new Object();
+hid.field = '${_hid.field}';
+hid.defaultValue = '$!{_hid.defaultValue}';
+        #if(${_hid.static})
+hid.static = "true";
+        #end
+        #if(${_hsource.count})
+hid.count = '$!{_hsource.count}';
+        #elseif(${_hid.count})
+hid.count = '$!{_hid.count}';
+        #else
+hid.count = '';
+        #end
+        #if(${_hid.defaultValues})
+hid.defaultValues = new Array();
+            #foreach($_def in $_hid.defaultValues)
+hid.defaultValues[hid.defaultValues.length] = '$!{_def}';
+            #end
+        #end
+hid.source = '$!{_hsource.source}';
+hiddenElements[$index] = hid;
+        #set($index = $index + 1)
+    #end
+#end
+</script>
+<div id="hiddenArea"></div>
+#end
+
+#**
+ * buildDynamicHiddenFields
+ *
+ * 动态添加隐域,在已存在同名域时不添加
+ *
+ *#
+#macro(buildDynamicHiddenFields $hiddenFieldName $defaultValue)
+
+#set($_tempHiddensScript =
+[{
+    "hidden" : [
+        {"field" : "$!{hiddenFieldName}", "defaultValue" : "$!{defaultValue}"}
+    ]
+}])
+#buildHiddenFields($_tempHiddensScript)
+#end
+
+#**
+ * 构建单页内可收缩Blocks
+ *#
+#macro(buildBlocks)
+	<script language="javascript">
+	var blocks = new Array();
+	#foreach($sheet in $_sheetSource.sheets)
+	    #set($index = $velocityCount - 1)
+	    #if($velocityCount == 1)
+	    	var currentSheet = "${sheet.id}";
+	    #end
+	    blocks[$index] = "${sheet.id}";
+	#end
+	//初始化所有的Block
+	function initBlocks() {
+	    for (var i = 0; i < blocks.length; i++) {
+	        var sheetLink = document.getElementById("block-content-" + blocks[i]);
+	        var sheetModel = document.getElementById("sheetModel_" + blocks[i]);
+	        if (sheetLink && sheetModel) {
+	            sheetLink.innerHTML = sheetModel.innerHTML;
+	            sheetModel.innerHTML = "";
+	        }
+	    }
+	    #foreach($sheet in $_sheetSource.sheets)
+		    #if(${sheet.beforeCall})
+	            if (${sheet.beforeCall} && typeof ${sheet.beforeCall} == 'function') {
+	                ${sheet.beforeCall}({sheetId: "${sheet.id}"});
+	            }
+	        #end
+        #end
+	}
+
+	//重置所有的构建标志
+	function resetSheetBuildedFlag() {
+	    var flag;
+	    for (var i = 0; i < blocks.length; i++) {
+	        flag = document.getElementById("buildedSheet_" + blocks[i]);
+	        if (flag != null) {
+	            flag.value = "false";
+	        }
+	    }
+	}
+	</script>
+    #foreach($sheet in $_sheetSource.sheets)
+        #formHiddenInput("buildedSheet_${sheet.id}" "false" " id='buildedSheet_${sheet.id}'")
+        <div id="block-title-${sheet.id}" class="block-title-open"><span onclick="openCloseBlock('${sheet.id}');"><img src="../images/space.gif" align="middle"> ${sheet.name}</span></div>
+        <div id="block-content-${sheet.id}" class="block-content"></div>
+    #end
+#end
+
+#**
+ * buildSheets
+ *
+ * 构建sheet页
+ *
+ *#
+#macro(buildSheets)
+<script language="javascript">
+var sheets = new Array();
+#foreach($sheet in $_sheetSource.sheets)
+    #set($index = $velocityCount - 1)
+    #if($velocityCount == 1)
+var currentSheet = "${sheet.id}";
+    #end
+    sheets[$index] = "${sheet.id}";
+#end
+//初始化所有的sheet页
+function initSheets() {
+    var sheetLink, sheetModel;
+    for (var i = 0; i < sheets.length; i++) {
+        sheetLink = document.getElementById("sheetLink_" + sheets[i]);
+        sheetModel = document.getElementById("sheetModel_" + sheets[i]);
+        if (sheetLink != undefined && sheetModel != undefined) {
+            sheetLink.innerHTML = sheetModel.innerHTML;
+            sheetModel.innerHTML = "";
+        }
+    }
+}
+//切换sheet页
+/*
+ * sheet 中是没有Id的，请看上述初始化，耦合性太高，已经有新的tab替代品。
+ */
+function changeSheet(sheet, beforeCall) {
+/*
+    if (sheet.sheetId == currentSheet) {
+        return;
+    }
+    */
+    if (sheet == currentSheet) {
+        return;
+    }
+    for (var i = 0; i < sheets.length; i++) {
+        sheetsArea = document.getElementById("sheet_" + sheets[i]);
+        sheetsTab = document.getElementById("sheetTab_" + sheets[i]);
+       // if (sheets[i] == sheet.sheetId) {
+        if (sheets[i] == sheet.sheetId) {
+            if (beforeCall != null && typeof(beforeCall) == "function") {
+                beforeCall(sheet);
+            }
+            sheetsArea.style.display = "";
+            sheetsTab.className = "index";
+            //currentSheet = sheet.sheetId;
+            currentSheet = sheet.sheetId;
+        } else {
+            sheetsArea.style.display = "none";
+            sheetsTab.className = "";
+        }
+    }
+}
+//重置所有的构建标志
+function resetSheetBuildedFlag() {
+    var flag;
+    for (var i = 0; i < sheets.length; i++) {
+        flag = document.getElementById("buildedSheet_" + sheets[i]);
+        if (flag != null) {
+            flag.value = "false";
+        }
+    }
+}
+</script>
+<div style="position:absolute;overflow: hidden;top:0px;background:white;width:100%;">
+<table cellpadding="0" cellspacing="0" class="button_line_lr" width="100%">
+    <tr valign="top">
+           <td class="dymenu">
+             #foreach($sheet in ${_sheetSource.sheets})
+             <a id="sheetTab_${sheet.id}" sheetId="${sheet.id}" href="#" #if($velocityCount == 1)class="index"#end onclick="javascript:changeSheet(this#if(${sheet.beforeCall}), $!{sheet.beforeCall}#{else}, null#end);"><span> ${sheet.name}</span></a>
+             #end
+          <div style="position:relative;float:right;top:3px;">
+                #foreach($button in ${_sheetSource.buttons})
+                    ##如果有传src那就是有图片的按钮
+                	#if(${button.src})
+	                	#if(${button.innerText})
+		                   	 ${button.innerText}
+	                    #else
+		                   	#if(${button.condition})
+	                   			#qbutton("$!{button.src}" "$!{button.name}" "$!{button.event}" )
+	                  		#else
+	                   			#qbutton("$!{button.src}" "$!{button.name}" "$!{button.event}" )
+		                   	#end
+	                    #end
+                    #else
+                   	   #if(${button.innerText})
+	                   	  ${button.innerText}
+	                   #else
+	                   	  #if(${button.condition})
+		                   	#set($tmp = '#set($condition = ' + ${HELPER_BEAN.format($!{button.condition})} + ')')
+		                   	## use new method in current version of velocity
+		                   	##${render.eval($tmp)}
+		                   	#evaluate($tmp)
+		                   	#if(${condition})
+		                   		#formDefButtonInput("" "$!{button.name}" "$!{button.event}" "$!{button.attribute}")
+	                   		#end
+	                  	  #else
+	                   		#formDefButtonInput("" "$!{button.name}" "$!{button.event}" "$!{button.attribute}")
+	                   	  #end
+	                   #end
+                    #end
+                #end
+                &nbsp;
+           </div>
+           </td>
+    </tr>
+</table>
+</div>
+<div style="position:absolute;top:34px;height:94%;overflow:auto;width:100%;">
+<table cellpadding="0" cellspacing="0" class="button_line_lr" width="100%">
+        <tr><td height="20"></td></tr>
+        #foreach($sheet in ${_sheetSource.sheets})
+         <tr id="sheet_${sheet.id}" style="display:#if($velocityCount != 1)none#end;">
+            #formHiddenInput("buildedSheet_${sheet.id}" "false" " id='buildedSheet_${sheet.id}'")
+           <td>
+                <div id="sheetLink_${sheet.id}"></div>
+           </td>
+         </tr>
+        #end
+       </table>
+       #buildDebugArea(true)
+</div>
+#end
+
+#**
+ * loadDefaultScript
+ *
+ * 装载script脚本
+ *
+ * @param ajaxScript  ajax脚本的名字
+ *
+ *#
+#macro(loadDefaultScript $ajaxScript)
+#if(!$LOAD_DEFAULT_SCRIPT)
+#set($LOAD_DEFAULT_SCRIPT=true)
+<link rel="stylesheet" type="text/css" href="../app/right/form.css"/>
+<link rel="stylesheet" type="text/css" href="../app/right/right.css"/>
+<link rel="stylesheet" type="text/css" href="../script/DHTML_calendar_style.css" media="all"  title="calendar_style" />
+<link rel="stylesheet" type="text/css" href="../ext/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../ext/resources/css/xtheme-gray.css" />
+<link rel="stylesheet" type="text/css" href="../base/css/ext-patch.css"   />
+<!-- extjs must place before  DHTML_calendar.js, or calendarpicker crash -->
+<script type="text/javascript" src="../ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+<script type="text/javascript" src="../base/js/picker/CC.ux.UserOrg.js"></script>
+<script type="text/javascript" src="../script/selectStaff.js"></script>
+<script language="JavaScript" type="text/javascript" src="../script/validator.js"></script>
+<script language="JavaScript" type="text/javascript" src="../script/common.js"></script>
+<script language="JavaScript" type="text/javascript" src="../app/script/appcommon.js"></script>
+<script language="JavaScript" type="text/javascript" src="../script/map.js"></script>
+<script language="JavaScript" type="text/javascript" src="../script/htmlElements.js"></script>
+<script language="JavaScript" type="text/javascript" src="../script/DHTML_calendar.js"></script>
+#end
+    #if($ajaxScript && $ajaxScript != "")
+        #if($ajaxScript.indexOf(",") > 0)
+            #set($scripts = $ajaxScript.split(","))
+            #foreach($script in $scripts)
+                #importDWRScript($!{script})
+            #end
+        #else
+            #importDWRScript($!{ajaxScript})
+        #end
+    #end
+#end
+#**
+ * buildDebugArea
+ *
+ * Debug功能
+ *
+ * @param open  是否展开Debug
+ *
+ *#
+#macro(buildDebugArea $open)
+#parse("/common/Constants.tpl.vm")
+#if($_constants.DEBUG_OPEN == false)
+    #set($open = false)
+#end
+<div id="debugArea" style="display:#if($open == false)none#end;width:100%;" >
+      <table width="100%" cellpadding="0" cellspacing="0" class="button_line_lr">
+    <tr>
+      <td nowrap align="right">#formSimpleCheckbox("debug_track" "tracked" "true" "" "跟踪ajax回写过程")&nbsp; #formDefButtonInput("" "显示所有隐含值" "showAllHiddenValue()" "")&nbsp;#formDefButtonInput("" "填写默认值" "setDefaultValue()" "")</td>
+    </tr>
+    <tr><td nowrap align="center" colspan="2">#formTextarea("" "" " id='debugText' class='area_input' rows='10' cols='90' style='width:99%'")</td></tr>
+  </table>
+</div>
+#end
+
+#**
+ * buildDebugInfo
+ *
+ * 构建要设置默认值的Debug域
+ *
+ * @param _scriptName  模板名称
+ *
+ *#
+#macro(buildDebugInfo $_scriptName)
+<script language="javascript">
+var debugElements = new Array();
+    #foreach($script in $_scriptName.elements)
+        #set($index = $velocityCount - 1)
+debugElements[$index] = new Object();
+debugElements[$index].field = '${script.field}';
+        #if($script.index)
+debugElements[$index].index = '$!{script.index}';
+        #end
+        #if($script.callback)
+debugElements[$index].callback = $!{script.callback};
+        #end
+debugElements[$index].value = '$!script.value';
+    #end
+</script>
+#end
+
+#**
+ * buildDebugArea
+ *
+ * Debug功能
+ *
+ * @param open  是否展开Debug
+ *
+ *#
+#macro(buildAlertArea)
+<div id="ajaxAlert" style="position:absolute;top:0;left:0;display:none;filter:Alpha(opacity=50);zindex:100">
+  <iframe id="alertFrame" frameborder="0"></iframe>
+  <div id="alertPanel" style="position:absolute;top:100;left:300;"><span id="alertLab" style="color:blue;font-size:40px;font-weight:800;"></span> </div>
+</div>
+#end
+
+#**
+ * buildPrintLicenceInfo
+ *
+ * 构建套打数据数组
+ *
+ * @param $_printItemList 数据列表
+ *
+ *#
+#macro(buildPrintLicenceInfo $_printItemList)
+<script>
+var printItems = new Array(), printItem = new Object();
+#if($_printItemList)
+    #foreach($item in $_printItemList)
+printItem.title = '$!{item.title}';
+printItem.field = '$!{item.field}';
+printItem.value = '$!{item.value}';
+printItems[printItems.length] = printItem;
+printItem = new Object();
+    #end
+#end
+</script>
+#end
+
+############################################################################构建编辑页面的表格信息################################################
+#**
+ * buildFrameTable
+ *
+ * 构建有外框架的表格
+ *
+ * @param $_tableInfo 表格描述信息
+ *
+ *#
+#macro(buildFrameTable $_tableInfo)
+<fieldset class="search_border">
+  <legend class="search_title"><img src="../app/right/images/list.png" border="0" align="absmiddle">　$!{_tableInfo.name}</legend>
+#buildTable($_tableInfo "EDIT")
+</fieldset>
+#end
+
+#**
+ * buildEditTable
+ *
+ * 构建编辑页面的表格
+ *
+ * @param $_tableInfo 表格描述信息
+ *
+ *#
+#macro(buildEditTable $_tableInfo)
+    #buildTable($_tableInfo "EDIT")
+#end
+#**
+ * buildQueryTable
+ *
+ * 构建编辑页面的表格
+ *
+ * @param $_tableInfo 表格描述信息
+ *
+ *#
+#macro(buildQueryTable $_tableInfo)
+    #buildTable($_tableInfo "QUERY")
+#end
+
+#**
+ * buildTable
+ *
+ * 构建编辑页面的表格
+ *
+ * @param $_tableInfo 表格描述信息
+ *
+ *#
+#macro(buildTable $_tableInfo $_tableType)
+#if(!$_PARSE_CONTANTS_FLAG)
+    #parse("/common/Constants.tpl.vm")
+    #set($_PARSE_CONTANTS_FLAG = true)
+#end
+
+#set($_count = 0)
+#set($_max = 1)
+#foreach($_css in ${_constants.BUILD_TABLE_CSS})
+    #if(${_css.TYPE} == "$_tableType")
+        #set($_tableCss = $_css)
+    #end
+#end
+
+#foreach($_row in $_tableInfo.tr)
+    #set($_count = 0)
+    #foreach($_cell in $_row.td)
+        #if("$!{_cell.cType}" == "co")
+            #set($_count = $_count + 2)
+        #else
+            #set($_count = $_count + 1)
+        #end
+    #end
+    #set($_max = $math.max($_count, $_max))
+#end
+<table #if(${_tableCss.table_css})class="$!{_tableCss.table_css}" #end #buildTABLEInfo($_tableInfo $_tableType)>
+#if(${_tableInfo.head})
+  <tr><th colspan="$_max"><div class="form_title_char">${_tableInfo.head}</div></th></tr>
+#end
+#foreach($_row in $_tableInfo.tr)
+  <tr #buildTRInfo($_row)>
+    #foreach($_cell in $_row.td)
+        #if($!{_cell.width})
+            #set($_widths = $!{_cell.width.split(",")})
+            #foreach($_wd in $_widths)
+                #if($velocityCount == 1)#set($_width = $!{_wd})#elseif($velocityCount == 2)#set($_width2 = $!{_wd})#end
+            #end
+        #end
+
+        #if($!{_cell.colspan})
+            #set($_colspans = $!{_cell.colspan.split(",")})
+            #foreach($_c in $_colspans)
+                #if($velocityCount == 1)#set($_col = $!{_c})#elseif($velocityCount == 2)#set($_col2 = $!{_c})#end
+            #end
+        #end
+
+        #if("$!{_cell.cType}" == "co")
+            #if($_cell.align && "$!_cell.align" != "")
+                #set($_aligns = $!{_cell.align.split(",")})
+                #foreach($_al in $_aligns)
+                    #if($velocityCount == 1)#set($_al1 = $!{_al})#elseif($velocityCount == 2)#set($_al2 = $!{_al})#end
+                #end
+            #elseif($_tableCss.co_align_1 || $_tableCss.co_align_2)
+                #set($_al1 = ${_tableCss.co_align_1})#set($_al2 = ${_tableCss.co_align_2})
+            #else
+                #set($_al1 = "right")#set($_al2 = "left")
+            #end
+        #end
+        #if("$!_cell.cType" == "co")
+
+        #if(${_cell.tdclass})
+            #set($_tdClass1 = ${_cell.tdclass})
+        #else
+            #set($_tdClass1 = ${_tableCss.co_cell_css_1})
+        #end
+    <td class="$!{_tdClass1}" #buildTDInfo($_cell $!{_width} $!{_col} "$!{_al1}")>#buildCellsInfo($_cell "first")</td>
+    <td class="$!{_tableCss.co_cell_css_2}" #buildTDInfo($_cell $!{_width2} $!{_col2} "$!{_al2}")>#buildCellsInfo($_cell "last")</td>
+        #else
+    <td class="$!{_cell.cla}" #buildTDInfo($_cell $!{_width} $!{_cell.colspan} $!{_cell.align})>#buildCellsInfo($_cell "")</td>
+        #end
+        #set($_width = "")
+        #set($_width2 = "")
+        #set($_col = "")
+        #set($_col2 = "")
+    #end
+  </tr>
+#end
+</table>
+
+#if($_tableInfo.check)
+<script language="javascript">
+if (typeof(elements) == "undefined") {
+    var elements = new Array();
+}
+var idx = elements.length;
+    #foreach($_check in $_tableInfo.check)
+        #set($_i = $velocityCount - 1)
+elements[idx++] = new Object();
+elements[elements.length - 1].name = "$!{_check.name}";
+elements[elements.length - 1].field = "$!{_check.field}";
+elements[elements.length - 1].fillType = "val";
+elements[elements.length - 1].check = new Object();
+elements[elements.length - 1].check.checkType = "$!{_check.checkType}";
+elements[elements.length - 1].check.checkRange = "$!{_check.checkRange}";
+elements[elements.length - 1].check.rangeType = "$!{_check.rangeType}";
+elements[elements.length - 1].check.relationFieldName = "$!{_check.relationFieldName}";
+elements[elements.length - 1].check.relationField = "$!{_check.relationField}";
+elements[elements.length - 1].check.relationType = "$!{_check.relationType}";
+        #if($!{_check.relationNum})
+elements[elements.length - 1].check.relationNum = "$!{_check.relationNum}";
+        #end
+    #end
+</script>
+#end
+#end
+
+#**
+ * buildTABLEInfo
+ *
+ * 构建表格的头信息
+ *
+ * @param $_rowInfo 行描述信息
+ *
+ *#
+#macro(buildTABLEInfo $_tableInfo $_tableType)
+    #if($_tableType == "EDIT")
+        #if(${_tableInfo.id})id="${_tableInfo.id}"#end cellpadding="0" cellspacing="0" width="100%" class="label_form_tab" #if(${_tableInfo.attr})${_tableInfo.attr} #end
+    #elseif($_tableType == "QUERY")
+        #if(${_tableInfo.id})id="${_tableInfo.id}"#end cellpadding="0" cellspacing="0" width="100%" #if(${_tableInfo.attr})${_tableInfo.attr} #end
+    #else
+        #if(${_tableInfo.id})id="${_tableInfo.id}"#end cellpadding="0" cellspacing="0" width="100%" #if(${_tableInfo.attr})${_tableInfo.attr} #end
+    #end
+#end
+#**
+ * buildTRInfo
+ *
+ * 构建表格的TR信息
+ *
+ * @param $_rowInfo 行描述信息
+ *
+ *#
+#macro(buildTRInfo $_rowInfo)
+#if(${_rowInfo.id})id="${_rowInfo.id}"#end #if(${_rowInfo.align})align="${_rowInfo.align}"#end #if(${_rowInfo.rowspan})rowspan="${_rowInfo.rowspan}"#end #if(${_rowInfo.attr})${_rowInfo.attr}#end
+#end
+#**
+ * buildTDInfo
+ *
+ * 构建表格的TD信息
+ *
+ * @param $_cellInfo 单元格描述信息
+ * @param $_width width
+ * @param $_colspan colspan
+ * @param $_align align
+ *
+ *#
+#macro(buildTDInfo $_cellInfo $_width $_colspan $_align)
+#if(${_cellInfo.nowrap})nowrap #end #if(${_cellInfo.id})id="${_cellInfo.id}"#end #if($_width != "")width="${_width}"#end #if($_align != "")align="${_align}"#end #if(${_colspan} && ${_colspan} != "")colspan="${_colspan}"#end #if(${_cellInfo.rowspan})rowspan="${_cellInfo.rowspan}"#end #if(${_cellInfo.height})height="${_cellInfo.height}"#end #if(${_cellInfo.attr})${_cellInfo.attr}#end
+#end
+#**
+ * buildCellsInfo
+ *
+ * 构建表格的TD中的html信息
+ *
+ * @param $_cellInfo td中的描述信息
+ * @param $_cellSerial 当cType == "combo"时用的单元格1和单元格2描述
+ *
+ *#
+#macro(buildCellsInfo $_cellInfo $_cellSerial)
+    #if(("$!_cellInfo.cType" == "co") && $_cellSerial == "first")
+        #if($_cellInfo.req)#requiredTag()#end${_cellInfo.title}
+    #elseif(("$!_cellInfo.cType" == "co") && $_cellSerial == "last")
+        #if($_cellInfo.value)
+            $!{_cellInfo.value}
+        #end
+        #buildFieldsInfo($_cellInfo.fields)
+    #elseif("$!_cellInfo.cType" == "st")
+        #if($_cellInfo.req)#requiredTag()#end${_cellInfo.title}
+        #buildFieldsInfo($_cellInfo.fields)
+    #else
+        #buildFieldsInfo($_cellInfo.fields)
+    #end
+#end
+#**
+ * buildFieldsInfo
+ *
+ * 构建域信息
+ *
+ * @param $_fieldsInfo 域描述信息
+ *
+ *#
+#macro(buildFieldsInfo $_fieldsInfo)
+    #foreach($_field in $_fieldsInfo)
+        #if($_field.innerHTML)
+            ${_field.innerHTML}
+        #else
+            #if($_field.prefix)${_field.prefix}#end
+            #if("$!{_field.fType}" == "text" || "$!{_field.fType}" == "textarea" || !${_field.fType})
+                #buildTextField($_field)
+            #elseif("$!{_field.fType}" == "span")
+                #buildSpanField($_field)
+            #elseif("$!{_field.fType}" == "date" || "$!{_field.fType}" == "dateRange")
+                #buildDateField($_field)
+            #elseif("$!{_field.fType}" == "select")
+                #buildSelectField($_field)
+            #elseif("$!{_field.fType}" == "button")
+                #buildButtonField($_field)
+            #elseif("$!{_field.fType}" == "radio")
+                #buildRadioField($_field)
+            #elseif("$!{_field.fType}" == "checkbox")
+                #buildCheckboxField($_field)
+            #elseif("$!{_field.fType}" == "img")
+                #buildImgField($_field)
+            #elseif("$!{_field.fType}" == "file")
+                #buildFileField($_field)
+            #elseif("$!{_field.fType}" == "hidden")
+                #buildHiddenField($_field)
+            #elseif("$!{_field.fType}" == "href")
+                #buildHrefField($_field)
+            #end
+            #if($_field.suffix)${_field.suffix}#end
+        #end
+    #end
+#end
+
+#**
+ * buildHiddenField
+ *
+ * 构建隐藏域脚本
+ *
+ * @param $_field 隐藏域描述信息
+ *
+ *#
+#macro(buildHiddenField $_field)
+    #set($_fieldValue = $!{_field.value})
+    #if($_fieldValue == "" && ${_field.defVal})
+        #set($_fieldValue = $!{_field.defVal})
+    #end
+    #formHiddenInput("$!{_field.field}" "$!{_fieldValue}" "$!{_field.attr}")
+#end
+#**
+ * buildImgField
+ *
+ * 构建Img控件脚本
+ *
+ * @param $_field img描述信息
+ *
+ *#
+#macro(buildImgField $_field)
+    #formDefImg("$!{_field.src}" "$!{_field.attr}" "${_field.events.onclick}")
+#end
+#**
+ * buildButtonField
+ *
+ * 构建按钮控件脚本
+ *
+ * @param $_field 按钮描述信息
+ *
+ *#
+#macro(buildButtonField $_field)
+    #formDefButtonInput("$!{_field.field}" "$!{_field.title}" "$!{_field.onclick}" "$!{_field.attr}")
+
+#end
+#**
+ * buildFileField
+ *
+ * 构建文件上传控件脚本
+ *
+ * @param $_field 文件上传控描述信息
+ *
+ *#
+#macro(buildFileField $_field)
+    #formDefInputFile("$!{_field.field}" "$!{_field.attr}" "$!{_field.onchange}")
+#end
+#**
+ * buildRadioField
+ *
+ * 构建radio脚本
+ *
+ * @param $_field radio描述信息
+ *
+ *#
+#macro(buildRadioField $_field)
+    #if($_field.ary)
+<table cellpadding="0" cellspacing="0">
+        #set($_count = 0)
+        #foreach($_op in $_field.dict.keySet())
+            #set($_count = $_count + 1)
+            #if($_field.dict)
+                #set($_value = $_op)
+                #set($_title = ${_field.dict.get($_op)})
+            #else
+                #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${_op})})
+                #set($_value = ${dataBeanMap.get($_field.field)})
+                #set($_title = ${dataBeanMap.get($_field.title)})
+            #end
+            #if($math.mod($velocityCount, $_field.ary) == 1)<tr>#end
+            #if($_field.defVal == $_value)#set($_check = "true")#else #set($_check = "false")#end
+    <td>
+            #formSimpleRadio("${_field.field}" "$_value" $_check ${_field.attr} $_title)
+    </td>
+           #if($math.mod($velocityCount, $_field.ary) == 0)</tr>#end
+        #end
+        #if($math.mod($_count, $_field.ary) != 0)
+            #set($_last = ($_field.ary - $math.mod($_count, $_field.ary)))
+            #foreach($_i in [1..$_last])<td></td>#end
+  </tr>
+        #end
+</table>
+    #else
+        #if($_field.dict)
+            #formRadioButtons("${_field.field}" "${_field.defVal}" ${_field.dict} "" ${_field.attr})
+        #else
+            #formSimpleRadio("${_field.field}" "${_field.value}" ${_field.checked} ${_field.attr} ${_field.title})
+        #end
+    #end
+#end
+
+#**
+ * buildCheckboxField
+ *
+ * 构建checkbox脚本
+ *
+ * @param $_field checkbox描述信息
+ *
+ *#
+#macro(buildCheckboxField $_field)
+    #if($_field.ary)
+<table cellpadding="0" cellspacing="0">
+        #set($_count = 0)
+        #foreach($_op in $_field.dict.keySet())
+            #set($_count = $_count + 1)
+            #if($_field.dict)
+                #set($_value = $_op)
+                #set($_title = ${_field.dict.get($_op)})
+            #else
+                #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${_op})})
+                #set($_value = ${dataBeanMap.get($_field.field)})
+                #set($_title = ${dataBeanMap.get($_field.title)})
+            #end
+            #if($math.mod($velocityCount, $_field.ary) == 1)<tr>#end
+            #if($_field.defVal == $_value)#set($_check = "true")#else #set($_check = "false")#end
+    <td>
+            #formSimpleCheckbox("${_field.field}" "$_value" $_check ${_field.attr} $_title)
+    </td>
+           #if($math.mod($velocityCount, $_field.ary) == 0)</tr>#end
+        #end
+        #if($math.mod($_count, $_field.ary) != 0)
+            #set($_last = ($_field.ary - $math.mod($_count, $_field.ary)))
+            #foreach($_i in [1..$_last])<td></td>#end
+  </tr>
+        #end
+</table>
+    #else
+        #if($_field.dict)
+            #formCheckboxes("$!{_field.field}" "$!{_field.defVal}" $!{_field.dict} "" $!{_field.attr})
+        #else
+            #formSimpleCheckbox("$!{_field.field}" "!${_field.value}" $!{_field.checked} $!{_field.attr} $!{_field.title})
+        #end
+    #end
+#end
+#**
+ * buildSpanField
+ *
+ * 构建span脚本
+ *
+ * @param $_field span描述信息
+ *
+ *#
+#macro(buildSpanField $_field)
+    #set($_fieldValue = $!{_field.value})
+    #if($_fieldValue == "" && ${_field.defVal})
+        #set($_fieldValue = $!{_field.defVal})
+    #end
+    #formSpanText(${_field.id} "$!{_fieldValue}" "$!{_field.attr}")
+#end
+#**
+ * buildSelectField
+ *
+ * 构建下拉控件脚本
+ *
+ * @param $_field 下拉控件描述信息
+ *
+ *#
+#macro(buildSelectField $_field)
+    #set($_fieldValue = $!{_field.value})
+    #if($_fieldValue == "" && ${_field.defVal})
+        #set($_fieldValue = $!{_field.defVal})
+    #end
+    #if(${_field.events.onchange})
+        #set($_field.attr = $_field.attr + " onchange=javascript:${_field.events.onchange};")
+    #end
+    #formSingleSelectDictionary(${_field.field} "$!{_fieldValue}" ${_field.dict} "${_field.attr}" "-- 请选择 --")
+#end
+#**
+ * buildDateField
+ *
+ * 构建日期控件脚本
+ *
+ * @param $_field 日期控件描述信息
+ *
+ *#
+#macro(buildDateField $_field)
+    #if($_field.fType == "dateRange")
+        #set($_fields = $!{_field.field.split(",")})
+        #foreach($_f in $_fields)
+            #if($velocityCount == 1)
+                #set($_fd = $_f)
+            #elseif($velocityCount == 2)
+                #set($_fd2 = $_f)
+            #end
+        #end
+        #calendarRange("$!{_fd}" "$!{_fd2}" "$!{_field.values.value}" "$!{_field.values.value2}")
+        #set($_fd = "")
+        #set($_fd2 = "")
+    #else
+        #calendarPicker("$!{_field.field}" $!{_field.value} "$!{_field.attr}" $!{_field.len})
+    #end
+#end
+#**
+ * buildTextField
+ *
+ * 构建文本域脚本
+ *
+ * @param $_field 文本域描述信息
+ *
+ *#
+#macro(buildTextField $_field)
+    #set($_fieldValue = "$!{_field.value}")
+    #if($_fieldValue == "" && ${_field.defVal})#set($_fieldValue = $!{_field.defVal})#end
+    #if(${_field.events.onclick})
+        #if(!$_field.attr)
+            #set($_field.attr = "")
+        #end
+        #set($_field.attr = $_field.attr + " onclick=javascript:${_field.events.onclick};")
+    #elseif(${_field.events.onchange})
+        #if(!$_field.attr)
+            #set($_field.attr = "")
+        #end
+        #set($_field.attr = $_field.attr + " onchange=javascript:${_field.events.onchange};")
+    #elseif(${_field.events.onkeypress})
+        #if(!$_field.attr)
+            #set($_field.attr = "")
+        #end
+        #set($_field.attr = $_field.attr + " onkeypress=javascript:${_field.events.onkeypress};")
+    #end
+    #if("text" == "$!{_field.fType}" || !${_field.fType})
+        #if("INT" == "$!{_field.dataType}")
+            #formIntDefInput(${_field.field} "$!{_fieldValue}" "$!{_field.len}" "$!{_field.attr}")
+        #elseif("FLO" == "$!{_field.dataType}")
+            #formFloDefInput(${_field.field} "$!{_fieldValue}" "$!{_field.len}" "$!{_field.attr}")
+        #else
+            #formDefInput(${_field.field} "$!{_fieldValue}" "$!{_field.len}" "$!{_field.attr}")
+        #end
+    #elseif("textarea" == "$!{_field.fType}")
+        #formDefArea(${_field.field} "$!{_fieldValue}" "$!{_field.len}" "$!{_field.attr}")
+    #end
+#end
+
+#**
+ * buildHrefField
+ *
+ * 构建href脚本
+ *
+ * @param $_field href描述信息
+ *
+ *#
+#macro(buildHrefField $_field)
+<a href="$!{_field.src}" $!{_field.attr} #if($_field.onclick)onclick="javascript:$!{_field.onclick};"#end>#htmlEscape($!{_field.title})</a>
+
+#end
+#**
+ * buildQueryList
+ *
+ * 构建查询列表
+ *
+ * @param $_queryList 列表描述信息
+ *
+ *#
+#macro(buildQueryList $_queryList)
+    #buildCommonList($_queryList "QUERYLIST")
+#end
+
+#**
+ * buildQueryList
+ *
+ * 构建查询列表
+ *
+ * @param $_queryList 列表描述信息
+ *
+ *#
+#macro(buildCommonList $_queryList $_listType)
+    ##加载常量对象
+    #if(!$_PARSE_CONTANTS_FLAG)
+        #parse("/common/Constants.tpl.vm")
+        #set($_PARSE_CONTANTS_FLAG = true)
+    #end
+    ##获取预定义的样式常量
+    #foreach($_css in ${_constants.BUILD_TABLE_CSS})
+        #if(${_css.TYPE} == "$_listType")
+            #set($_listStyle = $_css)
+        #end
+    #end
+<table id="$!{_queryList.id}" cellpadding="0" cellspacing="0" class="$!{_listStyle.table_css}" $!{_queryList.attr}>
+  <thead class="fixedHeader">
+  <tr>
+    <th nowrap width="4%">序号</th>
+#foreach($_tr in $!{_queryList.tr})
+    <th #if(${_listStyle.nowrap} == true || $_td.nowrap == true)nowrap#end #if($_tr.width)width='${_tr.width}'#end>${_tr.title}</th>
+#end
+  </tr>
+  </thead>
+  <tbody class="scrollContent">
+#foreach($_data in ${_queryList.source})
+    #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${_data})})
+  <tr #tableRowBgcolor($velocityCount)>
+    <td #if(${_listStyle.nowrap} == true || $_td.nowrap == true)nowrap#end align="center" class="$!{_listStyle.cell_css}">$velocityCount</td>
+    #foreach($_td in $!{_queryList.tr})
+    <td #if(${_listStyle.nowrap} == true || $_td.nowrap == true)nowrap#end #if($_td.align)align="${_td.align}"#end class="$!{_listStyle.cell_css}">
+        #if($_td.field)
+            #if($_td.href)
+                #set($_attr = ${HELPER_BEAN.formatCondition(${_td.href.attr}, ${dataBeanMap})})
+      <a href="#" $!{_attr} onclick="javascript:${_td.href.onclick}">#htmlEscape($dataBeanMap.get($!{_td.field}))</a>
+            #elseif($_td.format)
+                #if($_td.format == "DATE")
+                    #displayOnlyDate($!dataBeanMap.get($!{_td.field}))
+                #elseif($_td.format == "DATETIME")
+                    #displayOnlyTime($!dataBeanMap.get($!{_td.field}))
+                #end
+            #elseif($_td.dict)
+                #set($_tmpDictValue = "")
+                #set($_tmpDictValue = $!{dataBeanMap.get($!{_td.field})})
+                #lookUpDict($_td.dict $_tmpDictValue)
+            #else
+                $!{dataBeanMap.get($!{_td.field})}
+            #end
+            #set($_attr = "")
+        #elseif($_td.imgs)
+            #foreach($_img in $_td.imgs)
+                #set($_attr = ${HELPER_BEAN.formatCondition(${_img.attr}, ${dataBeanMap})})
+                #if($_img.cond)
+                    #set($tmp = '#set($condition = (' + ${HELPER_BEAN.formatCondition($_img.cond, ${dataBeanMap})} + '))')
+                    #evaluate($tmp)
+                    #if(${condition})
+                        #formDefImg("$!{_img.src}" "$!{_attr}" "${_img.onclick}")
+                    #end
+                #else
+                    #formDefImg("$!{_img.src}" "$!{_attr}" "${_img.onclick}")
+                #end
+            #end &nbsp;
+        #end
+        #if($_td.hids)
+            #foreach($_hid in $_td.hids)
+                #if($_hid.attr)
+                    #set($_attr = ${HELPER_BEAN.formatCondition($!{_hid.attr}, ${dataBeanMap})})
+                #end
+                #set($_value = "")
+                #if($_hid.cond)
+                    #set($_hidTmp = '#set($condition = ' + ${HELPER_BEAN.formatCondition($_hid.cond, ${dataBeanMap})} + ')')
+                    ## use new method in current version of velocity
+                    ##${render.eval($_hidTmp)}
+                    #evaluate($_hidTmp)
+                    #if(${condition})
+                        #if($_hid.value)
+                            #set($_value = $_hid.value)
+                        #elseif($_hid.dict)
+                            #set($_tmpDictValue = "")
+                            #set($_tmpDictValue = $!{dataBeanMap.get($!{_hid.field})})
+                            #set($_value = "#lookUpDict($_hid.dict $_tmpDictValue)")
+                        #else
+                            #set($_value = "$!{dataBeanMap.get($!{_hid.field})}")
+                        #end
+                        #formHiddenInput(${_hid.name} "$!{_value}" $!{_attr})
+                    #end
+                #else
+                    #if($_hid.value)
+                        #set($_value = $_hid.value)
+                    #elseif($_hid.dict)
+                        #set($_tmpDictValue = "")
+                        #set($_tmpDictValue = $!{dataBeanMap.get($!{_hid.field})})
+                        #set($_value = "#lookUpDict($_hid.dict $_tmpDictValue)")
+                    #else
+                        #set($_value = "$!{dataBeanMap.get($!{_hid.field})}")
+                    #end
+                    #formHiddenInput(${_hid.name} "$!{_value}" $!{_attr})
+                #end
+            #end
+        #end
+    </td>
+    #end
+  </tr>
+#end
+</tbody>
+</table>
+#end
+#**
+ * buildCommonPrintList
+ *
+ * 构建通用打印列表
+ *
+ * @param $_queryList 列表描述信息
+ * @param $_pageSize 页记录数
+ *
+ *#
+#macro(buildCommonPrintList $_queryList $_pageSize)
+    #set($_indexCount = 0) ##行号计数器
+  ${_constants.BREAK_LINE}
+  <tr page="${_queryList.title}" style="display:;">
+#set($_lastPage = $math.sub($_pageSize, $math.mod(${_queryList.source.size()}, $_pageSize)))
+    <td>
+      <div class="cyry_mar">
+      <table cellpadding="0" cellspacing="0" class="cyry_header">
+        <tr >
+          <td colspan="2" align="right" class="jbqk_chek">数据核对码：#formSpanText("mailerEntpName" "$!{appItemApply.checkNum}" "")<br><br></td>
+        </tr>
+        #if(${_queryList.title})
+        <tr>
+          <td colspan="2" align="center" class="jbqk_title">${_queryList.title}<br/><br/></td>
+        </tr>
+        #end
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="0" class="header_char">
+              <tr>
+                <td>填报单位：</td><td valign="bottom" class="cyry_td"><div class="gz_line">${appItemEntp.entpName}</div></td><td>(盖章)</td>
+              </tr>
+            </table>
+          </td>
+          <td align="right">
+            填报日期：#displayChinaDate($!{appItemApply.applyTime})
+            ##填报日期：#repeatString("&nbsp;" 4)年&nbsp;&nbsp;月&nbsp;&nbsp;日
+          </td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" class="jbqk_tab">
+        <tr align="center">
+          <td>序号</td>
+#foreach($_td in $_queryList.tr)<td #if(${_td.width}) width=${_td.width} #end>${_td.title}</td>#end
+        </tr>
+#foreach($_data in ${_queryList.source})
+    #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${_data})})
+    #if($velocityCount != 1 && $math.mod($velocityCount, ${_pageSize}) == 1)
+      </table>
+      </div>
+${_constants.PAGE_NUM_DIV}
+    </td>
+  </tr>
+  ${_constants.BREAK_LINE}
+  <tr page="${_queryList.title}" align="center" style="display:;">
+    <td>
+      <div class="cyry_mar">
+      <table cellpadding="0" cellspacing="0" class="jbqk_tab">
+        <tr align="center">
+          <td>序号</td>
+        #foreach($_td in $_queryList.tr)<td #if(${_td.width}) width=${_td.width} #end>${_td.title}</td>#end
+        </tr>
+    #end
+
+    #if(${_queryList.cond})
+         #set($_queryTmp = '#set($condition = ' + ${HELPER_BEAN.formatCondition($_queryList.cond, ${dataBeanMap})} + ')')
+         ## use new method in current version of velocity
+         ##${render.eval($_queryTmp)}
+         #evaluate($_queryTmp)
+         #if(${condition})
+         #set($_indexCount = $_indexCount + 1)
+        <tr>
+          <td class="cyry_td"  align="center">$_indexCount</td>
+             #foreach($_td in $_queryList.tr)<td class="cyry_td" #if($_td.type=="int") align="right" #else align="left" #end>$!{dataBeanMap.get($!{_td.field})}</td>#end
+        </tr>
+         #end
+    #else
+         #set($_indexCount = $_indexCount + 1)
+        <tr>
+          <td class="cyry_td" align="center">$_indexCount</td>
+             #foreach($_td in $_queryList.tr)<td class="cyry_td" #if($_td.type=="int") align="right" #else align="left" #end>$!{dataBeanMap.get($!{_td.field})}</td>#end
+        </tr>
+    #end
+#end
+#if($_lastPage > 0)
+    #foreach($_i in [1..$_lastPage])
+        <tr>#foreach($_td in $_queryList.tr)<td>&nbsp;</td>#end<td>&nbsp;</td></tr>
+    #end
+#end
+      </table>
+      </div>
+${_constants.PAGE_NUM_DIV}
+    </td>
+  </tr>
+#end
+
+#**
+ * buildPrintPage
+ *
+ * 构建通用打印页面
+ *
+ * @param $_tableInfo 页面描述信息
+ *
+ *#
+#macro(buildPrintPage $_tableInfo)
+  <tr page="${_tableInfo.name}" style="display:;">
+    <td>
+      <div class="cyry_mar">
+    ##<p align="right" class="jbqk_chek">数据核对码：#formSpanText("mailerEntpName" "$!{appItemApply.checkNum}" "")#repeatString("&nbsp;" 12)<br><br></p>
+
+        <table cellpadding="0" cellspacing="0" class="cyry_header">
+          <tr >
+            <td colspan="2" align="right" class="jbqk_chek">数据核对码：#formSpanText("mailerEntpName" "$!{appItemApply.checkNum}" "")<br><br></td>
+          </tr>
+      #if(!${_tableInfo.hidTitle})
+          <tr >
+            <td align="center" class="jbqk_title">${_tableInfo.name}<br><br></td>
+          </tr>
+          ## <p align="center" class="jbqk_title">${_tableInfo.name}<br><br></p>
+      #end
+          <tr><td colspan="2">$!{_tableInfo.descript_h}</td></tr>
+        </table>
+      #buildTable($_tableInfo "PRINT")
+        <table cellpadding="0" cellspacing="0" class="zcsq_tab">
+          <tr><td>$!{_tableInfo.descript}</td></tr>
+        </table>
+      </div>
+${_constants.PAGE_NUM_DIV}
+    </td>
+  </tr>
+#end
+
+#**
+ * buildLicencePrintPanel
+ *
+ * 构建许可证打印选择面板
+ *
+ * @param $_tableInfo 页面描述信息
+ *
+ *#
+#macro(buildLicencePrintPanel $_licenceSource)
+  	<div id="panelDocLink" style="display:none;">
+    	<fieldset class="search_border">
+			<br>
+	      	<legend class="search_title"><img src="../app/right/images/list.png" border="0" align="absmiddle"> 请选择需打印的许可证　</legend>
+			<br>
+	      	<table cellpadding="0" cellspacing="0" class="label_form_tab">
+				#foreach($_licence in $_licenceSource)
+                    ##临时使用,如果licenceEnName里有"New"字符串,使用新方式LODOP打印
+                    #if(${_licence.licenceEnName})
+                        #if($!{_licence.licenceEnName.indexOf("New")} > 0)
+                        <tr>
+                            <td width="25%" align="center" class="form_gray_unit">#formDefImg("#appLicenceImagePath()$!{_licence.licenceImgName}_min.jpg" "style='cursor:pointer' alt='点击进入证件打印界面' absmiddle" "printItemEntpNew('$!{_licence.licenceTypeId}', closeCommonPanel)")</td>
+                            <td width="75%" alt="点击进入证件界面"><a href="#" style="font-  :16px;font-weight:bold;" onclick="javascript:printItemEntpNew('$!{_licence.licenceTypeId}', closeCommonPanel);">$!{_licence.licenceName}</a></td>
+                        </tr>
+                        #else
+                        <tr>
+                            <td width="25%" align="center" class="form_gray_unit">#formDefImg("#appLicenceImagePath()$!{_licence.licenceImgName}_min.jpg" "style='cursor:pointer' alt='点击进入打印界面' absmiddle" "printItemEntp('$!{_licence.licenceTypeId}', closeCommonPanel)")</td>
+                            <td width="75%" alt="点击进入打印界面"><a href="#" style="font-  :16px;font-weight:bold;" onclick="javascript:printItemEntp('$!{_licence.licenceTypeId}', closeCommonPanel);">$!{_licence.licenceName}</a></td>
+                        </tr>
+                        #end
+			    	#end
+				#end
+		        <tr align="left">
+	         		<td>
+	          		#qbutton('return.png' '返回' 'javascript:closeCommonPanel()')
+	          		</td>
+	        	</tr>
+	      	</table>
+	    </fieldset>
+  	</div>
+	#set($_printPanelInfo = {
+	    "panelDocId" : "panelDocLink",
+	    "alpha" : "95",
+	    "innerPanelWidth" : "500",
+	    "innerPanelLeft" : "160"
+	})
+#buildCommonInnerPanel($_printPanelInfo)
+#end
+
+#**
+ * buildLicencePrintPanel
+ *
+ * 构建许可证打印选择面板
+ *
+ * @param $_tableInfo 页面描述信息
+ *
+ *#
+#macro(buildLicencePrintPanelNew $_licenceSource)
+  	<div id="panelDocLink" style="display:none;">
+    	<fieldset class="search_border">
+			<br>
+	      	<legend class="search_title"><img src="../app/right/images/list.png" border="0" align="absmiddle"> 请选择需打印的许可证　</legend>
+			<br>
+	      	<table cellpadding="0" cellspacing="0" class="label_form_tab">
+				#foreach($_licence in $_licenceSource)
+		    		#if(${_licence.licenceEnName})
+				        <tr>
+				          	<td width="25%" align="center" class="form_gray_unit">#formDefImg("#appLicenceImagePath()$!{_licence.licenceImgName}_min.jpg" "style='cursor:pointer' alt='点击进入证件打印界面' absmiddle" "printItemEntpNew('$!{_licence.licenceTypeId}', closeCommonPanel)")</td>
+    						<td width="75%" alt="点击进入证件打印界面"><a href="#" style="font-  :16px;font-weight:bold;" onclick="javascript:printItemEntpNew('$!{_licence.licenceTypeId}', closeCommonPanel);">$!{_licence.licenceName}</a></td>
+				        </tr>
+			    	#end
+				#end
+		        <tr align="left">
+	         		<td>
+	          		#qbutton('return.png' '返回' 'javascript:closeCommonPanel()')
+	          		</td>
+	        	</tr>
+	      	</table>
+	    </fieldset>
+  	</div>
+	#set($_printPanelInfo = {
+	    "panelDocId" : "panelDocLink",
+	    "alpha" : "95",
+	    "innerPanelWidth" : "500",
+	    "innerPanelLeft" : "160"
+	})
+#buildCommonInnerPanel($_printPanelInfo)
+#end
+
+#**
+ * buildLicencePrintPanel
+ *
+ * 构建许可证打印选择面板
+ *
+ * @param $_tableInfo 页面描述信息
+ *
+ *#
+#macro(buildCommonInnerPanel $_tableInfo)
+<div id="commonOutPanel" style="position:absolute;top:0;left:0;display:none;#if($_tableInfo.alpha)filter:Alpha(opacity=${_tableInfo.alpha});#end zindex:100">
+  <iframe id="commonPanelFrame" frameborder="0"></iframe>
+  <div id="commonInnerPanel" style="overflow:auto; position:absolute;top:#if($_tableInfo.innerPanelTop)${_tableInfo.innerPanelTop}#{else}10#end;left:#if($_tableInfo.innerPanelLeft)${_tableInfo.innerPanelLeft}#{else}200#end;#if($_tableInfo.innerPanelWidth)width:${_tableInfo.innerPanelWidth}#end"></div>
+<script language="javascript">
+    var panelDoc = document.getElementById("${_tableInfo.panelDocId}");
+    if (panelDoc != null) {
+        document.getElementById("commonInnerPanel").innerHTML = panelDoc.innerHTML;
+        panelDoc.innerHTML = "";
+    }
+</script>
+</div>
+#end
+
+#**
+ * buildUserWordsPrintPanel
+ *
+ * 构建许可证打印选择面板
+ *
+ * @param $_tableInfo 页面描述信息
+ *
+ *#
+#macro(buildUserWordsPrintPanel $submitFunction)
+    <div id="panelDocLink" style="display:none;">
+        <fieldset class="search_border">
+            <br>
+             <legend class="search_title"><img src="../app/right/images/list.png" border="0" align="absmiddle"> 词条内容</legend>
+            <br>
+            <table cellpadding="0" cellspacing="0" class="label_form_tab">
+                <form action="../workflow/userWordsSave.do" method=post name="editForm">
+                        <tr>
+                            <td width="85%" align="center" class="form_gray_unit">
+                                #formHiddenInput("wordsId" "" "")
+                                #formHiddenInput("wordsUserId" "" "")
+                                #formDefArea("wordsContent" "" "2000" "rows='5' label='词条内容' validator='maxLength:2000'")
+                            </td>
+
+                        </tr>
+                </form>
+                <tr align="center">
+                    <td >
+                    <button name="submitUserWords" class="q-button" onclick="$submitFunction"><img src="../app/right/images/ok16.png"> 确定</button>
+                    #qbutton('return.png' '返回' 'javascript:closeCommonPanel()')
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+    #set($_userWordsPanelInfo = {
+        "panelDocId" : "panelDocLink",
+        "alpha" : "95",
+        "innerPanelWidth" : "800",
+        "innerPanelLeft" : "0"
+    })
+#buildCommonInnerPanel($_userWordsPanelInfo)
+#end
+
+
+#**
+ * buildFrameQueryList
+ *
+ * 构建查询列表
+ *
+ * @param $_queryList 列表描述信息
+ *
+ *#
+#macro(buildFrameQueryList $_queryList)
+<fieldset class="search_border">
+  <legend class="search_title"><img src="../app/right/images/list.png" border="0" align="absmiddle">　$!{_queryList.name}</legend>
+#buildCommonList($_queryList 'FRAMEQUERYLIST')
+</fieldset>
+
+#end
+
+#**
+ * selectOrgUnit
+ *
+ * 构建选择单位
+ *
+ *
+*#
+#macro(selectOrgUnit)
+#set($_unitDepScript = "{callback: autoSetSelectDep, bindId : 'handleUnitId', bindName : 'handleUnitName', params : 'orgRanks=0,1,2'}")
+#formHiddenInput("handleUnitId" "$!{appItemApply.handleUnitId}" "")
+#formTextInput("handleUnitName" "#lookUpDict($dicData.dicSysOrg $!{appItemApply.handleUnitId})" "readOnly=true class='text_input_readonly' style='width:40%'")
+<img  src="../images/dep_select.gif" align="absmiddle" alt="选择单位" onclick="CC.ux.OrgWindow.selectUnit('handleUnitId', 'handleUnitName');" style="cursor:pointer" >
+##selectDept($_unitDepScript)
+#end
+
+#macro(converTextAreaBR $value)<textarea style="overflow-y:visible;border:0px;font-size: 14px;line-height:150%;overflow:visible;border-width:0px;width:95%;" readOnly >$!value</textarea>#end
+
+#macro(removeWrapString $value)${HELPER_HTMLHELPER.removeWrapString($value)}#end
+
+#macro(appLicenceImagePath)../app/licence/#end
+
+
+##单位多选，选择范围为本部门同级的单位以及下级单位（不包括本单位），有四个多选框
+#macro(selectMulDepartment2 $callbackFunction $depIdName $notSelectDepId)
+    #if(!$INCLUDE_SHOW_SELECT_DEPARTMENT_MUL_DIALOG_SCRIPT2)
+        #set($INCLUDE_SHOW_SELECT_DEPARTMENT_MUL_DIALOG_SCRIPT2 = true)
+<script type="text/javascript">
+function showSelectDepartmentDialog2(callbackFunction,depName, notSelectDepId) {
+    //var gwRecDwStr = document.getElementsByName(depName)[0].value;
+    var theUrl = "../manage/selectMulDepartmentTree2.do?notSelectDepId=" + notSelectDepId;
+    FCKDialog.OpenDialog("selectDepartment2", "系统外发", theUrl, 550, 600, callbackFunction, window);
+}
+</script>
+    #end
+<input type="button" class="input_style" value="系统外发" onclick="javascript:showSelectDepartmentDialog2($callbackFunction, '$depIdName', '$notSelectDepId')" />
+#end
+
+/**
+*多单位选择树
+*选择范围: 本部门同级的单位以及下级单位
+*/
+#macro(selectMultiUnitFromSubordinate $callbackFunction $notSelectDepId $title $withSms)
+ <script type="text/javascript" src="../script/selectStaff.js"></script>
+ <input type="button" class="input_style" value="$title" onclick="javascript:selectMultiUnitFromSubordinate($callbackFunction, '$notSelectDepId', '$title', '$withSms')"/>
+#end
+
+#macro(selectStaff1 $callbackFunction)
+#selectStaffWithTitle1($callbackFunction '' '')
+#end
+
+#macro(selectStaffWithTitle1 $callbackFunction $buttonTitle $beforeFunction)
+#if(!$INCLUDE_SHOW_SELECT_STAFF_DIALOG_SCRIPT1)
+#set($INCLUDE_SHOW_SELECT_STAFF_DIALOG_SCRIPT1 = true)
+<script type="text/javascript">
+function showSelectStaffDialog1(callbackFunction,beforeFunction) {
+    var theUrl = "../scm/go.do?action=/manage/selectsinglestaffframe1";
+   // ../scm/go.do?action=/select/selectsinglestaffframe1
+    if (typeof(beforeFunction) == 'function') {
+       if(beforeFunction()) {
+            FCKDialog.OpenDialog("selectstaff", "选择人员", theUrl, 800, 600, callbackFunction, window);
+        }
+    } else {
+       FCKDialog.OpenDialog("selectstaff", "选择人员", theUrl, 800, 600, callbackFunction, window);
+    }
+}
+</script>
+#end
+    #if(!$buttonTitle || $buttonTitle == "")
+        <img src="../images/staff_select.gif" align="absmiddle" alt="选择人员" style="cursor:pointer"
+            onclick="javascript:showSelectStaffDialog1($callbackFunction#if($beforeFunction != ''), $beforeFunction#end)">
+    #else
+       <input type="button" class="input_style" value="$buttonTitle"
+            onclick="javascript:showSelectStaffDialog1($callbackFunction#if($beforeFunction && $beforeFunction!= ''), $beforeFunction#end)" />
+
+    #end
+#end
+
+/**
+* 此处为选择单位
+* 由于行政审批原有代码采用该宏选择单位，而相应调用的java代码已经被case覆盖,所以此次调用改为选择单位
+* 相应的宏参数也要做处理:原传入参数params中包含:回调函数，单位选中后要设置的单位id input名称:bindId, 要设置的单位名称对应的input名字: bindName
+*
+*/
+
+#macro(selectDept $params)
+
+<script type="text/javascript" src="../script/selectStaff.js"></script>
+<script type="text/javascript">
+ function _selectSingleUnitFromAll() {
+     var paramValues = {};
+     //将velocity形式的map转换成js形式
+     #foreach($p in $params.entrySet())
+        paramValues["$p.key"] = "$p.value";
+     #end
+    //打开单位选择窗口
+    selectSingleUnitFromAll(function(unitId, unitName) {
+        //真正的回调函数,如果要避免eval可以直接调用函数名，但是会绑定名字
+        eval(paramValues.callback+'({"id":'+unitId+', "name":"'+unitName+'"},{"bindId":"'+paramValues.bindId+'", "bindName":"'+paramValues.bindName+'"})');
+    });
+}
+</script>
+<img  src="../images/dep_select.gif" align="absmiddle" alt="选择部门" onclick="javascript:_selectSingleUnitFromAll();" style="cursor:pointer" >
+#end
+
+
+/**
+* 选择唯一单位
+*/
+#macro(selectSingleUnitFromAll $callbackFunction)
+ <script type="text/javascript" src="../script/selectStaff.js"></script>
+ <img  src="../images/dep_select.gif" align="absmiddle" alt="选择单位" onclick="javascript:selectSingleUnitFromAll($callbackFunction)" style="cursor:pointer" >
+#end
+/**
+* 选择唯一地市县单位
+*/
+#macro(selectSingleProviceCityCountryUniFromAll $callbackFunction)
+ <script type="text/javascript" src="../script/selectStaff.js"></script>
+ <img  src="../images/dep_select.gif" align="absmiddle" alt="选择单位" onclick="javascript:selectSingleProviceCityCountryUniFromAll($callbackFunction)" style="cursor:pointer" >
+#end
+
+/**
+*选择唯一部门
+*/
+#macro(selectSingleDepartmentInUnit $callbackFunction)
+#if(!$INCLUDE_SHOW_SELECT_DEPT_DIALOG_SCRIPT)
+#set($INCLUDE_SHOW_SELECT_DEPT_DIALOG_SCRIPT = true)
+<script type="text/javascript" src="../script/selectStaff.js"></script>
+#end
+<img  src="../images/dep_select.gif" align="absmiddle" alt="选择部门" onclick="javascript:selectSingleDepartmentInUnit($callbackFunction)" style="cursor:pointer" >
+#end
+
+/**
+*选择以rootId为根单位的唯一部门
+*/
+#macro(selectSingleDepartmentInRootIdUnit $rootId $callbackFunction)
+#if(!$INCLUDE_SHOW_SELECT_DEPT_DIALOG_SCRIPT)
+#set($INCLUDE_SHOW_SELECT_DEPT_DIALOG_SCRIPT = true)
+<script type="text/javascript" src="../script/selectStaff.js"></script>
+#end
+<img  src="../images/dep_select.gif" align="absmiddle" alt="选择部门" onclick="javascript:selectSingleDepartmentInRootIdUnit($rootId, $callbackFunction)" style="cursor:pointer" >
+#end
+
+/**
+*
+* 从本单位部门树中选择单人
+* 调用相应的js方法: selectSingleStaffFromCandidate,默认预设部门和预设人员为空
+*
+*/
+#macro(selectUnitDepartment $callbackFunction)
+    #selectSingleUnitFromAll($callbackFunction '' '')
+#end
+#macro(selectProviceCityCountryUnit $callbackFunction)
+    #selectSingleProviceCityCountryUniFromAll($callbackFunction '' '')
+#end
+
+#macro(selectSingleStaffFromCandidate $callback)
+    #selectSingleStaffFromCandidate($callback '' '')
+#end
+
+#macro(selectSingleStaffFromCandidate $callback $unitId $buttonTitle)
+ <script type="text/javascript" src="../script/selectStaff.js"></script>
+    #if(!$unitId) #set($_unitId='')
+    #else #set($_unitId=$unitId) #end
+
+    #if(!$buttonTitle || $buttonTitle == "")
+        <img src="../app/right/images/staff_select.gif" align="absmiddle" alt="选择人员" style="cursor:pointer"
+            onclick="javascript:selectSingleStaffFromCandidate($callback, '$_unitId', '', '', '选择人员')">
+    #else
+       <input type="button" class="input_style" value="$buttonTitle"
+            onclick="javascript:selectSingleStaffFromCandidate($callback,'$_unitId', '', '', '选择人员')">
+    #end
+#end
+
+
+
+#macro(selectMultiStaff $callbackFunction)
+#selectMultiStaffWithTitle($callbackFunction '')
+#end
+
+#macro(selectMultiStaff $callbackFunction $initStaffName $initStaffId)
+#selectMultiStaffWithTitle($callbackFunction '' $initStaffName $initStaffId)
+#end
+
+#macro(selectMultiStaffWithTitle $callbackFunction $buttonTitle $initStaffName $initStaffId)
+#if(!$INCLUDE_SHOW_SELECT_STAFF_MULTI_DIALOG_SCRIPT)
+#set($INCLUDE_SHOW_SELECT_STAFF_MULTI_DIALOG_SCRIPT = true)
+<script type="text/javascript">
+function showSelectStaffMultiDialog(callbackFunction, initStaffName, initStaffId) {
+    var theUrl = "../scm/go.do?action=/manage/selectmultistaffframe";
+    var customValue = new Object();
+    var initData = new Array();
+    var param = new Object();
+    var i = 0;
+    customValue.callback = callbackFunction;
+    ##单位人员过滤
+    #if($staff.dw_id)
+       param_new = new Object();
+       param_new.paramName = "dep_ace";
+       param_new.paramValue = "$staff.dw_id";
+       initData[i++] = param_new;
+    #end
+    if (initStaffName != null && initStaffName != "") {
+        var staffName = document.getElementsByName(initStaffName);
+        for(x in staffName) alert(staffName+"-:"+staffName[x]);
+        if (staffName != undefined) {
+            param.paramName = "filter_names";
+            param.paramValue = staffName[0].value;
+            initData[i++] = param;
+            customValue.rightUrlInitParams = initData;
+        }
+    }
+    if (initStaffId != null && initStaffId != "") {
+        var staffId = document.getElementsByName(initStaffId);
+        if (staffId != undefined) {
+            param.paramName = "filter_ids";
+            param.paramValue = staffId[0].value;
+            initData[i] = param;
+            customValue.rightUrlInitParams = initData;
+        }
+    }
+    FCKDialog.OpenDialog("selectstaff", "选择人员", theUrl, 880, 600, customValue, window);
+}
+</script>
+#end
+#if($buttonTitle && $buttonTitle != "")
+<input type="button" class="input_style" value="$buttonTitle"
+    onclick="javascript:showSelectStaffMultiDialog($callbackFunction, '$initStaffName', '$initStaffId')" />
+#else
+<img  src="../images/staff_select.gif" align="absmiddle" alt="选择人员" style="cursor:pointer"
+    onclick="javascript:showSelectStaffMultiDialog($callbackFunction, '$initStaffName', '$initStaffId')">
+#end
+#end
+
+
+#############################################################################################
+
+## 本宏在一个页面内只能调用一次
+## $treeRootNodeList        树根节点列表
+## $treeName                树标题
+## $openLevel                缺省展开级别
+## $clickMode                单击节点时的行为：allNode-->全部节点都响应单击事件
+##                                         none----->全部节点都不响应单击事件
+##                                         其它------>只有叶子节点响应单击事件
+## $treeNodeClickFunction    单击节点时调用的函数
+#macro(showTree $treeRootNodeList $treeName $openLevel $clickMode $treeNodeClickFunction)
+##    <div id="treeContentBorder" class="unnamed1" style="position:absolute;top:0;left:0;display:none;">
+      <table border="0" cellpadding="0" cellspacing="0" class="text12">
+        <tbody>
+          <tr>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="8" width="16"
+              src="../images/space.gif" /></td>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/root_main.gif" /></td>
+            <td align="left" height="10" width="3"><img alt="" border="0" height="10" width="3"
+              src="../images/space.gif" /></td>
+            <td align="left" class="text14">$treeName</td>
+          </tr>
+        </tbody>
+      </table>
+    #set($openLevel = $openLevel - 1)
+    #set($parentIsLastRootArray = [])   ##标识每个父结点是否是其所在级别中的最后一个结点
+    #set($currentRootNodeArray = [])    ##当前正在处理的根结点栈
+    #set($parentIsLastRootArray2 = [])   ##标识每个父结点是否是其所在级别中的最后一个结点
+    #set($currentRootNodeArray2 = [])    ##当前正在处理的根结点栈
+    #foreach($treeNode in $treeRootNodeList)
+        #set($isLast = $velocityCount == $treeRootNodeList.size())
+        #set($temp = $currentRootNodeArray.add($treeNode))    ##当前结点进栈
+        ##特殊处理：“自治区食安办”作为根节点处理
+        #if(!$treeNode.isLeaf())  ##有子结点
+            #foreach($treeSubNode in $treeNode.getChildren())
+                #if($treeSubNode.nodeName == '自治区食安办')
+                    #set($temp2 = $currentRootNodeArray2.add($treeSubNode))    ##当前结点进栈
+                    #showRootTreeNode($currentRootNodeArray2 $parentIsLastRootArray2 $isLast $openLevel $clickMode $treeNodeClickFunction)
+                    #break
+                #end
+            #end
+        #end
+        #showRootTreeNode($currentRootNodeArray $parentIsLastRootArray $isLast $openLevel $clickMode $treeNodeClickFunction)
+    #end
+##    </div>
+<script type="text/javascript">
+function showTreeNextLevel(divId, clickObj) {
+    var nextLevel = document.getElementById(divId);
+    if (nextLevel.style.display == "none") {
+        nextLevel.style.display = "";
+        if (clickObj.src == "../images/plus_last.gif") {
+            clickObj.src = "../images/minus_last.gif";
+        } else {
+            clickObj.src = "../images/minus_notlast.gif";
+        }
+    } else {
+        nextLevel.style.display = "none";
+        if (clickObj.src == "../images/minus_last.gif") {
+            clickObj.src = "../images/plus_last.gif";
+        } else {
+            clickObj.src = "../images/plus_notlast.gif";
+        }
+    }
+    return false;
+}
+</script>
+#end
+
+#macro(showRootTreeNode $currentRootNodeArray $parentIsLastRootArray $isLastRoot $openLevel $clickMode $treeNodeClickFunction)
+    #set($currentRootNodeIndex = $currentRootNodeArray.size() - 1)
+    #set($treeNode = $currentRootNodeArray.get($currentRootNodeIndex))    ##取得当前根结点
+      <table border="0" cellpadding="0" cellspacing="0" class="text12">
+        <tbody>
+          <tr>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/space.gif" /></td>
+    #foreach($parentIsLastRoot in $parentIsLastRootArray)
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+            #if($parentIsLastRoot) src="../images/space.gif" #else src="../images/line.gif" #end /></td>
+    #end
+            <td align="left" height="16" width="16">
+    #if(!$treeNode.isLeaf())  ##有子结点
+        #if(!$treeZoomIndex) #set($treeZoomIndex = 1) #end
+              <input type="image" alt="" border="0" height="16" width="16"
+        #if($parentIsLastRootArray.size() > $openLevel)
+              #if($isLastRoot) src="../images/plus_last.gif" #else src="../images/plus_notlast.gif" #end
+        #else
+              #if($isLastRoot) src="../images/minus_last.gif" #else src="../images/minus_notlast.gif" #end
+        #end
+              onclick="showTreeNextLevel('treeZoom${treeZoomIndex}', this);return false;" />
+    #else
+              <img alt="" border="0" height="16" width="16"
+              #if($isLastRoot) src="../images/minus_last.gif" #else src="../images/minus_notlast.gif" #end />
+    #end
+            </td>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/trans_doc_icon05.gif" /></td>
+            <td align="left" height="10" width="3"><img alt="" border="0" height="10" width="3"
+              src="../images/space.gif" /></td>
+            <td align="left">
+    #if($clickMode == "allNode")
+              <a class="text14" href="#" onclick="javascript:$treeNodeClickFunction('$treeNode.getNodeKey()', '#htmlEscape($!{treeNode.getNodeName()})')">$treeNode.getNodeName()</a>
+    #else
+              <font class="text14">$treeNode.getNodeName()</font>
+    #end
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    #if(!$treeNode.isLeaf())  ##有子结点
+      <div id="treeZoom${treeZoomIndex}" #if($parentIsLastRootArray.size() > $openLevel)style="display:none;"#end>
+        #set($treeZoomIndex = $treeZoomIndex + 1)
+        #set($temp = $parentIsLastRootArray.add($isLastRoot))
+
+        #foreach($treeSubNode in $treeNode.getChildren())
+            #set($currentRootNodeIndex = $currentRootNodeArray.size() - 1)
+            #set($treeNode = $currentRootNodeArray.get($currentRootNodeIndex)) ##恢复 $treeNode 指向当前根结点
+            #set($isLast = $velocityCount == $treeNode.getChildren().size())   ##否则这行的比较可能不正确
+                                                                               ##因为递归时可能修改了 $treeNode 的值
+                                                                               ##使其指定别的根结点
+
+            #if($treeSubNode.isLeaf())
+                ##特殊处理：“自治区食安办”作为根节点处理
+                #if($treeSubNode.nodeName != '自治区食安办')
+                    #showLeafTreeNode($treeSubNode $parentIsLastRootArray $isLast $clickMode $treeNodeClickFunction)
+                #end
+            #else
+               #if($treeSubNode.nodeName != '自治区食安办')
+                   #set($temp = $currentRootNodeArray.add($treeSubNode))    ##当前结点进栈
+                   #showRootTreeNode($currentRootNodeArray $parentIsLastRootArray $isLast $openLevel $clickMode $treeNodeClickFunction)
+               #end
+            #end
+        #end
+
+        #set($removeIndex = $parentIsLastRootArray.size() - 1)
+        #set($temp = $parentIsLastRootArray.remove($removeIndex))
+      </div>
+    #end
+
+    #set($currentRootNodeIndex = $currentRootNodeArray.size() - 1)
+    #set($temp = $currentRootNodeArray.remove($currentRootNodeIndex))    ##处理完成，当前根结点出栈
+#end
+
+#macro(showLeafTreeNode $treeNode $parentIsLastRootArray $isLastLeaf $clickMode $treeNodeClickFunction)
+      <table border="0" cellpadding="0" cellspacing="0" class="text12">
+        <tbody>
+          <tr>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/space.gif" /></td>
+    #foreach($parentIsLastRoot in $parentIsLastRootArray)
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+            #if($parentIsLastRoot) src="../images/space.gif" #else src="../images/line.gif" #end /></td>
+    #end
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+            #if($isLastLeaf) src="../images/line_last.gif" #else src="../images/line_notlast.gif" #end /></td>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/function.gif" /></td>
+            <td align="left" height="10" width="3"><img alt="" border="0" height="10" width="3"
+              src="../images/space.gif" /></td>
+            <td align="left">
+    #if($clickMode == "none")
+              <font class="text14">$treeNode.getNodeName()</font>
+    #else
+              <a class="text14" href="#" onclick="javascript:$treeNodeClickFunction('$treeNode.getNodeKey()', '#htmlEscape($!{treeNode.getNodeName()})')">$treeNode.getNodeName()</a>
+    #end
+            </td>
+          </tr>
+        </tbody>
+      </table>
+#end
+
+
+#############################################################################################
+
+## 本宏在一个页面内只能调用一次
+## $treeRootNodeList        树根节点列表
+## $treeName                树标题
+## $openLevel                缺省展开级别
+## $clickMode                单击节点时的行为：allNode-->全部节点都响应单击事件
+##                                         none----->全部节点都不响应单击事件
+##                                         其它------>只有叶子节点响应单击事件
+## $treeNodeClickFunction    单击节点时调用的函数
+#macro(showTree2 $treeRootNodeList $treeName $openLevel $clickMode $treeNodeClickFunction)
+##    <div id="treeContentBorder" class="unnamed1" style="position:absolute;top:0;left:0;display:none;">
+      <table border="0" cellpadding="0" cellspacing="0" class="text12">
+        <tbody>
+          <tr>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="8" width="16"
+              src="../images/space.gif" /></td>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/root_main.gif" /></td>
+            <td align="left" height="10" width="3"><img alt="" border="0" height="10" width="3"
+              src="../images/space.gif" /></td>
+            <td align="left" class="text14">$treeName</td>
+          </tr>
+        </tbody>
+      </table>
+    #set($openLevel = $openLevel - 1)
+    #set($parentIsLastRootArray = [])   ##标识每个父结点是否是其所在级别中的最后一个结点
+    #set($currentRootNodeArray = [])    ##当前正在处理的根结点栈
+    #foreach($treeNode in $treeRootNodeList)
+        #set($isLast = $velocityCount == $treeRootNodeList.size())
+        #set($temp = $currentRootNodeArray.add($treeNode))    ##当前结点进栈
+
+        #showRootTreeNode2($currentRootNodeArray $parentIsLastRootArray $isLast $openLevel $clickMode $treeNodeClickFunction)
+    #end
+##    </div>
+<script type="text/javascript">
+function showTreeNextLevel(divId, clickObj) {
+    var nextLevel = document.getElementById(divId);
+    if (nextLevel.style.display == "none") {
+        nextLevel.style.display = "";
+        if (clickObj.src == "../images/plus_last.gif") {
+            clickObj.src = "../images/minus_last.gif";
+        } else {
+            clickObj.src = "../images/minus_notlast.gif";
+        }
+    } else {
+        nextLevel.style.display = "none";
+        if (clickObj.src == "../images/minus_last.gif") {
+            clickObj.src = "../images/plus_last.gif";
+        } else {
+            clickObj.src = "../images/plus_notlast.gif";
+        }
+    }
+    return false;
+}
+</script>
+#end
+
+#macro(showRootTreeNode2 $currentRootNodeArray $parentIsLastRootArray $isLastRoot $openLevel $clickMode $treeNodeClickFunction)
+    #set($currentRootNodeIndex = $currentRootNodeArray.size() - 1)
+    #set($treeNode = $currentRootNodeArray.get($currentRootNodeIndex))    ##取得当前根结点
+      <table border="0" cellpadding="0" cellspacing="0" class="text12">
+        <tbody>
+          <tr>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/space.gif" /></td>
+    #foreach($parentIsLastRoot in $parentIsLastRootArray)
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+            #if($parentIsLastRoot) src="../images/space.gif" #else src="../images/line.gif" #end /></td>
+    #end
+            <td align="left" height="16" width="16">
+    #if(!$treeNode.isLeaf())  ##有子结点
+        #if(!$treeZoomIndex) #set($treeZoomIndex = 1) #end
+              <input type="image" alt="" border="0" height="16" width="16"
+        #if($parentIsLastRootArray.size() > $openLevel)
+              #if($isLastRoot) src="../images/plus_last.gif" #else src="../images/plus_notlast.gif" #end
+        #else
+              #if($isLastRoot) src="../images/minus_last.gif" #else src="../images/minus_notlast.gif" #end
+        #end
+              onclick="showTreeNextLevel('treeZoom${treeZoomIndex}', this);return false;" />
+    #else
+              <img alt="" border="0" height="16" width="16"
+              #if($isLastRoot) src="../images/minus_last.gif" #else src="../images/minus_notlast.gif" #end />
+    #end
+            </td>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/trans_doc_icon05.gif" /></td>
+            <td align="left" height="10" width="3"><img alt="" border="0" height="10" width="3"
+              src="../images/space.gif" /></td>
+            <td align="left">
+    #if($clickMode == "allNode")
+              <input type="checkbox" ancestorDep="$treeNode.data.unitOrgId" name="depcheckbox" rank="$treeNode.data.orgRank" id="$treeNode.data.orgId" onclick="javascript:$treeNodeClickFunction(this)" value="$treeNode.data.orgId,$treeNode.getNodeName()" #containStr($!treeNode.data.orgId, $selectDepId)/><LABEL class="text14" for="$treeNode.data.orgId">$treeNode.getNodeName()</LABEL>
+    #else
+              <font class="text14"><input type="checkbox" ancestorDep="$treeNode.data.unitOrgId" name="depcheckbox" rank="$treeNode.data.orgRank" id="$treeNode.data.orgId" onclick="javascript:$treeNodeClickFunction(this)" value="$treeNode.data.orgId,$treeNode.getNodeName()" #containStr($treeNode.data.orgId, $selectDepId)/>$treeNode.getNodeName()</font>
+    #end
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    #if(!$treeNode.isLeaf())  ##有子结点
+      <div id="treeZoom${treeZoomIndex}" #if($parentIsLastRootArray.size() > $openLevel)style="display:none;"#end>
+        #set($treeZoomIndex = $treeZoomIndex + 1)
+        #set($temp = $parentIsLastRootArray.add($isLastRoot))
+
+        #foreach($treeSubNode in $treeNode.getChildren())
+            #set($currentRootNodeIndex = $currentRootNodeArray.size() - 1)
+            #set($treeNode = $currentRootNodeArray.get($currentRootNodeIndex)) ##恢复 $treeNode 指向当前根结点
+            #set($isLast = $velocityCount == $treeNode.getChildren().size())   ##否则这行的比较可能不正确
+                                                                               ##因为递归时可能修改了 $treeNode 的值
+                                                                               ##使其指定别的根结点
+
+            #if($treeSubNode.isLeaf())
+                #showLeafTreeNode2($treeSubNode $parentIsLastRootArray $isLast $clickMode $treeNodeClickFunction)
+            #else
+                #set($temp = $currentRootNodeArray.add($treeSubNode))    ##当前结点进栈
+                #showRootTreeNode2($currentRootNodeArray $parentIsLastRootArray $isLast $openLevel $clickMode $treeNodeClickFunction)
+            #end
+        #end
+
+        #set($removeIndex = $parentIsLastRootArray.size() - 1)
+        #set($temp = $parentIsLastRootArray.remove($removeIndex))
+      </div>
+    #end
+
+    #set($currentRootNodeIndex = $currentRootNodeArray.size() - 1)
+    #set($temp = $currentRootNodeArray.remove($currentRootNodeIndex))    ##处理完成，当前根结点出栈
+#end
+
+#macro(showLeafTreeNode2 $treeNode $parentIsLastRootArray $isLastLeaf $clickMode $treeNodeClickFunction)
+      <table border="0" cellpadding="0" cellspacing="0" class="text12">
+        <tbody>
+          <tr>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/space.gif" /></td>
+    #foreach($parentIsLastRoot in $parentIsLastRootArray)
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+            #if($parentIsLastRoot) src="../images/space.gif" #else src="../images/line.gif" #end /></td>
+    #end
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+            #if($isLastLeaf) src="../images/line_last.gif" #else src="../images/line_notlast.gif" #end /></td>
+            <td align="left" height="16" width="16"><img alt="" border="0" height="16" width="16"
+              src="../images/function.gif" /></td>
+            <td align="left" height="10" width="3"><img alt="" border="0" height="10" width="3"
+              src="../images/space.gif" /></td>
+            <td align="left">
+    #if($clickMode == "none")
+              <font class="text14"><input type="checkbox" ancestorDep="$treeNode.data.unitOrgId" name="depcheckbox" rank="$treeNode.data.orgRank" id="$treeNode.data.orgId" onclick="avascript:$treeNodeClickFunction(this)" value="$treeNode.data.orgId,$treeNode.getNodeName()" #containStr($treeNode.data.orgId, $selectDepId)/>$treeNode.getNodeName()</font>
+    #else
+             <input type="checkbox" ancestorDep="$treeNode.data.unitOrgId" name="depcheckbox" rank="$treeNode.data.orgRank" id="$treeNode.data.orgId" onclick="javascript:$treeNodeClickFunction(this)" value="$treeNode.data.orgId,$treeNode.getNodeName(),$!mapOrgUnit.get($treeNode.data.orgId)" #containStr($treeNode.data.orgId, $selectDepId)/><LABEL class="text14" for="$treeNode.data.orgId">$treeNode.getNodeName()</LABEL>
+    #end
+            </td>
+          </tr>
+        </tbody>
+      </table>
+#end
+
+#macro(sheetbutton $picture $title $onclick)
+ <button  class="sheet-button" onclick="$onclick"  ><img src="../app/right/images/$picture"/> $title</input>
+#end
+
+#macro(selectEntp $callbackFunction)
+  <script type="text/javascript" src="../script/selectStaff.js"></script>
+  <img  src="../images/dep_select.gif" align="absmiddle" alt="选择企业" onclick="javascript:selectSingleEntp($callbackFunction)" style="cursor:pointer" >
+#end
+
+#**
+ * containStr
+ * 针对checkbox 判断$list中是否包含$str
+ * @param str 字符串
+ * @param list 判断的list或者array
+*#
+#macro(containStr $str $list)
+    #set($res = "")
+    #foreach($st in $list)
+       #if($st == $str)#set($res = "checked")#end
+   #end
+   $res
+#end

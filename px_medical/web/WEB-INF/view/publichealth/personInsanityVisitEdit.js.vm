@@ -1,0 +1,162 @@
+<script type="text/javascript">
+$(function (){
+	// 选择患者信息
+	$('#inportPerson').click(function(){
+		layer.open({
+            type: 2,
+            title: '选择患者信息',
+            shadeClose: false,
+            shade: 0.5,
+            maxmin: false,
+            area: ['95%', '95%'],
+            content: contextPath + '/personInsanity/selectCommonPersonInsanityList.do'
+        });
+	});
+	
+	// 添加药物
+	$('#btn_add_drug, #btn_add_guidanceDrug').click(function (){
+		var html = $('#drugFormTemplet').html();
+		$('#' + this.value).append(html);
+	});
+	
+	// 保存
+	$('#btn_save').click(function(){
+		var params = common.serializeObject($('#editForm'));
+		
+		if ($('#submitFlag').val() == "1") {
+			common.alert("不能重复提交", 0);
+    		return ;
+		}
+		if (params.visitClassify == "" || params.visitClassify == undefined) {
+    		common.alert("请选择此次随访分类", 0);
+    		return ;
+    	}
+		if (params.personInsanityId == "" || params.personInsanityId == undefined) {
+    		common.alert("请选择患者", 0);
+    		return ;
+    	}
+		if (params.visitTime == "" || params.visitTime == undefined) {
+    		common.alert("请选择随访时间", 0);
+    		return ;
+    	}
+		if (params.insanityDangerFlag == "" || params.insanityDangerFlag == undefined) {
+    		common.alert("请选择危险性评估", 0);
+    		return ;
+    	}
+		if (params.eatDrugBelong == "" || params.eatDrugBelong == undefined) {
+    		common.alert("请选择服药依从性", 0);
+    		return ;
+    	}
+
+		// 将用药情况信息以json格式传到后台
+		params.insanityBehaviorJson = buildBehaviorJson();
+		// 将用药情况信息以json格式传到后台
+		params.insanityUsedrugJson = buildFormJSON($('#drugList'));
+		// 将指导用药情况信息以json格式传到后台
+		params.insanityGuidedrugJson = buildFormJSON($('#guidanceDrugList'));
+		$.post("../personInsanity/savePersonInsanityVisit.jo", params, function (result){
+			if (result.code == "0") {
+				$('#submitFlag').val('1');
+				if (parent.savedShow && typeof(parent.savedShow) == "function") {
+					parent.savedShow(params.personInsanityVisitId);
+				} else {
+					// 刷新父页面
+					$('#btn_query', window.parent.document).click();
+					// 关闭窗口
+					var index = parent.layer.getFrameIndex(window.name);
+			        parent.layer.close(index); 
+				}
+			} else {
+				common.alert(result.msg, 2);
+			}
+		},"json").error(function (e){jqueryPostError(e)});
+	});
+	
+	// 将容器中的表单转为json格式
+	function buildFormJSON(container) {
+		var array = [];
+		$(container).find(".form-group").each(function (){
+			var obj = {};
+			$(this).find("input, select").each(function (){
+				if (this.value != "") {
+					obj[this.name] = this.value;
+				}
+			});
+			array.push(obj);
+		});
+		return JSON.stringify(array);
+	}
+	
+	// 将危险行为表单数据封装成JSON
+	function buildBehaviorJson(){
+		var array = [];
+		$("#behaviorList").find("input").each(function (){
+			if (this.value != "") {
+				var obj = {};
+				obj[this.name] = this.value;
+				obj["insanity_type"] = this.id;
+				array.push(obj);
+			}
+		});
+		return JSON.stringify(array);
+	}
+});
+
+var tempEle;
+// 删除药物
+function deleteDrugForm(obj, drugId, delType){
+	if (drugId != "" && drugId != undefined) {
+		var url = "";
+		var params = {};
+		if (delType == "1") {
+			url = contextPath + '/personInsanity/deletePersonInsanityUsedrug.jo'
+			params = {personInsanityUsedrugId: drugId}
+		}
+		if (delType == "2") {
+			url = contextPath + '/personInsanity/deletePersonInsanityGuidedrug.jo'
+			params = {personInsanityGuidedrugId: drugId}
+		}
+		common.confirm("确定要彻底删除吗？", function (){
+			$.post(url, params, function (result){
+				if (result.code == "0") {
+					common.alert(result.msg, 1);
+					$(obj).parents("div .form-group").remove();
+				} else {
+					common.alert(result.msg, 2);
+				}
+			}).error(function (e){jqueryPostError(e)});
+		});
+	} else {
+		$(obj).parents("div .form-group").remove();
+	}
+}
+// 选择用药
+function selectDrug(ele) {
+	tempEle = $(ele).parents('div .form-group');
+	layer.open({
+        type: 2,
+        title: '选择用药',
+        shadeClose: false,
+        shade: 0.5,
+        maxmin: false,
+        area: ['90%', '95%'],
+        content: contextPath + '/diseaseDrug/selectCommonChronicDrugList.do'
+    });
+}
+//选择药品回调函数
+function selectDrugCallBack(obj) {
+	$(tempEle).find("select[name='diseaseDrugType']").val(obj.diseaseDrugType);
+	$(tempEle).find("input[name='diseaseDrugName']").val(obj.diseaseDrugName);
+	$(tempEle).find("input[name='diseaseDrugId']").val(obj.diseaseDrugId);
+	$(tempEle).find("input[name='drugQuantity']").val(obj.drugQuantity);
+	$(tempEle).find("input[name='drugUnit']").val(obj.drugUnit);
+	$(tempEle).find("input[name='drugFreq']").val(obj.drugFreq);
+}
+
+// 选择患者调函数
+function selectInsanityCallBack(obj) {
+	$('#personDetailId').val(obj.personDetailId);
+	$('#personInsanityId').val(obj.personInsanityId);
+	$('#patientName').val(obj.patientName);
+}
+</script>

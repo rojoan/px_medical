@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>糖尿病-慢性病患者随访编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal full-height">
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>随访基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">患者姓名</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("patientName" "#htmlEscape($!personChronicVisit.personChronic.patientName)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">随访方式</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("visitWay" "#lookUpDict($dicData.dicVisitWay $!personChronicVisit.visitWay)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">随访时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("visitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.visitTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">随访医生</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("visitDoctorName" "#htmlEscape($!personChronicVisit.visitDoctorName)" " id='visitDoctorName' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">随访医院</label>
+	                <div class="col-sm-3">
+	                    #formTextInput("hospitalName" "#htmlEscape($!personChronicVisit.hospitalName)" " id='hospitalName' maxlength='15' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">医院联系电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalPhone" "#htmlEscape($!personChronicVisit.hospitalPhone)" "id='hospitalPhone' maxlength='100' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">症状</label>
+	                <div class="col-sm-7" style="padding-top: 6px;">
+	                    #formCheckboxesLable("visitChronicSymIds" $!visitChronicSymIds $!dicData.dicDMSymptom "&nbsp;" "class='m-t-xs m-r-xs i-checks' disabled='disabled'" "")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">下次随访时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("nextVisitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.nextVisitTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>体征</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">身高（cm）</label>
+	                <div class="col-sm-3">
+	                	#formFloLenInput("personVisitItem.height" "$!personVisitItem.height" 2 "maxlength='4' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">收缩压（mmHg）</label>
+	                <div class="col-sm-3">
+	                    #formIntZeroInput("personVisitItem.diastolicBloodPressure" "$!personVisitItem.diastolicBloodPressure" "maxlength='3' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">舒张压（mmHg）</label>
+	                <div class="col-sm-3">
+	                	#formIntZeroInput("personVisitItem.systolicBloodPressure" "$!personVisitItem.systolicBloodPressure" "maxlength='3' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">体重（kg）</label>
+	                <div class="col-sm-3">
+	                	#formFloLenInput("personVisitItem.weight" "$!personVisitItem.weight" 2 "maxlength='4' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">体质指数（BMI）</label>
+	                <div class="col-sm-3">
+	                	#formFloLenInput("personVisitItem.bodyIndex" "$!personVisitItem.bodyIndex" 3 "maxlength='5' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">高血压心率(次/分)</label>
+	                <div class="col-sm-3">
+	                    #formIntZeroInput("personVisitItem.heartRate" "$!personVisitItem.heartRate" "maxlength='3' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">下次控制体重（kg）</label>
+	                <div class="col-sm-3">
+	                	#formFloLenInput("personVisitItem.nextWeight" "$!personVisitItem.nextWeight" 2 "maxlength='4' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">下次控制体质指数（BMI）</label>
+	                <div class="col-sm-3">
+	                	#formFloLenInput("personVisitItem.nextBodyIndex" "$!personVisitItem.nextBodyIndex" 3 "maxlength='5' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">糖尿病足背动脉搏动</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personVisitItem.footPulsation" "#lookUpDict($dicData.dicFootPulsation $!personVisitItem.footPulsation)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">其他体征描述</label>
+	                <div class="col-sm-11">
+	                	#formTextInput("personVisitItem.otherSign" "#htmlEscape($!personVisitItem.otherSign)" "maxlength='50' class='form-control' readOnly")
+	                </div>
+	            </div>
+				
+	            <div class="text-box"><h5>生活方式指导</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">每日饮酒量(两)</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("personVisitItem.wineEveryday" "$!personVisitItem.wineEveryday" 2 "maxlength='4' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">每日抽烟量(支)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.smokeEveryday" "$!personVisitItem.smokeEveryday" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">运动两(次/周)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.physicalWeek" "$!personVisitItem.physicalWeek" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">运动时长(分钟/次)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.physicalTime" "$!personVisitItem.physicalTime" "maxlength='3' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">下次控制饮酒量(两)</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("personVisitItem.nextWineEveryday" "$!personVisitItem.nextWineEveryday" 2 "maxlength='4' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">下次控制每日抽烟量(支)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.nextSmokeEveryday" "$!personVisitItem.nextSmokeEveryday" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">下次控制运动两(次/周)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.nextPhysicalWeek" "$!personVisitItem.nextPhysicalWeek" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">下次控制运动时长(分钟/次)</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.nextPhysicalTime" "$!personVisitItem.nextPhysicalTime" "maxlength='3' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">摄盐情况(咸)</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personVisitItem.takenSaltThick" "#lookUpDict($dicData.dicTakenSaltThick $!personVisitItem.takenSaltThick)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">摄盐情况(淡)</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personVisitItem.takenSaltThin" "#lookUpDict($dicData.dicTakenSaltThick $!personVisitItem.takenSaltThin)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">心理调整</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personVisitItem.psychologicalRecovery" "#lookUpDict($dicData.dicBehaviorDoctor $!personVisitItem.psychologicalRecovery)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">遵医行为</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personVisitItem.behaviorDoctor" "#lookUpDict($dicData.dicBehaviorDoctor $!personVisitItem.behaviorDoctor)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>实验室检查</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">空腹血糖(mmol/L)</label>
+	                <div class="col-sm-3">
+	                	#formFloLenInput("personVisitItem.fbgMmol" "$!personVisitItem.fbgMmol" 3 "maxlength='5' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">糖化血红蛋白(%)</label>
+	                <div class="col-sm-3">
+	                	#formIntZeroInput("personVisitItem.glycosylatedHemoglobin" "$!personVisitItem.glycosylatedHemoglobin" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">检查日期</label>
+	                <div class="col-sm-3">
+						#formTextInput("personVisitItem.visitExamTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personVisitItem.visitExamTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">其他辅助检查</label>
+	                <div class="col-sm-11">
+	                	#formTextInput("personVisitItem.visitExamOther" "#htmlEscape($!personVisitItem.visitExamOther)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	            </div>
+
+	            <div class="text-box"><h5>治疗状况</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">低血糖反应</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personVisitItem.lowBloodSugar" "#lookUpDict($dicData.dicLowBloodSugar $!personVisitItem.lowBloodSugar)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">胰岛素种类</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personVisitItem.insulinType" "#htmlEscape($!personVisitItem.insulinType)" "maxlength='50' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">胰岛素用法用量</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personVisitItem.insulinUsage" "#htmlEscape($!personVisitItem.insulinUsage)" "maxlength='100' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">药物不良反应</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personVisitItem.drugReaction" "#lookUpDict($dicData.dicHaveNo $!personVisitItem.drugReaction)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">服药依从性</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personVisitItem.drugCompliance" "#lookUpDict($dicData.dicDrugCompliance $!personVisitItem.drugCompliance)" "class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none ">此次随访分类</label>
+	                <div class="col-sm-3">
+	                	#formTextInput("personVisitItem.visitType" "#lookUpDict($dicData.dicVisitType $!personVisitItem.visitType)" "class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">药物不良情况</label>
+	                <div class="col-sm-11">
+	                	#formTextInput("personVisitItem.drugReactionOther" "#htmlEscape($!personVisitItem.drugReactionOther)" "maxlength='50' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            
+	            <div class="text-box">
+		            <h5>用药情况</h5>
+	            </div>
+	            <div id="drugList">
+		            #foreach($item in $!visitDrugList)
+			            <div class="form-group">
+			            	<label class="col-md-1 control-label text-right p-r-none p-l-none ">药物名称</label>
+					        <div class="col-md-2 ">
+					            #formTextInput("diseaseDrugName" "#htmlEscape($!item.diseaseDrugName)" "onclick='selectDrug(this)' maxlength='20' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none ">用法用量</label>
+					        <div class="col-md-1 ">
+					            #formTextInput("drugQuantity" "#htmlEscape($!item.drugQuantity)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none ">用药单位</label>
+					        <div class="col-md-1" style="width:100px;">
+					            #formTextInput("drugUnit" "#htmlEscape($!item.drugUnit)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+					        <label class="col-md-1 control-label text-right p-r-none p-l-none ">每次用药次数</label>
+					        <div class="col-md-1" style="width:100px;">
+					            #formTextInput("drugFreq" "#htmlEscape($!item.drugFreq)" " maxlength='10' class='form-control' readOnly")
+					        </div>
+			            </div>
+			        #end
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+</html>

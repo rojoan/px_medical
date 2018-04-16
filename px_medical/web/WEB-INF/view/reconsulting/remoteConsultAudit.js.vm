@@ -1,0 +1,91 @@
+<script>
+  $(document).ready(function() {
+	$('.i-checks').iCheck({
+		checkboxClass : 'icheckbox_square-green',
+		radioClass : 'iradio_square-green',
+	});
+
+	//下拉表单
+	var config = {
+		'.chosen-select' : {},
+		'.chosen-select-deselect' : {
+			allow_single_deselect : true
+		},
+		'.chosen-select-no-single' : {
+			disable_search_threshold : 10
+		},
+		'.chosen-select-no-results' : {
+			no_results_text : 'Oops, nothing found!'
+		},
+		'.chosen-select-width' : {
+			width : "100%"
+		}
+	};
+	for ( var selector in config) {
+		$(selector).chosen(config[selector]);
+	}
+	;
+
+	$('#data_4 .input-group.date').datepicker({
+		minViewMode : 1,
+		keyboardNavigation : false,
+		forceParse : false,
+		autoclose : true,
+		todayHighlight : true
+	});
+
+	$('#data_5 .input-daterange').datepicker({
+		keyboardNavigation : false,
+		forceParse : false,
+		autoclose : true
+	});
+	
+	$('#btn_pass').click(function() {
+		remoteConsultAudit.reqeustSave('1');
+	});
+	$('#btn_save').click(function() {
+		remoteConsultAudit.reqeustSave('0');
+	});
+});
+
+var remoteConsultAudit = {
+	reqeustSave : function(operateType) {
+		var params = common.serializeObject($('#meetingForm'));
+		params.submitType = operateType;
+		if (params.submitFlag == "1") {
+			alert("请不要不能重复提交！");
+			return false;
+		}
+		if (params.topic == undefined || params.topic == "") {
+			alert("请填写会议名称");
+			return false;
+		}
+		if (params.beginTime == undefined || params.beginTime == "") {
+			alert("请选择会议开始时间");
+			return false;
+		}
+		if (params.endTime == undefined || params.endTime == "") {
+			alert("请选择会议结束时间");
+			return false;
+		}
+
+		var cur = new Date();
+	    var endTime = new Date(params.beginTime.replace("-", "/").replace("-", "/"));  
+		if(cur > endTime) {
+			alert("会议结束时间必须大于当前时间");
+			return false;
+		}
+		
+		return false;
+		$.post("../reConsult/saveAudit.jo", params, function(result) {
+			if (result.code == "0") {
+				$('#submitFlag').val("1");
+				alert("保存成功");
+			} else {
+				alert(result.msg);
+				$('#submitFlag').val("");
+			}
+		}, "json");
+	}
+}
+</script>

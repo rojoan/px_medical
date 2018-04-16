@@ -1,0 +1,170 @@
+<script>
+$(document).ready(function () {
+	// 新增
+    $('#btn_add_register').click(function (){
+    	var title = '慢阻肺患者随访编辑<span class="must-red font-14">( 红字为必填 )</span>';
+    	common.open(contextPath + '/personChronicVisit/personVisitEdit.do?view=personCopdVisitEdit', title, {area: ['99%', '99%']});
+    });
+
+	// 删除
+	$('#btn_delete').click(function (){
+		var ids = [];
+		var row = common.getTableSelectRow('personCopdList', true);
+		if (row.length == undefined || row.length <= 0) {
+			common.alert("请选择要删除的数据", 0);
+    		return ;
+		}
+		$.each(row, function (){
+			ids.push(this.chronicVisitId);
+		});
+		common.confirm("确定要删除吗？", function (){
+			$.post(
+					contextPath +'/personChronicVisit/deletePersonChronicVisit.jo',
+					{ids: ids.join(',')}, 
+					function (result){
+						if (result.code == "0") {
+							$('#btn_query').click();
+						} else {
+							common.alert(result.msg, 2);
+						}
+					}, 
+			'json').error(function (e){jqueryPostError(e)});
+		});
+    });
+	
+    // 查询按钮
+    $('#btn_query').click(function (){
+    	var queryParams = common.serializeObject($('#queryForm'));
+    	var options = {url: '../personChronicVisit/personCopdVisitDataList.jo', silent: false, query: queryParams};
+    	$('#personCopdList').bootstrapTable('refresh', options); 
+    });
+    
+ 	// 清空按钮
+    $('#btn_clean').click(function (){
+    	$('#gender').val('');
+    	$('#idCard').val('');
+    	$('#patientName').val('');
+    	$('#beginBirthDate').val('');
+    	$('#endBirthDate').val('');
+    	
+    	$('#visitDoctorName').val('');
+    	$('#visitWay').val('');
+    	//$('#transDiagnosisFlag').val('');
+    	$('#beginVisitDate').val('');
+    	$('#endVisitDate').val('');
+    });
+    
+    var dicSex = JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)'); 
+    var dicVisitWay = JSON.parse('$dicTools.changeMapToJson($dicData.dicVisitWay)'); 
+ 	// 初始化列表数据
+    $('#personCopdList').bootstrapTable({
+		url : "../personChronicVisit/personCopdVisitDataList.jo",
+		mobileResponsive : true,
+		pagination : true,
+		pageNumber : true,
+		cache : false,
+		striped: true,
+		//clickToSelect: true,
+		singleSelect: false,
+		pageSize : "10",
+		pageNumber : "1",
+		height : "500",
+		queryParamsType : "",
+		sidePagination : 'server',
+		halign : "center",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		columns : [
+		{ checkbox:true }, 
+		{
+			field : 'personChronic.patientName',
+			title : '患者姓名'
+		}, {
+			field : 'personChronic.gender',
+			title : '性 别',
+			formatter :function (value, row, index) {
+				return dicSex[row.personChronic.gender];
+			}
+		}, {
+			field : 'personChronic.birthDate',
+			title : '出生日期'
+		}, {
+			field : 'personChronic.idCard',
+			title : '身份证号码'
+		}, {
+			field : 'personChronic.linkmanPhone',
+			title : '联系人电话'
+		}, {
+			field : 'visitWay',
+			title : '随访方式',
+			formatter :function (value, row, index) {
+				return dicVisitWay[row.visitWay];
+			}
+		}, {
+			field : 'visitDoctorName',
+			title : '随访医生'
+		}, {
+			field : 'hospitalName',
+			title : '随访医院'
+		}, {
+			field : 'visitTime',
+			title : '随访时间'
+		}, {
+			field : 'nextVisitTime',
+			title : '下次随访时间'
+		}, {
+   			field : 'operate',
+   			title : '操作',
+   			events : operateEvents,
+   			formatter : operateFormatter
+   		}],
+		onDblClickRow: function (row, element){
+			var title = '慢阻肺患者随访详情</span>';
+			common.open(contextPath + '/personChronicVisit/personVisitEdit.do?view=personCopdVisitShow&chronicVisitId=' + row.chronicVisitId, title, {area: ['99%', '99%']});
+		},
+		onLoadSuccess : function(){
+			var height = ($('#personCopdList').parents("body").height() - $('#queryForm').parents(".ibox").height() - 72);
+			$('#personCopdList').bootstrapTable('resetView', {height: height}); 
+		}
+	});
+});
+window.operateEvents = {
+		"click #btn_show_register": function(e, value, row, index) {
+			var title = '慢阻肺患者随访详情</span>';
+			common.open(contextPath + '/personChronicVisit/personVisitEdit.do?view=personCopdVisitShow&chronicVisitId=' + row.chronicVisitId, title, {area: ['99%', '99%']});
+			
+		},
+		"click #btn_edit_register": function(e, value, row, index) {
+			var title = '慢阻肺患者随访编辑 <span class="must-red font-14">( 红字为必填 )</span>';
+	    	common.open(contextPath + '/personChronicVisit/personVisitEdit.do?view=personCopdVisitEdit&chronicVisitId=' + row.chronicVisitId, title, {area: ['99%', '99%']});
+	    	
+		},
+		"click #btn_del_register": function(e, value, row, index) {
+			common.confirm("确定要删除吗？", function (){
+				$.post(
+						contextPath +'/personChronicVisit/deletePersonChronicVisit.jo',
+						{ids: row.chronicVisitId}, 
+						function (result){
+							if (result.code == "0") {
+								$('#btn_query').click();
+							} else {
+								common.alert(result.msg, 2);
+							}
+						}, 
+				'json').error(function (e){jqueryPostError(e)});
+			});
+		}
+	};
+function operateFormatter(value, row, index) {
+	var html = [
+				'<a id="btn_show_register" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+	            '<a id="btn_edit_register" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>',
+	            '<a id="btn_del_register" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>'
+	            ];
+	return html.join('');
+}
+</script>

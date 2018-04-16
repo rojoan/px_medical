@@ -1,0 +1,98 @@
+<script>
+        // 提交表单
+        function saveFamilyDetail() {
+        	var familyDetailParams = common.serializeObject($('#familyDetailForm'));
+            if (familyDetailParams.familyOwnerName == undefined || familyDetailParams.familyOwnerName == "") {
+                common.alert("请填写户主姓名",0);
+                $("#familyOwnerName").focus();
+                return false;
+            }
+           
+            if (familyDetailParams.mobile)  {
+            	if (!checkMobile(familyDetailParams.mobile) && !checkPhone(familyDetailParams.mobile)) {
+       				common.alert("联系电话格式错误！",0);
+   	    			$("#mobile").focus();
+       				return false;
+       			}
+            }
+            
+            //街道
+            if ($("#regionId").parent().find(".select-item").last().attr('data-code') == undefined) {
+	            familyDetailParams.regionId = '';
+	            common.alert("请选择城镇街道！",0);
+	            return false;
+			}else{
+				familyDetailParams.regionId = $("#regionId").parent().find(".select-item").last().attr('data-code');
+			}
+             
+            var familyDetailRetionData = {};
+            familyDetailRetionData.familyDetailOtherEditInfo = familyDetailParams;
+            
+            $.post("../familyDetail/saveFamilyDetail.jo", 
+            		{familyDetailRetionData : JSON.stringify(familyDetailRetionData)},  function (result) {
+                if (result.code == "0") { 
+                    common.alertCall("保存成功!", 1, function (){
+                        // 刷新父页面
+                        var $btnQuery = $('#btn_query', window.parent.document);
+                        if($btnQuery.length > 0 ) $btnQuery.click();
+                 
+                        // 关闭窗口
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index); 
+                    });
+                } else {
+                    common.alert(result.msg,0);
+                    $('#submitFlag').val("");
+                }
+            }, "json");
+        }
+        
+        //对街道重置
+	   /* $(document).ready(function () {
+	    	$('#regionIdReset').click(function () {
+	 			 $('#regionId').citypicker('reset');
+	 	    });
+	    });*/
+        
+	    //添加家庭成员的回调函数
+	    function savePersonDetailCallBack(person){
+	        var fimilyPersonRowHtml = $('#personRow').find('tbody').html();
+	        var jqFimilyPersonRow = $(fimilyPersonRowHtml);//通过获取元素的html来创建新的元素
+	        jqFimilyPersonRow.find('.personalName').html(person.personalName);
+	        jqFimilyPersonRow.find('.familyRelId').html(person.familyRelText);
+	        jqFimilyPersonRow.find('.gender').html(person.genderText);
+	        jqFimilyPersonRow.find('.birthDate').html(person.birthDateText);
+	        jqFimilyPersonRow.find('.certificateNumber').html(person.certificateNumber);
+	        $('#familyPersonRows').append(jqFimilyPersonRow);
+	        $('#familyPersonRows > tr').each(function(i){
+	            $(this).find('td').find('.sortNum').html(i+1);
+	        });
+	    }
+	   
+	    //保存family打开新增person
+	    function saveFamilyToAddPerson(){
+	        saveFamilyDetail();
+	        var familyDetailId = $("#familyDetailId").val();
+	        if(familyDetailId) addFamilyPerson();
+	    }
+	   
+	    //addPsersonModal
+	    function addFamilyPerson(){
+	        var familyDetailId = $("#familyDetailId").val();
+	        var title = '添加家庭成员  '+common.mustHit;
+	        var url = '../personDetail/editPersonDetail.do?mode=simple&familyDetailId=' + familyDetailId ;
+	        common.open(url, title, {area: ['99%', '99%']});
+	    }
+	    
+	    //查看 设置 readonly、disabled
+        $(document).ready(function() { 
+            var jqForm = $('#familyDetailForm');
+            //查看 - 编辑模式的页面显示
+            if('show' == '$!mode'){
+                jqForm.find('input').attr('readonly',true);
+                jqForm.find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+                jqForm.find('select').attr('disabled',true);
+                jqForm.find('textarea').attr('readonly',true);
+            }
+        });
+</script>

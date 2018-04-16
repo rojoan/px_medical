@@ -1,0 +1,234 @@
+<script>
+$(document).ready(function() {
+	$('div.chosen-container.chosen-container-multi, input.default').css('width','100%');
+});
+
+$(function() {
+	$('#registerQueryBtn').click(function (){
+		var queryParams = common.serializeObject($('#registerForm'));
+		var options = {url: '../reConsult/list.do', silent: false, query: queryParams};
+		$('#registerListData').bootstrapTable('refresh', options); 
+	});
+	$('#applyQueryBtn').click(function (){
+		var queryParams = common.serializeObject($('#applyForm'));
+		var options = {url: '../reConsult/list.do', silent: false, query: queryParams};
+		$('#applyListData').bootstrapTable('refresh', options); 
+	});
+	$('#diagnosQueryBtn').click(function (){
+		var queryParams = common.serializeObject($('#diagnosForm'));
+		var options = {url: '../reConsult/list.do', silent: false, query: queryParams};
+		$('#diagnosListData').bootstrapTable('refresh', options); 
+	});
+	$('#finishQueryBtn').click(function (){
+		var queryParams = common.serializeObject($('#finishForm'));
+		var options = {url: '../reConsult/list.do', silent: false, query: queryParams};
+		$('#finishListData').bootstrapTable('refresh', options); 
+	});
+	
+	///////**begin所有清空按钮**///////
+	$('#registerQueryBtnRm,#applyQueryBtnRm,#diagnosQueryBtnRm,#finishQueryBtnRm').click(function (){
+		var formObj = $(this).parents("form");
+		$(formObj).find("#consultationType").val("");
+		$(formObj).find("#consultationType").trigger("chosen:updated");
+		$(formObj).find("#queryField").val("");
+		$(formObj).find("#queryField").trigger("chosen:updated");
+		$(formObj).find("#keyword").val("");
+		
+		if ($(formObj).find("#beginCreateDate")) {
+			$(formObj).find("#beginCreateDate").val("");
+		}
+		if ($(formObj).find("#endCreateDate")) {
+			$(formObj).find("#endCreateDate").val("");
+		}
+		if ($(formObj).find("#queryDateType")) {
+			$(formObj).find("#queryDateType").val("");
+			$(formObj).find("#queryDateType").trigger("chosen:updated");
+		}
+		if ($(formObj).find("#beginQueryDate")) {
+			$("#beginQueryDate").val("");
+		}
+		if ($(formObj).find("#endQueryDate")) {
+			$(formObj).find("#endQueryDate").val("");
+		}
+	});
+	$('#registerQueryBtnRm,#applyQueryBtnRm,#diagnosQueryBtnRm,#finishQueryBtnRm').click(function (){
+		var formObj = $(this).parents("form");
+		$(formObj).find("#consultationType").val("");
+		$(formObj).find("#consultationType").trigger("chosen:updated");
+		$(formObj).find("#queryField").val("");
+		$(formObj).find("#queryField").trigger("chosen:updated");
+		$(formObj).find("#keyword").val("");
+		
+		if ($(formObj).find("#beginCreateDate")) {
+			$(formObj).find("#beginCreateDate").val("");
+		}
+		if ($(formObj).find("#endCreateDate")) {
+			$(formObj).find("#endCreateDate").val("");
+		}
+		if ($(formObj).find("#queryDateType")) {
+			$(formObj).find("#queryDateType").val("");
+			$(formObj).find("#queryDateType").trigger("chosen:updated");
+		}
+		if ($(formObj).find("#beginQueryDate")) {
+			$("#beginQueryDate").val("");
+		}
+		if ($(formObj).find("#endQueryDate")) {
+			$(formObj).find("#endQueryDate").val("");
+		}
+	});
+	///////**end所有清空按钮**///////
+	
+	// 点击加登记断状态数据
+	$('#btn_registerList').click(function(){
+		loadData('#registerListData', '#registerForm', '0');
+	});
+	
+	// 点击加载申请状态数据
+	$('#btn_applyList').click(function (){
+		loadData('#applyListData', '#applyForm', '1');
+	});
+	
+	// 点击加载诊断状态数据
+	$('#btn_diagnosList').click(function(){
+		loadData('#diagnosListData', '#diagnosForm', '2');
+	});
+	
+	// 点击加载完成状态数据
+	$('#btn_finishList').click(function(){
+		loadData('#finishListData', '#finishForm', '3');
+	});
+
+	// 第一次打开页面初始化登记断状态数据
+	#if("$!tabIndex" == "2")
+		loadData('#applyListData', '#applyForm', '1');
+	#elseif("$!tabIndex" == "3")
+		loadData('#diagnosListData', '#diagnosForm', '2');
+	#elseif("$!tabIndex" == "4")
+		loadData('#finishListData', '#finishForm', '3');
+	#else
+		loadData('#registerListData', '#registerForm', '0');
+	#end
+});
+function loadData(tableId, queryForm, status) {
+	var tableParams = {
+		url : "../reConsult/list.do",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($(queryForm));
+		    requestParams.pageSize = params.pageSize;
+		    requestParams.pageNumber = params.pageNumber;
+		    return requestParams;
+		},
+		columns : [
+	   		//{ checkbox:true }, 
+	   		{
+	   			field : 'indexNo',
+	   			title : '序号',
+	   			width : '50px',
+	   			formatter: function (value, row, index) {return  index + 1} 
+	   		}, {
+	   			field : 'patientName',
+	   			title : '患者姓名'
+	   		}, {
+	   			field : 'officeName',
+	   			title : '申请科室(医生)',
+	   			formatter: function (value, row, index) {  
+	                   return  row.officeName + "(" + row.doctorName + ")";  
+	               } 
+	   		}, {
+	   			field : 'consultationType',
+	   			title : '会诊类型',
+	   			formatter: function (value, row, index) {
+	   				return  $("#registerForm").find("#consultationType option[value='" + row.consultationType + "']").text()
+	   			}  
+	   		}, {
+	   			field : 'reApplyTime',
+	   			title : '申请时间'
+	   		}, {
+	   			field : 'reConsultingStart',
+	   			title : '会议时间',
+	   			formatter: function (value, row, index) {  
+	                   return (row.reConsultingStart == null ? "" : row.reConsultingStart) + " - " + (row.reConsultingEnd == null ? "" : row.reConsultingEnd);  
+	               } 
+	   		}, {
+	   			field : 'operate',
+	   			title : '操作',
+	   			events : operateEvents,
+	   			formatter : operateFormatter
+	   		}],
+   		onDblClickRow : function (row, element){
+   			var title = '申请详情';
+   			common.open("../reConsult/showMedicalRecord.do?reConsultingId=" + row.reConsultingId, title, {area: ['99%', '99%']});
+   		},
+   		onLoadSuccess : function(){
+   			var height = ($(tableId).parents("body").height() - $(queryForm).parents(".ibox-content").height() - 105);
+   			$(tableId).bootstrapTable('resetView', {height: height}); 
+   		}
+	}
+	$(tableId).bootstrapTable($.extend(baseTable, tableParams));
+}
+window.operateEvents = {
+	"click #btn_show" : function(e, value, row, index) {
+		var title = '申请详情';
+		common.open("../reConsult/showMedicalRecord.do?reConsultingId=" + row.reConsultingId, title, {area: ['99%', '99%']});
+	},
+	"click #btn_edit" : function(e, value, row, index) {
+		var title = '申请编辑';
+		common.open('../reConsult/showConsult.do?show=0&mode=0&reConsultingId=' + row.reConsultingId, title, {area: ['90%', '95%']});
+	},
+	"click #btn_report" : function(e, value, row, index) {
+		if (row.consultingStatus != "2") {
+    		common.alert("您选择的申请数据不允许填写报告", 0);
+    		return ;
+    	}
+    	common.confirm("您确定会诊已结束，要填写报告吗？", function (){
+			var title = '会诊报告编辑';
+			common.open("../reConsult/fillReport.do?reConsultingId=" + row.reConsultingId, title, {area: ['99%', '99%']});
+		});
+	},
+	"click #btn_finish" : function(e, value, row, index) {
+		common.confirm("结束后不可填写报告，确定要结束吗？", function (){
+    		$.post("../reConsult/finish.jo", {reConsultingId: row.reConsultingId},function (data){
+		 		if (data.code == "0") {
+		 			// 刷新诊断列表 
+		 			var queryParams = common.serializeObject($('#diagnosForm'));
+		 			var options = {url: '../reConsult/list.do', silent: false, query: queryParams};
+		 			$('#diagnosListData').bootstrapTable('refresh', options); 
+		 			// 刷新已完成列表 
+		 			var queryParams = common.serializeObject($('#finishForm'));
+		 			var options = {url: '../reConsult/list.do', silent: false, query: queryParams};
+		 			$('#finishListData').bootstrapTable('refresh', options); 
+		 		} else {
+		 			common.alert(data.msg, 2);
+		 		}
+		 	}, "json").error(function (e){jqueryPostError(e)});
+		});
+	},
+	"click #btn_meeting" : function(e, value, row, index) {
+		window.location.href = "../reConsult/meetingInfo.do?reConsultingId=" + row.reConsultingId;
+	}
+};
+function operateFormatter(value, row, index) {
+	var html = []
+	if (row.consultingStatus == "0") {
+		html.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+		html.push('<a id="btn_edit" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>');
+		return html.join('');
+	} else if (row.consultingStatus == "1" || row.consultingStatus == "3") {
+		html.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+		return html.join('');
+	} else if (row.consultingStatus == "2") {
+		html.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+		html.push('<a id="btn_report" href="javascript:void(0)" title="填写报告"><i class="fa fa-file-word-o"></i></a>');
+		html.push('<a id="btn_finish" href="javascript:void(0)" title="结束"><i class="fa fa-power-off"></i></a>');
+		
+		var cur = new Date();
+	    var endTime = new Date(row.reConsultingEnd.replace("-", "/").replace("-", "/")); 
+		if (row.reConsultingEnd != null && row.reConsultingEnd != "" && row.reConsultingEnd != undefined && endTime > cur && row.consultationType == "2") {
+			html.push('<a id="btn_meeting" href="javascript:void(0)">进入会诊</a>&nbsp;&nbsp;');
+		}
+		
+		return html.join('');
+	}
+	return '';
+}
+</script>

@@ -1,0 +1,2 @@
+$!{cell.prefix}<input type="checkbox" bindname="$!{cell.field}" unselectvalue="0" value="$!{cell.fieldValue}" #if(${datamap.get(${cell.field})} == ${cell.fieldValue}) checked#end  #if(!${datamap.get(${cell.field})} && ${cell.initSelect}) checked#end #if(${cell.readonly})readonly#end class='inputobject' $!{cell.custom} #if(${cell.style})style=#singleQuotes()${cell.style}#singleQuotes()#end onclick="javascript:setBindValue(this);"/> $!{cell.suffix}
+#formHiddenInput("$!{cell.field}" "$!{datamap.get(${cell.field})}" "")

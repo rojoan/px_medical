@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${SessionSysPortal.appTitle}</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+   <style>
+        html,body { height: 100%}
+        button.close { position: relative; z-index: 5555; right:9px; top:5px;}
+        ul.nav.nav-tabs { background: none}
+    </style>
+</head>
+<body class="gray-bg top-navigation">
+	
+	    <div class="wrapper wrapper-content" style="height: calc(100% - 0px);">
+	        <div class="row full-height">
+	            <div class="col-sm-12 full-height">
+	                <div class="ibox float-e-margins m-b-none full-height">
+	                    <div class="ibox-content pacs-register-left full-height">
+	                        <!-- Nav tabs -->
+	                        <ul class="nav nav-tabs" role="tablist">
+	                            <li role="presentation" class='#if("$!tabIndex" == "1" || "$!tabIndex" == "")active#end'>
+	                            	<a id="btn_registerList" href="#tab-one" aria-controls="tab-one" role="tab" data-toggle="tab"><span> 检查登记 </span></a>
+	                            </li>
+	                            <li id="btn_applyList" role="presentation" class='#if("$!tabIndex" == "2")active#end'>
+	                            	<a href="#tab-two" aria-controls="tab-two" role="tab" data-toggle="tab"><span> 已申请 </span></a>
+	                            </li>
+	                            <li role="presentation" class='#if("$!tabIndex" == "3")active#end'>
+	                            	<a id="btn_diagnosList" href="#tab-three" aria-controls="tab-three" role="tab" data-toggle="tab"><span> 诊断中 </span></a>
+	                            </li>
+	                            <li role="presentation" class='#if("$!tabIndex" == "4")active#end'>
+	                            	<a id="btn_finishList" href="#tab-four" aria-controls="tab-four" role="tab" data-toggle="tab"><span> 已完成 </span></a>
+	                            </li>
+	                        </ul>
+	                        <!-- Tab panes -->
+	                        <div class="tab-content full-height" style="height: calc(100% - 33px);">
+	                            <div role="tabpanel" class='tab-pane #if("$!tabIndex" == "1" || "$!tabIndex" == "")active#end' id="tab-one">
+	                                <div class="ibox float-e-margins m-b-none">
+	                                    <div class="ibox-content">
+	                                        <form id="registerForm" method="get" class="form-horizontal">
+	                                        	<input type="hidden" name="consultingStatus" value="0" />
+	                                            <div class="form-group" >
+	                                                <div class="col-xs-2">
+	                                                    #formSingleSelectFirstNone("consultationType" "$!childVisit.shitExam" $!{dicData.consultingConsultationType} "id='consultationType' class='form-control' " "会诊类型")
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <select class="form-control" id="queryField" name="queryField">
+	                                                        <option value="">查询类型</option>
+	                                                        <option value="rc.patientName = ?">患者姓名</option>
+	                                                        <option value="rc.doctorName = ?">申请医生</option>
+	                                                        <option value="rc.officeName = ?">申请科室</option>
+	                                                        <option value="rc.proposerName = ?">会议发起人</option>
+	                                                    </select>
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <input type="text" id="keyword" name="keyword" class="form-control" placeholder="请输入查询关键词">
+	                                                </div>
+	                                                <div class="col-xs-3" >	                                                
+					                                    <div class="input-daterange input-group">
+				                                            <input class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginCreateDate" name="beginCreateDate" placeholder="开始创建时间" type="text" value="" >
+				                                            <span class="input-group-addon">到</span>
+				                                            <input class="input-sm form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endCreateDate" name="endCreateDate" placeholder="截止创建时间" type="text" value="" >
+				                                        </div>
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <button type="button" id="registerQueryBtn" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 查 询 </button>&nbsp;&nbsp;
+	                                                    <button type="button" id="registerQueryBtnRm" class="btn btn-sm btn-info"><i class="iconfont fa icon-qingchu"></i> 清 空 </button>
+	                                                </div>                                               
+	                                            </div>
+	                                        </form>
+	                                    </div>
+	                                    <div class="ibox-content">
+	                                        <div class="table-responsive">
+	                                            <table id="registerListData" class="table table-bordered table-hover" data-mobile-responsive="true"></table>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div role="tabpanel" class='tab-pane #if("$!tabIndex" == "2")active#end' id="tab-two">
+	                                <div class="ibox float-e-margins m-b-none">
+	                                    <div class="ibox-content">
+	                                        <form id="applyForm" method="get" class="form-horizontal">
+												<input type="hidden" name="consultingStatus" value="1" />
+	                                            <div class="form-group" >
+	                                                <div class="col-xs-2">
+	                                                    #formSingleSelectFirstNone("consultationType" "$!childVisit.shitExam" $!{dicData.consultingConsultationType} "id='consultationType' class='form-control' " "会诊类型")
+	                                                </div>
+	                                            	 <div class="col-xs-2">
+	                                                    <select class="form-control" id="queryField" name="queryField">
+	                                                        <option value="">查询类型</option>
+	                                                        <option value="rc.patientName = ?">患者姓名</option>
+	                                                        <option value="rc.doctorName = ?">申请医生</option>
+	                                                        <option value="rc.officeName = ?">申请科室</option>
+	                                                        <option value="rc.proposerName = ?">会议发起人</option>
+	                                                    </select>
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <input type="text" id="keyword" name="keyword" class="form-control" placeholder="输入查询关键词">
+	                                                </div>     
+	                                                <div class="col-xs-1">
+	                                                    <select class="form-control" id="queryDateType" name="queryDateType">
+	                                                        <option value="">时间类型</option>
+	                                                        <option value="create">创建时间</option>
+	                                                        <option value="apply">申请时间</option>
+	                                                    </select>
+	                                                </div>	
+	                                                                                    
+	                                                <div class="col-xs-3" >	                                                
+					                                    <div class="input-group date" data-date="" data-date-format="yyyy-MM-dd - HH:ii " data-link-field="dtp_input1">
+				                                            <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginQueryDate" name="beginQueryDate" type="text" value="" placeholder="开始时间">
+				                                            <span class="input-group-addon">到</span>
+				                                            <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endQueryDate" name="endQueryDate" type="text" value="" placeholder="截止时间">
+				                                        </div>
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <button type="button" id="applyQueryBtn" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 查 询 </button>
+	                                                    <button type="button" id="applyQueryBtnRm" class="btn btn-sm btn-info"><i class="iconfont fa icon-qingchu"></i> 清 空 </button>
+	                                                </div>
+	                                            </div>
+	                                        </form>
+	                                    </div>
+	                                    <div class="ibox-content">
+	                                        <div class="table-responsive">
+	                                        	<table id="applyListData" class="table table-bordered table-hover" data-mobile-responsive="true"></table>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div role="tabpanel" class='tab-pane #if("$!tabIndex" == "3")active#end' id="tab-three">
+	                                <div class="ibox float-e-margins m-b-none">
+	                                    <div class="ibox-content">
+	                                        <form id="diagnosForm" method="get" class="form-horizontal">
+												<input type="hidden" name="consultingStatus" value="2" />
+	                                            <div class="form-group" >
+	                                                <div class="col-xs-2">
+	                                                    #formSingleSelectFirstNone("consultationType" "$!childVisit.shitExam" $!{dicData.consultingConsultationType} "id='consultationType' class='form-control' " "会诊类型")
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <select class="form-control" id="queryField" name="queryField">
+	                                                        <option value="">查询类型</option>
+	                                                        <option value="rc.patientName = ?">患者姓名</option>
+	                                                        <option value="rc.doctorName = ?">申请医生</option>
+	                                                        <option value="rc.officeName = ?">申请科室</option>
+	                                                        <option value="rc.proposerName = ?">会议发起人</option>
+	                                                    </select>
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <input type="text" id="keyword" name="keyword" class="form-control" placeholder="请输入查询关键词">
+	                                                </div>                                   
+	                                            	<div class="col-xs-1">
+	                                                    <select class="form-control" id="queryDateType" name="queryDateType">
+	                                                        <option value="">时间类型</option>
+	                                                        <option value="create">创建时间</option>
+	                                                        <option value="apply">申请时间</option>
+	                                                        <option value="consult">会诊时间</option>
+	                                                    </select>
+	                                                </div>                     
+	                                                <div class="col-xs-3" >	                                                
+					                                    <div class="input-group date" data-date="" data-date-format="yyyy-MM-dd - HH:ii " data-link-field="dtp_input1">
+				                                            <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginQueryDate" name="beginQueryDate" type="text" value="" placeholder="开始时间">
+				                                            <span class="input-group-addon">到</span>
+				                                            <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endQueryDate" name="endQueryDate" type="text" value="" placeholder="截止时间">
+				                                        </div>
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <button type="button" id="diagnosQueryBtn" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 查 询 </button>
+	                                                    <button type="button" id="diagnosQueryBtnRm" class="btn btn-sm btn-info"><i class="iconfont fa icon-qingchu"></i> 清 空 </button>
+	                                                </div>
+	                                            </div>
+	                                        </form>
+	                                    </div>
+	                                    <div class="ibox-content">
+	                                        <div class="table-responsive">
+	                                            <table id="diagnosListData"  class="table table-bordered table-hover" data-mobile-responsive="true"></table>
+	                                         </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div role="tabpanel" class='tab-pane #if("$!tabIndex" == "4")active#end' id="tab-four">
+	                                <div class="ibox float-e-margins m-b-none">
+	                                    <div class="ibox-content">
+	                                        <form id="finishForm" method="get" class="form-horizontal">
+												<input type="hidden" name="consultingStatus" value="3" />
+	                                            <div class="form-group" >
+	                                                <div class="col-xs-2">
+	                                                	#formSingleSelectFirstNone("consultationType" "$!childVisit.shitExam" $!{dicData.consultingConsultationType} "id='consultationType' class='form-control' " "会诊类型")
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <select class="form-control" id="queryField" name="queryField">
+	                                                        <option value="">查询类型</option>
+	                                                        <option value="rc.patientName = ?">患者姓名</option>
+	                                                        <option value="rc.doctorName = ?">申请医生</option>
+	                                                        <option value="rc.officeName = ?">申请科室</option>
+	                                                        <option value="rc.proposerName = ?">会议发起人</option>
+	                                                    </select>
+	                                                </div>
+	                                                <div class="col-xs-2">
+	                                                    <input type="text" id="keyword" name="keyword" class="form-control" placeholder="请输入查询关键词">
+	                                                </div>
+	                                                <div class="col-xs-1">
+	                                                    <select class="form-control" id="queryDateType" name="queryDateType">
+	                                                        <option value="">时间类型</option>
+	                                                        <option value="create">创建时间</option>
+	                                                        <option value="apply">申请时间</option>
+	                                                        <option value="consult">会诊时间</option>
+	                                                        <option value="finish">结束时间</option>
+	                                                    </select>
+	                                                </div>
+	                                                <div class="col-xs-3" >	                                                
+					                                    <div class="input-group date" data-date="" data-date-format="yyyy-MM-dd - HH:ii " data-link-field="dtp_input1">
+				                                            <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="beginQueryDate" name="beginQueryDate" type="text" value="" placeholder="开始时间">
+				                                            <span class="input-group-addon">到</span>
+				                                            <input class="form-control layer-date" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm'})" id="endQueryDate" name="endQueryDate" type="text" value="" placeholder="截止时间">
+				                                        </div>
+	                                                </div>	
+	                                                <div class="col-xs-2">
+	                                                    <button type="button" id="finishQueryBtn" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 查 询 </button>
+	                                                    <button type="button" id="finishQueryBtnRm" class="btn btn-sm btn-info"><i class="iconfont fa icon-qingchu"></i> 清 空 </button>
+	                                                </div>
+	                                            </div>
+	                                        </form>
+	                                    </div>
+	                                    
+	                                    <div class="ibox-content">
+	                                        <div class="table-responsive">
+	                                            <table id="finishListData"  class="table table-bordered table-hover" data-mobile-responsive="true"></table>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	#parse("./reconsulting/applyWorkSpace.js.vm")
+</body>
+
+</html>

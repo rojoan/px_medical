@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>客户端</title>
+    <link href="../style/css/css.css" type="text/css" rel="stylesheet" />
+    <script src="../style/lib/js/loadScript.js" type="text/javascript"></script>
+    
+</head>
+<body>
+    <!--top start-->
+    <header>
+        <div class="top form_add">
+            <div class="fl">
+                <a href="javascript:history.back()"><i class="iconfont back">&#xe89b;</i></a>
+            </div>
+            <div class="txt form_add">会诊报告</div>
+            <div class="fr">
+            	<a href="../index.html"><i class="iconfont back">&#xe60b;</i></a>
+            </div>
+        </div>
+    </header>
+    <!--top end    article start-->
+    <article class="top-min">
+        <div class="head_clear"></div>
+        <div class="main">
+            <div class="main_left" id="frmTitle" >
+                <div class="picBox" onclick="switchSysBar()" id="switchPoint" ><i class="iconfont">&#xec56;</i></div>
+                <ul id="tabMenu" class="side-menu">
+                    <li onclick="show.changeTab(1)">
+                    	<i class="iconfont">&#xe603;</i> 
+                    	<span>患者信息</span>
+                    </li>
+                    <li onclick="show.changeTab(2)">
+                    	<i class="iconfont">&#xe684;</i> 
+                    	<span>会诊报告</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="main_right" id="frmMain">
+                <div class="form_list" id="tab1" style="display: none">
+                    <dl>
+                        <dt>
+                            <label>患者姓名</label><input id="patientName" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>患者编号</label><input id="patientNo" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>性 别</label><input id="patientSex" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>年 龄</label><input id="age" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>出生日期</label><input id="patientBirth" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt>
+                            <label>是否已婚</label><input id="marryFlag" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="input-row">
+                            <label>现住地址</label><input id="patientNowAddr" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="input-row">
+                            <label>家庭地址</label><input id="homeAddr" type="text" class="input-txt" readonly />
+                        </dt>
+                        <dt class="textarea">
+                            <label>备注</label><textarea id="remark" class="text" readonly></textarea>
+                        </dt>
+                    </dl>
+                </div>
+
+                <div class="form_list" id="tab2" style="display: none">
+                	<dl>
+                        <dt class="textarea">
+                            <label>检查所见</label><textarea id="examFinding" class="text" readonly style="height: 1.5rem"></textarea>
+                        </dt>
+                        <dt class="textarea">
+                            <label>检查提示</label><textarea id="examHint" class="text" readonly style="height: 1.5rem"></textarea>
+                        </dt>
+                        <dt class="textarea">
+                            <label>诊断意见</label><textarea id="diagnosticOpinion" class="text" readonly style="height: 1.5rem"></textarea>
+                        </dt>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!--article end-->
+</body>
+<script type="text/javascript">
+	var show = {
+		patientId: "",
+		changeTab: function (index){
+			var array = ['tab', index];
+			var targetDiv = array.join('');
+			$('#frmMain').find("div").each(function (){
+				if (this.id == targetDiv) {
+					$(this).show();
+					show.loadData(index);
+				} else {
+					$(this).hide();
+				}
+			});
+		},
+		loadData: function (index) {
+			switch(index) {
+			case 1:
+				common.loading();
+				$.post(
+					rootPath + '/mobile.patient/showPatientInfo.do', 
+					{patientId: common.getCache(common.patientId)}, 
+					function(data){
+						var patient = data.patient;
+						if (patient != undefined) {
+							$('#patientName').val(patient.patientName);
+							$('#patientNo').val(patient.patientNo);
+							$('#age').val(patient.age);
+							$('#patientBirth').val(patient.patientBirth);
+							$('#patientNowAddr').val(patient.patientNowAddr);
+							$('#homeAddr').val(patient.homeAddr);
+							$('#remark').val(patient.remark);
+							
+							if (patient.patientSex == "1") {
+								$('#patientSex').val("男");
+							} else if (patient.patientSex == "2") {
+								$('#patientSex').val("女");
+							}
+							if (patient.marryFlag == "0") {
+								$('#marryFlag').val("未婚");
+							} else if (patient.marryFlag == "1") {
+								$('#marryFlag').val("已婚");
+							}
+						}
+						
+						common.loaded();
+				}, 'json');
+				break;
+			case 2:
+				common.loading();
+				$.post(
+					rootPath + '/mobile.reconsult/getConsult.do', 
+					{patientExamId: common.getCache(common.patientExamId), patientId: common.getCache(common.patientId)}, 
+					function(data){
+						var consult = data.consult;
+						if (consult != undefined) {
+							$('#examFinding').val(consult.examFinding);
+							$('#examHint').val(consult.examHint);
+							$('#diagnosticOpinion').val(consult.diagnosticOpinion);
+						}
+						common.loaded();
+				}, 'json');
+				break;
+			default:
+			  return ;
+			}
+		}
+	}
+	$(function (){
+		show.changeTab(1);
+	});
+</script>
+</html>

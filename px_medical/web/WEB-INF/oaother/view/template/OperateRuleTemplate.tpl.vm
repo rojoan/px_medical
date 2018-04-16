@@ -1,0 +1,38 @@
+<script language="javascript">
+var operateRules = new Array();
+    #foreach($data in ${page.data})
+        #set($dataBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+var ruleItem = new Array();
+        #foreach($rule in ${_layout.operateRule.rules})
+            #if(${rule.condition})
+                #set($temp = [])
+                #foreach($pp in ${rule.param})
+                    #set($none = ${temp.add(${dataBeanMap.get($pp)})})
+                #end
+                #set($conditions = '#set($result =' + "${HELPER_BEAN.format(${rule.condition}, ${temp})}" + ")")
+               ## use new method in current version of velocity
+               ##${render.eval($conditions)}
+               #evaluate($conditions)
+                #if($result)
+ruleItem['${rule.field}'] = new Object();
+ruleItem['${rule.field}'].result = true;
+                #end
+            #else
+ruleItem['${rule.field}'] = new Object();
+ruleItem['${rule.field}'].result = true;
+            #end
+            #if($rule.urlParam)
+var functionParam = new Object();
+                #foreach($param in $rule.urlParam)
+functionParam.$param = '${dataBeanMap.get($param)}';
+                #end
+if (ruleItem['${rule.field}'] != undefined) {
+    ruleItem['${rule.field}'].functionParam = functionParam;
+}
+            #end
+        #end
+operateRules[$dataBeanMap.get(${_layout.operateRule.key})] = new Object();
+operateRules[$dataBeanMap.get(${_layout.operateRule.key})].rule = ruleItem;
+operateRules[$dataBeanMap.get(${_layout.operateRule.key})].key = '$dataBeanMap.get(${_layout.operateRule.key})';
+    #end
+</script>

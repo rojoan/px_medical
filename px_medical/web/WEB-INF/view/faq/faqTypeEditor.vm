@@ -1,0 +1,15 @@
+{
+    title: '条目类型',
+    dataUrl: '../faq/getAllFaqTypeStore.jo?withCheckBox=true',
+    dataParams: {},
+    saveUrl: '../faq/faqTypeSave.jo',
+    deleteUrl: '../faq/faqTypeDelete.jo',
+    rootId: '0', 
+    rootText:'知识库目录',
+    rootVisible: false,
+    idField: 'faqTypeId',  
+    parentIdField: 'parentTypeId',  
+    fields: [
+        {name: 'faqTypeName', label: '分类名称', type: 'text'}
+    ]
+}

@@ -1,0 +1,5 @@
+#if(${cell.dictionary})
+#formHiddenInput("$!{cell.title}" "#lookUpDict(${cell.dictionary} ${datamap.get(${cell.field})})" "$!{cell.attributes} #if(${cell.clean})clean #end")
+#else
+#formHiddenInput("$!{cell.field}" "#htmlEscape($!{datamap.get(${cell.field})})" "$!{cell.attributes} #if(${cell.clean})clean #end")
+#end

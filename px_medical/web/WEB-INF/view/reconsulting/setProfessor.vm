@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>法律法规库管理</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+<!-- 页面js -->
+#parse("./common/common.js.vm")
+#parse("./reconsulting/setProfessor.js.vm")
+
+</head>
+<body class="gray-bg full-height">
+	<div class="wrapper wrapper-content full-height animated fadeInRight">
+		<div class="col-sm-3 p-l-none full-height">
+			<div class="ibox float-e-margins full-height m-b-none">
+				<div class="ibox-title">
+					<h5>机构列表</h5>
+				</div>
+				<div class="ibox-content" style="height: calc(100% - 38px)">
+					<div id="orgTree"></div>
+				</div>
+			</div>
+		 </div>
+		
+		<div class="col-sm-9 p-l-none p-r-none full-height">
+			<!-- 查询表单 -->
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">					
+						<form id="lis_queryForm" class="form-horizontal">
+							<div class="form-group">															
+								<label class="control-label p-r-n col-sm-1">姓名</label>
+								<div class="col-sm-2">
+									<input type="text" id="name" name="name" class="form-control ">
+								</div>
+							    <label class="control-label p-r-n col-sm-1">性别</label>						
+								<div class="col-sm-2">
+								#formSingleSelectFirstNone("sex" "" $dicData.dicSex "id='sex' placeholder='请选择性别' class='form-control'" "")
+							    </div>
+								<label class="control-label p-r-n col-sm-1">医疗机构</label>
+								<div class="col-sm-2">
+									#formSingleSelectFirstNone("unitOrgId" "" $dicData.dicSysOrgUnitIdName "id='unitOrgId' class='form-control'" "")
+								</div>
+								<div class="col-sm-3 form-group text-right m-b-n">
+									<button type="button" id="btn_search" class="btn btn-primary btn-sm">
+										<i class="fa fa-search"></i> 查 询
+									</button>
+									<button type="button" id="btn_clean" class="btn btn-primary btn-sm">
+										<i class="iconfont fa icon-qingchu"></i> 清 空
+									</button>
+								</div>
+							</div>
+						</form>
+					
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<!-- 操作按钮  -->		
+					<button type="button" id="btn_setProfessor" class="btn btn-sm btn-primary" data-toggle="modal">
+						<i class="fa fa-gears"></i> <span>专家设置</span>
+					</button>			
+				
+					<!-- 列表 -->
+					<div class="example">
+						#formSingleSelectFirstNone("sysDuty" "" $dicData.dicSysDuty "style='display:none' id='sysDuty'" "")
+						<table id="sysUserData" class="table table-bordered" data-mobile-responsive="true"></table>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			
+		</div>
+	</div>
+	
+	<!-- 弹出层 -->
+	<div class="modal inmodal full-height" id="setProfessorDialog" tabindex="-1" data-backdrop="static">
+	    <div class="modal-dialog" style="margin: 50px auto; width: calc(100% - 40%); height: calc(100% - 17%);">
+	        <div class="modal-content animated bounceInRight">
+	            <div class="modal-header">
+	                <button id="colose_setProfessorDialog" type="button" class="close" data-dismiss="modal">
+	                	<span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+	                </button>
+	                <h4 class="modal-title">专家设置</h4>
+				</div>
+	            <div class="modal-body" style="height: calc(90%); padding: 10px">
+		            
+		            	<form id="editForm" action="" class="form-horizontal">
+		            		#formHiddenInput("professorId" "" "id='professorId'")
+			            	#formHiddenInput("hospitalId" "" "id='hospitalId'")
+			                <div class="form-group">
+				                <label class="col-sm-2 control-label text-right p-r-none p-l-none">姓名</label> 
+				                <div class="col-sm-10">
+				                	#formTextInput("doctorName" "" "id='doctorName' class='form-control' readonly")
+				                </div>
+			                </div>
+			                
+			                <div class="form-group">
+				                <label class="col-sm-2 control-label text-right p-r-none p-l-none">性别</label> 
+				                <div class="col-sm-10">
+				                	#formHiddenInput("doctorSex" "" "id='doctorSex' class='form-control' readonly")
+				                	#formTextInput("doctorSexText" "" "id='doctorSexText' class='form-control' readonly")
+				                </div>
+			                </div>
+			                
+			                <div class="form-group">
+				                <label class="col-sm-2 control-label text-right p-r-none p-l-none">职务</label> 
+				                <div class="col-sm-10">
+				                	#formTextInput("doctorPost" "" "id='doctorPost' class='form-control' readonly")
+				                </div>
+			                </div>
+			                
+			                <div class="form-group">
+				                <label class="col-sm-2 control-label text-right p-r-none p-l-none">联系方式</label> 
+				                <div class="col-sm-10">
+				                 	#formTextInput("doctorMobilePhone" "" "id='doctorMobilePhone' class='form-control' readonly")
+				                </div>
+			                </div>
+			                
+			                <div class="form-group">
+				                <label class="col-sm-2 control-label text-right p-r-none p-l-none">所属机构</label> 
+				                <div class="col-sm-10">
+				                 	#formTextInput("orgName" "" "id='orgName' class='form-control' readonly")
+				                </div>
+			                </div>
+			                
+			                <div class="form-group">
+				                <label class="col-sm-2 control-label text-right p-r-none p-l-none">是否有效</label> 
+				                <div class="col-sm-10">
+				                	<div class="radio i-checks">
+				                		<label><input type="radio" id='validFlag1' name="validFlag" checked="" value="1" > <i></i>是</label>
+		                            	<label><input type="radio" id='validFlag0' name="validFlag" value="0"> <i></i>否</label>
+									</div>
+				                </div>
+			                </div>
+			                
+			                <div class="form-group">
+				                <label class="col-sm-2 control-label text-right p-r-none p-l-none">职业范围（擅长）</label> 
+				                <div class="col-sm-10">
+				                	#formTextarea("doctorGoodat" "" "id='doctorGoodat' maxlength='50' class='form-control' placeholder='填写职业范围...'")
+				                </div>
+			                </div>
+		                </form>	
+		            
+	            </div>
+	            <div class="modal-footer text-center">
+	            	<div class="text-center">
+		                <button id="btn_save" type="button" class="btn btn-primary">
+		                	<i class="fa fa-save"></i> 保 存
+		                </button>
+	                </div>
+	            </div>
+	            
+	        </div>
+	    </div>
+	</div>
+</body>
+</html>

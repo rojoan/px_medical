@@ -1,0 +1,210 @@
+<script>
+  //验证单选函数
+    function singleCheck(rows){
+        if (rows.length != 1 || !rows[0].cardMoveId) {
+            common.alert("请选择将要编辑的行且仅能选择一行",0);
+        return false;
+    }
+    return true;
+}
+ //查询函数
+function queryRecord() {
+        var queryParams = common.serializeObject($('#vaccinationCardMove_queryForm'));
+        var options = {url: '../vaccinationCardMove/vaccinationCardMoveListData.jo', silent: false, query: queryParams};
+        $('#vaccinationCardMoveListGrid').bootstrapTable('refresh', options); 
+}
+//编辑方法
+function editVaccinationCardMove(cardMoveId) {
+        layer.open({
+            type: 2,
+            title: '疫苗接种证调动记录表编辑 <span class="must-red font-14">(  带红色*号为必填)</span>',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccinationCardMove/vaccinationCardMoveEdit.do?cardMoveId=' + cardMoveId
+        });
+}
+
+//展示方法
+function showVaccinationCardMove(cardMoveId) {
+        layer.open({
+            type: 2,
+            title: '疫苗接种证调动记录表详情',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccinationCardMove/vaccinationCardMoveShow.do?cardMoveId=' + cardMoveId
+        });
+}
+
+$(document).ready(function () {
+
+    // 新增按钮
+    $('#btn_add').click(function (){
+        layer.open({
+            type: 2,
+            title: '疫苗接种证调动记录表编辑<span class="must-red font-14">( 带红色*号为必填 )</span>',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['100%', '100%'],
+            content: contextPath + '/vaccinationCardMove/vaccinationCardMoveEdit.do'
+        });
+    });
+
+    // 删除按钮
+    $('#btn_del').click(function (){
+        var rows = common.getTableSelectRow('vaccinationCardMoveListGrid', false);
+        if (rows.length != 1 || !rows[0].cardMoveId ) {
+            common.alert("请选择一条要删除的数据",0);
+            return false;
+        }
+        common.confirm("您确定要执行删除吗？", function (){
+             $.post("../vaccinationCardMove/delVaccinationCardMove.jo", {cardMoveId:rows[0].cardMoveId}, function (result) {
+                 if (result.code == "0") {
+                        common.alert("删除成功",0);
+                        queryRecord();
+                    } else if (result.code == "4"){
+                       common.alert("后台删除失败!",0);
+                    } else {
+                        common.alert(result.msg,0);
+                    }
+            }, "json");
+        });
+        
+    });
+
+    // 查询按钮
+    $('#btn_query').click(function (){
+        queryRecord();
+    });
+
+    // 清空按钮
+    $('#btn_clean').click(function (){
+    // 清空按钮
+        $('#q_createTime').val('');
+        $('#q_handleDoctor').val('');
+        $('#q_inHospitalName').val('');
+        $('#q_outHospitalName').val('');
+        $('#q_proposerName').val('');
+        $('#q_regionId').val('');
+        $('#q_vaccinatedName').val('');
+        $('#q_vaccinationCardNo').val('');
+    });
+
+
+
+            //查询疫苗接种证调动记录表表列表
+            $('#vaccinationCardMoveListGrid').bootstrapTable(
+                $.extend(baseTable, {
+                    url : "../vaccinationCardMove/vaccinationCardMoveListData.jo",
+                    queryParams : function (params){
+                        var requestParams = common.serializeObject($('#vaccinationCardMove_queryForm'));
+                        requestParams.pageSize = params.pageSize;
+                        requestParams.pageNumber = params.pageNumber;
+                        return requestParams;
+                    },
+                    columns : [
+                    {checkbox : true} ,
+                    {
+                        field : 'createTime',
+                        title : '操作时间'
+                        ,formatter :function (value) {
+                            if (value) {
+                                return getSmpFormatDateByLong(value,false);
+                            }
+                        }
+                    },
+                    {
+                        field : 'handleDoctor',
+                        title : '处理医生'
+                    },
+                    {
+                        field : 'inHospitalName',
+                        title : '调入医疗机构'
+                    },
+                    {
+                        field : 'outHospitalName',
+                        title : '调出医疗机构'
+                    },
+                    {
+                        field : 'proposerName',
+                        title : '调动申请人'
+                    },
+                    {
+                        field : 'regionId',
+                        title : '行政区域ID'
+                    },
+                    {
+                        field : 'vaccinatedName',
+                        title : '被接种人姓名'
+                    },
+                    {
+                        field : 'vaccinationCardNo',
+                        title : '预防接种卡编号'
+                    },
+                    {
+                    field : 'operate',
+                    title : '操作',
+                    width : '150px',
+                    events : operateEvents,
+                    formatter : operateFormatter
+                    }     
+                              ],
+                    onDblClickRow : function (row, element){
+                        $('#vaccinationCardMoveListGrid').bootstrapTable('check',element.attr('data-index'));
+                        show();
+                    },
+                    onLoadSuccess : function(){
+                        var height = ($('#vaccinationCardMoveListGrid').parents("body").height() - $('#vaccinationCardMove_queryForm').parents(".ibox").first().height()  - 130);
+                        $('#vaccinationCardMoveListGrid').bootstrapTable('resetView', {height: height}); 
+                    }
+                }
+                )//extends
+              );//bootstapTable
+         });//document.ready() event function
+
+    //操作栏操作按钮
+    function operateFormatter(value, row, index) {
+        var btnArray=[];
+        btnArray.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+        btnArray.push('<a id="btn_edit" href="javascript:void(0)" title="修改"><i class="fa fa-pencil-square-o"></i></a>');
+        btnArray.push('<a id="btn_delete" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>');
+        return btnArray.join("&nbsp;");
+    }
+
+    //操作栏操作按钮的事件
+    window.operateEvents = {
+        "click #btn_edit" : function (e, value, row, index) {
+            editVaccinationCardMove(row.cardMoveId);
+        },
+        "click #btn_show" : function (e, value, row, index) {
+            showVaccinationCardMove(row.cardMoveId);
+        },
+        "click #btn_delete" : function(e, value, row, index) {
+            if(!confirm("确定要删除此条疫苗接种证调动记录表数据吗？")) {
+                 return ;
+            }
+            $.post("../vaccinationCardMove/delVaccinationCardMove.jo", {cardMoveId: row.cardMoveId}, function (result){
+                   if (result.code == "0") {
+                        common.alert("疫苗接种证调动记录表删除成功",0);
+                        queryRecord();
+                    } else if (result.code == "4"){
+                        common.alert("后台执行疫苗接种证调动记录表删除失败!",0);
+                    } else {
+                        common.alert(result.msg,0);
+                    }
+            }, "json").error(function(jqXHR) {
+                                jqueryPostError(jqXHR);
+                           }
+                       );//post;
+        }
+    };
+
+    $(window).resize(function() { 
+        var height = ($('#vaccinationCardMoveListGrid').parents("body").height() - $('#vaccinationCardMove_queryForm').parents(".ibox").first().height() - 130);
+        $('#vaccinationCardMoveListGrid').bootstrapTable('resetView', {height: height}); 
+    })
+</script>

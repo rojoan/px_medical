@@ -1,0 +1,136 @@
+<script>
+  $(document).ready(function() {
+	// 搜索按钮
+	$('#btn_remoteConsult').click(function (){
+		var queryParams = common.serializeObject($('#lis_queryForm'));
+		//alert(JSON.stringify(queryParams))
+		var options = {url: '../reConsult/consultingProfessorList.do', silent: false, query: queryParams};
+		$('#dataList').bootstrapTable('refresh', options); 
+		
+	});
+	// 清空按钮
+	$('#clean_remoteConsult').click(function (){
+		$('#patientName').val('');
+		$("#consultingStatus").val("");
+		$("#consultingStatus").trigger("chosen:updated");
+		$("#medicalInstitutionId").val("");
+		$("#medicalInstitutionId").trigger("chosen:updated");
+	});
+  });
+$(function() {
+	var tableParams = {
+		url : "../reConsult/consultingProfessorList.do",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($("#lis_queryForm"));
+		    requestParams.pageSize = params.pageSize;
+		    requestParams.pageNumber = params.pageNumber;
+		    return requestParams;
+		},
+		columns : [
+	   		//{ checkbox:true }, 
+	   		{
+	   			field : 'indexNo',
+	   			title : '序号',
+	   			width : '50px',
+	   			formatter: function (value, row, index) {return  index + 1} 
+	   		}, {
+	   			field : 'consulting.patientName',
+	   			title : '患者姓名'
+	   		}, {
+	   			field : 'consulting.consultationType',
+	   			title : '会诊类型',
+	   			formatter: function (value, row, index) {
+	   				return  $("#consultationType option[value='" + row.consulting.consultationType + "']").text();
+	   			}  
+	   		}, {
+	   			field : 'consulting.officeName',
+	   			title : '申请科室'
+	   		}, {
+	   			field : 'consulting.doctorName',
+	   			title : '申请医生'
+	   		}, {
+	   			field : 'consulting.reApplyTime',
+	   			title : '申请时间'
+	   		}, {
+	   			field : 'consulting.consultTime',
+	   			title : '会议时间',
+	   			formatter: function (value, row, index) {  
+	                   return (row.consulting.reConsultingStart == null ? "" : row.consulting.reConsultingStart) + " - " + (row.consulting.reConsultingEnd == null ? "" : row.consulting.reConsultingEnd);  
+	               } 
+	   		}, {
+	   			field : 'consulting.consultingStatus',
+	   			title : '会诊状态',
+	   			formatter: function (value, row, index) {
+	   				var status = $("#consultingStatus option[value='" + row.consulting.consultingStatus + "']").text();
+	   				return  (status == "" ? "登记或申请中" : status);
+	   			}
+	   		}, {
+	   			field : 'operate',
+	   			title : '操作',
+	   			width : '180px',
+	   			events : operateEvents,
+	   			formatter : operateFormatter
+	   		} 
+	   	],
+   		onDblClickRow : function (row, element){
+   			var title = '会诊详情';
+   			common.open("../reConsult/showMedicalRecord.do?reConsultingId=" + row.consulting.reConsultingId, title, {area: ['99%', '99%']});
+   		},
+   		onLoadSuccess : function(){
+   			var height = ($('#dataList').parents("body").height() - $('#lis_queryForm').parents(".ibox").height() - 45);
+   			$('#dataList').bootstrapTable('resetView', {height: height}); 
+   		}
+	}
+	$('#dataList').bootstrapTable($.extend(baseTable, tableParams));
+});
+
+window.operateEvents = {
+	"click #btn_show" : function(e, value, row, index) {
+		var title = '会诊详情';
+		common.open("../reConsult/showMedicalRecord.do?reConsultingId=" + row.reConsultingId, title, {area: ['99%', '99%']});
+	},
+	"click #btn_report" : function(e, value, row, index) {
+		if (row.consultingStatus != "2") {
+    		common.alert("您选择的申请数据不允许填写报告", 0);
+    		return ;
+    	}
+    	common.confirm("您确定会诊已结束，要填写报告吗？", function (){
+			var title = '会诊报告编辑';
+			common.open("../reConsult/fillReport.do?reConsultingId=" + row.reConsultingId, title, {area: ['99%', '99%']});
+		});
+	},
+	"click #btn_finish" : function(e, value, row, index) {
+		common.confirm("结束后不可填写报告，确定要结束吗？", function (){
+    		$.post("../reConsult/finish.jo", {reConsultingId: row.reConsultingId},function (data){
+		 		if (data.code == "0") {
+		 			$('#btn_remoteConsult').click();
+		 		} else {
+		 			common.alert(data.msg, 2);
+		 		}
+		 	}, "json").error(function (e){jqueryPostError(e)});
+		});
+	},
+	"click #btn_meeting" : function (e, value, row, index) {
+		window.location.href = "../reConsult/meetingInfo.do?fromFlag=1&reConsultingId=" + row.reConsultingId;
+	}
+};
+function operateFormatter(value, row, index) {
+	var html = [];
+	if (row.consulting.consultingStatus == "2") {
+		html.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+		html.push('<a id="btn_report" href="javascript:void(0)" title="填写报告"><i class="fa fa-file-word-o"></i></a>');
+		html.push('<a id="btn_finish" href="javascript:void(0)" title="结束"><i class="fa fa-power-off"></i></a>');
+		
+		var cur = new Date();
+	    var endTime = new Date(row.consulting.reConsultingEnd.replace("-", "/").replace("-", "/")); 
+	    if (cur < endTime && row.consulting.consultationType == "2") {
+	    	html.push('<a id="btn_meeting" href="javascript:void(0)">进入会诊</a>');
+	    }
+	    return html.join('');
+	    
+	} else if (row.consulting.consultingStatus == "3") {
+		html.push('<a id="btn_show" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>');
+	    return html.join('');
+	}
+}
+</script>

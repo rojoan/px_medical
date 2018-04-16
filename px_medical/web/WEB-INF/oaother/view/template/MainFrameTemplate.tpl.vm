@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+#set($dataMap = ${HELPER_BEAN.getBeanNameMap(${command})})
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script language="JavaScript">
+#if($message)
+alert("$esc.javascript($message)");
+#end
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+
+function sendSelectFromLeft(node) {
+    //document.frames["rightFrame"].receiveSelectFromLeft(node);
+    window.frames["rightFrame"].receiveSelectFromLeft(node);
+}
+
+</script>
+
+<body >
+<div class="gradual">
+##以下是查询界面的工具条
+##parse("/template/EditToolBar.tpl.vm")
+##左右分隔iframe, 一般左边是树形控件 右边是最终对象选择
+  <table height="100%" width="100%" cellpadding="0" cellspacing="0" class="table_form2">
+    <tr>
+      <td valign="top" height="100%" width="40%" bgcolor="#red">
+        <iframe frameborder="0" height="400" src="#buttonUrl(${_layout.leftUrl} $datamap)" width="100%" marginwidth="10" scrolling="auto" id="leftFrame" name="leftFrame" >
+        </iframe>
+      </td>
+      <td valign="top" height="100%" width="60%">
+        <iframe frameborder="0" height="400" src="#buttonUrl(${_layout.rightUrl} $datamap)" width="100%" marginwidth="10" scrolling="auto" id="rightFrame" name="rightFrame" >
+        </iframe>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

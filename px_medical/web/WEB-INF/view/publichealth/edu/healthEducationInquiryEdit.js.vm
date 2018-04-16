@@ -1,0 +1,135 @@
+<script type="text/javascript">
+$(function (){
+	// 保存
+	$('#btn_save').click(function(){
+		var params = common.serializeObject($('#editForm'));
+		
+		if ($('#submitFlag').val() == "1") {
+			common.alert("不能重复提交", 0);
+    		return ;
+		}
+		if (params.eduName == "" || params.eduName == undefined) {
+    		common.alert("请填写活动名称", 0);
+    		return ;
+    	}
+		if (params.eduThemeId == "" || params.eduThemeId == undefined) {
+    		common.alert("请选择活动主题", 0);
+    		return ;
+    	}
+		if (params.eduTime == "" || params.eduTime == undefined) {
+    		common.alert("请选择活动时间", 0);
+    		return ;
+    	}
+		
+		$.post("../healthEducation/saveInquiry.jo", params, function (result){
+			if (result.code == "0") {
+				$('#submitFlag').val('1');
+				common.alertCall("保存成功。", 1, function (){
+					// 刷新父页面
+					$('#btn_query', window.parent.document).click();
+					// 关闭窗口
+					var index = parent.layer.getFrameIndex(window.name);
+			        parent.layer.close(index); 
+				});
+			} else {
+				common.alert(result.msg, 2);
+			}
+		},"json").error(function (e){jqueryPostError(e)});
+	});
+	
+	// 初始化上传附件
+	$("#uploadify").uploadify({  
+        'uploader' : '../affix/upload.jo',  
+        'swf' : '../resource/css/plugins/uploadify/uploadify.swf',  
+        //'cancelImg' : 'img/uploadify-cancel.png',  
+        //'folder' : 'uploads',//您想将文件保存到的路径  
+        'queueID' : 'fileQueue',//与下面的id对应  
+        'queueSizeLimit' : 5,  
+        'fileDesc' : 'rar文件或zip文件',  
+        'fileExt' : '*.rar;*.zip', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc  
+        'auto' : false,  
+        'multi' : true,  
+        'simUploadLimit' : 1, // 限制同时传文件数量 
+        'buttonText' : '选择附件',  
+        //'formData' : {
+        //	'area':'healthEduAffixService', 
+        //	'affixId':$('#affixId').val()
+        //},
+        'onDialogOpen' : function() {
+        	//当选择文件对话框打开时触发  
+        },  
+        'onSelect' : function(file) {
+        	//当每个文件添加至队列后触发  
+        },  
+        'onSelectError' : function(file,errorCode,errorMsg) {
+        	//当文件选定发生错误时触发   
+        },  
+        'onDialogClose' : function(swfuploadifyQueue) {
+            if( swfuploadifyQueue.filesErrored > 0 ){  
+            	//当文件选择对话框关闭时触发  
+            }  
+        },  
+        'onQueueComplete' : function(stats) { 
+        	//当队列中的所有文件全部完成上传时触发 
+        },  
+        'onUploadComplete' : function(file, swfuploadifyQueue) {
+        	//队列中的每个文件上传完成时触发一次   
+        },  
+        'onUploadError' : function(file,errorCode,errorMsg,errorString,swfuploadifyQueue) {
+        	//上传文件出错是触发（每个出错文件触发一次）  
+        },  
+        'onUploadProgress' : function(file,fileBytesLoaded,fileTotalBytes,queueBytesLoaded,swfuploadifyQueueUploadSize) { 
+        	//上传进度发生变更时触发 
+        },  
+        'onUploadStart': function(file) {
+        	//上传开始时触发（每个文件触发一次）   
+        	var params = {'area': 'healthEduAffix', 'affixId': $('#affixId').val()};
+            $("#uploadify").uploadify("settings", "formData", params); 
+        },  
+        'onUploadSuccess' : function(file, data, response) {
+        	//上传完成时触发（每个文件触发一次）  
+        	if (null == data || data == "") {
+        		return false;
+        	}
+        	
+        	var item = data.split(',');
+        	if (item.length < 2 || item[1] == undefined || null == item[1] || "" == item[1]) {
+        		return false;
+        	}
+        	$('#affixId').val(item[1]);
+        	
+        	var html = [];
+        	html.push('<div class="fileRow">');
+        	html.push('<span class="showTrueName">' + file.name + '</span>&nbsp;&nbsp;&nbsp;');
+        	html.push('<span class="showFileSize">' + (file.size / 1024).toFixed(2) + ' KB</span>');
+        	html.push('<span id="btn_down_file" class="dicomRemove">');
+        	html.push('<a onclick="common.downLoadFile(\'down_file\', \'healthEduAffix\', ' + item[0] + ')" href="javascript:void(0)" title="下载"><i class="fa fa-download"></i></a>');
+        	html.push('</span>');
+        	html.push('<span id="btn_del_file" class="dicomRemove">');
+        	html.push('<a onclick="common.deleteFile(' + item[0] + ', \'healthEduAffix\', this)" href="javascript:void(0)" title="刪除"><i class="fa fa-times"></i></a>');
+        	html.push('</span>');
+        	html.push('</div>');
+			$('#bodyFile').append(html.join(''));
+			$('#' + file.id).remove();
+        }  
+    });  
+	
+	// 删除单个附件
+	$('#btn_del_file a').click(function (){
+		if(this.id == undefined || this.id == "") {
+			return false;
+		}
+		common.deleteFile(this.id, 'healthEduAffix', this);
+		
+	});
+	
+	// 下载单个附件
+	$('#btn_down_file a').click(function (){
+		if(this.id == undefined || this.id == "") {
+			return false;
+		}
+		common.downLoadFile('down_file', 'healthEduAffix', this.id)
+	});
+	
+});
+</script>

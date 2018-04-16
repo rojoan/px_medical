@@ -1,0 +1,86 @@
+<script>
+$(document).ready(function () {
+    //下拉表单
+    var config = {
+        '.chosen-select': {},
+        '.chosen-select-deselect': { allow_single_deselect: true },
+        '.chosen-select-no-single': { disable_search_threshold: 10 },
+        '.chosen-select-no-results': {  no_results_text: 'Oops, nothing found!' },
+        '.chosen-select-width': { width: "100%" }
+    };
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
+    
+    // 查询按钮
+	$('#btn_query').click(function(){
+		var queryParams = common.serializeObject($('#queryForm'));
+		var options = {url: '../diseaseDrug/diseaseDrugList.do', silent: false, query: queryParams};
+		$('#diseaseDrugList').bootstrapTable('refresh', options); 
+	});
+	// 清空按钮
+	$('#btn_clean').click(function(){
+		$('#diseaseDrugName').val('');
+		$('#diseaseDrugType').val('');
+		$('#diseaseDrugType').trigger("chosen:updated");
+	});
+
+    // 初始化表格
+    $('#diseaseDrugList').bootstrapTable({
+		url : "../diseaseDrug/diseaseDrugList.do",
+		mobileResponsive: true,
+		pagination : true,
+		pageNumber : true,
+		cache : false,
+		singleSelect : true,
+		//method : "get",
+		pageSize : "10",
+		pageNumber : "1",
+		height : "380",
+		queryParams : function (params){
+			var requestParams = common.serializeObject($('#sc_queryForm'));
+	        requestParams.pageSize = params.pageSize;
+	        requestParams.pageNumber = params.pageNumber;
+	        return requestParams;
+		},
+		queryParamsType : "",
+		sidePagination:'server',
+		columns : [
+			{checkbox:true},
+			{
+				field : 'diseaseDrugName',
+				title : '药品名称'
+			}, {
+				field : 'diseaseDrugType',
+				title : '药品类型'
+			}, {
+				field : 'drugUsage',
+				title : '用法'
+			}, {
+				field : 'drugQuantity',
+				title : '每次用量'
+			}, {
+				field : 'drugUnit',
+				title : '用药单位'
+			}, {
+				field : 'drugFreq',
+				title : '每次用药次数'
+			}
+		],
+		onCheck:function(row){
+			if (parent.selectDrugCallBack && typeof(parent.selectDrugCallBack) == "function") {
+                parent.selectDrugCallBack(row);
+                
+                // 关闭窗口
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index); 
+            }
+	    },
+		onLoadSuccess : function(){
+			var height = ($('#diseaseDrugList').parents("body").height() - $('#queryForm').parents(".ibox").height() - 26);
+			$('#diseaseDrugList').bootstrapTable('resetView', {height: height}); 
+		}
+	});
+
+});
+</script>

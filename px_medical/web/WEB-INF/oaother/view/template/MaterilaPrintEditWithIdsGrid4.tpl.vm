@@ -1,0 +1,63 @@
+<div>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr align="center"><td class="table_print_top1">$!{_layout.printTitle}</td></tr>
+    <tr><td>&nbsp;</td></tr>
+</table>
+#set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${maindata})})
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr align="right">
+       <td width="90%" class="table_print_top1">#inputTitle($!{_layout.billno.title} $!{_layout.billno.required})：&nbsp;</td>
+       <td width="10%" align="left" class="print_title">
+            #if(${_layout.billno.view})
+            #viewInputField(${_layout.billno} $editBeanMap)
+            #else
+            #inputField(${_layout.billno} $editBeanMap)
+            #end
+       </td>
+	</tr>
+  </table>
+  <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" bordercolor="#000000">
+#set($cellcount=0)
+#set($cur_colspan=0)
+#foreach($cell in $_layout.mainFieldList)
+#if("hidden" != ${cell.type})
+#if(${cell.colspan} && ${cell.colspan} > 2)
+#if($cellcount!=0)##留空本行剩下的单元，准备新开一行
+                <td width="10%" align="right" class="$printcss">&nbsp;</td>
+                <td width="40%" align="left" class="$printcss">&nbsp;</td>
+              </tr>
+#end
+#set($cellcount=0)##新开一行
+#set($cur_colspan=3)
+#end
+#if($cellcount==0)##行开始
+              <tr>
+#end
+
+#set($cellcount=$cellcount+1)
+                <td width="10%" align="right" class="$printcss">#inputTitle($!{cell.title} $!{cell.required})</td>
+                <td width="40%" align="left" class="$printcss" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+#if(${cell.view})
+#viewInputField(${cell} $editBeanMap)
+#else
+#inputField(${cell} $editBeanMap)
+#end
+                 </td>
+#if($cur_colspan > 2)##新开一行
+#set($cellcount=2)
+#set($cur_colspan=0)
+#end
+#if($cellcount>=2)##行结束
+#set($cellcount=0)
+              </tr>
+#end
+#else
+#end
+#end
+#if($cellcount!=0)
+                <td width="10%" align="right" class="$printcss">&nbsp;</td>
+                <td width="40%" align="left" class="$printcss">&nbsp;</td>
+              </tr>
+#end
+</table>
+</div>

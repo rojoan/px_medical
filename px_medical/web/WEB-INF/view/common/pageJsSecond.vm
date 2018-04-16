@@ -1,0 +1,25 @@
+<script src="../resource/js/jquery.min.js"></script>
+<script src="../resource/js/bootstrap.min.js"></script>
+
+<script src="../resource/js/plugins/metisMenu/jquery.metisMenu.js"></script> 
+<script src="../resource/js/plugins/layer/layer.min.js"></script>
+<script src="../resource/js/plugins/chosen/chosen.jquery.js"></script>
+<script src="../resource/js/plugins/iCheck/icheck.min.js"></script>
+
+<!-- <script src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+<script src="../resource/js/plugins/datatimepicker/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script> -->
+<script src="../resource/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="../resource/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+<script src="../resource/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="../resource/js/plugins/citypicker/city-picker.data.js"></script>
+<script src="../resource/js/plugins/citypicker/city-picker.js"></script>
+<script src="../resource/js/plugins/popover/bootstrap-popover-x.js"></script>
+<script src="../resource/js/plugins/jsTree/jstree.min.js"></script>
+<script src="../resource/style/js/img-viewer.min.js"></script>
+ <script src="../resource/style/js/ui-new.js"></script>
+ 
+
+<script src="../resource/js/plugins/layer/laydate/laydate.js"></script>
+<!-- 第三方插件 -->
+<script src="../resource/js/plugins/pace/pace.min.js"></script>
+<script type="text/javascript">var contextPath = "$!contextPath";</script>

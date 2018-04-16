@@ -1,0 +1,322 @@
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span aria-hidden="true"><i class="fa fa-close"></i></span> <span class="sr-only"><i class="fa fa-close"></i></span>
+	</button>
+	<h7 class="modal-title">新增突发公卫报告审核 <span class="must-red font-14">( 红字为必填 )</span></h7>
+</div>
+<div class="modal-body full-height-scroll" style="height: calc(100% - 92px)">
+	<!--如果弹窗没有底部菜单栏则 -44px -->
+		<div class="row">
+	<form id="emHealthReportForm" class="form-horizontal">
+		<input type="hidden" id="submitFlag" >
+		<input type="hidden" id="healthReportId" name="healthReportId" value="$!emHealthReport.healthReportId" >
+		
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">填报单位</label>
+				<div class="col-md-8">
+					<input type="text" value="$!emHealthReport.fillOrgName" readonly="readonly" class="form-control">
+					#formHiddenInput("fillOrgId" "$!emHealthReport.fillOrgId" " id='fillOrgId' ")
+                    #formHiddenInput("fillOrgName" "$!emHealthReport.fillOrgName" " id='fillOrgName' ")
+				</div>
+
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">填报日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input type="text" class="form-control " name="fillTime" value="$!date.format('yyyy-MM-dd', $!{emHealthReport.fillTime})" />
+					</div>
+				</div>
+
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">报告人</label>
+				<div class="col-md-8">
+					<!-- <input type="text" class="form-control"> -->
+					 <div class="input-group">
+                          <input  type="text" value="$!emHealthReport.fillManName"  readonly="readonly" class="form-control">
+                          #formHiddenInput("fillManId" "$!emHealthReport.fillManId" " id='fillManId' ")
+                          #formHiddenInput("fillManName" "$!emHealthReport.fillManName" " id='fillManName' ")
+				     </div>
+				</div>
+
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">联系电话</label>
+				<div class="col-md-8">
+					<input id="linkmanPhone" name="linkmanPhone" type="text" value="$!emHealthReport.linkmanPhone" maxlength="20" class="form-control">
+				</div>
+
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label must-red">事件名称</label>
+				<div class="col-md-10">
+					<input id="eventName" name="eventName" value="$!emHealthReport.eventName" maxlength="100"  type="text" class="form-control" style="width: 94.8%">
+				</div>
+
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label must-red">信息类别</label>
+				<div class="col-md-10">
+					#formRadioButtonsLabel("eventTypeId" "$!emHealthReport.eventTypeId" $dicData.dicEventType "" "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+			<div class=" form-group">
+				<label class="col-md-2 control-label must-red">突发事件等级</label>
+				<div class="col-md-10">
+					<!-- <label class="checkbox-inline i-checks"> <input type="radio" name="aa" value="">特别重大 </label>   -->
+					#formRadioButtonsLabel("eventLevelId" "$!emHealthReport.eventLevelId" $dicData.dicEventLevel "" "" "class='checkbox-inline i-checks' ")
+				</div>
+
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">初步诊断</label>
+				<div class="col-md-8">
+					<input id="firstDiagnosis" name="firstDiagnosis" value="$!emHealthReport.firstDiagnosis" type="text" class="form-control">
+				</div>
+
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">初步诊断日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input id="firstDiagnosisTime" name="firstDiagnosisTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.firstDiagnosisTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">订正诊断</label>
+				<div class="col-md-8">
+					<input name="modifyDiagnosis" value="$!emHealthReport.modifyDiagnosis"  maxlength="2000" type="text" class="form-control">
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">订正诊断日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input name="modifyDiagnosisTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.modifyDiagnosisTime})"/>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">确认分级日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input name="levelTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.levelTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">订正分级日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input name="modifyLevelTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.modifyLevelTime})" />
+					</div>
+				</div>
+			</div>
+			  <div class="form-group">
+                  <label class="col-md-2 control-label">报告地区</label>
+                  <div class="col-md-5 " id="distpicker">
+                      <div style="position: relative; width: 500px;">
+                          <input id="reportRegionId" class="form-control" readonly type="text" value="$!reportRegionAddress" data-toggle="city-picker">
+                      </div>
+                  </div>    
+              </div>
+              
+			  <div class="form-group">
+                  <label class="col-md-2 control-label">发生地区</label>
+                  <div class="col-md-5 " id="distpicker">
+                      <div style="position: relative; width: 500px;">
+                          <input id="occurRegionId" class="form-control" readonly type="text" value="$!occurRegionAddress" data-toggle="city-picker">
+                      </div>
+                  </div>
+              </div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">详细地点</label>
+				<div class="col-md-10">
+					<input name="reportAddr" value="$!emHealthReport.reportAddr"  maxlength="200" type="text" class="form-control" style="width: 94.8%">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">事件发生场所</label>
+				<div class="col-md-10">
+					#formCheckboxesLable("eventAreaId" $!areaIdsList $dicData.dicEventArea "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">事件信息来源</label>
+				<div class="col-md-10">
+					 #formCheckboxesLable("eventSourceId" $!sourceIdsList $dicData.dicEventSource "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">事件信息来源详细</label>
+				<div class="col-md-10">
+					<input name="eventSource" value="$!emHealthReport.eventSource"  maxlength="300" type="text" class="form-control" style="width: 94.8%">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">事件波及地域范围</label>
+				<div class="col-md-10">
+					<input name="eventArea" value="$!emHealthReport.eventArea" type="text"  maxlength="300" class="form-control" style="width: 94.8%">
+				</div>
+			</div>
+			
+			
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">新报告病历数</label>
+				<div class="col-md-8">
+					<input name="fillIllCount" value="$!emHealthReport.fillIllCount"  maxlength="18" onkeyup="value=value.replace(/[^\d]/g,'')" type="text" class="form-control">
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">排除病例数</label>
+				<div class="col-md-8">
+					<input name="excludeIllCount" value="$!emHealthReport.excludeIllCount"  maxlength="18" onkeyup="value=value.replace(/[^\d]/g,'')" type="text" class="form-control">
+				</div>
+			</div>
+			
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">累计报告病历数</label>
+				<div class="col-md-8">
+					<input name="addIllCount"  value="$!emHealthReport.addIllCount"  maxlength="18" onkeyup="value=value.replace(/[^\d]/g,'')" type="text" class="form-control">
+				</div>
+			</div>
+			
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">累计报告死亡数</label>
+				<div class="col-md-8">
+					<input name="addDieCount" value="$!emHealthReport.addDieCount"  maxlength="18" onkeyup="value=value.replace(/[^\d]/g,'')" type="text" class="form-control">
+				</div>
+			</div>
+			
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label must-red">事件发生日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input id="eventOccurTime" name="eventOccurTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.eventOccurTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">接到报告日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input name="eventReportTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.eventReportTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">首例病人发病日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input name="firstAttackTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.firstAttackTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">末例病人发病日期</label>
+				<div class="col-md-8">
+					<div class="input-daterange  ">
+						<input name="endAttackTime" type="text" class="form-control " value="$!date.format('yyyy-MM-dd', $!{emHealthReport.endAttackTime})" />
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label ">主要症状</label>
+				<div class="col-md-10">
+					#formCheckboxesLable("cheifSymptomId" $!symptomIdsList $dicData.dicCheifSymptom "" "class='checkbox-inline i-checks' ")
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">主要体征</label>
+				<div class="col-md-10">
+					<input name="mainSign" value="$!emHealthReport.mainSign"  maxlength="300"  type="text" class="form-control" style="width: 94.8%">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-md-2 control-label">主要措施与效果</label>
+				<div class="col-md-10">
+					<input name="mainMeasure" readonly="readonly" value="$!emHealthReport.mainMeasure"  maxlength="300" type="text" class="form-control" style="width: 94.8%">
+				</div>
+			</div>
+
+	</form>
+		</div>
+		
+		<div class="row">
+		<form id="healthReportFormAudit" class="form-horizontal">
+		<input type="hidden" id="submitFlag" >
+		<input type="hidden" id="healthReportId" name="healthReportId" value="$!emHealthReport.healthReportId" >
+		<input type="hidden" id="healthCheckId" name="healthCheckId" value="$!emHealthCheck.healthCheckId" >
+		
+
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label">审核单位</label>
+				<div class="col-md-8">
+					<input type="text" name="checkOrgName" value="$!emHealthCheck.checkOrgName" readonly="readonly" class="form-control">
+							#formHiddenInput("checkOrgId" "$!emHealthCheck.checkOrgId" " id='checkOrgId' ")<!-- 审核单位ID-->
+				</div>
+
+			</div>
+			<div class="col-md-6 form-group">
+				<label class="col-md-4 control-label ">审核人</label>
+				<div class="col-md-8">
+					<input name="checkerName" type="text" value="$!emHealthCheck.checkerName"  readonly="readonly" class="form-control" /> 
+					 	    #formHiddenInput("checkerId" "$!emHealthCheck.checkerId" " id='checkerId' ")
+				</div>
+			</div>
+			<div class="col-md-12 form-group">
+				<label class="col-md-2 control-label must-red">审核意见和建议</label>
+				<div class="col-md-10">
+					<input name="checkOpinion" value="$!emHealthCheck.checkOpinion"  maxlength="300" type="text" class="form-control" style="width: 94.8%">
+				</div>
+			</div>
+			</form>
+		
+		</div>
+		 
+</div>
+
+<div class="modal-footer" style="text-align: center">
+	<button onclick="saveEmHealthCheck();" type="button" class="btn btn-success">
+		<i class="fa fa-save"></i> 审核
+	</button>
+</div>
+
+#parse("./common/common.js.vm")
+
+<script>
+   $(document).ready(function () {
+   	$('#emHealthReportForm').find('input').attr('readonly',true);
+   	$('#emHealthReportForm').find('input[type=radio],input[type=checkbox]').attr('disabled',true);
+   });
+</script>
+<script>
+        // 提交审核内容
+        function saveEmHealthCheck() {
+        	 var reportAuditParams = common.serializeObject($('#healthReportFormAudit'));
+       
+            if (reportAuditParams.checkOpinion == undefined || reportAuditParams.checkOpinion == "") {
+                common.alert("请填写审核意见和建议",0);
+                return false;
+            }
+            console.log(JSON.stringify(reportAuditParams));
+            $.post("../emHealthReport/saveEmHealthCheck.do", reportAuditParams, function (result) {
+                if (result.code == "0") {
+                    $('#submitFlag').val("1");
+                    $("#healthCheckId").val( result.data.healthCheckId);
+                    common.alert("保存成功",0);
+                    query();//重新查询
+                } else {
+                    common.alert("保存失败",0);
+                    $('#submitFlag').val("");
+                }
+            }, "json");
+        }
+	    
+       
+</script>
+

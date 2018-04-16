@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>肿瘤-慢性病患者随访编辑</title> 
+#parse("./common/pageCss.vm")
+<style>
+	html, body { height: 100% }
+</style>
+</head>
+<body class="gray-bg-1">
+	<form id="editForm" class="form-horizontal full-height">
+	    <div class="modal-body full-height-scroll" >
+	        <!-- 表单 开始 -->
+	        <div class="table-content">
+	            <div class="text-box"><h5>随访基本信息</h5></div>
+	            <div class="form-group">
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">患者姓名</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("patientName" "#htmlEscape($!personChronicVisit.personChronic.patientName)" " id='patientName' maxlength='10' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">随访方式</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("visitWay" "#lookUpDict($dicData.dicVisitWay $!personChronicVisit.visitWay)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">目前情况</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personVisitItem.currentCondition" "#lookUpDict($dicData.dicTumCurrentCondition $!personVisitItem.currentCondition)" "class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">随访时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("visitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.visitTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            <div class="form-group">
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">随访医生</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("visitDoctorName" "#htmlEscape($!personChronicVisit.visitDoctorName)" " id='visitDoctorName' maxlength='18' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">随访医院</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalName" "#htmlEscape($!personChronicVisit.hospitalName)" " id='hospitalName' maxlength='15' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">医院联系电话</label>
+	                <div class="col-sm-2">
+	                    #formTextInput("hospitalPhone" "#htmlEscape($!personChronicVisit.hospitalPhone)" "id='hospitalPhone' maxlength='100' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none">下次随访时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("nextVisitTime" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personChronicVisit.nextVisitTime)" "class='input-sm form-control layer-date' readOnly")
+	               </div>
+	            </div>
+	            
+	            <div class="text-box"><h5>治疗情况</h5></div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">治疗情况</label>
+	                <div class="col-sm-11" style="padding-top: 6px;">
+	                    #formCheckboxesLable("visitCureTypes" $!visitCureTypes $!dicData.dicTumNonDrugType "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">其他情况</label>
+	                <div class="col-sm-11">
+	                    #formTextInput("personVisitItem.cureOther" "#htmlEscape($!personVisitItem.cureOther)" "maxlength='50' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">有无复发</label>
+	                <div class="col-sm-2" style="padding-top: 6px;">
+	                	#formRadioButtons("personVisitItem.recurFlag" "$!personVisitItem.recurFlag" $!dicData.dicHaveNo "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">复发次数</label>
+	                <div class="col-sm-2">
+	                	#formIntZeroInput("personVisitItem.recurCount" "$!personVisitItem.recurCount" "maxlength='2' class='form-control' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">复发时间</label>
+	                <div class="col-sm-2">
+						#formTextInput("personVisitItem.recurDate" "$!date.format('yyyy-MM-dd HH:mm:ss', $!personVisitItem.recurDate)" "class='input-sm form-control layer-date' readOnly")
+	                </div>
+	                <label class="col-sm-1 control-label text-right p-r-none p-l-none ">转移部位</label>
+	                <div class="col-sm-2">
+	                	#formTextInput("personVisitItem.tansPart" "#htmlEscape($!personVisitItem.tansPart)" "maxlength='20' class='form-control' readOnly")
+	                </div>
+	            </div>
+	            <div class="form-group">  
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">卡氏评分</label>
+	                <div class="col-sm-2">
+	                	#formFloLenInput("personVisitItem.kps" "$!personVisitItem.kps" 2 "maxlength='4' class='form-control' readOnly")
+	                </div>
+	            	<label class="col-sm-1 control-label text-right p-r-none p-l-none">报导内容</label>
+	                <div class="col-sm-8"  style="padding-top: 6px;">
+	                	#formCheckboxesLable("visitContentTypes" $!visitContentTypes $!dicData.dicTumContentType "" "class='checkbox-inline i-checks' disabled='disabled'")
+	                </div>
+	            </div>
+	        </div>
+	        <!-- 表单 结束 -->
+	    </div>
+	</form>
+</body>
+<!-- 全局js -->
+#parse("./common/pageJs.vm") 
+#parse("./common/common.js.vm")
+</html>

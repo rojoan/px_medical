@@ -1,0 +1,173 @@
+#macro(form_field_text $label $name $value )
+	<div class="i-input-box">
+	<input class="i-input" name="${name}" label="${label}" type="text" value="${value}" $!bodyContent>
+	</div>
+#end
+
+#macro(form_field_select $lable $name $value $options $emptyText)
+	<select class="i-input" name="${name}" label="${label}" $!bodyContent>
+	#if(${emptyText})<option value="">${emptyText}</option>#end
+	#foreach($key in ${options.keySet()})
+	<option value="$key" #if($key == ${value})selected="selected"#end>${options.get($key)}</option>
+	#end
+	</select>
+#end
+
+#macro(form_field_textarea $label $name $value)
+	<div class="i-input-box">
+	<textarea class="i-input" name="${name}" label="${label}" $!bodyContent>$!{value}</textarea>
+	</div>
+#end
+
+#macro(form_field_rich $label $name $value)
+	<div id="i-field-${name}">
+	$!{FCKeditor.get(${name}, "$!{field.valueString}", "100%", "$boxHeight", "fck='fck' label='${label}' $!bodyContent")}
+	</div>
+#end
+
+#macro(form_field_date $label $name $value)
+<table class="i-field" width="${field.option('width', '100%')};"><tr>
+<td><div class="i-input-box"><input class="i-input" type="text" name="${field.name}" label="${field.label}" size="10" readonly="readonly"
+        value="#displayOnlyDate(${field.value})" ${field.validatorAttrs}></div></td>
+<td width="21"><img src="../script/calendar.gif" width=21 height=21 align="absmiddle" style="cursor:pointer" onclick="return popupCalendar(this, '${field.name}', '%Y-%m-%d');"></td>
+</tr></table>
+#end
+
+#macro(form_field_datetime $label $name $value)
+<table class="i-field" width="${field.option('width', '100%')};"><tr>
+<td><div class="i-input-box"><input class="i-input" type="text" name="${field.name}" label="${field.label}" size="10" readonly="readonly"
+        value="#displayOnlyDate(${field.value})" ${field.validatorAttrs}></div></td>
+<td width="21"><img src="../script/calendar.gif" width=21 height=21 align="absmiddle" style="cursor:pointer" onclick="return popupCalendar(this, '${field.name}', '%Y-%m-%d');"></td>
+</tr></table>
+#end
+
+#macro(form_field_date_range $label $name $beginValue $endValue)
+<table id="i-field-${info.name}-${field.name}" width="${field.option('width', '100%')};"><tr>
+<td width="18">从</td>
+<td><div class="i-input-box"><input class="i-input" type="text" name="${field.name}" label="${field.label}" readonly="readonly"
+        id="i-field-${info.name}-${field.name}-begin" value="#displayOnlyDate($!{field.value})" slave="${endFieldName}" ${field.validatorAttrs} ></div></td>
+<td width="21"><img onclick="return popupCalendar(this, 'i-field-${info.name}-${field.name}-begin', '%Y-%m-%d');" src="../script/calendar.gif" width=21 height=21 align="absmiddle" style="cursor:pointer"></td>
+<td width="18">到</td>
+<td><div class="i-input-box"><input class="i-input" type="text" name="${endFieldName}" label="${field.label}" readonly
+        id="i-field-${info.name}-${field.name}-end" value="#displayOnlyDate($!{field.valueOf(${endFieldName})})" master="${field.name}" ${field.validatorAttrs} ></div></td>
+<td width="21"><img onclick="return popupCalendar(this, 'i-field-${info.name}-${field.name}-end', '%Y-%m-%d');" src="../script/calendar.gif" width=21 height=21 align="absmiddle" style="cursor:pointer"></td>
+</tr></table>
+#end
+
+#if(${field.type} == "text")
+#elseif(${field.type} == "select")
+#set($options = ${field.option("options")})
+#elseif(${field.type} == "label")
+#elseif(${field.type} == "textarea")
+#elseif(${field.type} == "rich")#set($boxHeight = ${math.mul($rowHeight, ${field.option("rows", "8")})})
+
+#elseif(${field.type} == "date")
+
+#elseif(${field.type} == "datetime")
+#elseif(${field.type} == "dateRange")
+#set($endFieldName = ${field.option('endField')})
+<table id="i-field-${info.name}-${field.name}" width="${field.option('width', '100%')};"><tr>
+<td width="18">从</td>
+<td><div class="i-input-box"><input class="i-input" type="text" name="${field.name}" label="${field.label}" readonly="readonly"
+        id="i-field-${info.name}-${field.name}-begin" value="#displayOnlyDate($!{field.value})" slave="${endFieldName}" ${field.validatorAttrs} ></div></td>
+<td width="21"><img onclick="return popupCalendar(this, 'i-field-${info.name}-${field.name}-begin', '%Y-%m-%d');" src="../script/calendar.gif" width=21 height=21 align="absmiddle" style="cursor:pointer"></td>
+<td width="18">到</td>
+<td><div class="i-input-box"><input class="i-input" type="text" name="${endFieldName}" label="${field.label}" readonly
+        id="i-field-${info.name}-${field.name}-end" value="#displayOnlyDate($!{field.valueOf(${endFieldName})})" master="${field.name}" ${field.validatorAttrs} ></div></td>
+<td width="21"><img onclick="return popupCalendar(this, 'i-field-${info.name}-${field.name}-end', '%Y-%m-%d');" src="../script/calendar.gif" width=21 height=21 align="absmiddle" style="cursor:pointer"></td>
+</tr></table>
+#elseif(${field.type} == "affix")
+<input id="i-field-${info.name}-${field.name}" class="i-input" type="hidden" name="${field.name}" label="${field.label}" value="$!{field.value}" ${field.validatorAttrs} >
+<div id="uploadProgress"></div><div id="uploadBtns"></div>
+<script type="text/javascript">
+(function(){
+var swfu = initSwfUpload("$!{field.option('area')}", "$!{field.value}", "i-field-${info.name}-${field.name}", "uploadBtns", "uploadProgress");
+#foreach($affixItem in ${field.option("items")})
+swfu.createOriginFile('${affixItem.fileId}', '${affixItem.trueName}');
+#end
+})();
+</script>
+#elseif(${field.type} == 'org')
+<input id="i-field-${info.name}-${field.name}" type="hidden" name="${field.name}" label="${field.label}" value="$!{field.valueString}" ${field.validatorAttrs} >
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
+<td><div class="i-input-box"><input id="i-field-${info.name}-${field.name}-view" value="#lookUpDict($dicData.dicSysOrg ${field.value})" type="text" readonly="readonly" class="i-input">
+</div></div></td>
+<td><img onclick="CC.ux.OrgWindow.selectOrg('i-field-${info.name}-${field.name}', 'i-field-${info.name}-${field.name}-view');" src="../images/dep_select.gif" width=21 height=21 align="absmiddle" style="cursor:pointer;margin-left:2px;"></td>
+</tr></table>
+#elseif(${field.type} == 'orgs')
+#set($boxHeight = ${math.mul($rowHeight, ${field.option("rows", "2")})})
+<input id="i-field-${info.name}-${field.name}"  type="hidden" name="${field.name}" label="${field.label}" value="$!{field.valueString}" ${field.validatorAttrs} >
+<div class="i-input-box">
+<textarea id="i-field-${info.name}-${field.name}-view" class="i-input" readonly="readonly" style="height:${boxHeight}px">
+#foreach($org in ${field.value})#if($velocityCount != 1), #end#lookUpDict($dicData.dicSysOrg $org)#end
+</textarea>
+<button class="i-button" onclick="CC.ux.OrgWindow.selectOrgs('i-field-${info.name}-${field.name}', 'i-field-${info.name}-${field.name}-view');return false;"><img src="../app/right/images/in_deps.gif"> ${field.option('buttonText', '所属部门')}</button>
+</div>
+#elseif(${field.type} == 'user')
+#if(${field.value})
+#if(${field.option('withOrg')})
+#set($valueStr = "#lookUpDict($dicData.dicSysUserInfoByUserInfoId ${field.value})(#lookUpDict($dicData.dicSysOrg $!{field.value.orgId}))")
+#else
+#set($valueStr = "#lookUpDict($dicData.dicSysUserInfoByUserInfoId ${field.value})")
+#end
+#end
+<input id="i-field-${info.name}-${field.name}" type="hidden" name="${field.name}" label="${field.label}" value="$!{field.valueString}" ${field.validatorAttrs} >
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
+<td><div class="i-input-box"><input id="i-field-${info.name}-${field.name}-view" value="$!{valueStr}" type="text" readonly="readonly" class="i-input">
+</div></div></td>
+<td style="padding-left:2px;"><img onclick="CC.ux.UserWindow.selectUser('i-field-${info.name}-${field.name}', 'i-field-${info.name}-${field.name}-view');" src="../app/right/images/staff_select.gif" width=21 height=21 align="absmiddle" style="cursor:pointer"></td>
+</tr></table>
+#elseif(${field.type} == 'users')
+#set($boxHeight = ${math.mul($rowHeight, ${field.option("rows", "2")})})
+<input id="i-field-${info.name}-${field.name}"  type="hidden" name="${field.name}" label="${field.label}" value="$!{field.valueString}" ${field.validatorAttrs} >
+<div class="i-input-box"><textarea id="i-field-${info.name}-${field.name}-view" class="i-input" readonly="readonly" style="height:${boxHeight}px">
+#if(${field.option('withOrg')})
+#foreach($user in ${field.value})#if($velocityCount != 1), #end#lookUpDict($dicData.dicSysUserInfoByUserInfoId $user.userInfoId)(#lookUpDict($dicData.dicSysOrg $user.orgId))#end
+#else
+#foreach($user in ${field.value})#if($velocityCount != 1), #end#lookUpDict($dicData.dicSysUserInfoByUserInfoId $user)#end
+#end
+</textarea>
+<button class="i-button" onclick="CC.ux.UserWindow.selectUsers('i-field-${info.name}-${field.name}', 'i-field-${info.name}-${field.name}-view');return false;"><img src="../app/right/images/group_add.png"> ${field.option('buttonText', '选择人员')}</button>
+</div>
+#elseif(${field.type} == 'funcs')
+#set($boxHeight = ${math.mul($rowHeight, ${field.option("rows", "2")})})
+<input id="i-field-${info.name}-${field.name}"  type="hidden" name="${field.name}" label="${field.label}" value="$!{field.valueString}" ${field.validatorAttrs} >
+<div class="i-input-box">
+<textarea id="i-field-${info.name}-${field.name}-view" class="i-input" readonly="readonly" style="height:${boxHeight}px">
+#foreach($func in ${field.value})#if($velocityCount != 1), #end${UserOrg.getFunction($func).name}#end
+</textarea>
+<button class="i-button" onclick="CC.ux.UserWindow.selectFunctions('i-field-${info.name}-${field.name}', 'i-field-${info.name}-${field.name}-view');return false;"><img src="../app/right/images/add_func.png"> ${field.option('buttonText', '选择授权模块')}</button>
+</div>
+#elseif(${field.type} == 'checkboxes')
+<div id="i-field-${info.name}-${field.name}" class="i-field">
+#set($options = ${field.option("options")})
+#foreach($key in ${options.keySet()})
+<input class="i-checkbox" type="checkbox" name="${field.name}" label="${field.label}" value="$key" id="${info.name}-${field.name}-${key}"
+    ${field.validatorAttrs} #foreach($v in ${field.value})#if($key == $v)checked="checked"#end#end >
+<label for="${info.name}-${field.name}-${key}">${options.get($key)}</label>
+#end
+</div>
+#elseif(${field.type} == 'radios')
+<div id="i-field-${info.name}-${field.name}">
+#set($options = ${field.option("options")})
+#foreach($key in ${options.keySet()})
+<input class="i-radio" type="radio" name="${field.name}" label="${field.label}" value="$key" id="${info.name}-${field.name}-${key}"
+    ${field.validatorAttrs} #if($key == ${field.valueString})checked="checked"#end>
+<label for="${info.name}-${field.name}-${key}">${options.get($key)}</label>
+#end
+</div>
+#elseif(${field.type} == 'onoff')
+<input class="i-form-field-checkbox" type="checkbox" name="${field.name}" value="${field.option('value', '1')}" id="${info.name}-${field.name}" #if(${field.value})checked="checked"#end>
+<label for="${info.name}-${field.name}">${field.option('text', ${field.label})}</label>
+#elseif(${field.type} == 'treePicker')
+#set($valueStr = "#lookUpDict($dicData.dicSysUserInfoByUserInfoId ${field.value})")
+<input id="i-field-${info.name}-${field.name}" type="hidden" name="${field.name}" label="${field.label}" value="$!{field.valueString}" ${field.validatorAttrs} >
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
+<td><div class="i-input-box"><input id="i-field-${info.name}-${field.name}-view" value="$!{field.option('text')}" type="text" readonly="readonly" class="i-input">
+</div></div></td>
+<td width=21><img onclick="CC.ux.TreePicker.pick('i-field-${info.name}-${field.name}', 'i-field-${info.name}-${field.name}-view', '..${field.option('action')}', ${field.option('params', '{}')});" src="../base/images/icons/expand-all.gif" width=21 height=21 align="absmiddle" style="cursor:pointer;padding-left: 2px;"></td>
+</tr></table>
+#elseif(${field.type} == 'custom')
+#set($html = ${field.option('html')})
+#if($html)#evaluate($html)#end
+#end

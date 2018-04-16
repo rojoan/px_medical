@@ -1,0 +1,287 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>${SessionSysPortal.appTitle}</title>
+  <base target='_self'/>
+  <link href="../css/style.css" rel="stylesheet" type="text/css">
+  <link href="../app/right/right.css" rel="stylesheet" type="text/css" />
+  <link href="../script/DHTML_calendar_style.css" rel="stylesheet" type="text/css" media="all"  title="calendar_style" />
+  <script language="JavaScript" type="text/javascript" src="../script/DHTML_calendar.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+ #importDWRScript("workflowDwr.js")
+<script type="text/javascript">
+
+
+function initForm() {
+    //设置必选单位
+    var mustSelectDepIdArray = document.getElementsByName("mustSelectDepId");
+    for (var i = 0; i < mustSelectDepIdArray.length; i++) {
+        var selectUnit = document.getElementById("" + mustSelectDepIdArray[i].value);
+        if(selectUnit != null && selectUnit.disabled != "undefined"){
+           selectUnit.checked = "true";
+           selectUnit.disabled = "true";
+        }
+    }
+    //设置其他已选单位,不属于本次页面部门树的已选单位需要保留
+    var otherSelectDepArray = document.getElementsByName("otherSelectDepId");
+    var newOtherSelectDepIdString = "";
+    if (otherSelectDepArray.length > 0) {
+        var depcheckbox = document.getElementsByName("depcheckbox");
+        for (var i = 0; i < otherSelectDepArray.length; i++) {
+            var inDepCheckboxFlag = false;
+            for (var j = 0; j < depcheckbox.length; j++) {
+                if (depcheckbox[j].id == otherSelectDepArray[i].value) {
+                    inDepCheckboxFlag = true;
+                    break;
+                }
+            }
+            if (!inDepCheckboxFlag) {
+                newOtherSelectDepIdString += otherSelectDepArray[i].value + ",";
+            }
+        }
+        if (newOtherSelectDepIdString.length > 0) {
+            newOtherSelectDepIdString = newOtherSelectDepIdString.substring(0, newOtherSelectDepIdString.length - 1);
+        }
+    }
+    document.getElementsByName("newOtherSelectDepId")[0].value = newOtherSelectDepIdString;
+}
+
+/**
+ * 选择指定部门的员工.
+ * @param id 部门编号
+ * @param name 部门名称
+ */
+function selectDepartmentStaff(obj) {return;
+    var checkedFlag = obj.checked;
+  var e = document.editForm;
+  var selectDepIds = "";
+  var count = 0;
+  // 设置局级标志
+  var rank = 3; // 设置局级标志
+  if(obj.getAttribute("rank") == 1) { //市级
+    rank = 4;
+  } else if (obj.getAttribute("rank") == 2) {
+    rank = 5;
+  }
+
+  // 选择该节点的所有下属结点
+  for (i = 0; i < e.depcheckbox.length; i++) {
+    if(e.depcheckbox[i].ancestorDep == obj.id && e.depcheckbox[i].getAttribute("rank") == rank) {
+        e.depcheckbox[i].checked = checkedFlag;
+    }
+    if (s != 0 && count>s) {
+        alert("最多只可以选择 " + s + " 个单位！")
+      return;
+    }
+    if (e.depcheckbox[i].checked) { // 选择
+        selectDepIds += e.depcheckbox[i].id + ",";
+      count++;
+    }
+  }
+    parent.sendSelectFromLeft(selectDepIds.substr(0, selectDepIds.length - 1));
+}
+
+//选择单位并确定，传递已选择单位并回调客户端js函数
+function defaultBeforeSubmitQuery(){
+    var e = document.listForm;
+    var retDatas = new Array();
+    var unitIds = "";
+    if( typeof e.depcheckbox == "undefine" || e.depcheckbox == null ){
+      alert("请选择单位！");
+        return;
+    }
+    var newOtherSelectDepId = document.getElementsByName("newOtherSelectDepId")[0].value;
+    if (newOtherSelectDepId != null && newOtherSelectDepId != "") {
+        var otherSelectDepIdArray = newOtherSelectDepId.split(',');
+        for (var i = 0; i <　otherSelectDepIdArray.length; i++) {
+            var otherSelectDepName = document.getElementById("otherSelectDepName_" + otherSelectDepIdArray[i]).value;
+            retDatas.push({orgId:otherSelectDepIdArray[i],orgName:otherSelectDepName});
+        }
+    }
+    for(var i=0; i < e.depcheckbox.length; i++  ){
+      if(e.depcheckbox[i].checked == true){
+        var selectedValue = e.depcheckbox[i].value.split(',');
+        retDatas.push({orgId:selectedValue[0],orgName:selectedValue[1]});
+          if(retDatas.length > 1) unitIds += ",";
+        unitIds += selectedValue[0];
+      }
+    }
+    if (typeof(e.depcheckbox.length) == "undefined" && (e.depcheckbox.tagName == "input" || e.depcheckbox.tagName == "INPUT")) {
+        var selectedValue = e.depcheckbox.value.split(',');
+        retDatas.push({orgId:selectedValue[0],orgName:selectedValue[1]});
+        if(retDatas.length > 1) unitIds += ",";
+        unitIds += selectedValue[0];
+    }
+    if (typeof(top.dialogArguments.CustomValue) == 'function') {
+        top.dialogArguments.CustomValue(retDatas);
+    } else if(typeof(top.dialogArguments.CustomValue.callback) == 'function' ){
+        top.dialogArguments.CustomValue.callback(retDatas);
+    }
+    window.close();
+    top.close();
+}
+
+function checkAll(){
+  var e = document.listForm;
+  var selData = e.depcheckbox;
+  var objarray = selData.length;
+  if(selData.checked == false || selData.checked == true){
+        selData.checked = e.checkAllUnit.checked;
+  } else {
+      for (i=0;i<objarray;i++){
+        if(!selData[i].disabled && selData[i].getAttribute("rank") != "14" && selData[i].getAttribute("rank") != "16"){
+            selData[i].checked = e.checkAllUnit.checked;
+        }
+      }
+  }
+}
+
+//通过单位标志选择相关单位
+function selectUnitByRank(ele_rank){
+    var checkBoxs = document.getElementsByName("depcheckbox");
+    for(var i=0,len=checkBoxs.length;i<len;i++) {
+      if(checkBoxs[i].getAttribute("rank") == ele_rank.value && !checkBoxs[i].disabled){
+         checkBoxs[i].checked = ele_rank.checked;
+      }
+    }
+}
+
+function checkCity() {
+  var e = document.listForm;
+  var selData = e.depcheckbox;
+  var objarray = selData.length;
+  if(selData.checked == false || selData.checked == true){
+        selData.checked = e.checkAllUnit.checked;
+  } else {
+      for (i=0;i<objarray;i++){
+      if(!selData[i].disabled && selData[i].getAttribute("rank")==1){
+              selData[i].checked = e.checkCityUnit.checked;
+      }
+        }
+  }
+}
+
+function checkCounty() {
+  var e = document.listForm;
+  var selData = e.depcheckbox;
+  var objarray = selData.length;
+  if(selData.checked == false || selData.checked == true){
+        selData.checked = e.checkAllUnit.checked;
+  } else {
+      for (i=0;i<objarray;i++){
+      if(!selData[i].disabled && selData[i].getAttribute("rank")==2){
+              selData[i].checked = e.checkCountyUnit.checked;
+      }
+        }
+  }
+}
+
+function checkLineally() {
+  var e = document.listForm;
+  var selData = e.depcheckbox;
+  var objarray = selData.length;
+  if(selData.checked == false || selData.checked == true){
+        selData.checked = e.checkAllUnit.checked;
+  } else {
+      for (i=0;i<objarray;i++){
+      if(!selData[i].disabled && selData[i].getAttribute("rank")==6){
+              selData[i].checked = e.checkLineallyUnit.checked;
+      }
+        }
+  }
+}
+
+//通过单位标志选择食安委成员单位
+function selectSAWUnitByRank(ele_rank,rank_saw,rank_sab){
+  var checkBoxs = document.getElementsByName("depcheckbox");
+    for(var i=0,len=checkBoxs.length;i<len;i++) {
+      if((checkBoxs[i].getAttribute("rank") == rank_saw || checkBoxs[i].getAttribute("rank") == rank_sab) && !checkBoxs[i].disabled){
+      checkBoxs[i].checked = ele_rank.checked;
+    }
+  }
+}
+// 是否短信提醒
+function ifTip(inp) {
+  document.getElementById("timingDiv").style.display = inp.checked?"inline":"none";
+  document.getElementById("message").style.display = inp.checked?"inline":"none";
+}
+
+// 是否定时
+function ifTiming(inp) {
+  document.getElementById("timingSendFlag").value = inp.checked?"1":"0";
+  document.getElementById("timingSpan").style.display = inp.checked?"inline":"none";
+}
+</script>
+
+</head>
+
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="javascript:initForm();">
+
+#set($_layout = {
+    "title" : "选择部门",
+    "jslib" : {
+        "validator" : "1"
+    },
+    "notshowreturnButton" : false,
+    "buttonList" : [
+        {
+            "type" : "imgButton",
+            "src":"../app/right/images/ok16.png",
+            "title" : "确定",
+            "onclick" : "javascript:defaultBeforeSubmitQuery();"
+        },
+        {
+            "type" : "imgButton",
+             "src":"../app/right/images/cancel16.png",
+            "title" : "关闭",
+            "onclick" : "javascript:parent.window.close();"
+        }
+    ],
+    "notshowreturnButton" : true,
+    "queryForm" : {
+        "name":"listForm"
+    }
+})
+#parse("/manage/EditToolBar.tpl.vm")
+<form name="listForm" method="post" action="">
+    <input type="hidden" name="nodeType" value="$!{nodeType}"/>
+    <input type="hidden" name="newOtherSelectDepId" value=""/>
+#if($!{mustSelectDepId} && $!{mustSelectDepId} != [])
+    #foreach($_mustSelectDepId in $!{mustSelectDepId})
+        <input type="hidden" name="mustSelectDepId" value="$!{_mustSelectDepId}"/>
+    #end
+#end
+#if($!{selectDepId} && $!{selectDepId} != [])
+    #foreach($_selectedDepId in $selectDepId)
+        <input type="hidden" name="otherSelectDepId" id="otherSelectDepId_$!{_selectedDepId}" value="$!{_selectedDepId}"/>
+        <input type="hidden" name="otherSelectDepName" id="otherSelectDepName_$!{_selectedDepId}" value="#lookUpDict($dicData.dicSysOrg ${_selectedDepId})"/>
+    #end
+#end
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" height="90%" style="border:#d0d0d0 1px solid;">
+  <tr height="1">
+    <td>&nbsp;
+        <span><input type="checkBox" name="checkAllUnit" onclick="javaScript:checkAll();"/>全选</span>
+        <span><input type="checkBox" name="cityUnit" value="2" onclick="javaScript:selectUnitByRank(this);"/>市局</span>
+        <span><input type="checkBox" name="countyUnit" value="4" onclick="javaScript:selectUnitByRank(this);"/>县局</span>
+        <span><input type="checkBox" name="areaUnit" value="10" onclick="javaScript:selectUnitByRank(this);"/>城区局</span>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0" class="mainTable">
+        <tr>
+          <td valign="top" width="60%" class="inputArea">
+<div style="overflow:auto; width:100%; height:100%; border-width:0px; border-color:#696969; border-style:dotted; scrollbar-base-color: ; scrollbar-face-color: ; scrollbar-track-color: ; scrollbar-arrow-color: ; scrollbar-3dlight-color: ; scrollbar-darkshadow-color: ; scrollbar-highlight-color: ; scrollbar-shadow-color: ">
+    #showTree2($departmentTree "单位列表" 1 "allNode" "selectDepartmentStaff")
+</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

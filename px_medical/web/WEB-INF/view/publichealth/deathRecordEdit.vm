@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>死亡登记信息编辑</title>
+<link rel="shortcut icon" href="../resource/favicon.ico">
+#parse("./common/pageCss.vm")
+#set($layerDate = 'laydate({istime: false, format: "YYYY-MM-DD"})')
+<style>
+html, body { height: 100% }
+</style>
+</head>
+<body class="top-navigation" style="background: #f8fafb;">
+ 
+					<!--如果弹窗没有底部菜单栏则 -44px -->
+				<form id="deathRecordForm"  class="form-horizontal" style="height: calc(100% - 44px)">
+					#formHiddenInput("deathRecordId" "$!deathRecord.deathRecordId")
+					#formHiddenInput("creatorId" "$!deathRecord.creatorId")
+					#formHiddenInput("hospitalId" "$!deathRecord.hospitalId")
+					#formHiddenInput("hospitalNo" "$!deathRecord.hospitalNo")
+					#formHiddenInput("regionId" "$!deathRecord.regionId" "id='regionId'")
+					#formHiddenInput("childDetailId" "$!deathRecord.childDetailId" "id='childDetailId'")
+					#formHiddenInput("personDetailId" "$!deathRecord.personDetailId" "id='personDetailId'")
+					#formHiddenInput("deathFlag" "$!deathRecord.deathFlag")
+					
+                    <div class="modal-body full-height-scroll" style="height: calc(100% - 49px)"><!--如果弹窗没有底部菜单栏则 -44px -->
+                        <!-- 表单 开始 -->
+                        <div class="table-content">
+                            <div class="text-box"><h5>基本信息</h5></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none red">姓名</label>
+                                <div class="col-sm-3"> 
+                                    <input id="vaccinatedName" name="vaccinatedName" readonly="readonly" value="#htmlEscape($!deathRecord.vaccinatedName)" placeholder="点击选择" maxlength="10" class="form-control"
+                                        #if(!$deathRecord.deathRecordId)  
+		                                    #if($!deathRecord.deathFlag == ${CONST.Contstants.DEATH_FLAG_CHILD})  
+		                                        onclick="selectChild();"
+		                                    #elseif($!deathRecord.deathFlag == ${CONST.Contstants.DEATH_FLAG_GRAVIDADETAIL})  
+		                                        onclick="selectGravida();"
+		                                    #elseif($!deathRecord.deathFlag == ${CONST.Contstants.DEATH_FLAG_PERSON})  
+		                                        onclick="selectPerson();"
+		                                    #end
+	                                    #end
+                                    />
+                                </div>
+                                <label class="col-sm-3 control-label text-right p-r-none p-l-none ">性别</label>
+                                <div class="col-sm-3">
+                                    #formRadioButtonsLabel("gender" "$!deathRecord.gender" $dicData.dicSex "&nbsp;" "" "class='checkbox-inline i-checks' ")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">出生日期</label>
+                                <div class="col-sm-3">
+                                    <div class=" input-daterange date">
+				                        #formTextInput("birthDate" "$!date.format('yyyy-MM-dd', $!deathRecord.birthDate)" " onclick='$layerDate' id='birthDate' class='form-control  layer-date' ")
+				                    </div>
+                                </div>
+                                <label class="col-sm-3 control-label text-right p-r-none p-l-none ">死亡日期</label>
+                                <div class="col-sm-3">
+                                     <div class=" input-daterange date">
+                                        #formTextInput("deathTime" "$!date.format('yyyy-MM-dd', $!deathRecord.deathTime)" " onclick='$layerDate' id='deathTime' class='form-control  layer-date' ")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                            <label class="col-sm-2 control-label text-right p-r-none p-l-none ">死亡年龄</label>
+                                <div class="col-sm-3 ">
+                                    #formIntInput("deathAge" $!deathRecord.deathAge  " id='deathAge' maxlength='3' class='form-control'")
+                                </div>
+                                <label class="col-sm-1 control-label text-left p-l-none" >岁  </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">死亡诊断</label>
+                                <div class="col-sm-6">
+                                    #formTextInput("deathSite" "#htmlEscape($!deathRecord.deathSite)" " id='deathSite' maxlength='100' class='form-control'")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">死亡诊断</label>
+                                <div class="col-sm-6">
+                                    #formTextInput("deathClinic" "#htmlEscape($!deathRecord.deathClinic)" " id='deathClinic' maxlength='25' class='form-control'")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">家庭联系电话</label>
+                                <div class="col-sm-3">
+                                    #formTextInput("familyPhone" "#htmlEscape($!deathRecord.familyPhone)" " id='familyPhone' maxlength='12' class='form-control'")
+                                </div>
+                            </div>   
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">家庭地址</label>
+                                <div class="col-sm-9">
+                                    #formTextInput("familyAddr" "#htmlEscape($!deathRecord.familyAddr)" " id='familyAddr' maxlength='100' class='form-control'")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">录入员</label>
+                                <div class="col-sm-3">
+                                    #formTextInput("creatorName" "#htmlEscape($!deathRecord.creatorName)" " id='creatorName' maxlength='10' class='form-control' readonly ")
+                                </div>
+                                <label class="col-sm-3 control-label text-right p-r-none p-l-none ">录入时间</label>
+                                <div class="col-sm-3">
+                                    #formTextInput("createTime" "$!date.format('yyyy-MM-dd HH:mm', $!deathRecord.createTime)" " id='createTime' maxlength='10' class='form-control' readonly")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right p-r-none p-l-none ">录入单位名称</label>
+                                <div class="col-sm-6">
+                                    #formTextInput("hospitalName" "#htmlEscape($!deathRecord.hospitalName)" " id='hospitalName' maxlength='10' class='form-control' readonly ")
+                                </div>
+                            </div>
+                         </div>   
+                        <!-- 表单 结束 -->
+                    </div>
+                </form>
+           
+				<div class="tool-table-fixed" style="width: calc(100%)">
+					#if('show' != $!mode)
+					    <button onclick="saveDeathRecord();" type="button" class="btn btn-success">
+	                        <i class="fa fa-save"></i> 保 存
+	                    </button>
+				    #end
+				</div>
+				
+	<!-- 全局js -->
+	#parse("./common/pageJs.vm") 
+	#parse("./common/common.js.vm")
+	#parse("./publichealth/deathRecordEdit.js.vm")
+</body>
+</html>

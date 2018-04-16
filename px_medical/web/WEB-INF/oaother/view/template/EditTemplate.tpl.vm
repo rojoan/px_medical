@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#if($!{_layout.dialogModule})
+    <base target="_self"/>
+#end
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=gbk" />
+  <title>$!{_layout.title}</title>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+#parse("/template/ScriptTemplate.tpl.vm")
+</head>
+<script>
+#if($message)
+alert("$esc.javascript($message)");
+#end
+#parse("/template/ValidatorTemplate.tpl.vm")
+
+#if(${_layout.script})
+#foreach($asc in ${_layout.script})
+$!asc
+#end
+#end
+</script>
+
+<body>
+<div class="gradual">
+
+##以下是编辑界面的工具条
+#parse("/template/EditToolBar.tpl.vm")
+##以下是编辑用的表格
+##根据编辑列的数量设置默认使用的模板
+#if(!${_layout.columnCount} && ${_layout.editFieldList})
+#if(${_layout.editFieldList.size()} <= 8)
+#set(${_layout.columnCount}=2)
+#elseif(${_layout.editFieldList.size()} <= 16)
+#set(${_layout.columnCount}=4)
+#else
+#set(${_layout.columnCount}=8)
+#end
+#end
+##选择使用的模板
+#if(${_layout.columnCount}==2)
+#parse("/template/EditGrid2.tpl.vm")
+#elseif(${_layout.columnCount}==8)
+#parse("/template/EditGrid8.tpl.vm")
+#else
+#parse("/template/EditGrid4.tpl.vm")
+#end
+
+#if(${layout.printButton})
+    #if(${_layout.columnCount}==2)
+        #parse("/template/PrintGrid2.tpl.vm")
+    #elseif(${_layout.columnCount}==8)
+        #parse("/template/PrintGrid8.tpl.vm")
+    #else
+        #parse("/template/PrintGrid4.tpl.vm")
+    #end
+#end
+
+</div>
+</body>
+</html>

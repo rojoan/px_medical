@@ -1,0 +1,49 @@
+<!-- 隐藏字段 -->
+	#formHiddenInput("orgId" "$!institutionDownUnit.orgId" "")<!-- 申请医院Id--> 
+    #formHiddenInput("hdDiagnosisApplyId" "" " id='hdDiagnosisApplyId' ")
+    #formHiddenInput("hdDiagnosisNum" "" " id='hdDiagnosisNum' ")
+    #formHiddenInput("patientId" "" " id='patientId' ")
+    #formHiddenInput("patientNo" "" " id='patientNo' ")
+    #formHiddenInput("patientName" "" " id='patientName' ")
+    #formHiddenInput("hospitalno" "$!hospitalno" "")
+    #formHiddenInput("hdType" "$!{CONST.Contstants.DIAGNOSISAPPLY_HDTYPE_UP}" "")
+    #formHiddenInput("otherDiagnosisUp" "" "")<!--  其他（上转）-->
+    #formHiddenInput("applyTime" "" " id='applyTime' ")<!--  其他（上转）-->
+    #formHiddenInput("transStatus" "" " id='transStatus' ")
+    #formHiddenInput("autoCheckFlag" "0" "")<!--  自动审核-->
+    
+    <!-- 患者来源类型 -->
+    #formHiddenInput("patientType" "" "id='patientType'")
+    #formHiddenInput("inpatientId" "" "id='inpatientId'")
+    
+    <!-- 转入医院信息-->
+    #formHiddenInput("institutionUpName" "" " id='institutionUpName' ")<!-- 转入医院名称-->
+    #formHiddenInput("officeUpName" "" " id='officeUpName' ")<!-- 转入科室名称-->
+    #formHiddenInput("doctorUpName" "" " id='doctorUpName' ")<!-- 转入医生-->
+    #formHiddenInput("doctorMobileUp" "" "")<!-- 转入医生电话-->
+    <!-- 转出医院信息-->
+    #formHiddenInput("institutionDownId" "$!institutionDownUnit.orgId" "") <!-- 转出医院ID -->
+    #formHiddenInput("institutionDownName" "$!institutionDownUnit.name" "") <!-- 转出医院名称 -->
+    #formHiddenInput("hospitalNoDown" "$!institutionDownUnit.orgNo" "") <!-- 转出医院编码 -->
+    #formHiddenInput("officeDownName" "" " id='officeDownName' ") <!-- 转出科室-->
+    #formHiddenInput("doctorDownName" "" " id='doctorDownName' ") <!-- 转出医生-->
+    #formHiddenInput("institutionPhoneDow" "$!institutionDownUnit.directorTel" " id='institutionPhoneDow' ") <!-- 转出医院联系电话-->
+    <!-- 下转-->
+    #formHiddenInput("diagnosisDown" "" "") <!-- 转诊诊断（下转）-->
+    #formHiddenInput("diagnosisResultDown" "" "") <!-- 转诊检查结果（下转）-->
+    #formHiddenInput("diagnosisCureDown" "" "") <!-- 转诊治疗经过（下转）-->
+    #formHiddenInput("recoverySuggestDown" "" "") <!-- 转诊康复建议（下转）-->
+    #formHiddenInput("operationDown" "" "") <!-- 手术名称 下转-->
+    #formHiddenInput("operationTimeDown" "" "") <!-- 手术时间-->
+    <!-- 审核-->
+    #formHiddenInput("checkDoctorId" "" "") <!-- 审核医生ID-->
+    #formHiddenInput("checkDoctorName" "" "") <!-- 审核医生 -->
+    #formHiddenInput("checkOpinion" "" "") <!-- 审核意见 -->
+    #formHiddenInput("checkTime" "" "") <!-- 审核日期 -->
+    <!-- 接诊-->
+    #formHiddenInput("clinicalOfficeId" "" "") <!-- 接诊科室ID -->
+    #formHiddenInput("clinicalOfficeName" "" "") <!-- 接诊科室名称 -->
+    #formHiddenInput("clinicalDoctorId" "" "") <!-- 接诊医生ID -->
+    #formHiddenInput("clinicalDoctorName" "" "") <!-- 接诊医生 -->
+    #formHiddenInput("clinicalTime" "" "") <!-- 接诊时间 -->
+					

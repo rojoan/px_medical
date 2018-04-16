@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="shortcut icon" href="../resource/favicon.ico">
+    <link href="../resource/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../resource/css/font-awesome.css" rel="stylesheet">
+    <link href="../resource/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="../resource/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="../resource/css/animate.css" rel="stylesheet">
+    <link href="../resource/css/style.css" rel="stylesheet">
+    <link href="../resource/style/css/page.css" rel="stylesheet">
+    <style>
+        html,body { height: 100%}        
+    </style>
+</head>
+
+<body class="gray-bg top-navigation">
+    <div class="wrapper wrapper-content" style="height: calc(100% - 63px); ">        
+        <div class="ibox float-e-margins m-b-none full-height" style="padding: 10px; background: #fff">
+            <div class="ibox-heading">
+                <div class="ibox-title">
+                    <h5>
+                    	会议号：$!meeting.confId  
+                    	<span style="margin-left: 100px">
+                    	状态：#if("$!meetingStatus" == "1") 已开启 #elseif("$!meetingStatus" == "2") 已结束 #else 未知 #end
+                    	</span>
+                    </h5>
+                    <div class="ibox-tools">申请时间：$!date.format('yyyy-MM-dd HH:mm', $!consult.reApplyTime)</div>
+                </div>
+            </div>
+            <div class="ibox-content">
+            <!-- 会议信息 -->
+                <div class="row">
+		<div class="table-responsive">
+			<table class="table table-bordered table-jcdj">
+				<tbody>
+					<tr>
+						<th class="text-nowrap">会诊时间</th>
+						<td>
+							$!date.format('yyyy-MM-dd HH:mm', $!consult.reConsultingStart)
+						</td>
+						<th class="text-nowrap">结束时间</th>
+						<td>
+							$!date.format('yyyy-MM-dd HH:mm', $!consult.reConsultingEnd)
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">发起人</th>
+						<td>
+							#htmlEscape($!consult.proposerName)
+						</td>
+						<th class="text-nowrap">会诊类型</th>
+						<td>
+							#lookUpDict($dicData.consultingConsultationType $!consult.consultationType)
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">会诊要求</th>
+						<td colspan="3">
+							#htmlEscape($!consult.proposerName)
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                
+                <!-- 患者信息 -->
+                <div class="row">
+					<div class="table-responsive">
+			<table class="table table-bordered table-jcdj">
+				<tbody>
+					<tr>
+						<th class="text-nowrap">患者姓名</th>
+						<td>
+							#htmlEscape("$!consult.patientName")
+						</td>
+						<th class="text-nowrap"></th>
+						<td>
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">年龄</th>
+						<td>
+							$!patient.currentAge
+						</td>
+						<th class="text-nowrap">性别</th>
+						<td>
+							#lookUpDict($dicData.dicSex $!patient.patientSex)
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">病史描述</th>
+						<td colspan="3">
+							#htmlEscape($!consult.diseaseDescribe)
+						</td>
+					</tr>
+					<tr>
+						<th class="text-nowrap">临床诊断</th>
+						<td colspan="3">
+							#htmlEscape($!consult.clinicalDiagnosis)
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <!-- 按钮 -->
+                <div class="text-center m-t-md m-b-md">
+                	<a id="downloadImg" class="btn btn-w-m btn-info m-r-xs" href="#"><i class="fa fa-arrow-circle-down"></i>下载图片</a>
+                    <a id="enter_meeting" class="btn btn-w-m btn-info m-r-xs" href="#"><i class="fa fa-sign-in"></i> 进入会议</a>
+					<a id="go_back" class="btn btn-w-m btn-info m-r-xs" href="#"><i class="fa fa-reply"></i> 返 回 </a>
+                </div>
+                <div class="text-center m-t-md m-b-md">
+					<div id="downloadMsg"></div>
+					<iframe id="downloadIfrmae" src="" style="border: none; height: 0px; width: 100%"></iframe>
+                </div>
+             </div>
+        </div>        
+    </div>
+
+    <iframe id="enterMeetingIframe" src="" width="100%" height="0" style="border: none;"></iframe>
+    <!-- 全局js -->
+    <script src="../resource/js/jquery.min.js"></script>
+    <script src="../resource/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    	$(function (){
+    		$('#enter_meeting').click(function (){
+    			#if("$!consult.consultationType" == "2")
+	    			$.post("../meeting/enterMeeting.do", {reConsultingId: "$!consult.reConsultingId"},  function(result){
+	    				if (result.isSuccess == "0") {
+	    					$("#enterMeetingIframe").attr("src", result.msg);
+	    					//window.open(result.msg)
+	    				} else {
+	    					alert(result.msg);
+	    				}
+	    			},"json");
+    			#elseif("$!consult.consultationType" == "1")
+    				window.location.href = "../meeting/notInteractiveMeeting.do?reConsultingId=$!consult.reConsultingId";
+    			#end
+    		});
+    		$('#go_back').click(function (){
+    			if ("$!fromFlag" == "1") {
+    				window.location.href = "../consult/remoteConsultList.do";
+    			} else {
+    				window.location.href = "../consult/applyWorkSpace.do?tabIndex=3";
+    			}
+    		});
+    		
+    		
+    		// 打包下载图片
+    	    $('#downloadImg').click(function (){
+    	    	$('#downloadMsg').html('正在打包压缩要下载的图片...');
+    	    	$.post("../pacs/compressImg.do", {patientExamId : "$!consult.patientExamId"}, function(result){
+    	    		if (result == "0") {
+    	    			$('#downloadMsg').html('正在下载图片');
+    	    			$('#downloadIfrmae').attr('src','../pacs/downloadImg.do?patientExamId=$!consult.patientExamId');
+    	    			$('#downloadMsg').html('');
+    	    		} else {
+    	    			$('#downloadMsg').html('压缩图片失败, 请检查是否有可压缩的图片数据');
+    	    		}
+    	    		
+    	    	},"json");
+    	    });
+    	});
+    </script>
+</body>
+
+</html>

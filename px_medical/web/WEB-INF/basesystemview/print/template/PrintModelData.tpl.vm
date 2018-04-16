@@ -1,0 +1,1697 @@
+#set($_printItemData = {
+    "instProduceEntp" : {
+        "name" : "生产企业许可证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "prodAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "生产范围",
+                "field" : "busName",
+                "value" : "生产范围"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "企业负责人",
+                "field" : "corpName_02",
+                "value" : "企业负责人"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2019-08-09"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "补发/换证/变更 日期",
+                "field" : "licenceOtherTime",
+                "value" : "补发/换证/变更日期:2014年04月28日"
+            }
+        ]
+    },
+    "instProduceEntp1" : {
+        "name" : "生产企业许可证(副本)",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "prodAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "生产范围",
+                "field" : "busName",
+                "value" : "生产范围"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "企业负责人",
+                "field" : "corpName_02",
+                "value" : "企业负责人"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2019-02-28"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-02-28"
+            },
+            {
+                "title" : "变更内容1",
+                "field" : "changeItem1",
+                "value" : "变更内容1"
+            },
+            {
+                "title" : "变更日期1",
+                "field" : "changeDate1",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "补发/换证/变更 日期",
+                "field" : "licenceOtherTime",
+                "value" : "补发/换证/变更日期:2014年04月28日"
+            }
+        ]
+    },
+
+    "instBusinessEntp" : {
+        "name" : "经营企业许可证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "仓库地址",
+                "field" : "storeAddress",
+                "value" : "仓库地址"
+            },
+            {
+                "title" : "经营范围",
+                "field" : "busName",
+                "value" : "经营范围"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "企业负责人",
+                "field" : "corpName_02",
+                "value" : "企业负责人"
+            },
+            {
+                "title" : "质量管理人",
+                "field" : "corpName_03",
+                "value" : "质量管理人"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "有效期自",
+                "field" : "fromDate",
+                "value" : "2014-02-28"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2019-02-28"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-02-28"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+        ]
+    },
+    "instBusinessEntp1" : {
+        "name" : "经营企业许可证(副本)",
+        "sameModel" : "instBusinessEntp"
+    },
+
+    "instBusinessEntp2" : {
+        "name" : "经营企业许可证(副本2)",
+        "elements" : [
+            {
+                "title" : "变更内容1",
+                "field" : "changeItem1",
+                "value" : "变更内容1"
+            },
+            {
+                "title" : "变更日期1",
+                "field" : "changeDate1",
+                "value" : "2014-03-14"
+            }
+        ]
+    },
+    "drugBusinessEntp" : {
+        "name" : "经营许可证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "仓库地址",
+                "field" : "storeAddress",
+                "value" : "仓库地址"
+            },
+			{
+                "title" : "经营方式",
+                "field" : "busManner",
+                "value" : "经营方式"
+            },
+            {
+                "title" : "经营范围",
+                "field" : "busName",
+                "value" : "经营范围"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "企业负责人",
+                "field" : "corpName_02",
+                "value" : "企业负责人"
+            },
+            {
+                "title" : "质量管理人",
+                "field" : "corpName_03",
+                "value" : "质量管理人"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+        ]
+    },
+    "drugBusinessEntp1" : {
+        "name" : "经营许可证(副本)",
+        "sameModel" : "drugBusinessEntp"
+    },
+    "drugBusinessEntp2" : {
+        "name" : "经营许可证(副本2)",
+        "elements" : [
+            {
+                "title" : "变更内容",
+                "field" : "changeItem1",
+                "value" : "变更内容"
+            },
+            {
+                "title" : "变更日期",
+                "field" : "changeDate1",
+                "value" : "2014-03-14"
+            },
+            {
+                "title" : "监督检查机关",
+                "field" : "depName",
+                "value" : "监督检查机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            }
+        ]
+    },
+    "drugBusinessEntpAuth" : {
+        "name" : "经营质量管理规范认证证书",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "经营范围",
+                "field" : "busName",
+                "value" : "经营范围"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-02-28"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2019-02-28"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+        ]
+    },
+    "instInstrumentProd" : {
+        "name" : "注册证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "prodLicence",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "产品名称",
+                "field" : "instName",
+                "value" : "产品名称及有效期等描述组合"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "prodLicenceTime",
+                "value" : "2019-02-28"
+            },
+            {
+                "title" : "lable1",
+                "field" : "lable1",
+                "value" : "桂（准）字"
+            },
+            {
+                "title" : "lable2",
+                "field" : "lable2",
+                "value" : "第"
+            },
+            {
+                "title" : "lable3",
+                "field" : "lable3",
+                "value" : "号"
+            },           {
+                "title" : "lable4",
+                "field" : "lable4",
+                "value" : "："
+            },
+            {
+                "title" : "lable9",
+                "field" : "lable9",
+                "value" : "特此证明。"
+            },
+            {
+                "title" : "发证年份",
+                "field" : "prodLicenceYear",
+                "value" : "2019"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+
+        ]
+    },
+	"foodEntp" : {
+        "name" : "服务许可证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+			{
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "有效期起",
+                "field" : "fromDate",
+                "value" : "2014-08-10"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2014-08-10"
+            },
+			{
+                "title" : "类型",
+                "field" : "busManner",
+                "value" : "类型"
+            },
+            {
+                "title" : "经营范围",
+                "field" : "busName",
+                "value" : "经营范围"
+            }
+        ]
+    },
+    "foodProdEntp" : {
+        "name" : "生产许可证",
+        "elements" : [
+		    {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "产品名称",
+                "field" : "prodName",
+                "value" : "产品名称"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "registerAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "住所地址",
+                "field" : "address",
+                "value" : "住所地址"
+            },
+            {
+                "title" : "检验方式",
+                "field" : "prodMethod",
+                "value" : "检验方式"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-10"
+            },
+			{
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            }
+        ]
+    },
+    "foodProdEntp2" : {
+        "name" : "生产许可证（副本）",
+        "elements" : [
+		    {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "产品名称",
+                "field" : "prodName",
+                "value" : "产品名称"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "registerAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "住所地址",
+                "field" : "address",
+                "value" : "住所地址"
+            },
+            {
+                "title" : "检验方式",
+                "field" : "prodMethod",
+                "value" : "检验方式"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-10"
+            },
+			{
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+			{
+				"title" : "（副　　本）",
+                "field" : "label",
+                "value" : "（副　　本）"
+			}
+        ]
+    },
+	"foodProdEntp1" : {
+        "name" : "生产许可证(副页)",
+        "elements" : [
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+             {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "产品名称",
+                "field" : "prodName",
+                "value" : "产品名称"
+            },
+            {
+                "title" : "标准号",
+                "field" : "standardNo",
+                "value" : "标准号"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "registerAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "住所地址",
+                "field" : "address",
+                "value" : "住所地址"
+            },
+            {
+                "title" : "检验方式",
+                "field" : "prodMethod",
+                "value" : "检验方式"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-10"
+            },
+			{
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+			{
+                "title" : "发证日期(盖章处)",
+                "field" : "licenceTime1",
+                "value" : "2014-08-09"
+            },
+			{
+                "title" : "申请单元",
+                "field" : "prodName1",
+                "value" : "申请单元"
+            },
+			{
+                "title" : "表格",
+                "field" : "printSheetFormart",
+                "value" : "<TABLE border=1 cellSpacing=1 cellPadding=1 width=500 height=350><THEAD><TR><TD height=50 borderColor=#000000 scope=col align=middle>申请单元 </TD><TD borderColor=#000000 scope=col align=middle>品种明细</TD></TR></THEAD><TBODY><TR><TD borderColor=#000000>&nbsp;</TD><TD borderColor=#000000>&nbsp;</TD></TR><TR><TD height=50 borderColor=#000000 colSpan=2 align=middle>（以下空白）</TD></TR></TBODY></TABLE>"
+            }
+        ]
+    },
+     "foodProdAdditionEntp" : {
+        "name" : "添加剂生产许可证",
+        "elements" : [
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "产品名称",
+                "field" : "prodName",
+                "value" : "产品名称"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "registerAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "住所地址",
+                "field" : "address",
+                "value" : "住所地址"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-10"
+            }
+        ]
+    },
+     "foodProdAdditionEntp1" : {
+        "name" : "添加剂生产许可证(副本)",
+        "sameModel" : "foodProdAdditionEntp"
+    },
+	"drugProdEntp" : {
+        "name" : "生产许可证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+			{
+                "title" : "分类码",
+                "field" : "licenceSideNo",
+                "value" : "分类码"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "生产范围",
+                "field" : "busName",
+                "value" : "生产范围"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "prodAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "企业负责人",
+                "field" : "corpName_02",
+                "value" : "企业负责人"
+            },
+            {
+                "title" : "类别",
+                "field" : "propertyId",
+                "value" : "企业类型"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+        ]
+    },
+    "drugProdEntp1" : {
+        "name" : "生产许可证(副本1)",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+			{
+                "title" : "分类码",
+                "field" : "licenceSideNo",
+                "value" : "分类码"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "企业负责人",
+                "field" : "corpName_02",
+                "value" : "企业负责人"
+            },
+            {
+                "title" : "企业类型",
+                "field" : "entpType",
+                "value" : "企业类型"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "生产范围",
+                "field" : "busName",
+                "value" : "生产范围"
+            },
+            {
+                "title" : "生产地址",
+                "field" : "prodAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            }
+        ]
+    },
+    "drugProdEntp2" : {
+        "name" : "生产许可证(副本2)",
+        "elements" : [
+            {
+                "title" : "变更内容1",
+                "field" : "changeItem1",
+                "value" : "变更内容1"
+            },
+            {
+                "title" : "变更日期1",
+                "field" : "changeDate1",
+                "value" : "2015-03-14"
+            }
+        ]
+    },
+    "drugProdEntp3" : {
+        "name" : "生产许可证(副本3)",
+        "elements" : [
+        	{
+            	"title" : "检查日期1",
+                "field" : "checkDate1",
+                "value" : "2015-05-14"
+            },
+            {
+            	"title" : "结论及存在问题1",
+                "field" : "checkResult1",
+                "value" : "结论及存在问题1"
+            }
+        ]
+    },
+     "drugProdEntp4" : {
+        "name" : "生产许可证(副本4)",
+        "elements" : [
+        	{
+            	"title" : "检查日期1",
+                "field" : "checkDate1",
+                "value" : "2015-05-14"
+            },
+            {
+            	"title" : "结论及存在问题1",
+                "field" : "checkResult1",
+                "value" : "结论及存在问题1"
+            }
+        ]
+    },
+	"drugRadioactiveEntp" : {
+        "name" : "放射性使用许可证书",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "科（室）负责人",
+                "field" : "drugUserNames",
+                "value" : "科（室）负责人"
+            },
+            {
+                "title" : "科（室）名称",
+                "field" : "drugUserofficeNames",
+                "value" : "科（室）名称"
+            },
+            {
+                "title" : "科（室）地址",
+                "field" : "drugUserofficeAddress",
+                "value" : "科（室）地址"
+            },
+            {
+                "title" : "医疗机构类别",
+                "field" : "propertyId",
+                "value" : "医疗机构类别"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2018-08-09"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "年份",
+                "field" : "nowYear",
+                "value" : "2014"
+            }
+        ]
+    },
+	"drugRadioactiveEntp1" : {
+        "name" : "放射性使用许可证书(副本1)",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2018-08-09"
+            },
+            {
+                "title" : "医疗机构名称",
+                "field" : "entpName",
+                "value" : "医疗机构名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "科（室）地址",
+                "field" : "drugUserofficeAddress",
+                "value" : "科（室）地址"
+            },
+            {
+                "title" : "科（室）负责人",
+                "field" : "drugUserNames",
+                "value" : "科（室）负责人"
+            },
+            {
+                "title" : "医疗机构类别",
+                "field" : "propertyId",
+                "value" : "医疗机构类别"
+            },
+            {
+                "title" : "许可证类别及科室名称",
+                "field" : "drugUserofficeNames",
+                "value" : "许可证类别及科室名称"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "年份",
+                "field" : "nowYear",
+                "value" : "2014"
+            }
+        ]
+    },
+    "drugRadioactiveEntp2" : {
+        "name" : "放射性使用许可证书(副本2)",
+        "elements" : [
+        	{
+                "title" : "变更内容1",
+                "field" : "changeItem1",
+                "value" : "变更内容1"
+            },
+            {
+                "title" : "变更日期1",
+                "field" : "changeDate1",
+                "value" : "2015-03-14"
+            },
+            {
+            	"title" : "年检机关1",
+                "field" : "checkUnit1",
+                "value" : "年检机关1"
+            },
+            {
+            	"title" : "年检日期1",
+                "field" : "checkDate1",
+                "value" : "2015-05-14"
+            }
+        ]
+    },
+    "drugRadioactiveEntp3" : {
+        "name" : "放射性使用许可证书(副本3)",
+        "elements" : [
+            {
+            	"title" : "年检机关1",
+                "field" : "checkUnit1",
+                "value" : "年检机关1"
+            },
+            {
+            	"title" : "年检日期1",
+                "field" : "checkDate1",
+                "value" : "2015-05-14"
+            }
+        ]
+    },
+	"drugPreparationEntp" : {
+        "name" : "医疗机构制剂许可证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "企业名称",
+                "field" : "entpName",
+                "value" : "企业名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "配置范围",
+                "field" : "busName",
+                "value" : "配置范围"
+            },
+            {
+                "title" : "配置地址",
+                "field" : "prodAddress",
+                "value" : "配置地址"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "制剂室负责人",
+                "field" : "corpName_06",
+                "value" : "制剂室负责人"
+            },
+            {
+                "title" : "医疗机构类别",
+                "field" : "hospitalPropertyId",
+                "value" : "医疗机构类别"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+        ]
+    },
+	"drugPreparationEntp1" : {
+        "name" : "医疗机构制剂许可证(副本1)",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+            	"title" : "医疗机构名称",
+                "field" : "entpName",
+                "value" : "医疗机构名称"
+            },
+            {
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+            {
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "制剂室负责人",
+                "field" : "corpName_06",
+                "value" : "制剂室负责人"
+            },
+            {
+                "title" : "医疗机构类型",
+                "field" : "entpType",
+                "value" : "医疗机构类型"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            }
+        ]
+    },
+    "drugPreparationEntp2" : {
+        "name" : "医疗机构制剂许可证(副本2)",
+        "elements" : [
+            {
+                "title" : "配置地址",
+                "field" : "prodAddress",
+                "value" : "配置地址"
+            },
+            {
+                "title" : "配置范围",
+                "field" : "busName",
+                "value" : "配置范围"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "变更内容1",
+                "field" : "changeItem1",
+                "value" : "变更内容1"
+            },
+            {
+                "title" : "变更日期1",
+                "field" : "changeDate1",
+                "value" : "2015-03-14"
+            }
+        ]
+    },
+    "drugPreparationEntp3" : {
+        "name" : "医疗机构制剂许可证(副本3)",
+        "elements" : [
+            {
+                "title" : "变更内容1",
+                "field" : "changeItem1",
+                "value" : "变更内容1"
+            },
+            {
+                "title" : "变更日期1",
+                "field" : "changeDate1",
+                "value" : "2015-03-14"
+            },
+            {
+            	"title" : "检查日期1",
+                "field" : "checkDate1",
+                "value" : "2015-05-14"
+            },
+            {
+            	"title" : "结论及存在问题1",
+                "field" : "checkResult1",
+                "value" : "结论及存在问题1"
+            }
+        ]
+    },
+    "drugPreparationEntp4" : {
+        "name" : "医疗机构制剂许可证(副本4)",
+        "elements" : [
+            {
+            	"title" : "检查日期1",
+                "field" : "checkDate1",
+                "value" : "2015-05-14"
+            },
+            {
+            	"title" : "结论及存在问题1",
+                "field" : "checkResult1",
+                "value" : "结论及存在问题1"
+            }
+        ]
+    },
+	"foodMarketEntp" : {
+        "name" : "流通许可证",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "名称",
+                "field" : "entpName",
+                "value" : "名称"
+            },
+			{
+                "title" : "经营场所",
+                "field" : "registerAddress",
+                "value" : "经营场所"
+            },
+			{
+                "title" : "负责人",
+                "field" : "corpName_01",
+                "value" : "负责人"
+            },
+			{
+                "title" : "主体类型",
+                "field" : "propertyName",
+                "value" : "主体类型"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-05-07"
+            },
+            {
+                "title" : "许可范围",
+                "field" : "busName",
+                "value" : "许可范围"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "有效期起",
+                "field" : "fromDate",
+                "value" : "2014-05-07"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2014-05-07"
+            }
+        ]
+    },
+	"foodMarketEntp1" : {
+        "name" : "流通许可证(副本)",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "名称",
+                "field" : "entpName",
+                "value" : "名称"
+            },
+			{
+                "title" : "经营场所",
+                "field" : "registerAddress",
+                "value" : "经营场所"
+            },
+			{
+                "title" : "负责人",
+                "field" : "corpName_01",
+                "value" : "负责人"
+            },
+			{
+                "title" : "主体类型",
+                "field" : "propertyName",
+                "value" : "主体类型"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-05-07"
+            },
+            {
+                "title" : "许可范围",
+                "field" : "busName",
+                "value" : "许可范围"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "有效期起",
+                "field" : "fromDate",
+                "value" : "2014-05-07"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-05-07"
+            }
+        ]
+    },
+	"cosmeticsHygiene" : {
+        "name" : "化妆品卫生许可证书",
+        "elements" : [
+            {
+                "title" : "许可证编号",
+                "field" : "licenceNo",
+                "value" : "许可证编号"
+            },
+            {
+                "title" : "单位名称",
+                "field" : "entpName",
+                "value" : "单位名称"
+            },
+			{
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+			{
+                "title" : "企业地址",
+                "field" : "registerAddress",
+                "value" : "企业地址"
+            },
+			{
+                "title" : "生产地址",
+                "field" : "prodAddress",
+                "value" : "生产地址"
+            },
+            {
+                "title" : "许可项目",
+                "field" : "busName",
+                "value" : "许可项目"
+            },
+            {
+                "title" : "备注",
+                "field" : "licenceRemark",
+                "value" : "备注"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "有效期起",
+                "field" : "fromDate",
+                "value" : "2014-05-07"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-05-06"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-05-08"
+            },
+            {
+                "title" : "年份",
+                "field" : "nowYear",
+                "value" : "2014"
+            },
+            {
+                "title" : "内容1",
+                "field" : "content1",
+                "value" : "(&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;卫妆准字&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号"
+            },
+            {
+                "title" : "内容2",
+                "field" : "content2",
+                "value" : "单位名称："
+            },
+            {
+                "title" : "内容3",
+                "field" : "content3",
+                "value" : "法定代表人："
+            },
+            {
+                "title" : "内容4",
+                "field" : "content4",
+                "value" : "企业地址："
+            },
+            {
+                "title" : "内容5",
+                "field" : "content5",
+                "value" : "生产地址："
+            },
+            {
+                "title" : "内容6",
+                "field" : "content6",
+                "value" : "许可项目："
+            },
+            {
+                "title" : "内容7",
+                "field" : "content7",
+                "value" : "备注："
+            },
+            {
+                "title" : "内容8",
+                "field" : "content8",
+                "value" : "发证机关："
+            },
+            {
+                "title" : "内容9",
+                "field" : "content9",
+                "value" : "年&nbsp;&nbsp;月&nbsp;&nbsp;日"
+            },
+            {
+                "title" : "内容10",
+                "field" : "content10",
+                "value" : "有效期限：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;月&nbsp;&nbsp;日至&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;月&nbsp;&nbsp;日"
+            }
+        ]
+    },
+	"healthcareProd" : {
+        "name" : "品生产许可证书(副本)",
+        "elements" : [
+            {
+                "title" : "单位名称",
+                "field" : "entpName",
+                "value" : "单位名称"
+            },
+            {
+                "title" : "证书编号",
+                "field" : "licenceNo",
+                "value" : "证书编号"
+            },
+			{
+                "title" : "生产地址",
+                "field" : "prodAddress",
+                "value" : "生产地址"
+            },
+			{
+                "title" : "注册地址",
+                "field" : "registerAddress",
+                "value" : "注册地址"
+            },
+			{
+                "title" : "法定代表人",
+                "field" : "corpName_01",
+                "value" : "法定代表人"
+            },
+            {
+                "title" : "企业负责人",
+                "field" : "corpName_02",
+                "value" : "企业负责人"
+            },
+            {
+                "title" : "许可生产范围",
+                "field" : "busName",
+                "value" : "许可生产范围"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "发证日期"
+            },
+            {
+                "title" : "有效期起",
+                "field" : "fromDate",
+                "value" : "2014-05-07"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2014-05-07"
+            },
+			{
+                "title" : "表格",
+                "field" : "printSheetFormart",
+                "value" : "<TABLE border=1 cellSpacing=1 cellPadding=1 width=600 height=700><THEAD><TR><TD height=50 borderColor=#000000 width=250 scope=col align=middle>单位名称</TD><TD borderColor=#000000 width=550 scope=col>&nbsp;</TD></TR></THEAD><TBODY><TR><TD height=50 borderColor=#000000 width=250 align=middle>法定代表人</TD><TD borderColor=#000000>&nbsp;</TD></TR><TR><TD height=50 borderColor=#000000 width=250 align=middle>企业负责人</TD><TD borderColor=#000000>&nbsp;</TD></TR><TR><TD height=50 borderColor=#000000 width=250 align=middle>注册地址</TD><TD borderColor=#000000>&nbsp;</TD></TR><TR><TD height=50 borderColor=#000000 width=250 align=middle>生产地址</TD><TD borderColor=#000000>&nbsp;</TD></TR><TR><TD vAlign=top borderColor=#000000 width=800 colSpan=2 align=left>&nbsp;&nbsp;&nbsp;</TD></TR></TBODY></TABLE><P>&nbsp;</P>"
+            },
+			{
+                "title" : "标题1",
+                "field" : "lable1",
+                "value" : "广西壮族自治区监督管理局"
+            },
+			{
+                "title" : "标题2",
+                "field" : "lable2",
+                "value" : "委托生产许可通知书"
+            },
+			{
+                "title" : "内容1",
+                "field" : "content1",
+                "value" : "&nbsp;&nbsp;&nbsp;&nbsp;经审核，符合《良好生产规范》要求，同意核准该企业委托生产许可。"
+            },
+			{
+                "title" : "内容2",
+                "field" : "content2",
+                "value" : "许可生产范围："
+            },
+			{
+                "title" : "内容3",
+                "field" : "content3",
+                "value" : "以上审核证明有效期至&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日"
+            },
+			{
+                "title" : "内容4",
+                "field" : "content4",
+                "value" : "&nbsp;&nbsp;&nbsp;&nbsp;(原卫生许可证编号：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可继续沿用至&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日)"
+            },
+			{
+                "title" : "内容5",
+                "field" : "content5",
+                "value" : "核准日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日（变更）"
+            },
+			{
+                "title" : "内容6",
+                "field" : "content6",
+                "value" : "注：《监督管理条例》出台实施后，按要求凭该通知书换领《生产许可证》。"
+            }
+        ]
+    },
+	"webDrugDealEntp" : {
+        "name" : "互联网信息服务资格证书",
+        "elements" : [
+            {
+                "title" : "证书编号",
+                "field" : "licenceNo",
+                "value" : "证书编号"
+            },
+            {
+                "title" : "机构名称",
+                "field" : "entpName",
+                "value" : "机构名称"
+            },
+			{
+                "title" : "地址和邮编",
+                "field" : "registerAddress",
+                "value" : "地址和邮编"
+            },
+            {
+                "title" : "法定代表",
+                "field" : "corpName_01",
+                "value" : "法定代表"
+            },
+            {
+                "title" : "网站负责人",
+                "field" : "corpName_08",
+                "value" : "网站负责人"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "网站域名",
+                "field" : "webSiteAddr",
+                "value" : "网站域名"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+        ]
+    },
+	"webDrugDealEntp1" : {
+        "name" : "互联网信息服务资格证书(副本1)",
+        "elements" : [
+            {
+                "title" : "证书编号",
+                "field" : "licenceNo",
+                "value" : "证书编号"
+            },
+            {
+                "title" : "机构名称",
+                "field" : "entpName",
+                "value" : "机构名称"
+            },
+			{
+                "title" : "地址和邮编",
+                "field" : "registerAddress",
+                "value" : "地址和邮编"
+            },
+            {
+                "title" : "法定代表",
+                "field" : "corpName_01",
+                "value" : "法定代表"
+            },
+            {
+                "title" : "网站负责人",
+                "field" : "corpName_08",
+                "value" : "网站负责人"
+            },
+            {
+                "title" : "发证机关",
+                "field" : "depName",
+                "value" : "发证机关"
+            },
+            {
+                "title" : "网站域名",
+                "field" : "webSiteAddr",
+                "value" : "网站域名"
+            },
+            {
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            },
+            {
+                "title" : "有效期至",
+                "field" : "toDate",
+                "value" : "2015-08-09"
+            },
+            {
+                "title" : "打证标志",
+                "field" : "printClassFlag",
+                "value" : "更/补/换"
+            }
+        ]
+    },
+	"webDrugDealEntp2" : {
+        "name" : "互联网信息服务资格证书(副本2)",
+        "elements" : [
+            {
+                "title" : "变更内容1",
+                "field" : "changeItem1",
+                "value" : "变更内容1"
+            },
+            {
+                "title" : "变更日期1",
+                "field" : "changeDate1",
+                "value" : "2015-03-14"
+            },
+			{
+                "title" : "发证日期",
+                "field" : "licenceTime",
+                "value" : "2014-08-09"
+            }
+        ]
+    },
+	"webDrugDealEntp3" : {
+        "name" : "互联网信息服务资格证书(副本3)",
+        "elements" : [
+            {
+                "title" : "意见1",
+                "field" : "checkResult1",
+                "value" : "意见1"
+            },
+            {
+                "title" : "日期1",
+                "field" : "checkDate1",
+                "value" : "2015-03-14"
+            }
+        ]
+    }
+})
+

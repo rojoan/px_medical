@@ -1,0 +1,29 @@
+#set($_layout = {
+    "title" : "选择部门",
+    "jslib" : {
+        "validator" : "1"
+    },
+    "notshowreturnButton" : true,
+    "buttonList" : [
+        {
+            "type" : "button",
+            "title" : "关闭",
+            "onclick" : "javascript:window.close();"
+        }
+    ],
+    "queryForm" : {
+        "name":"queryForm"
+    },
+    "rightUrl" : {
+        "onclick" : "../manage/departmentSingleSelectWithoutUnit.do"
+    }
+})
+#parse("/template/SelectMainFrameTemplate.tpl.vm")
+
+#*
+        {
+            "type" : "button",
+            "title" : "确&nbsp;定",
+            "onclick" : "javascript:sendSelectFromRight();"
+        },
+*#

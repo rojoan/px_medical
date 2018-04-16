@@ -1,0 +1,166 @@
+<script>
+$(document).ready(function () {
+
+    // 选择儿童信息弹层事件绑定到vaccinatedName
+    $('#vaccinatedName').click(function(){
+        var title = '选择接种儿童/新生儿信息';
+        common.open(contextPath + '/childDetail/selectCommonChildDetail.do', title, {area: ['85%', '95%']});
+    });
+
+    // 选择成人信息弹层事件绑定到btn
+    $('#vaccinatedPersonDetailBtn').click(function(){
+        var title = '选择接种人员(成人)信息';
+        common.open(contextPath + '/personDetail/selectCommonPersonDetail.do', title, {area: ['85%', '95%']});
+    });
+    // 选择接种卡信息弹层事件绑定到vaccinateCardNo
+    $('#vaccinationCardNo').click(function(){
+        var title = '选择接种卡信息';
+        common.open(contextPath + '/vaccinationCard/vaccinationCardSelectList.do', title, {area: ['85%', '95%']});
+    });
+    // 选择疫苗程序弹层事件绑定到vaccineName
+    $('#vaccineName').click(function(){
+        var title = '选择疫苗程序信息';
+        common.open(contextPath + '/vaccine/vaccineSelectList.do', title, {area: ['85%', '95%']});
+    });
+    // 选择疫苗程序弹层事件绑定到vaccineNo
+    $('#vaccineNo').click(function(){
+        var title = '选择疫苗程序信息';
+        common.open(contextPath + '/vaccine/vaccineSelectList.do', title, {area: ['85%', '95%']});
+    });
+});
+
+
+// 选择儿童信息弹层回调函数
+function selectChildCallBack(obj) {
+    $('#childDetailId').val(obj.childDetailId);
+    $('#vaccinatedName').val(obj.childName);
+##    $('#hospitalId').val(obj.hospitalId);
+##    $('#hospitalNo').val(obj.hospitalNo);
+##    $('#birthDate').val(obj.birthDate);
+##    $('#fetationAge').val(obj.fetationAge);
+##    $('#hospitalName').val(obj.hospitalName);
+##    $('#nextVisitAddr').val(obj.familyAddr);
+##    $('#birthWeight').val(obj.birthWeight);
+##    $('#birthHeight').val(obj.birthHeight);
+##    var genderEle = "#gender_" + obj.gender;
+##    $(genderEle).iCheck('check');
+}
+
+// 选择通用人员(personDetail)信息回调函数
+function selectPersonCallBack(obj) {
+    var genderEle = "#gender_" + obj.gender;
+    $('#personDetailId').val(obj.personDetailId);
+    $('#vaccinatedName').val(obj.personalName);
+##    $(genderEle).iCheck('check');
+##    $('#idCard').val(obj.certificateNumber);
+##    $('#regionId').val(obj.regionId);
+##    $('#linkmanPhone').val(obj.myselfPhone);
+##    $('#birthDate').val(obj.birthDate);
+##    $('#familyRelId').val(obj.familyRelId);
+##    $('#contactAddr').val(obj.familyAddr);
+}
+
+// 选择疫苗程序信息回调函数
+function selectVaccineCallBack(obj) {
+    $('#vaccineId').val(obj.vaccineId);
+    $('#vaccineNo').val(obj.vaccineNo);
+    $('#vaccineName').val(obj.vaccineName);
+    $('#vaccineSite').val(obj.vaccinePart);
+    $('#productionEntp').val(obj.productEntp);
+    
+}
+// 选择接种卡(VaccinationCard)信息回调函数
+function selectVaccinationCardCallBack(obj) {
+    $('#vaccinationCardId').val(obj.vaccinationCardId);
+    $('#vaccinationCardNo').val(obj.vaccinationCardNo);
+    $('#childDetailId').val(obj.childDetailId);
+    $('#personDetailId').val(obj.personDetailId);
+    $('#vaccinatedName').val(obj.vaccinatedName);
+}
+
+        // 提交表单
+        function saveVaccinationDetail() {
+            var vaccinationDetailParams = common.serializeObject($('#vaccinationDetailForm'));
+            if (vaccinationDetailParams.effectiveDate == undefined || vaccinationDetailParams.effectiveDate  == "") {
+                common.alert("请填写有效日期",0);
+                return false;
+            }
+
+            if (vaccinationDetailParams.hospitalId == undefined || vaccinationDetailParams.hospitalId  == "") {
+                common.alert("请填写医疗机构ID",0);
+                return false;
+            }
+
+            if (vaccinationDetailParams.hospitalName == undefined || vaccinationDetailParams.hospitalName  == "") {
+                common.alert("请填写医疗机构名称",0);
+               $("#hospitalName").focus();
+                return false;
+            }
+
+            if (vaccinationDetailParams.productionEntp == undefined || vaccinationDetailParams.productionEntp  == "") {
+                common.alert("请填写生产企业",0);
+               $("#productionEntp").focus();
+                return false;
+            }
+
+            if (vaccinationDetailParams.vaccinatedName == undefined || vaccinationDetailParams.vaccinatedName  == "") {
+                common.alert("请填写被接种人姓名",0);
+               $("#vaccinatedName").focus();
+                return false;
+            }
+
+            if (vaccinationDetailParams.vaccinationCardNo == undefined || vaccinationDetailParams.vaccinationCardNo  == "") {
+                common.alert("请填写预防接种卡编号",0);
+               $("#vaccinationCardNo").focus();
+                return false;
+            }
+
+            if (vaccinationDetailParams.vaccinationDate == undefined || vaccinationDetailParams.vaccinationDate  == "") {
+                common.alert("请填写接种日期",0);
+                return false;
+            }
+
+            if (vaccinationDetailParams.vaccineName == undefined || vaccinationDetailParams.vaccineName  == "") {
+                common.alert("请填写疫苗名称",0);
+               $("#vaccineName").focus();
+                return false;
+            }
+
+            if (vaccinationDetailParams.vaccineSite == undefined || vaccinationDetailParams.vaccineSite  == "") {
+                common.alert("请填写接种部位",0);
+               $("#vaccineSite").focus();
+                return false;
+            }
+
+#**
+            $.post("../vaccinationDetail/saveVaccinationDetail.jo", vaccinationDetailParams,  function (result) {
+                if (result.code == "0") {
+                    common.alert("保存成功",0);
+                    $('#addVaccinationDetailModal').modal('hide');
+                    var $form = $('#vaccinationDetail_queryForm');
+                    if ($form.size()) {
+                        queryVaccinationDetail();//重新查询
+                    }
+                } else {
+                    common.alert("保存失败:" + result.msg ,0);
+                }
+            }, "json");
+*#
+                $.post("../vaccinationDetail/saveVaccinationDetail.jo", vaccinationDetailParams,  function (result) {
+                if (result.code == "0") {
+                  common.alert("保存成功",0);
+                  parent.queryRecord();//重新查询
+                  // 关闭窗口
+                  var index = parent.layer.getFrameIndex(window.name);
+                  parent.layer.close(index); 
+               } else {
+                  common.alert(result.msg, 2);
+               }
+            }
+            , "json").error(function(jqXHR) {
+                                        jqueryPostError(jqXHR);
+                           }
+                       );//post
+
+        }//save function
+</script>

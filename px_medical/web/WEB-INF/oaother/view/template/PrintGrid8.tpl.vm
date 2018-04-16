@@ -1,0 +1,71 @@
+<div id="noteContent" style="display:none">
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr align="center"><td class="table_print_top1">${_layout.title}</td></tr>
+    <tr><td>&nbsp;</td></tr>
+</table>
+<table cellpadding="0" cellspacing="0" class="table_form">
+#set($editBeanMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+#set($cellcount=0)
+#set($new_columns=1)
+#set($cur_colspan=0)
+#foreach($cell in $_layout.editFieldList)
+#if("hidden" != ${cell.type})
+    #set($leftCss = "table_print")
+    #set($rightCss = "table_print_right")
+#if(${cell.colspan} && ${cell.colspan} > 0)
+#if(${cell.colspan} >= 7)
+#set($cur_colspan=7)
+#set($new_columns=4)
+#elseif(${cell.colspan} >= 5)
+#set($cur_colspan=5)
+#set($new_columns=3)
+#elseif(${cell.colspan} >= 3)
+#set($cur_colspan=3)
+#set($new_columns=2)
+#else
+#set($cur_colspan=0)
+#set($new_columns=1)
+#end
+#end
+#if(${cur_colspan} > 2)##有占多列的，看看是否要从下一行开始新的列
+#if(($cellcount + ($cur_colspan / 2)) > 3)##留空本行剩下的单元，准备新开一行
+#foreach($p in [$cellcount..3])
+                <td width="8%" class="table_form_color_td">&nbsp;</td>
+                <td width="17%" >&nbsp;</td>
+#end
+              </tr>
+#set($cellcount=0)##新开一行
+#end
+#end
+#if($cellcount==0)##行开始
+              <tr>
+#end
+
+#set($cellcount=$cellcount+$new_columns)
+                <td width="8%" class="table_form_color_td">#inputTitle($!{cell.title} $!{cell.required})</td>
+                <td width="17%" #if($cur_colspan>2)colspan="$cur_colspan"#end >
+#if(${cell.view})
+#viewInputField(${cell} $editBeanMap)
+#else
+#inputField(${cell} $editBeanMap)##if(${cell.required})#requiredTag()#end
+#end
+                 </td>
+#set($new_columns=1)
+#set($cur_colspan=0)
+#if($cellcount>=4)##行结束
+#set($cellcount=0)
+              </tr>
+#end
+#else
+<input type="hidden" name="${cell.field}" value="$!{editBeanMap.get(${cell.field})}" />
+#end
+#end
+#if($cellcount!=0)
+#foreach($p in [$cellcount..3])
+                <td width="8%" class="table_form_color_td">&nbsp;</td>
+                <td width="17%" >&nbsp;</td>
+#end
+              </tr>
+#end
+</table>
+</div>

@@ -1,0 +1,27 @@
+##附件显示模板
+
+#if(${attachpage.data})
+<tr>
+                <td width="18%" class="table_form_color_td">附件列表</td>
+                <td width="82%" colspan="3">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            #foreach($data in ${attachpage.data})
+                                #set($attMap = ${HELPER_BEAN.getBeanNameMap(${data})})
+                                 <tr>
+                                    <td height="17">
+                                        <a href="../scm/go.do?action=/media/attach/download&keyid=$!{attMap.get('oa_media_attach_id')}">$!{attMap.get('true_name')}（<font color="#FF0000">#getfileSizeKb($!{attMap.get('file_size')})</font>）</a>
+                                        #if(${cell.showInfo})
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            #foreach($attcell in ${cell.showInfo})
+                                                #joinText($attcell $attMap)&nbsp;&nbsp;
+                                            #end
+                                        #end
+                                    </td>
+                                </tr>
+                            #end
+                        </tbody>
+                     </table>
+                </td>
+</tr>
+#end

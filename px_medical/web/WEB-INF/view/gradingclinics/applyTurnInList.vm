@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>转诊单转入记录</title>
+#parse("./common/pageCss.vm")
+#parse("./common/pageJs.vm")
+#parse("./common/modalTemplate.vm")
+<script src="../report/js/CreateControl.js" type="text/javascript"></script>
+<script src="../report/js/GRInstall.js" type="text/javascript"></script>
+<style>
+.yxlx-label-f-none label {
+	font-weight: 100
+}
+</style>
+    <!-- Grid Report 报表部分 -->
+    <script type="text/javascript">
+        Install_InsertReport();
+    </script>
+
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content" style="margin-top: -16px; padding-bottom: 0">
+	    <!-- 报表部分 需要在body中插入 -->
+                 
+        <script type="text/javascript">
+            var Installed = Install_Detect();
+        </script>        
+	
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<div class="row">
+					<!-- 查询表格 -->
+					<form id="applay_queryForm" method="post" class="form-horizontal">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="control-label col-sm-1 p-r-none">患者姓名</label>
+								<div class="col-sm-3">
+									<input type="text" id="patientName" name="patientName" class="form-control">
+								</div>
+								<label class="control-label col-sm-1 p-r-none">身份证号</label>
+								<div class="col-sm-3">
+									<input type="text" id="idCard" name="idCard" class="form-control">
+								</div>
+								<label class="control-label col-sm-1 p-r-none">转出医院</label>
+								<div class="col-sm-3">
+									<!-- <input type="text" class="form-control"> -->
+									<div class="input-group">
+									#formSingleSelectDictionary("institutionDownId" "" $!hospitalMap 
+									"id='institutionDownId' data-placeholder='选择转出医院' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择医院" "")
+									</div>
+								</div>
+
+
+							</div>
+							<div class="form-group m-b-none">
+								<label class="control-label col-sm-1 p-r-none">转诊状态</label>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<!-- <select id="transStatus" name="transStatus" data-placeholder="转出科室" onchange="loadDoctorDown(this.value);"  class="form-control" style="min-width: 178px; width: 100%" tabindex="1">
+                                              <option value="">请选择科室</option>
+                                          </select> -->
+										#formSingleSelectDictionary("transStatus" "" $dicData.dicTurnInTransStatus 
+										" id='transStatus' data-placeholder='选择转诊状态' class='form-control' style='min-width: 178px; width: 100%' tabindex='1'" "请选择状态" "")
+									</div>
+								</div>
+
+								<label class="control-label col-sm-1 p-r-none">申请时间</label>
+								<div class="col-sm-3">
+									<div class="input-group date">
+										<input type="text" class="input-sm form-control layer-date" id="beginApplyTime" name="beginApplyTime" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" value="" /> <span class="input-group-addon">到</span> <input type="text"
+											class="input-sm form-control layer-date" id="endApplyTime" name="endApplyTime" placeholder="结束时间" value="" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" />
+									</div>
+								</div>
+
+								<div class="col-sm-3 text-center">
+									<button onclick="query();" type="button" class="btn btn-primary btn-sm">
+										<i class="fa fa-search"></i> 查 询
+									</button>
+									<button onclick="clearQuery();" type="button" class="btn btn-primary btn-sm"><i class="iconfont fa icon-qingchu"></i> 清 空</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- 表格数据 -->
+		<div class="ibox float-e-margins m-b-n">
+			<div class="ibox-content">
+				<div class="table-responsive tool">
+					<!-- 列表表格 工具栏-->
+					<div class=" hidden-xs" id="exampleTableEventsToolbar" role="group">
+						<!-- <button onclick="show();" class="btn btn-sm btn-info" >
+							<i class="fa fa-eye" aria-hidden="true"></i> <span>查看</span>
+						</button> -->
+					</div>
+					<!-- 列表表格 -->
+					<div class="example">
+						<table id="applyTurnInGrid" class="table table-bordered table-hover" data-mobile-responsive="true"> </table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 弹窗 Modal -->
+	#modalElement("modal")
+	#parse("./common/common.js.vm")
+    <!-- 页面js -->
+	<script>
+		//验证单选
+		function singleCheck(rows){
+			if (rows.length != 1 || !rows[0].hdDiagnosisApplyId ) {
+				common.alert("请选择将要编辑的行且仅能选择一行",0);
+				return false;
+			}
+			return true;
+		}
+ 
+		//查询按钮时间
+		function query() {
+			var queryParams = common.serializeObject($('#applay_queryForm'));
+			var options = {
+				url : '../gradingclinics/applyTurnInListData.do?tiem=' + new Date().getTime(),
+				silent : false,
+				query : queryParams
+			};
+			$('#applyTurnInGrid').bootstrapTable('refresh', options);
+		}
+		//清空查询框
+		function clearQuery() {
+			$("#patientName").val('');
+			$("#idCard").val('');
+			$("#beginApplyTime").val('');
+			$("#endApplyTime").val('');
+			var $form = $("#applay_queryForm");
+			$form.find("#transStatus").val('');
+			$form.find("#transStatus").trigger("chosen:updated");
+			$form.find("#institutionDownId").val('');
+			$form.find("#institutionDownId").trigger("chosen:updated");
+		}
+		var grid ;
+		$(function() {
+			 $('#applyTurnInGrid').bootstrapTable(
+					$.extend(baseTable, {
+						url : "../gradingclinics/applyTurnInListData.do",
+						queryParams : function (params){
+							var requestParams = common.serializeObject($('#applay_queryForm'));
+					        requestParams.pageSize = params.pageSize;
+					        requestParams.pageNumber = params.pageNumber;
+					        return requestParams;
+						},
+						columns : [
+						{checkbox:true},
+						{
+							field : 'hdDiagnosisNum',
+							title : '转诊单号'
+						}, {
+							field : 'patientName',
+							title : '患者姓名'
+						}, {
+							field : 'patientSex',
+							title : '患者性别',
+							formatter : function(value, row, index) {
+								return JSON.parse('$dicTools.changeMapToJson($dicData.dicSex)')[value];
+							}
+						}, {
+							field : 'idCard',
+							title : '身份证号'
+						}, {
+							field : 'applyTime',
+							title : '申请时间'
+						}, {
+							field : 'institutionDownName',
+							title : '转出医院'
+						}, {
+							field : 'officeDownName',
+							title : '转出科室'
+						},{
+							field : 'doctorDownName',
+							title : '转出医生'
+						},{
+							field : 'transStatus',
+							title : '转诊状态',
+							formatter : function(value, row, index) {
+								return JSON.parse('$dicTools.changeMapToJson($dicData.dicTransStatus)')[value];
+							}
+						}, {
+							field : 'hdType',
+							title : '转诊类型',
+							formatter : function(value, row, index) {
+								return JSON.parse('$dicTools.changeMapToJson($dicData.dicHdType)')[value];
+							}
+						},{
+	                        field : 'operate',
+	                        title : '操作',
+	                        events : operateEvents,
+	                        formatter : operateFormatter
+	                    } ], 
+						onDblClickRow : function (row, element){
+							$('#applyTurnInGrid').bootstrapTable('check',element.attr('data-index'));
+							openModal('modal','../gradingclinics/applyTurnInShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+				   		},
+						onLoadSuccess : function(){
+							var height = ($('#applyTurnInGrid').parents("body").height() - $('#applay_queryForm').parents(".ibox").first().height() - 45);
+							$('#applyTurnInGrid').bootstrapTable('resetView', {height: height}); 
+						}
+					}
+				)
+			);
+		});
+		
+		$(window).resize(function() { 
+			var height = ($('#applyTurnInGrid').parents("body").height() - $('#applay_queryForm').parents(".ibox").first().height() - 45);
+			$('#applyTurnInGrid').bootstrapTable('resetView', {height: height}); 
+		})
+ 	
+	    window.operateEvents = {
+            "click #btn_show_applyIn": function(e, value, row, index) {
+                openModal('modal','../gradingclinics/applyTurnInShow.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId);
+            },
+            
+            "click #btn_turnBackPrint": function(e, value, row, index) {
+                var title = '双向转诊单（回转）打印';
+                var url = '../gradingclinics/backReceiptPrint.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId + '&hdType=' + row.hdType ;
+                common.open(url, title, {area: ['99%', '99%']});
+            },
+             
+            "click #btn_diagnosisReportPrint": function(e, value, row, index) {
+            	 var title = '诊断报告单打印';
+                    var url = '../gradingclinics/diagnosisReportPrintPage.do?hdDiagnosisApplyId=' + row.hdDiagnosisApplyId ;
+                    common.open(url, title, {area: ['99%', '99%']});
+            }
+        }
+        
+        function operateFormatter(value, row, index) {
+            var html = [
+                        '<a id="btn_show_applyIn" href="javascript:void(0)" title="详情"><i class="fa fa-eye"></i></a>',
+                        '<a id="btn_turnBackPrint" href="javascript:void(0)" title="打印转诊单"><i class="fa fa-print"></i></a>',
+                        '<a id="btn_diagnosisReportPrint" href="javascript:void(0)" title="打印诊断报告"><i class="fa fa-print"></i></a>'
+                       ];
+            return html.join('');
+        }
+		
+		$(document).ready(function() {
+			//清除模态框的缓存
+			clearModal('modal');
+		});
+		  
+	</script>
+
+</body>
+</html>

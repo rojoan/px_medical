@@ -1,0 +1,1 @@
+#if(${datamap.get(${cell.field})})<a href="#" #if($cell.onclick)onclick="#buttonUrl($cell $datamap)"#end>$!{datamap.get(${cell.field})}</a>#end
